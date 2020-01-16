@@ -1,0 +1,118 @@
+% Sets
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\Ell}{\mathcal{L}}
+
+\newcommand{\Es}{\mathcal{S}}
+\newcommand{\Tee}{\mathcal{T}}
+\newcommand{\Ah}{\mathcal{A}}
+
+% Random Variable
+\newcommand{\rv}[1]{\symbf{#1}}
+\newcommand{\map}[1]{#1^{\text{MAP}}}
+% Matrix
+\newcommand{\mat}[1]{\symbf{#1}}
+\newcommand{\inv}{^{\raisebox{.2ex}{$\scriptscriptstyle-\mkern-1.5mu1$}}}
+\newcommand{\tran}{^{\mkern-1.5mu\raisebox{.2ex}{$\scriptscriptstyle\mathsf{T}$}}}
+\newcommand{\itran}{^{\raisebox{.2ex}{$\scriptscriptstyle-\mkern-1.5mu\mathsf{T}$}}}
+\newcommand{\Eye}{\mat{\mathrm{I}}}
+% Pseudo Inputs
+\newcommand{\ps}[1]{\bar{#1}}
+\newcommand{\psmat}[1]{\ps{\mat{#1}}}
+
+% Nicer empty set
+\renewcommand{\emptyset}{\varnothing}
+
+% Math operators
+% General
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator{\atanTwo}{atan2}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator*{\maximize}{maximize}
+\DeclareMathOperator*{\minimize}{minimize}
+\DeclareMathOperator{\subjectto}{subject\ to}
+\DeclareMathOperator{\Oh}{\mathcal{O}}
+\DeclareMathOperator{\softmax}{softmax}
+\newcommand{\Powerset}[1]{2^{#1}}
+\newcommand*{\diff}{\mathop{}\!\mathrm{d}}
+\DeclarePairedDelimiter{\abs}{\vert}{\vert}
+\newcommand{\nth}[2][th]{#2^{\text{#1}}}
+
+% Probabilities
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\cov}{cov}
+\DeclareMathOperator{\var}{var}
+\DeclareMathOperator{\corr}{\varrho}
+\DeclareMathOperator{\p}{p}
+\DeclareMathOperator{\q}{q}
+\DeclareMathOperator{\KLdiv}{KL}
+\DeclareMathOperator{\K}{\mathcal{K}}
+\DeclareMathOperator{\Q}{\mathcal{Q}}
+\DeclareMathOperator{\Norm}{\mathcal{N}}
+\DeclareMathOperator{\Multi}{\mathcal{M}}
+\DeclareMathOperator{\Ber}{\mathcal{B}}
+\DeclareMathOperator{\Uni}{\mathbb{U}}
+\DeclareMathOperator{\Ind}{\mathbb{I}}
+\DeclareMathOperator{\GP}{\mathcal{GP}}
+\DeclareMathOperator{\indep}{\perp\mkern-9.5mu\perp}
+\DeclareMathOperator{\nindep}{\centernot{\indep}}
+
+\providecommand\given{}
+\DeclarePairedDelimiterX{\Cond}[1]{(}{)}{
+\renewcommand\given{%
+  \nonscript\mkern2mu
+  \delimsize\vert
+  \nonscript\mkern2mu
+  \mathopen{}
+  \allowbreak}
+#1
+}
+
+\makeatletter
+\newcommand{\Fun}{\@ifstar\@sfun\@fun}
+\newcommand{\@fun}[1]{#1\Cond}
+\newcommand{\@sfun}[1]{#1\Cond*}
+\makeatother
+
+\newcommand{\Prob}{\p\Cond}
+\newcommand{\aProb}{\tilde{\p}\Cond}
+\newcommand{\Variat}{\q\Cond}
+\newcommand{\Gaussian}{\Norm\Cond}
+\newcommand{\Multinomial}{\Multi\Cond}
+\newcommand{\Uniform}{\Uni\Cond}
+\newcommand{\Indicator}{\Ind\Cond}
+
+\DeclarePairedDelimiterX{\KLdelim}[2]{(}{)}{%
+  #1\mkern2mu\delimsize\|\mkern2mu#2%
+}
+\newcommand{\KL}{\KLdiv\KLdelim}
+
+\DeclarePairedDelimiterXPP{\Moment}[2]{#1}{[}{]}{}{
+\renewcommand\given{%
+  \nonscript\mkern2mu
+  \delimsize\vert
+  \nonscript\mkern2mu
+  \mathopen{}
+  \allowbreak}
+#2
+}
+
+\providecommand\with{}
+\DeclarePairedDelimiterX{\Set}[1]{\{}{\}}{
+\renewcommand\with{%
+  \nonscript\mkern2mu
+  \delimsize\vert
+  \nonscript\mkern2mu
+  \mathopen{}
+  \allowbreak}
+#1
+}
+
+\DeclarePairedDelimiterXPP{\pix}[1]{\begingroup\scriptscriptstyle}{(}{)}{\endgroup}{\mkern-2mu#1\mkern-2mu}

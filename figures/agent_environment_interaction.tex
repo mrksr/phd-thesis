@@ -1,0 +1,24 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \tikzstyle{entity} = [draw, fill=sBlueDark!40, thick, inner sep=6pt];
+    \tikzstyle{caption} = [align=center];
+
+    \node[entity, text height=1.5ex, text depth=0ex] (agent) at (0, 3) {Agent};
+    \node[entity, text height=1.5ex, text depth=0ex] (env) at (0, 0) {Environment};
+
+    \draw[edge, directed, very thick] (agent.east) -- ++(2, 0) -- node[midway, right, caption] {Action \\ $\rv{a}_t$} ++(0, -3) -- (env.east);
+
+    \draw[edge, directed, very thick] (env.185)++(-1.25, 0) -- ++(-0.75, 0) |- node[pos=0.25, left, caption] {State \\ $\rv{s}_t$} node[pos=0.25, right, shift={(0.3, 0)}, caption] {Reward \\ $\rv{r}_t$} (agent.170);
+    \draw[edge, directed] (env.175)++(-1.25, 0) -- ++(-0.45, 0) |- (agent.190);
+
+    \draw[preaction={draw, line width=5pt, white}, thick, densely dashed] (env.west) ++(-1.25, -0.5) -- ++(0, 1);
+    \draw[edge, directed, very thick] (env.185) -- node[below] {$\rv{s}_{t+1}$} ++(-1.25, 0);
+    \draw[edge, directed] (env.175) -- node[above] {$\rv{r}_{t+1}$} ++(-1.25, 0);
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,105 @@
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+
+\newcommand{\includestandalonewithpath}[2][]{%
+    \begingroup%
+    \StrCount{#2}{/}[\matches]%
+    \StrBefore[\matches]{#2}{/}[\figurepath]%
+    \includestandalone[#1]{#2}%
+    \endgroup%
+}
+
+% See
+% https://tex.stackexchange.com/a/23583
+\tikzset{onslide/.code args={<#1>#2}{%
+  \only<#1>{\pgfkeysalso{#2}} % \pgfkeysalso doesn't change the path
+}}
+
+
+% Tikz (Figure) styles
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{calc}
+\usetikzlibrary{fit}
+\usetikzlibrary{positioning}
+\usetikzlibrary{scopes}
+\usetikzlibrary{shadows}
+
+\tikzstyle{with struts} = [execute at begin node={\strut}, execute at end node={\strut}]
+
+\tikzstyle{edge} = [draw, thick]
+\tikzstyle{directed} = [arrows={-latex}, shorten >=1.5pt, shorten <=0pt]
+\tikzstyle{inverse directed} = [arrows={latex-}, shorten >=0pt, shorten <=1.5pt]
+
+\tikzstyle{random variable} = [draw, very thick, circle, inner sep=.5pt, minimum size=23pt, font=\small, with struts]
+\tikzstyle{implicit} = [rectangle, inner sep=2pt, minimum size=15pt]
+\tikzstyle{observed} = [fill=sRedDark!40]
+\tikzstyle{variational} = [fill=sBlueDark!40]
+\tikzstyle{small} = [inner sep=0pt, minimum size=10pt]
+\tikzstyle{hyperparameter} = [fill=sYellowDark!40]
+\tikzstyle{latent} = [fill=sGreenDark!40]
+\tikzstyle{plate} = [draw=sStoneDark, fill=sStone, fill opacity=.2, very thick, inner xsep=2pt, inner ysep=2pt]
+
+
+% (PGF) Plot styles
+\usepgfplotslibrary{fillbetween}
+\usepgfplotslibrary{patchplots}
+\usepgfplotslibrary{colormaps}
+\pgfplotsset{filter discard warning=false}
+\pgfplotsset{unbounded coords=discard}
+
+\newlength{\plottextwidth}
+\setlength{\plottextwidth}{347.12354pt}
+
+\pgfplotsset{data/.style = {
+    only marks,
+    very thin,
+    mark size=1pt,
+    % draw opacity=.75,
+    fill opacity=.5,
+    sStoneDark,
+}}
+\pgfplotsset{
+    /pgfplots/colormap={firstsecond}{color=(sTealDark) color=(sStone) color=(sGreenLight)}
+}
+\pgfplotsset{model plot/.style = {
+    grid=major,
+    % enlarge x limits=false,
+    ylabel style={rotate=-90},
+}}
+
+\pgfplotsset{result plot/.style = {
+    model plot,
+    xlabel=$\mat{y}$, ylabel=$\mat{x}$,
+    ymax=6,
+    xtick={0, 2.5, 5},
+    ytick={0, 2.5, 5},
+}}
+
+\pgfplotsset{slim colorbar right/.style = {
+    colorbar,
+    colorbar style={
+        at={(1.05, 0.5)},
+        anchor=west,
+        width=.02*\plottextwidth,
+    },
+}}
+
+\pgfplotsset{slim colorbar left/.style = {
+    colorbar,
+    colorbar style={
+        at={(-0.05, 0.5)},
+        anchor=east,
+        width=.02*\plottextwidth,
+        yticklabel pos=left,
+    },
+}}
+
+
+\tikzstyle{mean} = [thick]
+\tikzstyle{std} = [thin]
+\tikzstyle{first} = [sTealDark]
+\tikzstyle{first fill} = [sTealDark, opacity=0.3]
+\tikzstyle{second} = [sGreenLight]
+\tikzstyle{second fill} = [sGreenDark, opacity=0.3]

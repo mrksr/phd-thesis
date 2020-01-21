@@ -357,7 +357,7 @@ Inspecting the log likelihood and applying the DSVI bound we (roughly) get
     \Moment*{\E_{\Variat{\mat{J}}}}{\log \Prob{\mat{J}^{\text{max}} \given \mat{J}}}
     - T \cdot \text{klterm},
 \end{align}
-with $\text{klterm} &= \KL{\Variat{\mat{\pi}^\ast}}{\Prob{\mat{\pi}^\ast}} + \KL{\Variat{\mat{f}}}{\Prob{\mat{f}}}$ multiplied by $T$ due to the recurrent structure.
+with $\text{klterm} = \KL{\Variat{\mat{\pi}^\ast}}{\Prob{\mat{\pi}^\ast}} + \KL{\Variat{\mat{f}}}{\Prob{\mat{f}}}$ multiplied by $T$ due to the recurrent structure.
 The distribution $\Variat{\mat{J}}$ can easily be sampled from $\Variat{\mat{s}_0, \dots, \mat{s}_T}$ using the definition of the value function.
 A sample from $\Variat{\mat{s}_0, \dots, \mat{s}_T}$ can be drawn via the usual ancestral sampling scheme employed by DSVI.
 Assuming a good likelihood and that the sufficient statistics assumption holds for both $\mat{\pi}^\ast$ and $\mat{f}$, the optimal policy should still be a maximizer of this variational lower bound.

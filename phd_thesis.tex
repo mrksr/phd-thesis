@@ -261,7 +261,7 @@ More concretely, the main challenges for this model are:
     \caption{
         \label{fig:graphical_model}
         The graphical model for reinforcement learning.
-        Starting with the observed state $\mat{s}_0$, a trajectory $\left( \mat{s}_0, \dots, \mat{s}_T \right)$ is generated using the variational parameters $\mat{u}_f$ and $\mat{u}_{\pi^\ast}$ which describe the transition dynamics and optimal policy respectively.
+        Starting with the observed state $\mat{s}_0$, a trajectory $\left( \mat{s}_0, \dots, \mat{s}_T \right)$ is generated using the variational parameters $\mat{f}$ and $\mat{\pi}^\ast$ which describe the transition dynamics and optimal policy respectively.
         Using the reward function $r$ and discount factor $\gamma$ -- both seen as hyperparameters -- the trajectory generates a value $\mat{J}^{\pi^\ast}(\mat{s}_0)$.
     }
 \end{figure}
@@ -274,10 +274,10 @@ The states are mapped to rewards using the reward function $r$ which we assume t
 Lastly, a sum discounted by the constant $\gamma$ yields the value.
 This structure implies a hierarchical recurrent generative process as both the transition dynamics and policy are applied repeatedly.
 
-Note that in the batch RL setting, the dynamics model represented via $\mat{u}_f$ can be trained independently from this hierarchical structure.
+Note that in the batch RL setting, the dynamics model represented via $\mat{f}$ can be trained independently from this hierarchical structure.
 As we are presented with a set of transition in the original system, inferring a dynamics model is a standard regression task which can be solved before ever considering policy search.
 A special case of such a model could be a mathematical simulation or even the system itself.
-In the following, we will consider $\mat{u}_f$ to be fixed.
+In the following, we will consider $\mat{f}$ to be fixed.
 
 There are two distinct sources of uncertainty in our model.
 First, knowledge of the dynamical system is either not perfect or the system is stochastic.
@@ -418,6 +418,19 @@ Here are a few ideas, but they will require additional iterations and more concr
         We might require an additional explicit value model.
         An implied benefit might be that this could give rise to a sensible and principled way of replacing $\mat{J}^{\text{max}}$ with a truly Bayesian alternative.
 \end{description}
+
+
+\section{Quantities of Interest}
+\label{sec:quantities_of_interest}
+\begin{figure}[t]
+    \centering
+    \includestandalone{figures/quantities_of_interest_rl}
+    \caption[Quantities of interest in reinforcement learning]{
+        Quantities of interest in reinforcement learning.
+    }
+    \label{fig:agent_environment_interaction}
+\end{figure}
+yo.
 
 
 \nocite{*}

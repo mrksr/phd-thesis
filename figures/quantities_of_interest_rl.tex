@@ -1,0 +1,18 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}[x=12em,y=16ex]
+    \node[random variable, latent] at (0, 0) (U) {$\Uu$};
+    \node[random variable, observed] at (1, 0) (Y) {$\Y$};
+    \node[random variable, variational] at (1, -1) (Q) {$\Qu$};
+
+    \draw[edge, directed] (U) -- node[midway, above] {Y} (Y);
+    \draw[edge, directed] (U) -- node[midway, below] {Q} (Q);
+    \draw[edge, directed, dashed] (Y) -- node[midway, right] {B} (Q);
+\end{tikzpicture}
+\end{document}

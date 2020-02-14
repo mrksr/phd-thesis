@@ -1,0 +1,68 @@
+\tikzstyle{edge} = [draw, thick]
+\tikzstyle{directed} = [arrows={-latex}, shorten >=1.5pt, shorten <=0pt]
+\tikzstyle{inverse directed} = [arrows={latex-}, shorten >=0pt, shorten <=1.5pt]
+
+\tikzstyle{random variable} = [draw, very thick, circle, inner sep=.5pt, minimum size=23pt, font=\small, with struts]
+\tikzstyle{implicit} = [rectangle, inner sep=3pt]
+\tikzstyle{observed} = [fill=sRedDark!40]
+\tikzstyle{variational} = [fill=sBlueDark!40]
+\tikzstyle{small} = [inner sep=0pt, minimum size=10pt]
+\tikzstyle{hyperparameter} = [fill=sYellowDark!40]
+\tikzstyle{latent} = [fill=sGreenDark!40]
+\tikzstyle{plate} = [draw=sStoneDark, fill=sStone, fill opacity=.2, very thick, inner xsep=2pt, inner ysep=2pt]
+
+
+\pgfplotsset{data/.style = {
+    only marks,
+    thin,
+    mark size=1.5pt,
+    % draw opacity=.75,
+    fill opacity=.5,
+    sStoneDark,
+}}
+\pgfplotsset{model plot/.style = {
+    grid=major,
+    % enlarge x limits=false,
+    ylabel style={rotate=-90},
+}}
+
+\pgfplotsset{sine plot/.style = {
+    model plot,
+    xlabel=$\rv{X}$, ylabel=$\rv{y}$,
+    ymin=-1, ymax=1,
+    xmin=-1.5, xmax=1.5,
+    xtick={-1, 0, 1},
+}}
+
+\pgfplotsset{wind plot/.style = {
+    model plot,
+    height=120pt,
+    enlarge x limits=false,
+}}
+\tikzstyle{wind data} = [thick]
+
+
+\tikzstyle{true function} = [line width=4pt, densely dashed, smooth]
+
+
+\tikzstyle{mean} = [thick]
+\tikzstyle{std} = [thin]
+\tikzstyle{first} = [sTealDark]
+\tikzstyle{first fill} = [sTealDark, opacity=0.3]
+\tikzstyle{first full} = [sTealDark, fill=sTealDark]
+\tikzstyle{second} = [sGreenLight]
+\tikzstyle{second fill} = [sGreenDark, opacity=0.3]
+\tikzstyle{second full} = [sGreenDark, fill=sGreenDark]
+\tikzstyle{third} = [sRedLight]
+\tikzstyle{third fill} = [sRedLight, opacity=0.3]
+\tikzstyle{third full} = [sRedLight, fill=sRedLight]
+\tikzstyle{fourth} = [sYellowDark]
+\tikzstyle{fourth fill} = [sYellowDark, opacity=0.3]
+\tikzstyle{fourth full} = [sYellowDark, fill=sYellowDark]
+
+\tikzstyle{sample} = [semithick]
+\tikzstyle{sample one} = [sample, hannah0]
+\tikzstyle{sample two} = [sample, hannah1]
+\tikzstyle{sample three} = [sample, hannah2]
+\tikzstyle{sample four} = [sample, hannah3]
+\tikzstyle{sample five} = [sample, hannah4]

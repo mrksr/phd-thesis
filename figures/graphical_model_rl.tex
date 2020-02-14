@@ -2,6 +2,7 @@
 \input{preamble/tikz_standalone.tex}
 \input{preamble/tikz_colors.tex}
 \input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
 \input{../preamble/abbreviations.tex}
 
 \begin{document}
@@ -22,9 +23,9 @@
         % \node[draw=none] (a2) at (2.5, 0.75) {};
         \node[random variable, latent] (aT) at (2.5, 1) {$\mat{a}_{T-1}$};
 
-        \node[random variable, variational] (Pi) at (-1, 1.5) {$\mat{u}_{\pi^\ast}$};
+        \node[random variable, variational] (Pi) at (-1, 1.5) {$\mat{\pi}^\ast$};
 
-        \node[random variable, variational] (f) at (-1, 0.5) {$\mat{u}_f$};
+        \node[random variable, variational] (f) at (-1, 0.5) {$\mat{f}$};
         \node[random variable, hyperparameter] (r) at (-1, -0.5) {$\mat{r}$};
 
         \node[random variable, hyperparameter] (gamma) at (-1, -1.5) {$\mat{\gamma}$};

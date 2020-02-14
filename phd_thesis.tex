@@ -430,6 +430,25 @@ Here are a few ideas, but they will require additional iterations and more concr
     }
     \label{fig:agent_environment_interaction}
 \end{figure}
+\begin{table}[t]
+    \centering
+    \caption{Great Table!}
+    \label{tab:label}
+    \newcolumntype{Y}{>{\centering\arraybackslash}X}
+    \begin{tabularx}{\textwidth}{cYY}
+        \toprule
+        & Probabilistic Numerics & Reinforcement Learning \\
+        \midrule
+        $\Uu$ & Latent function & True system-dynamics \\
+        $\Qu$ & Definite Integral & Optimal value \\
+        $\Y$ & Function evaluations & Batch/Online data \\
+        \midrule
+        $Q : \Uu \to \Qu$ & Integration & Bellman principle \\
+        $Y : \Uu \to \Y$ & Observation & Exploration \\
+        $B : \Y \to \Qu$ & Quadrature & Policy search \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
 yo.
 
 

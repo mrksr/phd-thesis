@@ -1,14 +1,16 @@
-\input{preamble/packages.tex}
+\input{preamble/packages_dump.tex}
+\endofdump
+\input{preamble/packages_no_dump.tex}
+
 \input{preamble/abbreviations.tex}
 \input{figures/preamble/tikz_colors.tex}
 
 % We use precompiled images and do not add tikz for speed of compilation.
 \newcommand{\includestandalonewithpath}[2][]{%
-    \begingroup%
-    \StrCount{#2}{/}[\matches]%
-    \StrBefore[\matches]{#2}{/}[\figurepath]%
-    \includestandalone[#1]{#2}%
-    \endgroup%
+    \includegraphics[#1]{#2}
+}
+\newcommand{\includestandalone}[2][]{%
+    \includegraphics[#1]{#2}
 }
 
 % Show overfull boxes

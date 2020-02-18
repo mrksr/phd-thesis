@@ -1,44 +1,136 @@
 
+@book{bertsekas_stochastic_1978,
+  title = {Stochastic {{Optimal Control}}: {{The Discrete}}-{{Time Case}}},
+  author = {Bertsekas, Dimitir P. and Shreve, Steven},
+  date = {1978},
+  publisher = {{Academic press}},
+  abstract = {The book is a comprehensive and theoretically sound treatment of the mathematical foundations of stochastic optimal control of discrete-time systems, including the treatment of the intricate measure-theoretic issues.},
+  file = {C\:\\Users\\pub\\Zotero\\storage\\5JHEMU42\\book.pdf},
+  isbn = {1-886529-03-5}
+}
+
+@article{cockayne_bayesian_2019,
+  title = {Bayesian {{Probabilistic Numerical Methods}}},
+  author = {Cockayne, Jon and Oates, Chris and Sullivan, Tim and Girolami, Mark},
+  date = {2019-01},
+  journaltitle = {SIAM Review},
+  shortjournal = {SIAM Rev.},
+  volume = {61},
+  pages = {756--789},
+  issn = {0036-1445, 1095-7200},
+  doi = {10.1137/17M1139357},
+  url = {http://arxiv.org/abs/1702.03673},
+  urldate = {2020-02-14},
+  abstract = {The emergent field of probabilistic numerics has thus far lacked clear statistical principals. This paper establishes Bayesian probabilistic numerical methods as those which can be cast as solutions to certain inverse problems within the Bayesian framework. This allows us to establish general conditions under which Bayesian probabilistic numerical methods are well-defined, encompassing both non-linear and non-Gaussian models. For general computation, a numerical approximation scheme is proposed and its asymptotic convergence established. The theoretical development is then extended to pipelines of computation, wherein probabilistic numerical methods are composed to solve more challenging numerical tasks. The contribution highlights an important research frontier at the interface of numerical analysis and uncertainty quantification, with a challenging industrial application presented.},
+  archivePrefix = {arXiv},
+  eprint = {1702.03673},
+  eprinttype = {arxiv},
+  file = {C\:\\Users\\pub\\Zotero\\storage\\IYE9Y4P8\\Cockayne et al. - 2019 - Bayesian Probabilistic Numerical Methods.pdf;C\:\\Users\\pub\\Zotero\\storage\\X8T74HX4\\1702.html},
+  keywords = {Mathematics - Numerical Analysis,Mathematics - Statistics Theory,Statistics - Computation,Statistics - Methodology},
+  number = {3}
+}
+
+@article{cockayne_probabilistic_2017,
+  title = {Probabilistic {{Numerical Methods}} for {{Partial Differential Equations}} and {{Bayesian Inverse Problems}}},
+  author = {Cockayne, Jon and Oates, Chris and Sullivan, Tim and Girolami, Mark},
+  date = {2017-07-11},
+  url = {http://arxiv.org/abs/1605.07811},
+  urldate = {2020-02-18},
+  abstract = {This paper develops a probabilistic numerical method for solution of partial differential equations (PDEs) and studies application of that method to PDE-constrained inverse problems. This approach enables the solution of challenging inverse problems whilst accounting, in a statistically principled way, for the impact of discretisation error due to numerical solution of the PDE. In particular, the approach confers robustness to failure of the numerical PDE solver, with statistical inferences driven to be more conservative in the presence of substantial discretisation error. Going further, the problem of choosing a PDE solver is cast as a problem in the Bayesian design of experiments, where the aim is to minimise the impact of solver error on statistical inferences; here the challenge of non-linear PDEs is also considered. The method is applied to parameter inference problems in which discretisation error in non-negligible and must be accounted for in order to reach conclusions that are statistically valid.},
+  archivePrefix = {arXiv},
+  eprint = {1605.07811},
+  eprinttype = {arxiv},
+  file = {C\:\\Users\\pub\\Zotero\\storage\\PDK3PR2J\\Cockayne et al. - 2017 - Probabilistic Numerical Methods for Partial Differ.pdf;C\:\\Users\\pub\\Zotero\\storage\\MIWRP8CG\\1605.html},
+  keywords = {Mathematics - Numerical Analysis,Mathematics - Statistics Theory,Statistics - Computation,Statistics - Methodology},
+  primaryClass = {cs, math, stat},
+  version = {3}
+}
+
 @inproceedings{deisenroth_pilco_2011,
-  author = {Deisenroth, Marc and Rasmussen, Carl E.},
+  title = {{{PILCO}}: {{A}} Model-Based and Data-Efficient Approach to Policy Search},
+  shorttitle = {{{PILCO}}},
   booktitle = {Proceedings of the 28th {{International Conference}} on Machine Learning ({{ICML}}-11)},
+  author = {Deisenroth, Marc and Rasmussen, Carl E.},
   date = {2011},
   pages = {465--472},
-  shorttitle = {{{PILCO}}},
-  title = {{{PILCO}}: {{A}} Model-Based and Data-Efficient Approach to Policy Search},
   url = {http://machinelearning.wustl.edu/mlpapers/paper_files/ICML2011Deisenroth_323.pdf},
-  urldate = {2016-02-01}
+  urldate = {2016-02-01},
+  file = {C\:\\Users\\pub\\Zotero\\storage\\YEDBHXGB\\Deisenroth and Rasmussen - 2011 - PILCO A model-based and data-efficient approach t.pdf}
+}
+
+@article{levine_reinforcement_2018,
+  title = {Reinforcement {{Learning}} and {{Control}} as {{Probabilistic Inference}}: {{Tutorial}} and {{Review}}},
+  shorttitle = {Reinforcement {{Learning}} and {{Control}} as {{Probabilistic Inference}}},
+  author = {Levine, Sergey},
+  date = {2018-05-20},
+  url = {http://arxiv.org/abs/1805.00909},
+  urldate = {2020-02-18},
+  abstract = {The framework of reinforcement learning or optimal control provides a mathematical formalization of intelligent decision making that is powerful and broadly applicable. While the general form of the reinforcement learning problem enables effective reasoning about uncertainty, the connection between reinforcement learning and inference in probabilistic models is not immediately obvious. However, such a connection has considerable value when it comes to algorithm design: formalizing a problem as probabilistic inference in principle allows us to bring to bear a wide array of approximate inference tools, extend the model in flexible and powerful ways, and reason about compositionality and partial observability. In this article, we will discuss how a generalization of the reinforcement learning or optimal control problem, which is sometimes termed maximum entropy reinforcement learning, is equivalent to exact probabilistic inference in the case of deterministic dynamics, and variational inference in the case of stochastic dynamics. We will present a detailed derivation of this framework, overview prior work that has drawn on this and related ideas to propose new reinforcement learning and control algorithms, and describe perspectives on future research.},
+  archivePrefix = {arXiv},
+  eprint = {1805.00909},
+  eprinttype = {arxiv},
+  file = {C\:\\Users\\pub\\Zotero\\storage\\N8D2BMI9\\Levine - 2018 - Reinforcement Learning and Control as Probabilisti.pdf;C\:\\Users\\pub\\Zotero\\storage\\FN6PF6J5\\1805.html},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning,Computer Science - Robotics,Statistics - Machine Learning},
+  primaryClass = {cs, stat}
+}
+
+@article{oates_modern_2019,
+  title = {A {{Modern Retrospective}} on {{Probabilistic Numerics}}},
+  author = {Oates, C. J. and Sullivan, T. J.},
+  date = {2019-01-14},
+  url = {http://arxiv.org/abs/1901.04457},
+  urldate = {2019-10-02},
+  abstract = {This article attempts to place the emergence of probabilistic numerics as a mathematical-statistical research field within its historical context and to explore how its gradual development can be related both to applications and to a modern formal treatment. We highlight in particular the parallel contributions of Sul'din and Larkin in the 1960s and how their pioneering early ideas have reached a degree of maturity in the intervening period, mediated by paradigms such as average-case analysis and information-based complexity. We provide a subjective assessment of the state of research in probabilistic numerics and highlight some difficulties to be addressed by future works.},
+  archivePrefix = {arXiv},
+  eprint = {1901.04457},
+  eprinttype = {arxiv},
+  file = {C\:\\Users\\pub\\Zotero\\storage\\D67KFS6E\\Oates and Sullivan - 2019 - A Modern Retrospective on Probabilistic Numerics.pdf;C\:\\Users\\pub\\Zotero\\storage\\HUTII4YQ\\1901.html},
+  keywords = {62-03; 65-03; 01A60; 01A65; 01A67,Mathematics - History and Overview,Mathematics - Numerical Analysis,Mathematics - Probability,Statistics - Machine Learning},
+  primaryClass = {math, stat}
 }
 
 @article{silver_mastering_2017,
-  abstract = {A long-standing goal of artificial intelligence is an algorithm that learns, tabula rasa, superhuman proficiency in challenging domains. Recently, AlphaGo became the first program to defeat a world champion in the game of Go. The tree search in AlphaGo evaluated positions and selected moves using deep neural networks. These neural networks were trained by supervised learning from human expert moves, and by reinforcement learning from self-play. Here we introduce an algorithm based solely on reinforcement learning, without human data, guidance or domain knowledge beyond game rules. AlphaGo becomes its own teacher: a neural network is trained to predict AlphaGo’s own move selections and also the winner of AlphaGo’s games. This neural network improves the strength of the tree search, resulting in higher quality move selection and stronger self-play in the next iteration. Starting tabula rasa, our new program AlphaGo Zero achieved superhuman performance, winning 100–0 against the previously published, champion-defeating AlphaGo.},
+  title = {Mastering the Game of {{Go}} without Human Knowledge},
   author = {Silver, David and Schrittwieser, Julian and Simonyan, Karen and Antonoglou, Ioannis and Huang, Aja and Guez, Arthur and Hubert, Thomas and Baker, Lucas and Lai, Matthew and Bolton, Adrian and Chen, Yutian and Lillicrap, Timothy and Hui, Fan and Sifre, Laurent and van den Driessche, George and Graepel, Thore and Hassabis, Demis},
   date = {2017-10},
-  doi = {10.1038/nature24270},
-  issn = {1476-4687},
   journaltitle = {Nature},
-  langid = {english},
-  number = {7676},
-  options = {useprefix=true},
-  pages = {354-359},
-  title = {Mastering the Game of {{Go}} without Human Knowledge},
+  volume = {550},
+  pages = {354--359},
+  issn = {1476-4687},
+  doi = {10.1038/nature24270},
   url = {https://www.nature.com/articles/nature24270},
   urldate = {2019-04-04},
-  volume = {550}
+  abstract = {A long-standing goal of artificial intelligence is an algorithm that learns, tabula rasa, superhuman proficiency in challenging domains. Recently, AlphaGo became the first program to defeat a world champion in the game of Go. The tree search in AlphaGo evaluated positions and selected moves using deep neural networks. These neural networks were trained by supervised learning from human expert moves, and by reinforcement learning from self-play. Here we introduce an algorithm based solely on reinforcement learning, without human data, guidance or domain knowledge beyond game rules. AlphaGo becomes its own teacher: a neural network is trained to predict AlphaGo’s own move selections and also the winner of AlphaGo’s games. This neural network improves the strength of the tree search, resulting in higher quality move selection and stronger self-play in the next iteration. Starting tabula rasa, our new program AlphaGo Zero achieved superhuman performance, winning 100–0 against the previously published, champion-defeating AlphaGo.},
+  file = {C\:\\Users\\pub\\Zotero\\storage\\9VNUJ3GJ\\Silver et al. - 2017 - Mastering the game of Go without human knowledge.pdf;C\:\\Users\\pub\\Zotero\\storage\\DLDP8I3H\\nature24270.html;C\:\\Users\\pub\\Zotero\\storage\\RE8QUYV6\\nature24270.html;C\:\\Users\\pub\\Zotero\\storage\\SBYNLYP2\\display.html;C\:\\Users\\pub\\Zotero\\storage\\ZW2KG8K4\\nature24270.html},
+  langid = {english},
+  number = {7676},
+  options = {useprefix=true}
 }
 
-@book{sutton_reinforcement_1998,
+@book{sutton_reinforcement_2018,
+  title = {Reinforcement Learning: An Introduction},
+  shorttitle = {Reinforcement Learning},
   author = {Sutton, Richard S. and Barto, Andrew G.},
-  date = {1998},
+  date = {2018},
+  edition = {2},
+  publisher = {{MIT Press}},
+  location = {{Cambridge, Mass}},
+  file = {C\:\\Users\\pub\\Zotero\\storage\\6EQF4BV3\\Sutton and Barto - 2018 - Reinforcement learning an introduction.pdf},
   isbn = {978-0-262-19398-6},
   keywords = {Reinforcement learning},
   langid = {english},
-  location = {{Cambridge, Mass}},
   pagetotal = {322},
-  publisher = {{MIT Press}},
-  series = {Adaptive Computation and Machine Learning},
-  shorttitle = {Reinforcement Learning},
-  title = {Reinforcement Learning: An Introduction}
+  series = {Adaptive Computation and Machine Learning}
+}
+
+@article{ziebart_modeling_2010,
+  title = {Modeling {{Interaction}} via the {{Principle}} of {{Maximum Causal Entropy}}},
+  author = {Ziebart, Brian D and Bagnell, J Andrew and Dey, Anind K},
+  date = {2010},
+  pages = {8},
+  abstract = {The principle of maximum entropy provides a powerful framework for statistical models of joint, conditional, and marginal distributions. However, there are many important distributions with elements of interaction and feedback where its applicability has not been established. This work presents the principle of maximum causal entropy—an approach based on causally conditioned probabilities that can appropriately model the availability and influence of sequentially revealed side information. Using this principle, we derive models for sequential data with revealed information, interaction, and feedback, and demonstrate their applicability for statistically framing inverse optimal control and decision prediction tasks.},
+  file = {C\:\\Users\\pub\\Zotero\\storage\\KJJBGJPC\\Ziebart et al. - Modeling Interaction via the Principle of Maximum .pdf},
+  langid = {english}
 }
 
 

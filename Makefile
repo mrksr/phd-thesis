@@ -1,13 +1,14 @@
 JOB := phd_thesis
 FMT := $(JOB).fmt
-HEADER := $(JOB).tex $(wildcard preamble/*.tex figures/preamble/*.tex)
+HEADER := $(JOB).tex $(wildcard preamble/*.tex) $(wildcard figures/preamble/*.tex)
 
 
-all: $(FMT) allFigures
+all: $(FMT) figures
 	latexmk
 
-allFigures:
-	$(MAKE) $(MFLAGS) -C figures
+.PHONY: figures
+figures:
+	$(MAKE) -C figures
 
 $(FMT): $(HEADER)
 	lualatex --shell-escape -ini -jobname="$(JOB)" "&lualatex mylatexformat.ltx $(JOB).tex"
@@ -17,5 +18,5 @@ preview: all
 
 clean:
 	rm $(FMT)
-	$(MAKE) $(MFLAGS) -C figures clean
+	$(MAKE) -C figures clean
 	latexmk -c

@@ -1,4 +1,4 @@
-HEADER := $(wildcard preamble/*.tex ../preamble/*.tex)
+HEADER := $(wildcard preamble/*.tex) $(wildcard ../preamble/*.tex)
 FIGURES := $(wildcard *.tex)
 FIGURE_PDFS := $(FIGURES:.tex=.pdf)
 

@@ -1,1 +1,2 @@
-../latexmkrc
+$pdf_mode = 4;
+$lualatex="lualatex --shell-escape --file-line-error --interaction=nonstopmode %O %S";

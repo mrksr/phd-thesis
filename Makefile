@@ -3,17 +3,19 @@ FMT := $(JOB).fmt
 HEADER := $(JOB).tex $(wildcard preamble/*.tex figures/preamble/*.tex)
 
 
-all: $(FMT)
+all: $(FMT) allFigures
 	latexmk
+
+allFigures:
+	$(MAKE) $(MFLAGS) -C figures
 
 $(FMT): $(HEADER)
 	lualatex --shell-escape -ini -jobname="$(JOB)" "&lualatex mylatexformat.ltx $(JOB).tex"
 
-preview: $(FMT)
+preview: all
 	latexmk -pvc
 
-cleanHeader:
+clean:
 	rm $(FMT)
-
-clean: cleanHeader
+	$(MAKE) $(MFLAGS) -C figures clean
 	latexmk -c

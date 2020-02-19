@@ -1,5 +1,4 @@
 \input{preamble/packages_dump.tex}
-\input{preamble/abbreviations.tex}
 \input{figures/preamble/tikz_colors.tex}
 
 % We use precompiled images and do not add tikz for speed of compilation.
@@ -11,6 +10,7 @@
 }
 \endofdump
 \input{preamble/packages_no_dump.tex}
+\input{preamble/abbreviations.tex}
 
 % Show overfull boxes
 % \overfullrule=5pt
@@ -26,15 +26,88 @@
 \chead{\@title}
 \makeatother
 
+\setkomafont{labelinglabel}{\bfseries}
+
 \begin{document}
 \maketitle
+\tableofcontents
 
 
-\section{The Problem}
-\label{sec:problem}
-We start with a general introduction to reinforcement learning close to the Sutton book~\parencite{sutton_reinforcement_1998}.
-This introduction sticks closely to the classical formulation of reinforcement learning.
-The last section of the problem statement will introduce our fully Bayesian view on the problem which we use to develop a model.
+\chapter{Structure from Composite Tasks}
+\label{cha:structure_from_composite_tasks}
+
+
+\section{Probabilistic Numerics}
+\label{sec:probabilistic_numerics}
+\begin{definition}[Probabilistic Numerical Method]
+    \label{def:probabilistic_numerical_method}
+    Let $\Uc$, $\Yc$ and $\Qc$ be measurable spaces and let $Y: \Uc \to \Yc$, $Q: \Uc \to \Qc$ and $B: \Probs{\Uc} \times \Yc \to \Probs{\Qc}$ where $Y$ and $Q$ are measurable functions.
+    The pair $M = (Y, B)$ is called a \emph{probabilistic numerical method} for estimation of a quantity of interest $Q$.
+    The map $Y$ is called an \emph{information opertor} and the map $B$ is called a \emph{belief update operator}.
+\end{definition}
+
+\begin{definition}[Disintegration]
+    Let $\Uc^y = \Set{u \in \Uc \with Y(u) = y}$.
+    For $p \in \Probs{\Uc}$, a collection $\Set{p^y}_{y \in \Yc} \subset \Probs{\Uc}$ is a \emph{disintegration of $p$} with respect to a measurable $Y: \Uc \to \Yc$ if
+    \begin{labeling}{Concentration\quad}
+        \item[Concentration] $\Fun*{p^y}{\Uc \setminus \Uc^y} = 0$ for $Y_\#p$-almost all $y \in \Yc$;
+        \item[Measurability] $y \mapsto p^y(f)$ is measurable;
+        \item[Conditioning] $p(f) = \int p^y(f) Y_\#p(\diff y)$;
+    \end{labeling}
+    for each measurable $f : \Uc \to [0, \infty)$.
+\end{definition}
+This is an extension to conditionings of Random variables to the case where $\Uc^y$ is a null set.
+Existence of disintegrations is guaranteed under weak conditions.
+
+\begin{definition}[Bayesian Probabilistic Numerical Method]
+    \label{def:bayesian_probabilistic_numerical_method}
+    A probabilistic numerical method $M = (Y, B)$ is called \emph{Bayesian} for a quantity of interest $Q$ if for all $p \in \Probs{\Uc}$ and for $Y_\#p$-almost-all $y \in \Yc$
+    \begin{align}
+        \Fun*{B}{p, y} = Q_\#p^y.
+    \end{align}
+\end{definition}
+
+
+\begin{figure}[t]
+    \centering
+    \includestandalone{figures/quantities_of_interest}
+    \caption[Quantities of interest]{
+        Quantities of interest.
+        \label{fig:quantities_of_interest}
+    }
+\end{figure}
+\begin{figure}[t]
+    \centering
+    \includestandalone{figures/probabilistic_numerics}
+    \caption[Probabilistic Numerics]{
+        Probabilistic Numerics.
+        \label{fig:probabilistic_numerics}
+    }
+\end{figure}
+
+
+\section{Bayesian Optimization}
+\label{sec:bayesian_optimization}
+\emph{Crickets and Tumbleweed.}
+
+
+\section{Reinforcement Learning}
+\label{sec:reinforcement_learning}
+\parencite{bertsekas_stochastic_1978}
+
+\begin{definition}[Reinforcement Learning Problem]
+    An \emph{infinite horizon stochastic reinforcement learning problem} is a seven-tuple $(\Sc, \Ac, \Zc, \Prob{z \given s, a}, f, \gamma, r)$ consisting of
+    \begin{labeling}{Disturbance kernel $\Prob{z \given s, a}$\quad}
+        \item[State space $\Sc$] A nonempty measurable space;
+        \item[Action space $\Ac$] A nonempty measurable space;
+        \item[Disturbance space $\Zc$] A nonempty measurable space;
+        \item[Disturbance kernel $\Prob{z \given s, a}$] A measurable function from $\Sc \times \Ac$ to $\Probs{\Zc}$;
+        \item[System function $f$] A measurable function from  $\Sc \times \Ac \times \Zc$ to $\Sc$;
+        \item[Discount factor $\gamma$] A positive real number;
+        \item[Reward function $r$] A differentiable function from $\Sc \times \Ac$ to $\Rb \cup \Set{\pm \infty}$.
+    \end{labeling}
+\end{definition}
+We remove the control constraint because nobody cares.
 
 
 \subsection{Reinforcement Learning}
@@ -50,17 +123,17 @@ The last section of the problem statement will introduce our fully Bayesian view
 Reinforcement learning describes the general problem of learning to control a system by interaction in order to achieve a predefined goal.
 An \emph{agent} has to decide on specific \emph{actions} to influence their \emph{environment}.
 The boundary between agent and environment is shown in \cref{fig:agent_environment_interaction}.
-They interact at specific discrete \emph{time steps} $t \in \N$.
-At every such time step, the agent observes the environment via the \emph{state} $\mat{s}_t \in \Es$, where $\Es$ is the space of all possible states.
-Based on this information, the agent has to decide which action $\mat{a}_t \in \Ah$ to perform.
-The space of all possible actions $\Ah$ is assumed to be constant for all time steps and states.
+They interact at specific discrete \emph{time steps} $t \in \Nb$.
+At every such time step, the agent observes the environment via the \emph{state} $\mat{s}_t \in \Sc$, where $\Sc$ is the space of all possible states.
+Based on this information, the agent has to decide which action $\mat{a}_t \in \Ac$ to perform.
+The space of all possible actions $\Ac$ is assumed to be constant for all time steps and states.
 The decision-process an agent employs in order to choose an action is called the agent's \emph{policy}.
 
 \begin{definition}[Policy]
     A \emph{policy $\pi$} an agent follows encodes the choice it makes when faced with a decision.
     It is a function
     \begin{align}
-        \pi: \Es \to \Ah
+        \pi: \Sc \to \Ac
     \end{align}
     which maps the current state of the system to the action the agent will perform.
 \end{definition}
@@ -76,7 +149,7 @@ That is, the distribution of $\mat{s}_{t+1}$ is independent of all states before
     The \emph{transition dynamics $f$} of a system encode its physical behaviour.
     These dynamics
     \begin{align}
-        f: \Es \times \Ah \to \Es
+        f: \Sc \times \Ac \to \Sc
     \end{align}
     stay constant over time but can be probabilistic.
 \end{definition}
@@ -91,7 +164,7 @@ It is obtained from a real-valued and known \emph{reward function $r$} such that
     \label{def:reward_function}
     The \emph{reward function $r$} assigns a quality to each state in the state space
     \begin{align}
-        r : \Es \to \R.
+        r : \Sc \to \Rb.
     \end{align}
     This reward is the immediate feedback an agent receives when interacting with the system.
 \end{definition}
@@ -114,11 +187,11 @@ For large values of $T$, it can be helpful to focus on rewards earned in the nea
 This is achieved with a constant discount factor $\gamma$.
 \begin{definition}[Value Function]
     \label{def:old_value_function}
-    Given transition dynamics $f$, a policy $\pi$, a time horizon $T \in \N \cup \left\{ \infty \right\}$ and a discount factor $0 \leq \gamma \leq 1$, the \emph{(expected) value function $J^\pi$} denotes the expected accumulated reward of a state and is given by
+    Given transition dynamics $f$, a policy $\pi$, a time horizon $T \in \Nb \cup \left\{ \infty \right\}$ and a discount factor $0 \leq \gamma \leq 1$, the \emph{(expected) value function $J^\pi$} denotes the expected accumulated reward of a state and is given by
     \begin{align}
         J^\pi : \left\{
             \begin{aligned}
-                \Es &\to \R \\
+                \Sc &\to \Rb \\
                 \mat{s} &\mapsto \Moment*{\E}{\sum_{t=1}^T \gamma^t r(\mat{s}_t) \given f, \pi, \mat{s}_t = \mat{s}}.
             \end{aligned}
         \right.
@@ -126,7 +199,7 @@ This is achieved with a constant discount factor $\gamma$.
     If the time horizon is infinite, $\gamma$ must be smaller than 1.
 \end{definition}
 
-Given a distribution of possible initial states $\Prob{\mat{s}_0}$, the sets $\Es$ and $\Ah$ of states and actions together with the transition dynamics $f$, and the reward function $r$, reinforcement learning can be interpreted as a fully observable Markov decision process (MDP).
+Given a distribution of possible initial states $\Prob{\mat{s}_0}$, the sets $\Sc$ and $\Ac$ of states and actions together with the transition dynamics $f$, and the reward function $r$, reinforcement learning can be interpreted as a fully observable Markov decision process (MDP).
 Note that extensions to partially observable MDPs (POMDPs) are regularly considered in the RL setting.
 
 The objective of the reinforcement learning problem is to find the best policy in this decision process under the assumption that the transition dynamics are unknown a priori.
@@ -140,296 +213,15 @@ The \emph{optimal policy} $\pi^*$ maximizes the expected value under the distrib
 \end{align}
 
 
-\subsection{Model-Based Reinforcement Learning}
-To find a good policy, an agent has to gain experience about its environment via interaction.
-In \emph{model-free} reinforcement learning, this experience is used to update a current candidate policy or an estimation of its value function directly.
-After enough time spent interacting with the system, iteratively improving the candidate policy can converge to the optimal policy.
-
-In \emph{model-based} reinforcement learning, the experience is used to learn an internal representation of the transition dynamics $f$.
-This allows the agent to make predictions about the future behaviour of the system and therefore approximatively evaluate the value function of any policy without actually interacting with the system.
-A closed form policy can then be found by solving the non-linear optimization problem proposed in \cref{eq:optimal_policy}.
-
-At Siemens we generally assume that all interaction with the system has to happen before any learning can take place.
-This assumption is sensible in the context of industrial applications where exploration of a system like a gas turbine can be very expensive and dangerous and where a potentially bad agent cannot be allowed to choose actions to perform.
-Instead of allowing interaction, the agent is presented with a \emph{batch} of observations of the transition dynamics in the form of tuples $(\mat{s_t}, \mat{a_t}, \mat{s_{t+1}})$.
-These observations can be obtained via a mix of random exploration and actions chosen by a sub-optimal controller.
-In contrast, many current RL algorithms assume an \emph{online} setting, where candidate policies can freely interact with a system to gather new data.
-
-Using an internal representation instead of the real transition dynamics to choose actions leads to one of the major drawbacks of model-based reinforcement learning.
-If this representation does not capture the important characteristics of the original system well, a policy found to be optimal on the simulation might not lead to good results on the original dynamics.
-This effect is called the \emph{model bias} of a policy.
-Reducing this model bias is the main goal of explicitly representing uncertainties in model-based RL.
-
-
-\subsection{A Bayesian View on Reinforcement Learning}
-\textcite{deisenroth_pilco_2011} introduced probabilistic inference for learning control (PILCO).
-The framework uses probabilistic (i.e. Bayesian) dynamics models through which uncertainties are propagated when generating trajectories and thus approximate value functions $J^\pi$.
-The value function is written as
-\begin{align}
-\begin{split}
-    J^\pi(\mat{s})
-    &= \Moment*{\E}{\sum_{t=1}^T \gamma^t r(\mat{s}_t) \given f, \pi, \mat{s}_t = \mat{s}} \\
-    &= \sum_{t=1}^T \gamma^t \Moment*{\E_{\Prob{\mat{s}_t}}}{r(\mat{s}_t)}.
-\end{split}
-\end{align}
-The distributions $\Prob{\mat{s}_t}$ are calculated recursively starting with $\mat{s}_0$ and propagated through $f$ using moment matching.
-To make the resulting integrals moment-matchable, $\pi$ must be of a specific form (essentially linear or a mixture of Gaussians).
-Also, the resulting $\Prob{\mat{s}_i}$ are Gaussians, which is a rather coarse approximation.
-The expected reward is also calculated in closed-form, which essentially restricts PILCO to Gaussian reward functions.
-Policy search is conducted through non-convex optimization of $J^\pi$ with respect to the policy parameters $\theta_\pi$.
-
-Importantly, this formulation of RL makes use of Bayesian dynamics-models, but is in itself not a Bayesian formulation of RL:
-\begin{inparaenum}[(1)]
-    \item The value $J^\pi$ itself is not a random variable, so no posterior is considered.
-    \item No Bayesian belief about the policy (or its parameters) is obtained or used during optimization.
-    \item Priors can only be formulated for the dynamics models, not for the policy or value.
-    \item Searching a policy through the maximization of $J^\pi$ is subject to many local minima.
-\end{inparaenum}
-
-To reformulate the policy search problem in a Bayesian setting, we reinterpret the policy $\mat{\pi}$ and transition dynamics $\mat{f}$ as random variables (without changing their underlying definition).
-Specifically, probabilistic behaviour of the transition dynamics would be reflected through Bayesian uncertainties and we
-Thus, probabilistic behaviour of these components (especially the transition dynamics) would be captured in the respective Bayesian uncertainties.
-\todo{
-    Steffen:\\
-    $\mat{f}$ is ambiguous here.
-    We assume that the transitions themselves are stochastic, which is why the function is a random variable in \cref{eq:bayesian_transition}.
-    In the integral in \cref{eq:bayesian_trajectory}, $\Prob{\mat{f}}$ is a distribution over random functions which means that there is still randomness left in the likelihood term (left).
-    That's quite confusing.
-}
-State transitions are defined as
-\begin{align}
-    \label{eq:bayesian_transition}
-    \mat{s}_{t+1} = \Fun{\mat{f}}{\mat{s}_{t}, \mat{a}_t},
-\end{align}
-which, in the Bayesian setting, yields the integrals
-\begin{align}
-\begin{split}
-    \label{eq:bayesian_trajectory}
-    \Prob{\mat{s}_{t+1}}
-    &= \int
-    \Prob{\mat{s}_{t+1} \given \mat{f}, \mat{s}_t, \mat{a}_t}
-    \Prob{\mat{a}_t \given \mat{\pi}, \mat{s}_t}
-    \Prob{\mat{s}_t}
-    \Prob{\mat{f}}
-    \Prob{\mat{\pi}}
-    \diff \mat{a}_t \diff \mat{s}_t
-    \diff \mat{f} \diff \mat{\pi}, \\
-    \Prob{\mat{r}_t \given r} &= \int \Fun{r}{\mat{s}_t} \Prob{\mat{s}_t} \diff \mat{s}_t,
-\end{split}
-\end{align}
-where $\Prob{\mat{s}_0}$ is known.
-We also assume the deterministic reward function to be known.
-The value function is redefined without the expectation.
-\begin{definition}[Value Function]
-    \label{def:value_function}
-    The \emph{value function $J^\pi$} denotes the expected accumulated reward of a state given a policy and is given by
-    \begin{align}
-        J^\pi : \left\{
-            \begin{aligned}
-                \Es &\to \R \\
-                \mat{s} &\mapsto \sum_{t=1}^T \gamma^t r(\mat{s}_t).
-            \end{aligned}
-        \right.
-    \end{align}
-\end{definition}
-Removing the expectation implies that now the value $\mat{J}^\pi$ might also be a random variable and subject to Bayesian belief.
-As a side-effect, the policy, which in the original formulation is a parameter of $\mat{J}$ outside of the expectation, can now also be Bayesian.
-
-Reformulating the policy search problem in this setting opens a new way of reasoning about the system:
-Instead of directly interpreting RL as a fixed-point problem (Q-learning) or an optimization problem (Model-based RL), we now see policy search as an inference problem.
-We do not want to reason about the relative improvement of different policy candidates which at some point ends with an optimal policy.
-Instead, we only reason about the latent optimal policy and infer knowledge about this optimal policy through interaction with the dynamical system.
-
-
-\section{The Model}
-\label{sec:model}
-At the core of our model is the attempt to formulate the search for a good RL policy in a Bayesian manner.
-This means that instead of maintaining or optimizing one candidate policy which gets optimized until some stopping criterion is reached, we want to maintain a Bayesian belief about the optimal policy (or rather one of them).
-Intuitively, we want to start off with a very uninformed policy which, given any state, can generate any action.
-The inference scheme then needs to be able to identify good actions and update the policy to reflect them subject to the prior.
-More concretely, the main challenges for this model are:
-\begin{description}
-    \item[Imposing structure and prior knowledge] How and where do we impose structure and add prior knowledge?
-    \item[An optimization goal] In standard regression, we want to maximize the likelihood of the observations. How does this translate to the RL setting?
-    \item[Uncertainty propagation] How do we translate the uncertainty about the action into informative feedback about good actions?
-\end{description}
-
-
-\subsection{Imposed Structure}
-\begin{figure}[t]
-    \centering
-    \includestandalone{figures/graphical_model_rl}
-    \caption{
-        \label{fig:graphical_model}
-        The graphical model for reinforcement learning.
-        Starting with the observed state $\mat{s}_0$, a trajectory $\left( \mat{s}_0, \dots, \mat{s}_T \right)$ is generated using the variational parameters $\mat{f}$ and $\mat{\pi}^\ast$ which describe the transition dynamics and optimal policy respectively.
-        Using the reward function $r$ and discount factor $\gamma$ -- both seen as hyperparameters -- the trajectory generates a value $\mat{J}^{\pi^\ast}(\mat{s}_0)$.
-    }
-\end{figure}
-The most important structure we can derive from the problem is the definition of the value function $J^\pi$.
-In \cref{fig:graphical_model} we reproduce the graphical model for how the value $J^\pi(\mat{s}_0)$ of the initial state $\mat{s}_0$ is generated.
-Starting with the initial state, a trajectory is generated using the transition dynamics $f$ and policy $\pi$ or models thereof.
-If both the transition and policy are deterministic, this results in a unique trajectory and thus a unique value.
-However, most of the time, there will be uncertainties in the system and thus, a multitude of trajectories is possible.
-The states are mapped to rewards using the reward function $r$ which we assume to be known and differentiable.
-Lastly, a sum discounted by the constant $\gamma$ yields the value.
-This structure implies a hierarchical recurrent generative process as both the transition dynamics and policy are applied repeatedly.
-
-Note that in the batch RL setting, the dynamics model represented via $\mat{f}$ can be trained independently from this hierarchical structure.
-As we are presented with a set of transition in the original system, inferring a dynamics model is a standard regression task which can be solved before ever considering policy search.
-A special case of such a model could be a mathematical simulation or even the system itself.
-In the following, we will consider $\mat{f}$ to be fixed.
-
-There are two distinct sources of uncertainty in our model.
-First, knowledge of the dynamical system is either not perfect or the system is stochastic.
-Both effects make trajectories non-deterministic, even if the initial state and policy are fixed.
-This kind of uncertainty is reflected in the expected value of the original value definition and we retain these uncertainties.
-Second, we do not maintain a candidate policy which we want to optimize.
-Instead, we maintain a belief about the optimal policy which is imperfect.
-Analogously, we never calculate the value of some candidate policy but rather always estimate the value of the optimal policy, which itself is subject to uncertainty.
-Both kinds of uncertainty need to be handled and can neatly be separated through their respective integrals.
-
-
-\subsection{Approximation of the Optimal Value}
-The only information about the optimal policy we have in general is that it maximizes the value.
-However, given a dynamics model, the search for an optimal policy and the search for an optimal value function is equivalent, so we cannot assume much prior knowledge about the optimal value function.
-Indeed, we can interpret our model as an inference problem for the optimal value function where the value function is parameterized in terms of a policy representation.
-Finding the optimal value function then has the side effect of finding an optimal policy.
-
-We can still bound the optimal value function.
-We assume wlog that the reward function is bounded and that $\max_{\mat{s}} r(\mat{s}) = 0$.
-Then we have that
-\begin{align}
-    \label{eq:inequality_chain}
-    \forall \mat{s} \forall \mat{\pi} : J^\pi(\mat{s}) \leq J^{\pi^\ast}(\mat{s}) \leq J^\text{max} \coloneqq \sum_{t=0}^T \gamma^t \cdot 0 = 0,
-\end{align}
-that is, any arbitrary policy will achieve less than or equal value than the optimal policy and the optimal value can never be higher than the sum of maximum achievable rewards.
-Indeed, the upper bound will usually be rather loose and could be improved with prior knowledge.
-We suspect a connection to reward shaping here, the practice of changing reward functions to hint towards the goal.
-The inference problem is solved when the left relation is an equality.
-
-
-\subsection{Variational Lower Bound}
-To solve the inference problem, we need to formulate some equivalent of the marginal likelihood in the regression case.
-Given by the structure discussed above we have
-\begin{align}
-    \label{eq:true_likelihood}
-    \Prob{\mat{J}^{\pi^\ast} \given \mat{s}_0}
-    &= \int
-    \underbrace{\Prob{\mat{J}^{\pi^\ast} \given \mat{J}}}_{\text{Likelihood}}
-    \underbrace{\Prob{\mat{J} \given \mat{\pi}^\ast, \mat{s}_0, \mat{f}}}_{\text{Trajectory}}
-    \underbrace{\Prob{\mat{\pi}^\ast, \mat{f}}}_{\text{System}}
-    \diff \mat{J} \diff \mat{\pi}^\ast \diff \mat{f} \diff \mat{s}_0,
-    \\
-    \label{eq:max_likelihood}
-    &\geq \int
-    \Prob{\mat{J}^{\text{max}} \given \mat{J}}
-    \Prob{\mat{J} \given \mat{\pi}^\ast, \mat{s}_0, \mat{f}}
-    \Prob{\mat{\pi}^\ast, \mat{f}}
-    \diff \mat{J} \diff \mat{\pi}^\ast \diff \mat{f} \diff \mat{s}_0,
-\end{align}
-where the inequality is implied by \cref{eq:inequality_chain} if the likelihood is monotonically decreasing with distance.
-Both the trajectory and system terms can easily be interpreted, as they represent the recurrent structure and function approximators respectively.
-It is however not clear how to interpret the likelihood term.
-Given the value estimate $\mat{J}$, this term encapsulates an estimation of closeness to the optimal value and must somehow encode the assumption that higher value is better.
-Note that the left inequality ensures that we never overestimate the performance of a policy (given $f$).
-
-We now assume variational distributions $\Variat{\mat{f}}$ and $\Variat{\mat{\pi}^\ast}$ obtained via the standard SVGP variational bound.
-Inspecting the log likelihood and applying the DSVI bound we (roughly) get
-\begin{align}
-    \label{eq:variational_bound}
-    \log \Prob{\mat{J}^{\pi^\ast} \given \mat{s}_0}
-    &\geq \log \Prob{\mat{J}^{\text{max}} \given \mat{s}_0} \\
-    &= \log \int
-    \Prob{\mat{J}^{\text{max}} \given \mat{J}}
-    \Prob{\mat{J} \given \mat{\pi}^\ast, \mat{s}_0, \mat{f}}
-    \Prob{\mat{\pi}^\ast, \mat{f}}
-    \diff \mat{J} \diff \mat{\pi}^\ast \diff \mat{f} \diff \mat{s}_0 \\
-    &\geq
-    \Moment*{\E_{\Variat{\mat{s}_0, \dots, \mat{s}_T}}}{
-        \log \int
-        \Prob{\mat{J}^{\text{max}} \given \mat{J}}
-        \underbrace{\Prob{\mat{J} \given \mat{s}_0, \dots, \mat{s}_T}}_{\text{Deterministic}}
-        \diff \mat{J}
-    }
-    - T \cdot \text{klterm}
-    \\
-    &=
-    \Moment*{\E_{\Variat{\mat{J}}}}{\log \Prob{\mat{J}^{\text{max}} \given \mat{J}}}
-    - T \cdot \text{klterm},
-\end{align}
-with $\text{klterm} = \KL{\Variat{\mat{\pi}^\ast}}{\Prob{\mat{\pi}^\ast}} + \KL{\Variat{\mat{f}}}{\Prob{\mat{f}}}$ multiplied by $T$ due to the recurrent structure.
-The distribution $\Variat{\mat{J}}$ can easily be sampled from $\Variat{\mat{s}_0, \dots, \mat{s}_T}$ using the definition of the value function.
-A sample from $\Variat{\mat{s}_0, \dots, \mat{s}_T}$ can be drawn via the usual ancestral sampling scheme employed by DSVI.
-Assuming a good likelihood and that the sufficient statistics assumption holds for both $\mat{\pi}^\ast$ and $\mat{f}$, the optimal policy should still be a maximizer of this variational lower bound.
-We need to think about this some more.
-
-Note an interesting special case, where we assume an exponential likelihood, that is
-\begin{align}
-\begin{split}
-    \Prob{\mat{J}^\text{max} \given \mat{J}}
-    &\coloneqq \lambda \Fun{\exp}{-\lambda (\mat{J}^\text{max} - \mat{J})} \\
-    &= \lambda \Fun{\exp}{\lambda \mat{J}}
-\end{split}
-\end{align}
-because $\mat{J}^\text{max} = 0$.
-With $\lambda = 1$, the bound in \cref{eq:variational_bound} reduces to
-\begin{align}
-\begin{split}
-    \MoveEqLeft\Moment*{\E_{\Variat{\mat{J}}}}{\log \Prob{\mat{J}^{\text{max}} \given \mat{J}}} - T \cdot \text{klterm}
-    \\
-    &= \Moment*{\E_{\Variat{\mat{J}}}}{\log \Fun{\exp}{\mat{J}}} - T \cdot \text{klterm}
-    \\
-    &= \Moment*{\E_{\Variat{\mat{J}}}}{\mat{J}} - T \cdot \KL{\Variat{\mat{\pi}^\ast}}{\Prob{\mat{\pi}^\ast}} + \text{const},
-\end{split}
-\end{align}
-which recovers the original maximization of the (expected) value subject to the prior of $\mat{\pi}^\ast$.
-This is the bound we currently use for the experiments.
-It is an interesting question how to interpret the likelihood term and which likelihood to choose.
-
-
-\section{The Story}
-\label{sec:story}
-With respect to a paper, we need to decide which kind of story we want to tell about this model and which properties we want to explore.
-Here are a few ideas, but they will require additional iterations and more concrete associated experiments.
-\begin{description}
-    \item[Good places to put prior knowledge]
-        Given our framework, we can easily place priors on $\mat{f}$ and $\mat{\pi}^\ast$ and also add knowledge about $\mat{J}^\text{max}$.
-        These priors are structurally different, as they concern knowledge about the system, about short-term actions and about long-term value respectively.
-    \item[Exploration by design]
-        Since we can start of with a policy which is essentially random, we do not have to add an explicit incentive to explore, the model does it automatically.
-        The aggressiveness of exploration mostly governed by the strength of the prior on $\mat{\pi}$.
-    \item[Risk-avoidance by design]
-        If we know that certain parts of the input space should never be visited, we can place a strong prior on $\mat{J}^\text{max}$ that these areas have bad value.
-        The model should then not yield a policy which is interested in these areas.
-    \item[Interesting dynamics models or policy representations]
-        As long as the inference does not break, the model should be able to handle dynamics models or policies which are more complicated than standard GPs.
-        It might be interesting to explore multimodal policies or dynamics models with complicated likelihoods.
-    \item[Data efficiency]
-        PILCO~\parencite{deisenroth_pilco_2011} made the strong argument that one can train very quickly from scratch when using GPs as dynamics models.
-        This directly plays to the strengths of GPs, so maybe we can recreate the success on a policy level somehow?
-    \item[A common RL framework]
-        We can reinterpret existing RL algorithms in the Bayesian framework.
-        Model-based RL is quite straightforward, but algorithms like policy iteration, value iteration or Q iteration should be representable as specific inference schemes or marginalizations in our model.
-    \item[Reasoning about trajectories and values along the way]
-        One important optimization used by AlphaGO~\parencite{silver_mastering_2017} is a Monte Carlo algorithm which transforms a policies one-step actions to trajectories and their value.
-        The resulting search tree is aggregated to actually produce the actions which are most promising.
-        In the continuous case, we do not ever revisit states, so AlphaGO's approach cannot be translated directly.
-        However, our graphical model together with the right inference algorithm could produce similar structure.
-        We might require an additional explicit value model.
-        An implied benefit might be that this could give rise to a sensible and principled way of replacing $\mat{J}^{\text{max}}$ with a truly Bayesian alternative.
-\end{description}
-
-
-\section{Quantities of Interest}
-\label{sec:quantities_of_interest}
+\subsection{Probabilistic Reinforcement Learning}
+\label{sub:probabilistic_reinforcement_learning}
 \begin{figure}[t]
     \centering
     \includestandalone{figures/quantities_of_interest_rl}
     \caption[Quantities of interest in reinforcement learning]{
         Quantities of interest in reinforcement learning.
+        \label{fig:quantities_of_interest_rl}
     }
-    \label{fig:agent_environment_interaction}
 \end{figure}
 \begin{table}[t]
     \centering
@@ -440,17 +232,20 @@ Here are a few ideas, but they will require additional iterations and more concr
         \toprule
         & Probabilistic Numerics & Reinforcement Learning \\
         \midrule
-        $\Uu$ & Latent function & True system-dynamics \\
-        $\Qu$ & Definite Integral & Optimal value \\
-        $\Y$ & Function evaluations & Batch/Online data \\
+        $\Uc$ & Latent function & True system-dynamics \\
+        $\Qc$ & Definite Integral & Optimal value \\
+        $\Yc$ & Function evaluations & Batch/Online data \\
         \midrule
-        $Q : \Uu \to \Qu$ & Integration & Bellman principle \\
-        $Y : \Uu \to \Y$ & Observation & Exploration \\
-        $B : \Y \to \Qu$ & Quadrature & Policy search \\
+        $Q : \Uc \to \Qc$ & Integration & Bellman principle \\
+        $Y : \Uc \to \Yc$ & Observation & Exploration \\
+        $B : \Yc \to \Qc$ & Quadrature & Policy search \\
         \bottomrule
     \end{tabularx}
 \end{table}
-yo.
+
+
+\subsection{Bayesian Reinforcement Learning}
+\label{sub:bayesian_reinforcement_learning}
 
 
 \nocite{*}

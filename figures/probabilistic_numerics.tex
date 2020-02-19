@@ -7,12 +7,12 @@
 
 \begin{document}
 \begin{tikzpicture}[x=12em,y=16ex]
-    \node[random variable, latent] at (0, 0) (U) {$\Uc$};
+    \node[random variable, latent] at (0, 0) (U) {$\Probs{\Uc}$};
     \node[random variable, observed] at (1, 0) (Y) {$\Yc$};
-    \node[random variable, variational] at (1, -1) (Q) {$\Qc$};
+    \node[random variable, variational] at (1, -1) (Q) {$\Probs{\Qc}$};
 
     \draw[edge, directed] (U) -- node[midway, above] {Y} (Y);
-    \draw[edge, directed] (U) -- node[midway, below] {Q} (Q);
-    \draw[edge, directed, dashed] (Y) -- node[midway, right] {B} (Q);
+    \draw[edge, directed] (U) -- node[midway, below] {$Q_\#$} (Q);
+    \draw[edge, directed, dashed] (Y) -- node[midway, right] {$B(\Prob{u}, y)$} (Q);
 \end{tikzpicture}
 \end{document}

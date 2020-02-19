@@ -1,20 +1,59 @@
 % Sets
-\newcommand{\N}{\mathbb{N}}
-\newcommand{\Z}{\mathbb{Z}}
-\newcommand{\R}{\mathbb{R}}
-\newcommand{\D}{\mathcal{D}}
-\newcommand{\T}{\mathcal{T}}
-\newcommand{\Ell}{\mathcal{L}}
+\newcommand{\Ab}{\mathbb{A}}
+\newcommand{\Bb}{\mathbb{B}}
+\newcommand{\Cb}{\mathbb{C}}
+\newcommand{\Db}{\mathbb{D}}
+\newcommand{\Eb}{\mathbb{E}}
+\newcommand{\Fb}{\mathbb{F}}
+\newcommand{\Gb}{\mathbb{G}}
+\newcommand{\Hb}{\mathbb{H}}
+\newcommand{\Ib}{\mathbb{I}}
+\newcommand{\Jb}{\mathbb{J}}
+\newcommand{\Kb}{\mathbb{K}}
+\newcommand{\Lb}{\mathbb{L}}
+\newcommand{\Mb}{\mathbb{M}}
+\newcommand{\Nb}{\mathbb{N}}
+\newcommand{\Ob}{\mathbb{O}}
+\newcommand{\Pb}{\mathbb{P}}
+\newcommand{\Qb}{\mathbb{Q}}
+\newcommand{\Rb}{\mathbb{R}}
+\newcommand{\Sb}{\mathbb{S}}
+\newcommand{\Tb}{\mathbb{T}}
+\newcommand{\Ub}{\mathbb{U}}
+\newcommand{\Vb}{\mathbb{V}}
+\newcommand{\Wb}{\mathbb{W}}
+\newcommand{\Xb}{\mathbb{X}}
+\newcommand{\Yb}{\mathbb{Y}}
+\newcommand{\Zb}{\mathbb{Z}}
 
-\newcommand{\Es}{\mathcal{S}}
-\newcommand{\Tee}{\mathcal{T}}
-\newcommand{\Ah}{\mathcal{A}}
+\newcommand{\Ac}{\mathcal{A}}
+\newcommand{\Bc}{\mathcal{B}}
+\newcommand{\Cc}{\mathcal{C}}
+\newcommand{\Dc}{\mathcal{D}}
+\newcommand{\Ec}{\mathcal{E}}
+\newcommand{\Fc}{\mathcal{F}}
+\newcommand{\Gc}{\mathcal{G}}
+\newcommand{\Hc}{\mathcal{H}}
+\newcommand{\Ic}{\mathcal{I}}
+\newcommand{\Jc}{\mathcal{J}}
+\newcommand{\Kc}{\mathcal{K}}
+\newcommand{\Lc}{\mathcal{L}}
+\newcommand{\Mc}{\mathcal{M}}
+\newcommand{\Nc}{\mathcal{N}}
+\newcommand{\Oc}{\mathcal{O}}
+\newcommand{\Pc}{\mathcal{P}}
+\newcommand{\Qc}{\mathcal{Q}}
+\newcommand{\Rc}{\mathcal{R}}
+\newcommand{\Sc}{\mathcal{S}}
+\newcommand{\Tc}{\mathcal{T}}
+\newcommand{\Uc}{\mathcal{U}}
+\newcommand{\Vc}{\mathcal{V}}
+\newcommand{\Wc}{\mathcal{W}}
+\newcommand{\Xc}{\mathcal{X}}
+\newcommand{\Yc}{\mathcal{Y}}
+\newcommand{\Zc}{\mathcal{Z}}
 
-\newcommand{\Uu}{\mathcal{U}}
-\newcommand{\Qu}{\mathcal{Q}}
-\newcommand{\Y}{\mathcal{Y}}
-
-% Random Variable
+% Random Variables
 \newcommand{\rv}[1]{\symbf{#1}}
 \newcommand{\map}[1]{#1^{\text{MAP}}}
 % Matrix
@@ -35,6 +74,8 @@
 \DeclareMathOperator{\id}{id}
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argsup}{argsup}
+\DeclareMathOperator*{\arginf}{arginf}
 \DeclareMathOperator{\atanTwo}{atan2}
 \DeclareMathOperator{\sgn}{sgn}
 \DeclareMathOperator{\diag}{diag}
@@ -65,6 +106,7 @@
 \DeclareMathOperator{\Uni}{\mathbb{U}}
 \DeclareMathOperator{\Ind}{\mathbb{I}}
 \DeclareMathOperator{\GP}{\mathcal{GP}}
+\DeclareMathOperator{\ProbSpace}{\mathcal{P}\mkern1mu}
 \DeclareMathOperator{\indep}{\perp\mkern-9.5mu\perp}
 \DeclareMathOperator{\nindep}{\centernot{\indep}}
 
@@ -85,6 +127,8 @@
 \newcommand{\@sfun}[1]{#1\Cond*}
 \makeatother
 
+\newcommand{\Probs}[1]{\ProbSpace_{#1}}
+% \newcommand{\Probs}{\Fun*{\ProbSpace}}
 \newcommand{\Prob}{\p\Cond}
 \newcommand{\aProb}{\tilde{\p}\Cond}
 \newcommand{\Variat}{\q\Cond}

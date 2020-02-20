@@ -35,16 +35,87 @@
 
 \chapter{Structure from Composite Tasks}
 \label{cha:structure_from_composite_tasks}
+Prerequisites?
+\begin{itemize}
+    \item Measureable spaces
+    \item Function Spaces
+\end{itemize}
 
-
-\section{Probabilistic Numerics}
+\section{Bayesian Probabilistic Numerics}
 \label{sec:probabilistic_numerics}
+\begin{figure}[t]
+    \centering
+    \includestandalone{figures/quantities_of_interest}
+    \caption[Quantities of interest]{
+        Quantities of interest.
+        \label{fig:quantities_of_interest}
+    }
+\end{figure}
+\begin{definition}[Numerical Method]
+    \label{def:numerical_method}
+    Let $\Uc$, $\Yc$ and $\Qc$ be measurable spaces and $Q: \Uc \to \Qc$ a measurable function.
+    A \emph{numerical method} $(Y, A)$ for estimation of a quantity of interest $Q$ consists of
+    \begin{labeling}{Information operator $Y$\quad}
+        \item[Information operator $Y$] A measurable function in $\Uc \to \Yc$;
+        \item[Estimation operator $A$] A measurable function in $\Yc \to \Qc$.
+    \end{labeling}
+\end{definition}
+
+Just like everybody else, we use quadrature as a motivating example to show what quantities of interest are.
+We assume $\Uu = \Fun*{C^0}{[a, b]; \Rb}$, the space of continuous real-valued functions on $[a, b]$.
+The corresponding quantity of interest space is $\Qc = \Rb$ with the respective values given by the integral
+\begin{align}
+    Q(u) = \int_a^b u(t) \diff t
+\end{align}
+We choose $\Yc \subset \Rb^2$ with the information operator
+\begin{align}
+    Y_{\mat{x}}(u) = \left( \mat{x}, u(\mat{x}) \right)
+\end{align}
+which evaluates $u$ at the points $\mat{x} \in \Rb^N$ of our choice.
+We can freely choose the vector $x_i$, giving rise to different information operators.
+Here are a few well-known choices:
+\paragraph{Monte Carlo integration}
+Here, no explicit assumption about the form of $u$ are made.
+\begin{align}
+    \mat{x}
+        &\sim \Uniform{[a, b]^N}
+        &\Fun*{A_{\text{MC}}}{(\mat{x}, u(\mat{x})}
+        &= \frac{1}{N} \sum_n u(x_n)
+\end{align}
+
+\paragraph{Trapezodial Rule}
+The trapezodial rule approximates a function via a piecewise linear surrogate which is then integrated.
+\begin{align}
+    \mat{x}
+    &= a + \frac{b - a}{N - 1} \cdot (0, 1, \cdots, N - 1)
+    &\Fun*{A_{\text{TZ}}}{(\mat{x}, u(\mat{x})}
+    &= \sum_{n=0}^{N - 1} \frac{b - a}{2} \left( u(x_{n-1}) + u(x_n) \right)
+\end{align}
+
+Note that all of these choices up to here are completely arbitrary, so none of those methods need to be particularly good.
+They can, of cause, be motivated quite well.
+We will show now how this motivation can be put in a probabilistic context.
+
+
+\begin{figure}[t]
+    \centering
+    \includestandalone{figures/probabilistic_numerics}
+    \caption[Probabilistic Numerics]{
+        Probabilistic Numerics.
+        \label{fig:probabilistic_numerics}
+    }
+\end{figure}
 \begin{definition}[Probabilistic Numerical Method]
     \label{def:probabilistic_numerical_method}
-    Let $\Uc$, $\Yc$ and $\Qc$ be measurable spaces and let $Y: \Uc \to \Yc$, $Q: \Uc \to \Qc$ and $B: \Probs{\Uc} \times \Yc \to \Probs{\Qc}$ where $Y$ and $Q$ are measurable functions.
-    The pair $M = (Y, B)$ is called a \emph{probabilistic numerical method} for estimation of a quantity of interest $Q$.
-    The map $Y$ is called an \emph{information opertor} and the map $B$ is called a \emph{belief update operator}.
+    Let $\Uc$, $\Yc$ and $\Qc$ be measurable spaces and let $Q: \Uc \to \Qc$ be a measurable function.
+    A \emph{probabilistic numerical method} $(Y, B)$ for estimation of a quantity of interest $Q$ consists of
+    \begin{labeling}{Belief update operator $B$\qad}
+        \item[Information operator $Y$] A measurable function in $\Uc \to \Yc$;
+        \item[Belief update operator $B$] A measurable function in $\Probs{\Uc} \times \Yc \to \Probs{\Qc}$.
+    \end{labeling}
 \end{definition}
+
+Explain Monte Carlo here?
 
 \begin{definition}[Disintegration]
     Let $\Uc^y = \Set{u \in \Uc \with Y(u) = y}$.
@@ -67,23 +138,7 @@ Existence of disintegrations is guaranteed under weak conditions.
     \end{align}
 \end{definition}
 
-
-\begin{figure}[t]
-    \centering
-    \includestandalone{figures/quantities_of_interest}
-    \caption[Quantities of interest]{
-        Quantities of interest.
-        \label{fig:quantities_of_interest}
-    }
-\end{figure}
-\begin{figure}[t]
-    \centering
-    \includestandalone{figures/probabilistic_numerics}
-    \caption[Probabilistic Numerics]{
-        Probabilistic Numerics.
-        \label{fig:probabilistic_numerics}
-    }
-\end{figure}
+Explain Trapezodial Rule here.
 
 
 \section{Bayesian Optimization}
@@ -101,10 +156,10 @@ Existence of disintegrations is guaranteed under weak conditions.
         \item[State space $\Sc$] A nonempty measurable space;
         \item[Action space $\Ac$] A nonempty measurable space;
         \item[Disturbance space $\Zc$] A nonempty measurable space;
-        \item[Disturbance kernel $\Prob{z \given s, a}$] A measurable function from $\Sc \times \Ac$ to $\Probs{\Zc}$;
-        \item[System function $f$] A measurable function from  $\Sc \times \Ac \times \Zc$ to $\Sc$;
+        \item[Disturbance kernel $\Prob{z \given s, a}$] A measurable function in $\Sc \times \Ac \to \Probs{\Zc}$;
+        \item[System function $f$] A measurable function in  $\Sc \times \Ac \times \Zc \to \Sc$;
         \item[Discount factor $\gamma$] A positive real number;
-        \item[Reward function $r$] A differentiable function from $\Sc \times \Ac$ to $\Rb \cup \Set{\pm \infty}$.
+        \item[Reward function $r$] A differentiable function in $\Sc \times \Ac \to \Rb \cup \Set{\pm \infty}$.
     \end{labeling}
 \end{definition}
 We remove the control constraint because nobody cares.

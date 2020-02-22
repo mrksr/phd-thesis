@@ -6,6 +6,11 @@ jobs:
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v1
+      - name: Create phony file for latex-action check
+        uses: finnp/create-file-action@master
+        env:
+          FILE_NAME: all
+          FILE_DATA: # Empty
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@master
         with:

@@ -9,8 +9,9 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@master
         with:
-          root_file: phd_thesis.tex
-          args: # Set in latexmkrc
+          compiler: make
+          root_file: all
+          args: -j
       - name: Upload PDF
         uses: actions/upload-artifact@v1
         with:

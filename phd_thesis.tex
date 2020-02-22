@@ -62,7 +62,7 @@ Prerequisites?
 \end{definition}
 
 Just like everybody else, we use quadrature as a motivating example to show what quantities of interest are.
-We assume $\Uu = \Fun*{C^0}{[a, b]; \Rb}$, the space of continuous real-valued functions on $[a, b]$.
+We assume $\Uc = \Fun*{C^0}{[a, b]; \Rb}$, the space of continuous real-valued functions on $[a, b]$.
 The corresponding quantity of interest space is $\Qc = \Rb$ with the respective values given by the integral
 \begin{align}
     Q(u) = \int_a^b u(t) \diff t
@@ -109,7 +109,7 @@ We will show now how this motivation can be put in a probabilistic context.
     \label{def:probabilistic_numerical_method}
     Let $\Uc$, $\Yc$ and $\Qc$ be measurable spaces and let $Q: \Uc \to \Qc$ be a measurable function.
     A \emph{probabilistic numerical method} $(Y, B)$ for estimation of a quantity of interest $Q$ consists of
-    \begin{labeling}{Belief update operator $B$\qad}
+    \begin{labeling}{Belief update operator $B$\quad}
         \item[Information operator $Y$] A measurable function in $\Uc \to \Yc$;
         \item[Belief update operator $B$] A measurable function in $\Probs{\Uc} \times \Yc \to \Probs{\Qc}$.
     \end{labeling}

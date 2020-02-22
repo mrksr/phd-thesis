@@ -14,6 +14,7 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@master
         with:
+          extra_system_packages: make
           compiler: make
           root_file: all
           args: -j

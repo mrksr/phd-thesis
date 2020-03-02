@@ -12,30 +12,16 @@
 \endofdump
 \input{preamble/packages_no_dump.tex}
 \input{preamble/abbreviations.tex}
+\input{preamble/title.tex}
 
 % Show overfull boxes
-% \overfullrule=5pt
+\overfullrule=5pt
 
 \addbibresource{zotero_export.bib}
 
-\title{A unifying Bayesian formulation of Reinforcement Learning}
-\author{
-    Markus Kaiser\\
-    \href{mailto:markus.kaiser@siemens.com}{\texttt{markus.kaiser@siemens.com}}
-}
-\makeatletter
-\chead{\@title}
-\makeatother
-
-\setkomafont{labelinglabel}{\bfseries}
-
 \begin{document}
-
 \frontmatter
-
-\maketitle
 \include{00_frontmatter}
-\tableofcontents
 
 \mainmatter
 \include{10_introduction}
@@ -46,7 +32,4 @@
 
 \appendix
 \include{60_appendix}
-
-\nocite{*}
-\printbibliography
 \end{document}

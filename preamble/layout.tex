@@ -8,6 +8,18 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                Fonts                                %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setkomafont{labelinglabel}{\bfseries}
+\addtokomafont{chapter}{\color{layoutHeading}}
+\addtokomafont{section}{\color{layoutHeading}}
+\addtokomafont{subsection}{\color{layoutHeading}}
+\addtokomafont{subsubsection}{\color{layoutHeading}}
+\addtokomafont{paragraph}{\color{layoutHeading}}
+\addtokomafont{disposition}{\boldmath}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                         Frames and Theorems                         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%
@@ -116,25 +128,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                              Pictures                               %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\graphicspath{{figures/}}
+\graphicspath{{figures/}{figures/logos/}{logos/}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                           Layout Elements                           %
+%                             Constructs                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%
-%  Sections  %
-%%%%%%%%%%%%%%
-\addtokomafont{chapter}{\color{layoutHeading}}
-\addtokomafont{section}{\color{layoutHeading}}
-\addtokomafont{subsection}{\color{layoutHeading}}
-\addtokomafont{subsubsection}{\color{layoutHeading}}
-\addtokomafont{paragraph}{\color{layoutHeading}}
-\addtokomafont{disposition}{\boldmath}
-
-%%%%%%%%%%%%%%
-%  Abstract  %
-%%%%%%%%%%%%%%
 \newenvironment{Abstract}[1]
 {
     \begin{otherlanguage}{#1}
@@ -144,9 +143,6 @@
     \end{otherlanguage}
 }
 
-%%%%%%%%%%
-%  Math  %
-%%%%%%%%%%
 \DeclareRobustCommand{\qed}{%
   \ifmmode \square%\mathqed
   \else

@@ -2,20 +2,6 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.16}
 
-\newcommand{\includestandalonewithpath}[2][]{%
-    \begingroup%
-    \StrCount{#2}{/}[\matches]%
-    \StrBefore[\matches]{#2}{/}[\figurepath]%
-    \includestandalone[#1]{#2}%
-    \endgroup%
-}
-
-% See
-% https://tex.stackexchange.com/a/23583
-\tikzset{onslide/.code args={<#1>#2}{%
-  \only<#1>{\pgfkeysalso{#2}} % \pgfkeysalso doesn't change the path
-}}
-
 
 % Tikz (Figure) styles
 \usetikzlibrary{arrows.meta}

@@ -17,6 +17,7 @@ preview: all
 	latexmk -pvc
 
 clean:
-	rm $(FMT)
+	$(RM) $(FMT)
 	$(MAKE) -C figures clean
 	latexmk -c
+	$(RM) *.aux

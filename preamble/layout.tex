@@ -1,0 +1,156 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                            Color Aliases                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\colorlet{layoutTitle}{sPetrol}
+\colorlet{layoutHeading}{sBlueDark!80!black}
+\colorlet{layoutDefinition}{sBlueDark!20}
+\colorlet{layoutTheorem}{sGreenDark!20}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                         Frames and Theorems                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%
+%  Boxes  %
+%%%%%%%%%%%
+\mdfsetup{
+    skipabove=0pt,
+    skipbelow=0pt,
+}
+\newenvironment{defaultColourFrame}[2]
+{
+    \begin{mdframed}[
+            innerleftmargin=8pt,
+            innerrightmargin=8pt,
+            innertopmargin=4pt,
+            innerbottommargin=4pt,
+            linecolor=#1,
+            middlelinewidth=0.5pt,
+            backgroundcolor=#2,
+            splitbottomskip=4pt,
+            splittopskip=12pt,
+            innermargin=0pt,
+            outermargin=0pt,
+            skipabove=\parskip,
+            skipbelow=0pt,
+        ]%
+}
+{
+    \end{mdframed}%
+}
+
+
+%%%%%%%%%%%%%%
+%  Theorems  %
+%%%%%%%%%%%%%%
+\theoremstyle{break}
+\theoremheaderfont{\rmfamily\bfseries\boldmath}
+\theorembodyfont{\normalfont}
+\theoremseparator{}
+\theorempreskipamount 0pt
+\theorempostskipamount 0pt
+
+\newtheorem{DefBox}[Definition]{Definition}
+\newtheorem{TheoBox}[Definition]{Theorem}
+\newtheorem{LemBox}[Definition]{Lemma}
+\newtheorem{ProbBox}[Definition]{Problem}
+
+\renewenvironment{definition}
+{
+    \begin{defaultColourFrame}{layoutDefinition}{layoutDefinition}
+    \begin{DefBox}
+}
+{
+    \end{DefBox}
+    \end{defaultColourFrame}
+}
+\renewenvironment{Definition}{\begin{definition}}{\end{definition}}
+
+\newenvironment{problem}
+{
+    \begin{defaultColourFrame}{layoutTheorem}{layoutTheorem}
+    \begin{ProbBox}
+}
+{
+    \end{ProbBox}
+    \end{defaultColourFrame}
+}
+\newenvironment{Problem}{\begin{problem}}{\end{problem}}
+
+\renewenvironment{theorem}
+{
+    \begin{defaultColourFrame}{layoutTheorem}{layoutTheorem}
+    \begin{TheoBox}
+}
+{
+    \end{TheoBox}
+    \end{defaultColourFrame}
+}
+\renewenvironment{Theorem}{\begin{theorem}}{\end{theorem}}
+
+\renewenvironment{lemma}%
+{
+    \begin{defaultColourFrame}{layoutTheorem}{layoutTheorem}
+    \begin{LemBox}
+}
+{
+    \end{LemBox}
+    \end{defaultColourFrame}
+}
+\renewenvironment{Lemma}{\begin{lemma}}{\end{lemma}}
+
+\makeatletter
+\renewenvironment{proof}
+{\textbf{\proofname}\par\nobreak\@afterheading\vspace*{-\parskip}}
+{\qed}
+
+\renewenvironment{Proof}
+{\textbf{\proofname}\par\nobreak\@afterheading\vspace*{-\parskip}}
+{\qed}
+\makeatother
+
+\crefname{Algorithm}{algorithm}{algorithms}
+\Crefname{Algorithm}{Algorithm}{Algorithms}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                              Pictures                               %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\graphicspath{{figures/}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           Layout Elements                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%
+%  Sections  %
+%%%%%%%%%%%%%%
+\addtokomafont{chapter}{\color{layoutHeading}}
+\addtokomafont{section}{\color{layoutHeading}}
+\addtokomafont{subsection}{\color{layoutHeading}}
+\addtokomafont{subsubsection}{\color{layoutHeading}}
+\addtokomafont{paragraph}{\color{layoutHeading}}
+\addtokomafont{disposition}{\boldmath}
+
+%%%%%%%%%%%%%%
+%  Abstract  %
+%%%%%%%%%%%%%%
+\newenvironment{Abstract}[1]
+{
+    \begin{otherlanguage}{#1}
+        \chapter{\abstractname}
+}
+{
+    \end{otherlanguage}
+}
+
+%%%%%%%%%%
+%  Math  %
+%%%%%%%%%%
+\DeclareRobustCommand{\qed}{%
+  \ifmmode \square%\mathqed
+  \else
+    \leavevmode\unskip\penalty9999 \hbox{}\nobreak\hfill
+    \quad\hbox{$\square$}%
+  \fi
+}

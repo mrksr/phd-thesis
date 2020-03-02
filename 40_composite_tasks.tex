@@ -1,0 +1,268 @@
+\chapter{Structure from Composite Tasks}
+\label{cha:structure_from_composite_tasks}
+Prerequisites?
+\begin{itemize}
+    \item Measureable spaces
+    \item Function Spaces
+\end{itemize}
+
+\section{Bayesian Probabilistic Numerics}
+\label{sec:probabilistic_numerics}
+\begin{figure}[t]
+    \centering
+    \includestandalone{figures/quantities_of_interest}
+    \caption[Quantities of interest]{
+        Quantities of interest.
+        \label{fig:quantities_of_interest}
+    }
+\end{figure}
+\begin{definition}[Numerical Method]
+    \label{def:numerical_method}
+    Let $\Uc$, $\Yc$ and $\Qc$ be measurable spaces and $Q: \Uc \to \Qc$ a measurable function.
+    A \emph{numerical method} $(Y, A)$ for estimation of a quantity of interest $Q$ consists of
+    \begin{labeling}{Information operator $Y$\quad}
+        \item[Information operator $Y$] A measurable function in $\Uc \to \Yc$;
+        \item[Estimation operator $A$] A measurable function in $\Yc \to \Qc$.
+    \end{labeling}
+\end{definition}
+
+Just like everybody else, we use quadrature as a motivating example to show what quantities of interest are.
+We assume $\Uc = \Fun*{C^0}{[a, b]; \Rb}$, the space of continuous real-valued functions on $[a, b]$.
+The corresponding quantity of interest space is $\Qc = \Rb$ with the respective values given by the integral
+\begin{align}
+    Q(u) = \int_a^b u(t) \diff t
+\end{align}
+We choose $\Yc \subset \Rb^2$ with the information operator
+\begin{align}
+    Y_{\mat{x}}(u) = \left( \mat{x}, u(\mat{x}) \right)
+\end{align}
+which evaluates $u$ at the points $\mat{x} \in \Rb^N$ of our choice.
+We can freely choose the vector $x_i$, giving rise to different information operators.
+Here are a few well-known choices:
+\paragraph{Monte Carlo integration}
+Here, no explicit assumption about the form of $u$ are made.
+\begin{align}
+    \mat{x}
+        &\sim \Uniform{[a, b]^N}
+        &\Fun*{A_{\text{MC}}}{(\mat{x}, u(\mat{x})}
+        &= \frac{1}{N} \sum_n u(x_n)
+\end{align}
+
+\paragraph{Trapezodial Rule}
+The trapezodial rule approximates a function via a piecewise linear surrogate which is then integrated.
+\begin{align}
+    \mat{x}
+    &= a + \frac{b - a}{N - 1} \cdot (0, 1, \cdots, N - 1)
+    &\Fun*{A_{\text{TZ}}}{(\mat{x}, u(\mat{x})}
+    &= \sum_{n=0}^{N - 1} \frac{b - a}{2} \left( u(x_{n-1}) + u(x_n) \right)
+\end{align}
+
+Note that all of these choices up to here are completely arbitrary, so none of those methods need to be particularly good.
+They can, of cause, be motivated quite well.
+We will show now how this motivation can be put in a probabilistic context.
+
+
+\begin{figure}[t]
+    \centering
+    \includestandalone{figures/probabilistic_numerics}
+    \caption[Probabilistic Numerics]{
+        Probabilistic Numerics.
+        \label{fig:probabilistic_numerics}
+    }
+\end{figure}
+\begin{definition}[Probabilistic Numerical Method]
+    \label{def:probabilistic_numerical_method}
+    Let $\Uc$, $\Yc$ and $\Qc$ be measurable spaces and let $Q: \Uc \to \Qc$ be a measurable function.
+    A \emph{probabilistic numerical method} $(Y, B)$ for estimation of a quantity of interest $Q$ consists of
+    \begin{labeling}{Belief update operator $B$\quad}
+        \item[Information operator $Y$] A measurable function in $\Uc \to \Yc$;
+        \item[Belief update operator $B$] A measurable function in $\Probs{\Uc} \times \Yc \to \Probs{\Qc}$.
+    \end{labeling}
+\end{definition}
+
+Explain Monte Carlo here?
+
+\begin{definition}[Disintegration]
+    Let $\Uc^y = \Set{u \in \Uc \with Y(u) = y}$.
+    For $p \in \Probs{\Uc}$, a collection $\Set{p^y}_{y \in \Yc} \subset \Probs{\Uc}$ is a \emph{disintegration of $p$} with respect to a measurable $Y: \Uc \to \Yc$ if
+    \begin{labeling}{Concentration\quad}
+        \item[Concentration] $\Fun*{p^y}{\Uc \setminus \Uc^y} = 0$ for $Y_\#p$-almost all $y \in \Yc$;
+        \item[Measurability] $y \mapsto p^y(f)$ is measurable;
+        \item[Conditioning] $p(f) = \int p^y(f) Y_\#p(\diff y)$;
+    \end{labeling}
+    for each measurable $f : \Uc \to [0, \infty)$.
+\end{definition}
+This is an extension to conditionings of Random variables to the case where $\Uc^y$ is a null set.
+Existence of disintegrations is guaranteed under weak conditions.
+
+\begin{definition}[Bayesian Probabilistic Numerical Method]
+    \label{def:bayesian_probabilistic_numerical_method}
+    A probabilistic numerical method $M = (Y, B)$ is called \emph{Bayesian} for a quantity of interest $Q$ if for all $p \in \Probs{\Uc}$ and for $Y_\#p$-almost-all $y \in \Yc$
+    \begin{align}
+        \Fun*{B}{p, y} = Q_\#p^y.
+    \end{align}
+\end{definition}
+
+Explain Trapezodial Rule here.
+
+
+\section{Bayesian Optimization}
+\label{sec:bayesian_optimization}
+\emph{Crickets and Tumbleweed.}
+
+
+\section{Reinforcement Learning}
+\label{sec:reinforcement_learning}
+\parencite{bertsekas_stochastic_1978}
+
+\begin{definition}[Reinforcement Learning Problem]
+    An \emph{infinite horizon stochastic reinforcement learning problem} is a seven-tuple $(\Sc, \Ac, \Zc, \Prob{z \given s, a}, f, \gamma, r)$ consisting of
+    \begin{labeling}{Disturbance kernel $\Prob{z \given s, a}$\quad}
+        \item[State space $\Sc$] A nonempty measurable space;
+        \item[Action space $\Ac$] A nonempty measurable space;
+        \item[Disturbance space $\Zc$] A nonempty measurable space;
+        \item[Disturbance kernel $\Prob{z \given s, a}$] A measurable function in $\Sc \times \Ac \to \Probs{\Zc}$;
+        \item[System function $f$] A measurable function in  $\Sc \times \Ac \times \Zc \to \Sc$;
+        \item[Discount factor $\gamma$] A positive real number;
+        \item[Reward function $r$] A differentiable function in $\Sc \times \Ac \to \Rb \cup \Set{\pm \infty}$.
+    \end{labeling}
+\end{definition}
+We remove the control constraint because nobody cares.
+
+
+\subsection{Reinforcement Learning}
+\label{sub:reinforcement_learning}
+\begin{figure}[t]
+    \centering
+    \includestandalone{figures/agent_environment_interaction}
+    \caption[Agent-environment interaction]{
+        The interaction between an agent and its environment in reinforcement learning happens at discrete time steps.
+    }
+    \label{fig:agent_environment_interaction}
+\end{figure}
+Reinforcement learning describes the general problem of learning to control a system by interaction in order to achieve a predefined goal.
+An \emph{agent} has to decide on specific \emph{actions} to influence their \emph{environment}.
+The boundary between agent and environment is shown in \cref{fig:agent_environment_interaction}.
+They interact at specific discrete \emph{time steps} $t \in \Nb$.
+At every such time step, the agent observes the environment via the \emph{state} $\mat{s}_t \in \Sc$, where $\Sc$ is the space of all possible states.
+Based on this information, the agent has to decide which action $\mat{a}_t \in \Ac$ to perform.
+The space of all possible actions $\Ac$ is assumed to be constant for all time steps and states.
+The decision-process an agent employs in order to choose an action is called the agent's \emph{policy}.
+
+\begin{definition}[Policy]
+    A \emph{policy $\pi$} an agent follows encodes the choice it makes when faced with a decision.
+    It is a function
+    \begin{align}
+        \pi: \Sc \to \Ac
+    \end{align}
+    which maps the current state of the system to the action the agent will perform.
+\end{definition}
+
+Once the agent has chosen an action for time step $t$, the state $\mat{s}_{t+1}$ is generated by the \emph{transition dynamics} $f$.
+These dynamics are unknown to the agent and can contain probabilistic components such as noise.
+However, the agent always observes one realization $\mat{s}_{t+1}$, the actual next state of the system.
+This implies that given the same initial state $\mat{s}_0$ and policy $\pi$ it might be possible to generate different \emph{trajectories} $(\mat{s}_0, \dots, \mat{s}_T)$ by applying the transition dynamics $T$ times.
+Together with the state and action spaces, the transition dynamics fulfill the Markov property.
+That is, the distribution of $\mat{s}_{t+1}$ is independent of all states before $\mat{s}_t$ given $\mat{s}_t$.
+\begin{definition}[Transition Dynamics]
+    \label{def:transition_dynamics}
+    The \emph{transition dynamics $f$} of a system encode its physical behaviour.
+    These dynamics
+    \begin{align}
+        f: \Sc \times \Ac \to \Sc
+    \end{align}
+    stay constant over time but can be probabilistic.
+\end{definition}
+
+At time step $t+1$, the agent observes the state $\mat{s}_{t+1}$.
+Additionally, it also receives a \emph{reward $r_{t+1}$}.
+The reward is a quality assigned to the state transition from $\mat{s}_t$ to $\mat{s}_{t+1}$ using the action $\mat{a}_t$.
+The higher the reward, the better the state transition is considered to be, independently of the future or past development of the system.
+In the following, we consider $r_{t+1}$ to be independent of the state $\mat{s}_t$ and the action $\mat{a}_t$ and only depend on $\mat{s}_{t+1}$.
+It is obtained from a real-valued and known \emph{reward function $r$} such that $r_{t+1} = r(\mat{s}_{t+1})$.
+\begin{definition}[Reward Function]
+    \label{def:reward_function}
+    The \emph{reward function $r$} assigns a quality to each state in the state space
+    \begin{align}
+        r : \Sc \to \Rb.
+    \end{align}
+    This reward is the immediate feedback an agent receives when interacting with the system.
+\end{definition}
+
+The goal of the agent is to maximize the sum of all rewards earned while interacting with the system.
+A greedy agent which is only concerned with the next immediate reward might not be the most successful, since it may be necessary to make a decision which is bad in the short term to gain an advantage in the long run, such as sacrificing a piece in chess to end up in a better position overall.
+
+The \emph{value function} is a measure for how good a policy behaves in the long run.
+Given a policy and an initial state, it is defined as the expected sum of rewards earned in a time horizon $T$.
+Since the transition dynamics are assumed to be probabilistic, the states at all time steps greater than zero can be random variables.
+Given a distribution of the state $\mat{s_t}$, the distribution for the next state $\mat{s_{t+1}}$ is
+\begin{align}
+    \Prob{\mat{s_{t+1}}} &= \int \Fun{f}{\mat{s_{t+1}} \given \mat{s_t}, \pi}\Prob{\mat{s_t}} \diff \mat{s_t},
+\end{align}
+where $f\Cond{\mat{s_{t+1}} \given \mat{s_t}, \pi(\mat{s_t})}$ denotes the probability of $\mat{s_{t+1}}$ under the distribution $f(\mat{s_t}, \pi(\mat{s_t}))$.
+
+The time horizon $T$ can be chosen freely but does not depend on the policy or state.
+The larger the time horizon, the more far-sighted an agent has to be to be successful.
+For large values of $T$, it can be helpful to focus on rewards earned in the near future and to weight potential rewards further along with a smaller factor.
+This is achieved with a constant discount factor $\gamma$.
+\begin{definition}[Value Function]
+    \label{def:old_value_function}
+    Given transition dynamics $f$, a policy $\pi$, a time horizon $T \in \Nb \cup \left\{ \infty \right\}$ and a discount factor $0 \leq \gamma \leq 1$, the \emph{(expected) value function $J^\pi$} denotes the expected accumulated reward of a state and is given by
+    \begin{align}
+        J^\pi : \left\{
+            \begin{aligned}
+                \Sc &\to \Rb \\
+                \mat{s} &\mapsto \Moment*{\E}{\sum_{t=1}^T \gamma^t r(\mat{s}_t) \given f, \pi, \mat{s}_t = \mat{s}}.
+            \end{aligned}
+        \right.
+    \end{align}
+    If the time horizon is infinite, $\gamma$ must be smaller than 1.
+\end{definition}
+
+Given a distribution of possible initial states $\Prob{\mat{s}_0}$, the sets $\Sc$ and $\Ac$ of states and actions together with the transition dynamics $f$, and the reward function $r$, reinforcement learning can be interpreted as a fully observable Markov decision process (MDP).
+Note that extensions to partially observable MDPs (POMDPs) are regularly considered in the RL setting.
+
+The objective of the reinforcement learning problem is to find the best policy in this decision process under the assumption that the transition dynamics are unknown a priori.
+The \emph{optimal policy} $\pi^*$ maximizes the expected value under the distribution of initial states, that is it solves the optimization problem
+\begin{align}
+    \label{eq:optimal_policy}
+    \begin{split}
+        \pi^\ast &\in \argmax_{\pi} \Moment*{\E_{\Prob{\mat{s}_0}}}{J^\pi(\mat{s}_0)} \\
+        &= \argmax_{\pi} \int J^\pi(\mat{s}_0) \Prob{\mat{s}_0} \diff \mat{s}_0.
+    \end{split}
+\end{align}
+
+
+\subsection{Probabilistic Reinforcement Learning}
+\label{sub:probabilistic_reinforcement_learning}
+\begin{figure}[t]
+    \centering
+    \includestandalone{figures/quantities_of_interest_rl}
+    \caption[Quantities of interest in reinforcement learning]{
+        Quantities of interest in reinforcement learning.
+        \label{fig:quantities_of_interest_rl}
+    }
+\end{figure}
+\begin{table}[t]
+    \centering
+    \caption{Great Table!}
+    \label{tab:label}
+    \newcolumntype{Y}{>{\centering\arraybackslash}X}
+    \begin{tabularx}{\textwidth}{cYY}
+        \toprule
+        & Probabilistic Numerics & Reinforcement Learning \\
+        \midrule
+        $\Uc$ & Latent function & True system-dynamics \\
+        $\Qc$ & Definite Integral & Optimal value \\
+        $\Yc$ & Function evaluations & Batch/Online data \\
+        \midrule
+        $Q : \Uc \to \Qc$ & Integration & Bellman principle \\
+        $Y : \Uc \to \Yc$ & Observation & Exploration \\
+        $B : \Yc \to \Qc$ & Quadrature & Policy search \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+
+\subsection{Bayesian Reinforcement Learning}
+\label{sub:bayesian_reinforcement_learning}

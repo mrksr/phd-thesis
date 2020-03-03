@@ -77,14 +77,14 @@
     \draw[white, opacity=0.75, fill=white] (0, 0) rectangle (1, 1);
 
     % Foreground
-    \tikzstyle{date} = [font=\normalsize]
+    % \tikzstyle{date} = [font=\normalsize]
     \tikzstyle{chairs} = [font=\normalsize, text width=15cm, align=right]
-    \tikzstyle{thesis} = [font=\Large]
-    \tikzstyle{author} = [font=\Large\bfseries]
+    \tikzstyle{thesis} = [font=\LARGE]
+    \tikzstyle{author} = [font=\huge\bfseries]
     \tikzstyle{title} = [sPetrol, font=\Huge\bfseries]
     \tikzstyle{title bar} = [title, line width=2pt, line cap=round]
 
-    \node[anchor=east, date] (date) at (0.95, 0.9) {Submitted on \makeatletter\@date\makeatother};
+    \node[anchor=east, author] (author) at (0.95, 0.9) {\makeatletter\@author\makeatother};
     \node[anchor=east] (logos) at (0.95, 0.1) {
         \includegraphics[height=2cm,width=4cm,keepaspectratio]{tum}
     };
@@ -99,10 +99,12 @@
         \bigskip
         \textbf{Learning Systems Group}\\
         CT-RDA-BAM-LSY-DE\\
-        Siemens AG
+        Siemens AG\\
+        \bigskip
+        Submitted on \makeatletter\@date\makeatother
     };
 
-    \coordinate (title height) at ($(date.south east)!0.5!(chairs.north east)$);
+    \coordinate (title height) at ($(author.south east)!0.5!(chairs.north east)$);
     \node[anchor=east] (title) at (title height -| 1,0) {
         \begin{tikzpicture}[x={(1.0,0)},y={(0,0.075)}]
             \node[thesis] (author) at (0.95, 1.25) {Dissertation};
@@ -110,7 +112,7 @@
             \draw[title bar] (0, 1) -- (1, 1);
             \node[title] (title) at (0.95, 0.5) {\makeatletter\@title\makeatother};
             \draw[title bar] (0, 0) -- (1, 0);
-            \node[author] (author) at (0.95, -0.25) {\makeatletter\@author\makeatother};
+            % \node[date] (date) at (0.95, -0.25) {Submitted on \makeatletter\@date\makeatother};
         \end{tikzpicture}
     };
 

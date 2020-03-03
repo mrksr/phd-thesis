@@ -1,5 +1,8 @@
-\chapter{Gaussian Processes}
-\label{cha:gaussian_processes}
+\chapter{Hierarchical Gaussian Processes}
+\label{cha:hierarchical_gaussian_processes}
+
+\section{Gaussian Processes}
+\label{sec}
 The transition dynamics $\Dyn \colon \Es \times \Ah \to \Dists(\Es^+)$ is a function mapping states and actions to a probability distribution of following states.
 In order to estimate them using Gaussian processes, some assumptions about the structure of this function are needed.
 First, it will be assumed that both the set of states $\Es$ and the set of actions $\Ah$ are euclidean real-valued vector spaces and that the set of terminal states $\Tee$ is empty, that is, $\Es^+$ and $\Es$ are assumed equal, requiring that episode endings have to be modelled separately.
@@ -32,7 +35,7 @@ This section introduces Gaussian processes and describes how to encode a prior d
 Based on observed data, GPs can be used make predictions about the predictive distribution $\Prob{y_\ast \given \mat{x_\ast}, f^\ast}$ taking all functions in the distribution $\Prob{f^\ast}$ into account.
 Since these predictions are not computationally cheap, an extension of Gaussian processes for large data sets, sparse Gaussian processes using pseudo-inputs \cite{snelson_sparse_2005}, is reviewed last.
 
-\section{Definition}
+\subsection{Definition}
 Gaussian processes are a generalization of the Gaussian distribution to function spaces.
 A multivariate Gaussian $\mat{x} \sim \Gaussian{\mat{\mu}, \mat{\Sigma}}$ describes a distribution over the finitely many elements in the vector $\mat{x}$ \cite{gauss_theoria_1809}.
 Every such element $\rv{x_i}$ is normally distributed according to $\rv{x_i} \sim \Gaussian{\mu_i, \Sigma_{ii}}$ with a particular dependency structure between them.
@@ -84,7 +87,7 @@ This assumption is without loss of generality \cite{rasmussen_gaussian_2006} sin
 The Gaussian process based on the observations $\left( \mat{X}, \mat{y^\prime} \right)$ then only models the differences to the mean function.
 It is the covariance functions which encode the assumptions about the underlying function.
 
-\section{Kernels}
+\subsection{Kernels}
 Gaussian processes are collections of random variables, any finite subset of which have a joint multivariate Gaussian distribution.
 For any pair $(\rv{X_i}, \mat{X_j})$ of these random variables, their covariance is given by the covariance function $\Moment{\cov}{\rv{X_i}, \rv{X_j}} = \K(i, j)$.
 The pairwise covariances in a multivariate Gaussian $\Gaussian{\mat{\mu}, \mat{\Sigma}}$ are given by its \emph{covariance matrix} $\mat{\Sigma}$.
@@ -219,7 +222,7 @@ These plots show continuous functions being drawn from their respective processe
 It is however only possible to evaluate the Gaussian process at finitely many points and then connect the resulting samples.
 Drawing the function values of a finite amount of sample input points $\mat{X_\ast}$ from a Gaussian process prior is equivalent to drawing a sample from the Gaussian $\Gaussian{\mat{0}, \mat{K_\ast}}$ where $\mat{K_\ast}$ is a short hand notation for $\K(\mat{X_\ast}, \mat{X_\ast})$.
 
-\section{Predictions and Posterior}
+\subsection{Predictions and Posterior}
 In order to use Gaussian processes for regression, it is necessary to combine observations with a Gaussian process prior $f \sim \GP\Cond{\mat{0}, \K}$ in order to obtain a predictive posterior.
 The $N$ data points observed are denoted as $\D = \left( \mat{X}, \mat{y} \right)$ with $\mat{y} = f(\mat{X}) + \Gaussian{\mat{0}, \sigma_n^2 \Eye}$ and $\abs{\mat{y}} = N$.
 The observed function values $\mat{y}$ are assumed to not be the true latent function values $\mat{f} = f(\mat{X})$ but rather have some additive Gaussian noise which is independent and identically distributed for all observations.
@@ -335,7 +338,7 @@ To predict its variance, it is still necessary to perform a matrix multiplicatio
 Since all of these operations are dependent on the number of training points, evaluating Gaussian processes on large data sets can be computationally expensive.
 Before introducing sparse approximations with better asymptotic complexity, the next section deals with choosing good values for the vector of hyperparameters $\mat{\theta}$.
 
-\section{Choosing Hyperparameters}
+\subsection{Choosing Hyperparameters}
 In the previous section, the hyperparameters $\mat{\theta}$ were assumed to be known and constant, that is, the prior assumptions about the function to be estimated were fixed.
 In this case, Gaussian processes do not have a training stage, since any test point can be predicted according to the predictive posterior.
 Usually however, the correct choice of hyperparameters is not clear a priori.
@@ -399,6 +402,7 @@ The computational complexity of evaluating the likelihood term and its derivativ
 Since this optimization scheme does not choose parameters of the function approximation directly but rather changes a small number of broad and high-level assumptions about it, overfitting does not tend to be a problem for Gaussian processes in general \cite{snelson_flexible_2007}.
 The sparse approximation of Gaussian processes presented in the next section chooses a small number of points in the input space to represent a large training set.
 The positions of these input points can be interpreted as hyperparameters to the original Gaussian process and induce a kernel function with many hyperparameters, where overfitting can become relevant.
+
 
 \section{Sparse Approximations using Inducing Inputs}
 A major drawback of Gaussian processes in real-world applications is their high computational cost for large data sets.
@@ -534,3 +538,13 @@ Since this strategy of selecting hyperparameters leads to batter convergence and
 In order to solve the control problem of the bicycle benchmark, the next step after modeling the transition dynamics using Gaussian processes is to find a policy representation.
 Instead of a closed form representation of the policy, the choice of which action to take is made by directly optimizing over the value function using Particle Swarm Optimization.
 This technique is presented in the next section.
+
+
+\section{Hierarchical Gaussian Processes}
+\label{sec:hierarchical_gaussian_processes}
+?
+
+
+\section{Composite Uncertainties}
+\label{sec:composite_uncertainties}
+

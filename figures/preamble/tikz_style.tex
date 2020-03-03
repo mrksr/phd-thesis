@@ -1,3 +1,6 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                               Grpahs                                %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \tikzstyle{edge} = [draw, thick]
 \tikzstyle{directed} = [arrows={-latex}, shorten >=1.5pt, shorten <=0pt]
 \tikzstyle{inverse directed} = [arrows={latex-}, shorten >=0pt, shorten <=1.5pt]
@@ -12,6 +15,9 @@
 \tikzstyle{plate} = [draw=sStoneDark, fill=sStone, fill opacity=.2, very thick, inner xsep=2pt, inner ysep=2pt]
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                         Common plot things                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \pgfplotsset{data/.style = {
     only marks,
     thin,
@@ -20,37 +26,36 @@
     fill opacity=.5,
     sStoneDark,
 }}
-\pgfplotsset{model plot/.style = {
+\pgfplotsset{default plot/.style = {
     grid=major,
-    % enlarge x limits=false,
     ylabel style={rotate=-90},
+    minor y tick num=1,
+    minor x tick num=1,
+    %
+    width=\plotfullwidth,
+    height=.5\plotfullheight,
+    %
+    % NOTE(mrksr): Do not consider labels for axis bounding boxes
+    xlabel style={overlay},
+    ylabel style={overlay},
 }}
 
-\pgfplotsset{sine plot/.style = {
-    model plot,
-    xlabel=$\rv{X}$, ylabel=$\rv{y}$,
-    ymin=-1, ymax=1,
-    xmin=-1.5, xmax=1.5,
-    xtick={-1, 0, 1},
+\pgfplotsset{half plot/.style = {
+    default plot,
+    % NOTE(mrksr): Due to width calculations in pgfplots, two of these next to
+    % each other are not wider than the full width.
+    width=.55\plotfullwidth,
+    height=.325\plotfullheight,
 }}
-
-\pgfplotsset{wind plot/.style = {
-    model plot,
-    height=120pt,
-    enlarge x limits=false,
-}}
-\tikzstyle{wind data} = [thick]
-
 
 \tikzstyle{true function} = [line width=4pt, densely dashed, smooth]
-
 
 \tikzstyle{mean} = [thick]
 \tikzstyle{std} = [thin]
 \tikzstyle{first} = [sTealDark]
 \tikzstyle{first fill} = [sTealDark, opacity=0.3]
 \tikzstyle{first full} = [sTealDark, fill=sTealDark]
-\tikzstyle{second} = [sGreenLight]
+\tikzstyle{second} = [sGreenDark]
 \tikzstyle{second fill} = [sGreenDark, opacity=0.3]
 \tikzstyle{second full} = [sGreenDark, fill=sGreenDark]
 \tikzstyle{third} = [sRedLight]
@@ -60,9 +65,62 @@
 \tikzstyle{fourth fill} = [sYellowDark, opacity=0.3]
 \tikzstyle{fourth full} = [sYellowDark, fill=sYellowDark]
 
-\tikzstyle{sample} = [semithick]
-\tikzstyle{sample one} = [sample, hannah0]
-\tikzstyle{sample two} = [sample, hannah1]
-\tikzstyle{sample three} = [sample, hannah2]
-\tikzstyle{sample four} = [sample, hannah3]
-\tikzstyle{sample five} = [sample, hannah4]
+\tikzstyle{sample} = [semithick, densely dashed]
+\tikzstyle{sample 0} = [sample, hannah0]
+\tikzstyle{sample 1} = [sample, hannah1]
+\tikzstyle{sample 2} = [sample, hannah2]
+\tikzstyle{sample 3} = [sample, hannah3]
+\tikzstyle{sample 4} = [sample, hannah4]
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           GP theory plots                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pgfplotsset{prediction plot/.style = {
+    half plot,
+}}
+\pgfplotsset{prior plot/.style = {
+    half plot,
+    ymin=-2.5,
+    ymax=2.5,
+    xmin=-2.5,
+    xmax=2.5,
+}}
+\pgfplotsset{prior sample/.style = {
+    semithick,
+    densely dashed,
+}}
+\pgfplotsset{posterior plot/.style = {
+    half plot,
+    ymin=-6.5,
+    ymax=6.5,
+    xmin=-5,
+    xmax=5,
+}}
+\pgfplotsset{spgp plot/.style = {
+    half plot,
+    clip mode=individual, % markers behind lines
+    ymin=-1.5,
+    ymax=1.5,
+    xmin=-4.5,
+    xmax=4.5,
+}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                Wind                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pgfplotsset{sine plot/.style = {
+    default plot,
+    xlabel=$\rv{X}$, ylabel=$\rv{y}$,
+    ymin=-1, ymax=1,
+    xmin=-1.5, xmax=1.5,
+    xtick={-1, 0, 1},
+}}
+
+\pgfplotsset{wind plot/.style = {
+    default plot,
+    height=120pt,
+    enlarge x limits=false,
+}}
+\tikzstyle{wind data} = [thick]

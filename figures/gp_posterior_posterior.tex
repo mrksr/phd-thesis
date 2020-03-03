@@ -1,0 +1,25 @@
+\documentclass{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \begin{axis}[
+            posterior plot,
+        ]
+        \addplot[first, std, name path=c, restrict x to domain=-5:5] table[x=X, y expr=\thisrow{y} + \thisrow{y_2std}] {\datapath/gp_theory/posterior_gp.dat};
+        \addplot[first, std, name path=d, restrict x to domain=-5:5] table[x=X, y expr=\thisrow{y} - \thisrow{y_2std}] {\datapath/gp_theory/posterior_gp.dat};
+        \addplot[first fill] fill between[of=c and d, on layer={axis background}];
+        \addplot[first, mean, restrict x to domain=-5:5] table[x=X, y=y] {\datapath/gp_theory/posterior_gp.dat};
+
+        \addplot[sample, second] table[x=X, y=y] {\datapath/gp_theory/posterior_posterior_sample_0.dat};
+        \addplot[sample, third] table[x=X, y=y] {\datapath/gp_theory/posterior_posterior_sample_1.dat};
+        \addplot[sample, fourth] table[x=X, y=y] {\datapath/gp_theory/posterior_posterior_sample_2.dat};
+
+        \addplot[only marks] table[x=X, y=y] {\datapath/gp_theory/posterior_data.dat};
+    \end{axis}
+\end{tikzpicture}
+\end{document}

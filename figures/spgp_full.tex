@@ -1,0 +1,21 @@
+\documentclass{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \begin{axis} [
+            spgp plot,
+        ]
+        \addplot[data] table[x=X, y=y] {\datapath/gp_theory/spgp_data.dat};
+
+        \addplot[first, std, name path=c, restrict x to domain=-5:5] table[x=X, y expr=\thisrow{y} + 2 * \thisrow{y_std}] {\datapath/gp_theory/spgp_full.dat};
+        \addplot[first, std, name path=d, restrict x to domain=-5:5] table[x=X, y expr=\thisrow{y} - 2 * \thisrow{y_std}] {\datapath/gp_theory/spgp_full.dat};
+        \addplot[first fill] fill between[of=c and d, on layer={axis background}];
+        \addplot[first, mean] table[x=X, y=y] {\datapath/gp_theory/spgp_full.dat};
+    \end{axis}
+\end{tikzpicture}
+\end{document}

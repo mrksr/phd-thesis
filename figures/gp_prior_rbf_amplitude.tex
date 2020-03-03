@@ -1,0 +1,26 @@
+\documentclass{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \begin{axis} [
+            prior plot
+        ]
+        \addplot[first, std, name path=c, domain=-2:2] {sqrt(2)};
+        \addplot[first, std, name path=d, domain=-2:2] {-sqrt(2)};
+        \addplot[first fill] fill between[of=c and d, on layer={axis background}];
+        \addplot[first, mean, domain=-2:2] {0} node[right] {$\mu_f$};
+
+        \draw[decorate, decoration={brace, raise=1pt}, thick] (-2,0) -- node[left=2pt] {$\sigma_f$} (-2,1.4142);
+        \draw[decorate, decoration={brace, mirror, raise=1pt}, thick] (-1,-1.41412) -- node[below=2pt] {$l$} (0,-1.4142);
+
+        \addplot[sample, second] table[x=X, y=y] {\datapath/gp_theory/prior_rbf_amplitude_sample_0.dat};
+        \addplot[sample, third] table[x=X, y=y] {\datapath/gp_theory/prior_rbf_amplitude_sample_1.dat};
+        \addplot[sample, fourth] table[x=X, y=y] {\datapath/gp_theory/prior_rbf_amplitude_sample_2.dat};
+    \end{axis}
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,23 @@
+\documentclass{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \begin{axis} [
+            prior plot,
+        ]
+        \addplot[first, std, name path=a, domain=-2:2] {x};
+        \addplot[first, std, name path=b, domain=-2:2] {-x};
+        \addplot[first fill] fill between[of=a and b, on layer={axis background}];
+        \addplot[first, mean, domain=-2:2] {0} node[right] {$\mu_f$};
+
+        \addplot[sample, second, domain=-2:2] {0.27 * x};
+        \addplot[sample, third, domain=-2:2] {-0.42 * x};
+        \addplot[sample, fourth, domain=-2:2] {0.67 * x};
+    \end{axis}
+\end{tikzpicture}
+\end{document}

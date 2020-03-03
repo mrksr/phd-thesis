@@ -146,41 +146,47 @@ Any function drawn from this Gaussian process, such as the ones shown in \cref{f
 This observation generalizes to higher dimensions \cite{rasmussen_gaussian_2006}.
 Gaussian process regression with a linear kernel is equivalent to Bayesian linear regression.
 \begin{figure}[p]
-    \centering
-    \begin{subfigure}[b]{\subfigurewidth}
+    \begin{subfigure}[b]{\halffigurewidth}
         \centering
-        \includestandalonewithpath{figures/theory_gp_prior_linear}
-        \caption{Linear}
-        \label{fig:gp_samples:linear}
+        \includestandalonewithpath{figures/gp_prior_linear}
+        \caption{
+            Linear
+            \label{fig:gp_samples:linear}
+        }
     \end{subfigure}
-    \begin{subfigure}[b]{\subfigurewidth}
+    \hfill
+    \begin{subfigure}[b]{\halffigurewidth}
         \centering
-        \includestandalonewithpath{figures/theory_gp_prior_rbf}
-        \caption{RBF with $\sigma_f = 1$ and $l=1$}
-        \label{fig:gp_samples:rbf_normal}
+        \includestandalonewithpath{figures/gp_prior_rbf}
+        \caption{
+            RBF with $\sigma_f = 1$ and $l=1$
+            \label{fig:gp_samples:rbf_normal}
+        }
+    \end{subfigure}\\[4ex]
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/gp_prior_rbf_amplitude}
+        \caption{
+            RBF with $\sigma_f = \sqrt{2}$ and $l=1$
+            \label{fig:gp_samples:rbf_noisy}
+        }
     \end{subfigure}
-
-    \vspace{4ex}
-
-    \begin{subfigure}[b]{\subfigurewidth}
+    \hfill
+    \begin{subfigure}[b]{\halffigurewidth}
         \centering
-        \includestandalonewithpath{figures/theory_gp_prior_rbf_amplitude}
-        \caption{RBF with $\sigma_f = \sqrt{2}$ and $l=1$}
-        \label{fig:gp_samples:rbf_noisy}
-    \end{subfigure}
-    \begin{subfigure}[b]{\subfigurewidth}
-        \centering
-        \includestandalonewithpath{figures/theory_gp_prior_rbf_lengthscale}
-        \caption{RBF with $\sigma_f = 1$ and $l=\sfrac{1}{4}$}
-        \label{fig:gp_samples:rbf_lengthscale}
+        \includestandalonewithpath{figures/gp_prior_rbf_lengthscale}
+        \caption{
+            RBF with $\sigma_f = 1$ and $l=\sfrac{1}{4}$
+            \label{fig:gp_samples:rbf_lengthscale}
+        }
     \end{subfigure}
     \caption[Samples from GP priors]{
         Since the mean function $\mu_f$ is assumed to be constant zero, the kernel specifies the prior assumptions about the function.
         A dashed sample function can be drawn by sampling a multivariate Gaussian with the kernel's Gram matrix using a grid of discrete sampling positions.
         While samples from the linear kernel are always hyperplanes, the RBF kernel describes arbitrary smooth functions.
         The hyperparameters $l$ and $\sigma_f$ of the kernel describe the assumed dynamic range in $x$ and $y$ directions respectively.
+        \label{fig:gp_samples}
     }
-    \label{fig:gp_samples}
 \end{figure}
 
 Because of its restrictiveness, the linear kernel is not very relevant for real-world applications of Gaussian processes.
@@ -287,17 +293,17 @@ The predictive posterior for the test outputs $\mat{f_\ast}$ can be obtained by 
         \end{split}
     \end{align}
 \end{lemma}
-\begin{figure}[tb]
-    \centering
-    \begin{subfigure}{\subfigurewidth}
+\begin{figure}[t]
+    \begin{subfigure}[b]{\halffigurewidth}
         \centering
-        \includestandalonewithpath{figures/theory_gp_posterior_prior}
+        \includestandalonewithpath{figures/gp_posterior_prior}
         \caption{GP Prior}
         \label{fig:gp_posterior:prior}
     \end{subfigure}
-    \begin{subfigure}{\subfigurewidth}
+    \hfill
+    \begin{subfigure}[b]{\halffigurewidth}
         \centering
-        \includestandalonewithpath{figures/theory_gp_posterior_posterior}
+        \includestandalonewithpath{figures/gp_posterior_posterior}
         \caption{GP Posterior}
         \label{fig:gp_posterior:posterior}
     \end{subfigure}
@@ -306,8 +312,8 @@ The predictive posterior for the test outputs $\mat{f_\ast}$ can be obtained by 
         After observing the black data points, the mean function of the posterior GP in \cref{fig:gp_posterior:posterior} is no longer constant zero.
         The dashed function samples of the posterior GP interpolate the data but can be different in-between.
         The shaded area represents the point wise mean plus and minus two times the standard deviation.
+        \label{fig:gp_posterior}
     }
-    \label{fig:gp_posterior}
 \end{figure}
 
 This predictive posterior makes it possible to evaluate the function approximation based on the input at arbitrary points in the input space.
@@ -472,19 +478,22 @@ This observation directly yields the SPGP predictive posterior using \cref{lem:g
     \end{align}
     and $\mat{Q_N} \coloneqq \mat{K_{N M}} \mat{K_M}^{-1} \mat{K_{M N}}$.
 \end{lemma}
-\begin{figure}[t]
-    \centering
-    \begin{subfigure}{\subfigurewidth}
+\begin{figure}[tp]
+    \begin{subfigure}{\halffigurewidth}
         \centering
-        \includestandalonewithpath{figures/theory_spgp_full}
-        \caption{Full GP}
-        \label{fig:spgp_example:gp}
+        \includestandalonewithpath{figures/spgp_full}
+        \caption{Full GP
+            \label{fig:spgp_example:gp}
+        }
     \end{subfigure}
-    \begin{subfigure}{\subfigurewidth}
+    \hfill
+    \begin{subfigure}{\halffigurewidth}
         \centering
-        \includestandalonewithpath{figures/theory_spgp_sparse}
-        \caption{SPGP}
-        \label{fig:spgp_example:spgp}
+        \includestandalonewithpath{figures/spgp_sparse}
+        \caption{
+            SPGP
+            \label{fig:spgp_example:spgp}
+        }
     \end{subfigure}
     \caption[SPGP example]{
         The black crosses signify data sampled from a noisy sine function.
@@ -492,8 +501,8 @@ This observation directly yields the SPGP predictive posterior using \cref{lem:g
         \Cref{fig:spgp_example:spgp} shows an SPGP with pseudo inputs located at the dart positions.
         Since the pseudo function values are marginalized, only their $x$-coordinate is meaningful.
         Three pseudo inputs are enough to approximate the full GP with reasonable accuracy.
+        \label{fig:spgp_example}
     }
-    \label{fig:spgp_example}
 \end{figure}
 
 The predictive distribution as written in the previous equations can easily be compared to the predictive posterior of Gaussian processes in \cref{lem:gp_posterior}.

@@ -3,17 +3,17 @@
 
 \section{Gaussian Processes}
 \label{sec}
-The transition dynamics $\Dyn \colon \Es \times \Ah \to \Dists(\Es^+)$ is a function mapping states and actions to a probability distribution of following states.
+The transition dynamics $f \colon \Sc \times \Ac \to \Probs{\Sc^+}$ is a function mapping states and actions to a probability distribution of following states.
 In order to estimate them using Gaussian processes, some assumptions about the structure of this function are needed.
-First, it will be assumed that both the set of states $\Es$ and the set of actions $\Ah$ are euclidean real-valued vector spaces and that the set of terminal states $\Tee$ is empty, that is, $\Es^+$ and $\Es$ are assumed equal, requiring that episode endings have to be modelled separately.
+First, it will be assumed that both the set of states $\Sc$ and the set of actions $\Ac$ are euclidean real-valued vector spaces and that the set of terminal states $\Tc$ is empty, that is, $\Sc^+$ and $\Sc$ are assumed equal, requiring that episode endings have to be modelled separately.
 And secondly, the probability distribution of the following state is assumed to be unimodal.
-This unimodality can result from deterministic transition functions, such as the one of the bicycle benchmark defined in \cref{cha:the_bicycle_benchmark}, being disturbed slightly by Gaussian noise.
+This unimodality can result from deterministic transition functions, such as the one of the bicycle benchmark, being disturbed slightly by Gaussian noise.
 
-Estimating a function $f$ on the basis of observations $\mat{y_i} = f(\mat{x_i}) + \epsilon_i \in \R$ with input vectors $\mat{x_i} \in \R^d$ and a noise term $\epsilon_i$ is a \emph{regression problem}.
+Estimating a function $f$ on the basis of observations $\mat{y_i} = f(\mat{x_i}) + \epsilon_i \in \Rb$ with input vectors $\mat{x_i} \in \Rb^d$ and a noise term $\epsilon_i$ is a \emph{regression problem}.
 Since the number of observations is finite and the function $f$ lives in an infinite dimensional function space, the estimation of $f$ is uncertain and based on prior assumptions about its structure.
 
 In classic control scenarios, these prior assumptions often follow from physical descriptions of the system to be modelled.
-While the physics of driving a bicycle is understood quite well and can be described using differential equations, a controller for a specific bicycle depends on some parameters $\rv{\eta}$ such as the masses and measures detailed in \cref{tab:bicycle_constants}.
+While the physics of driving a bicycle is understood quite well and can be described using differential equations, a controller for a specific bicycle depends on some parameters $\rv{\eta}$.
 In this setting, solving the regression problem corresponds to finding a choice of parameters $\rv{\eta^\ast}$ which explain the observations of the true system best.
 
 In a Bayesian context, instead of deciding on one specific vector of parameters, it might be more interesting to derive a distribution $\Prob{\rv{\eta^\ast}}$ of probable parameter values which then represents the uncertainty about their true value.
@@ -93,7 +93,7 @@ For any pair $(\rv{X_i}, \mat{X_j})$ of these random variables, their covariance
 The pairwise covariances in a multivariate Gaussian $\Gaussian{\mat{\mu}, \mat{\Sigma}}$ are given by its \emph{covariance matrix} $\mat{\Sigma}$.
 For any finite set of random variables, the matrix obtained by pairwise application of the covariance function is called the \emph{Gram matrix}.
 \begin{definition}[Gram Matrix]
-    Given a non-empty set $A$, a function $\K \colon A^2 \to \R$ and two sets $X = \Set*{x_i \in A \with i \in [n]}$ and $Y = \Set*{y_j \in A \with j \in [m]}$.
+    Given a non-empty set $A$, a function $\K \colon A^2 \to \Rb$ and two sets $X = \Set*{x_i \in A \with i \in [n]}$ and $Y = \Set*{y_j \in A \with j \in [m]}$.
     The $n \times m$ matrix
     \begin{align}
         \K(X, Y) = \mat{K_{XY}} \coloneqq \bigg( \K(x_i, y_j) \bigg)_{\substack{i \in [n], \\ j \in [m]}}
@@ -106,7 +106,7 @@ In order for the Gram matrix to be a valid covariance matrix $\mat{\Sigma}$ of a
 \begin{definition}[Kernel]
     Given a non-empty set $A$, a function
     \begin{align}
-        \K \colon A^2 \to \R
+        \K \colon A^2 \to \Rb
     \end{align}
     is called a \emph{(positive definite) kernel} or \emph{covariance function}, if for any finite subset $X \subseteq A$, the Gram matrix $\K(X, X)$ is positive definite \cite{scholkopf_learning_2002}.
 \end{definition}
@@ -121,13 +121,13 @@ Then, two points which are a multiple of wavelengths apart should also have simi
 A kernel which is not only dependent on the distance between two points but also their position in the input space is called \emph{non-stationary}.
 A simple example of such a non-stationary kernel is the linear kernel.
 \begin{definition}[Linear Kernel]
-    For a finite dimensional euclidean vector space $\R^d$, the \emph{linear kernel} is defined as
+    For a finite dimensional euclidean vector space $\Rb^d$, the \emph{linear kernel} is defined as
     \begin{align}
         \K_{\text{linear}}(\mat{x}, \mat{y}) \coloneqq \mat{x}\tran \mat{y} = \left\langle \mat{x}, \mat{y}\right\rangle.
     \end{align}
 \end{definition}
-Consider a function $f \colon \R \to \R$ which is distributed according to a Gaussian process with the linear kernel $f \sim \GP\Cond{\mat{0}, \K_{\text{linear}}}$.
-According to the definition of Gaussian processes, for any two input numbers $x$, $y \in \R$ their corresponding random variables $\rv{f_x}$ and $\rv{f_y}$ have a joint Gaussian distribution
+Consider a function $f \colon \Rb \to \Rb$ which is distributed according to a Gaussian process with the linear kernel $f \sim \GP\Cond{\mat{0}, \K_{\text{linear}}}$.
+According to the definition of Gaussian processes, for any two input numbers $x$, $y \in \Rb$ their corresponding random variables $\rv{f_x}$ and $\rv{f_y}$ have a joint Gaussian distribution
 \begin{align}
     \begin{pmatrix}
         \rv{f_x} \\ \rv{f_y}
@@ -198,11 +198,11 @@ A kernel which is a function of $\mat{x} - \mat{y}$ is called \emph{stationary} 
 The most important stationary kernel is the squared exponential kernel.
 \begin{definition}[Squared Exponential Kernel]
     \label{def:rbf_kernel}
-    For a finite dimensional euclidean vector space $\R^d$, the \emph{squared exponential kernel} (or \emph{RBF kernel}) is defined as
+    For a finite dimensional euclidean vector space $\Rb^d$, the \emph{squared exponential kernel} (or \emph{RBF kernel}) is defined as
     \begin{align}
         \K_{\text{SE}}(\mat{x}, \mat{y}) \coloneqq \sigma_f^2 \cdot \exp\!\left( -\frac{1}{2} (\mat{x} - \mat{y})\tran \mat{\Lambda}^{-1} (\mat{x} - \mat{y}) \right).
     \end{align}
-    The parameter $\sigma_f^2 \in \R_{>0}$ is called the \emph{signal variance} and $\mat{\Lambda} = \diag(l_1^2, \dots, l_d^2)$ is a diagonal matrix of the squared \emph{length scales} $l_i \in \R_{>0}$.
+    The parameter $\sigma_f^2 \in \Rb_{>0}$ is called the \emph{signal variance} and $\mat{\Lambda} = \diag(l_1^2, \dots, l_d^2)$ is a diagonal matrix of the squared \emph{length scales} $l_i \in \Rb_{>0}$.
 \end{definition}
 The similarity of two data points approaches one when they are close together and for larger distances approaches zero with exponential drop off.
 It can be shown that this kernel represents all infinitely differentiable functions \cite{rasmussen_gaussian_2006}.
@@ -224,7 +224,7 @@ Drawing the function values of a finite amount of sample input points $\mat{X_\a
 
 \subsection{Predictions and Posterior}
 In order to use Gaussian processes for regression, it is necessary to combine observations with a Gaussian process prior $f \sim \GP\Cond{\mat{0}, \K}$ in order to obtain a predictive posterior.
-The $N$ data points observed are denoted as $\D = \left( \mat{X}, \mat{y} \right)$ with $\mat{y} = f(\mat{X}) + \Gaussian{\mat{0}, \sigma_n^2 \Eye}$ and $\abs{\mat{y}} = N$.
+The $N$ data points observed are denoted as $\Dc = \left( \mat{X}, \mat{y} \right)$ with $\mat{y} = f(\mat{X}) + \Gaussian{\mat{0}, \sigma_n^2 \Eye}$ and $\abs{\mat{y}} = N$.
 The observed function values $\mat{y}$ are assumed to not be the true latent function values $\mat{f} = f(\mat{X})$ but rather have some additive Gaussian noise which is independent and identically distributed for all observations.
 The variance of this noise $\sigma_n^2$ is a hyperparameter of the Gaussian process model.
 
@@ -386,7 +386,7 @@ The solution of this integral is a Gaussian density function \cite{petersen_matr
 For practical reasons, it is convenient to minimize the negative logarithm of the likelihood which is given by
 \begin{align}
     \begin{split}
-        \Ell(\mat{\theta}) &= -\log\Prob{\mat{y} \given \mat{X}, \mat{\theta}} \\
+        \Lc(\mat{\theta}) &= -\log\Prob{\mat{y} \given \mat{X}, \mat{\theta}} \\
         &= \frac{1}{2} \mat{y}\tran \left( \mat{K_N} + \sigma_n^2 \Eye \right)^{-1} \mat{y} +
         \frac{1}{2} \log \abs{\mat{K_N} + \sigma_n^2 \Eye} +
         \frac{N}{2} \log(2\pi).
@@ -394,9 +394,9 @@ For practical reasons, it is convenient to minimize the negative logarithm of th
 \end{align}
 The estimation of hyperparameters is the solution of the optimization problem
 \begin{align}
-    \mat{\theta}^\ast &\in \argmin_{\mat{\theta}} \Ell(\mat{\theta})
+    \mat{\theta}^\ast &\in \argmin_{\mat{\theta}} \Lc(\mat{\theta})
 \end{align}
-and is calculated using standard approaches to non-convex optimization such as scaled conjugate gradient (SCD) techniques, since finding the derivatives of $\Ell$ is comparatively easy \cite{rasmussen_gaussian_2006}.
+and is calculated using standard approaches to non-convex optimization such as scaled conjugate gradient (SCD) techniques, since finding the derivatives of $\Lc$ is comparatively easy \cite{rasmussen_gaussian_2006}.
 The computational complexity of evaluating the likelihood term and its derivatives is dominated by the inversion of $\mat{K_N} + \sigma_n^2 \Eye$.
 
 Since this optimization scheme does not choose parameters of the function approximation directly but rather changes a small number of broad and high-level assumptions about it, overfitting does not tend to be a problem for Gaussian processes in general \cite{snelson_flexible_2007}.
@@ -523,7 +523,7 @@ which only involves the inversion of $M \times M$ matrices and one diagonal $N \
 Implemented this way, the calculation of all terms independent of the test points has a complexity of $\Oh(NM^2)$ and predicting means and variances takes $\Oh(M)$ and $\Oh(M^2)$ time respectively.
 The space requirement also drops to $\Oh(M^2)$.
 
-Since the positions of the pseudo inputs $\ps{\mat{X}}$ are additional hyperparameters in $\K_{\text{SPGP}}$, they can be chosen together with the hyperparameters of the original kernel $\mat{\theta}$ using maximum likelihood as explained in \cref{sub:gp_hyperparameters}.
+Since the positions of the pseudo inputs $\ps{\mat{X}}$ are additional hyperparameters in $\K_{\text{SPGP}}$, they can be chosen together with the hyperparameters of the original kernel $\mat{\theta}$ using maximum likelihood.
 Because they can be placed anywhere in the input space, the derivatives of the marginal likelihood by their positions are smooth functions \cite{snelson_sparse_2005}.
 This optimization chooses the positions in such a way that together with appropriate other hyperparameters, the original data is represented as good as possible.
 The curse of dimensionality of requiring exponentially many points in a grid given the number of input dimensions does therefore not necessarily apply to the number of pseudo inputs needed in an SPGP approximation.

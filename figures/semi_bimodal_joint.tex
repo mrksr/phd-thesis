@@ -1,0 +1,75 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}[tight background]
+\def\datapath{\figurepath/data/semi_bimodal_fancy}
+\begin{axis}[
+    semi bimodal plot,
+    clip mode=individual,
+    xlabel=$\rv{X}$, ylabel=$\rv{y}$,
+    ymin=-4, ymax=3,
+    xmin=-11, xmax=11,
+    ]
+
+    \addplot[
+    data,
+    ] table[
+    ignore chars={\#}, col sep=space, x=X, y=Y
+    ] {\datapath/Xs_Ys.dat};
+
+    \pgfplotsset{restrict/.style = {
+        restrict x to domain=-10:10,
+    }}
+    \pgfplotsset{attrib/.style = {
+        mesh,
+        point meta=\thisrow{attrib},
+        % opacity=\pgfplotspointmetatransformed/1000,
+        % opacity=0.3 + 0.7 * \pgfplotspointmetatransformed/1000,
+        opacity={min(1., max(0.25, 4 * \pgfplotspointmetatransformed/1000 - 1))},
+    }}
+    \tikzstyle{mean} = [very thick]
+    \tikzstyle{std} = [semithick]
+
+    \addplot[attrib, std, fourth, restrict, name path=minus]
+    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/Xt_mode_1.dat};
+    \addplot[attrib, std, fourth, restrict, name path=plus]
+    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/Xt_mode_1.dat};
+    % \addplot[fourth fill]
+    % fill between[of=plus and minus];
+    \addplot[attrib, mean, fourth, restrict]
+    table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/Xt_mode_1.dat};
+
+    \addplot[attrib, std, third, restrict, name path=plus]
+    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/Xt_mode_0.dat};
+    \addplot[attrib, std, third, restrict, name path=minus]
+    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/Xt_mode_0.dat};
+    % \addplot[third fill]
+    % fill between[of=plus and minus];
+    \addplot[attrib, mean, third, restrict]
+    table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/Xt_mode_0.dat};
+
+    \addplot[attrib, std, second, restrict, name path=plus]
+    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/Xt_mode_2.dat};
+    \addplot[attrib, std, second, restrict, name path=minus]
+    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/Xt_mode_2.dat};
+    % \addplot[second fill]
+    % fill between[of=plus and minus];
+    \addplot[attrib, mean, second, restrict]
+    table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/Xt_mode_2.dat};
+
+    \addplot[attrib, std, first, restrict, name path=plus]
+    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/Xt_mode_3.dat};
+    \addplot[attrib, std, first, restrict, name path=minus]
+    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/Xt_mode_3.dat};
+    % \addplot[first fill]
+    % fill between[of=plus and minus];
+    \addplot[attrib, mean, first, restrict]
+    table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/Xt_mode_3.dat};
+\end{axis}
+\end{tikzpicture}
+\end{document}

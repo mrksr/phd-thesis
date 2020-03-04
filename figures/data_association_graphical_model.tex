@@ -1,0 +1,71 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+    x=4.5em, y=13ex,
+    ]
+
+    \tikzset{%
+        cascaded/.style = {%
+            general shadow = {%
+                shadow scale = 1,
+                shadow xshift = 1.2ex,
+                shadow yshift = -1.2ex,
+                random variable,
+                #1
+                },
+            general shadow = {%
+                shadow scale = 1,
+                shadow xshift = .6ex,
+                shadow yshift = -.6ex,
+                random variable,
+                #1
+                },
+            }}
+
+    \node[random variable, observed, yshift=-1ex] (Xn) at (1, 0) {$\rv{x_n}$};
+    \node[random variable, observed, yshift=3ex] (yn) at (1, -3) {$\rv{y_n}$};
+
+    \node[random variable, latent, cascaded=latent] (fnm) at (0, -1) {$\rv{f_n^{\pix{k}}}$};
+    \node[random variable, latent] (ynm) at (0, -2) {$\rv{y_n^{\pix{k}}}$};
+
+    \node[random variable, latent] (alphanm) at (2, -1) {$\rv{\alpha_n^{\pix{k}}}$};
+    \node[random variable, latent, yshift=3ex] (an) at (2, -3) {$\rv{a_n}$};
+
+    \draw[edge, directed] (Xn) -| (fnm);
+    \draw[edge, directed] (Xn) -| (alphanm);
+    \draw[edge, directed, densely dashed, shorten <=1.5ex] (fnm) -- (ynm);
+    \draw[edge, directed] (alphanm) -- (an);
+    \draw[edge, directed] (ynm) |- (yn);
+    \draw[edge, directed] (an) -- (yn);
+
+    % ---
+
+    \node[random variable, hyperparameter, cascaded=hyperparameter, shift={(-1.2ex,.6ex)}] (thetam) at (-1, -0.75) {$\rv{\theta^{\pix{k}}}$};
+    \node[random variable, variational, cascaded=variational, shift={(-1.2ex,-.6ex)}] (um) at (-1, -1.25) {$\rv{u^{\pix{k}}}$};
+
+    \node[random variable, hyperparameter] (sigmam) at (-1, -2) {$\rv{\sigma^{\pix{k}}}$};
+
+    \node[random variable, hyperparameter] (thetaalpham) at (3, -0.75) {$\rv{\theta_\alpha^{\pix{k}}}$};
+    \node[random variable, variational] (ualpham) at (3, -1.25) {$\rv{u_\alpha^{\pix{k}}}$};
+
+    \draw[edge, directed] ([xshift=1.5ex]thetam.east) -- +(1ex, 0) |- (fnm.west);
+    \draw[edge, directed] ([xshift=1.5ex]um.east) -- +(1ex, 0) |- (fnm.west);
+
+    \draw[edge, directed] (sigmam.east) -- (ynm.west);
+    \draw[edge, directed] (thetaalpham.west) -- +(-1ex, 0) |- (alphanm.east);
+    \draw[edge, directed] (ualpham.west) -- +(-1ex, 0) |- (alphanm.east);
+
+    % ---
+
+    \begin{scope}[on background layer]
+        \node[plate, inner xsep=12pt, fit=(Xn)(fnm)(yn)(an), label={[anchor=south east]south east:N}] {};
+        \node[plate, fit=(thetam)(thetaalpham)(sigmam), label={[anchor=south east]south east:K}] {};
+    \end{scope}
+\end{tikzpicture}
+\end{document}

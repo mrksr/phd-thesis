@@ -12,7 +12,7 @@
 \tikzstyle{small} = [inner sep=0pt, minimum size=10pt]
 \tikzstyle{hyperparameter} = [fill=sYellowDark!40]
 \tikzstyle{latent} = [fill=sGreenDark!40]
-\tikzstyle{plate} = [draw=sStoneDark, fill=sStone, fill opacity=.2, very thick, inner xsep=2pt, inner ysep=2pt]
+\tikzstyle{plate} = [draw=sStoneDark, fill=sStone, fill opacity=.2, very thick, inner xsep=4pt, inner ysep=4pt]
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,6 +45,14 @@
     % NOTE(mrksr): Due to width calculations in pgfplots, two of these next to
     % each other are not wider than the full width.
     width=.55\plotfullwidth,
+    height=.325\plotfullheight,
+}}
+
+\pgfplotsset{third plot/.style = {
+    default plot,
+    % NOTE(mrksr): Due to width calculations in pgfplots, two of these next to
+    % each other are not wider than the full width.
+    width=.4\plotfullwidth,
     height=.325\plotfullheight,
 }}
 
@@ -104,6 +112,26 @@
     ymax=1.5,
     xmin=-4.5,
     xmax=4.5,
+}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                          Data Association                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pgfplotsset{choicenet plot/.style = {
+    third plot,
+    height=.25\plotfullheight,
+    xlabel=$\rv{X}$, ylabel=$\rv{y}$,
+    ymin=-1.5, ymax=3.5,
+    xlabel style={overlay=false},
+    ylabel style={overlay=false},
+}}
+
+\pgfplotsset{semi bimodal plot/.style = {
+    default plot,
+    height=.25\plotfullheight,
+    xlabel style={overlay=false},
+    ylabel style={overlay=false},
 }}
 
 

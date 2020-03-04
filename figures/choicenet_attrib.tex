@@ -1,0 +1,43 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}[tight background]
+\def\datapath{\figurepath/data/choicenet_noisy_0.6}
+\begin{axis}[
+    choicenet plot,
+    xlabel=$\rv{X}$, ylabel=$\rv{y}$,
+    ylabel=,
+    yticklabels={,,},
+    ]
+
+    \pgfplotsset{marked/.style = {
+        fill opacity=0,
+        mark size=1.25pt,
+        thin,
+    }}
+
+    \addplot[
+    data,
+    first,
+    mark=triangle*,
+    marked,
+    ] table[
+    ignore chars={\#}, col sep=space, x=X, y=Y
+    ] {\datapath/Xs_Ys_attrib_separated_0.dat};
+
+    \addplot[
+    data,
+    second,
+    mark=square*,
+    marked,
+    ] table[
+    ignore chars={\#}, col sep=space, x=X, y=Y
+    ] {\datapath/Xs_Ys_attrib_separated_1.dat};
+\end{axis}
+\end{tikzpicture}
+\end{document}

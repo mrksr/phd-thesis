@@ -45,6 +45,9 @@
 \usepackage{tabularx}
 \usepackage{colortbl}
 \usepackage{siunitx}
+% NOTE(mrksr): Fix \bfseries in tables for siunitx
+\usepackage{etoolbox}
+\robustify\bfseries
 
 % Navigation
 \usepackage{url}

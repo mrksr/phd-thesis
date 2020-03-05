@@ -216,3 +216,51 @@
     tick label style={font=\small},
     label style={font=\small},
 }}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             Wetchicken                              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pgfplotsset{wetchicken system plot/.style = {
+    default plot,
+    width=.45\plotfullwidth,
+    height=.35\plotfullheight,
+    xlabel=$\mat{y}$, ylabel=$\mat{x}$,
+    ymax=6,
+    xtick={0, 2.5, 5},
+    ytick={0, 2.5, 5},
+    xlabel style={overlay=false},
+    ylabel style={overlay=false},
+}}
+
+\pgfplotsset{wetchicken cut plot/.style = {
+    default plot,
+    width=.9\plotfullwidth,
+    height=.225\plotfullheight,
+    xlabel=$\mat{x}_t$, ylabel=$\mat{x}_{t+1}$,
+    ymin=-1,
+    ymax=6,
+    xmin=-.5,
+    xmax=5.5,
+    xtick={0, 2.5, 5},
+    ytick={0, 2.5, 5},
+    % NOTE(mrksr): Rotate back the model plot rotation
+    ylabel style={rotate=90},
+    xlabel style={overlay=false},
+    ylabel style={overlay=false},
+}}
+
+\pgfplotsset{slim colorbar right/.style = {
+    colorbar,
+    colorbar style={
+        at={(1.05, 0.5)},
+        anchor=west,
+        width=.02*\plotfullwidth,
+    },
+}}
+
+\tikzstyle{quiver arrow} = [-{Stealth[length=4pt, round]}]
+\tikzstyle{waterfall} = [draw=none, fill=sStoneDark]
+\newcommand{\addwaterfall}{%
+    \draw[waterfall] (0, 5) rectangle (5, 5.25) node[midway, above, yshift=2pt] {waterfall};
+}

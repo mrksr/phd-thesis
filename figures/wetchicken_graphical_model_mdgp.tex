@@ -1,0 +1,69 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \begin{scope}[x=4.5em, y=10ex]
+        \node[random variable, observed, xshift=-4ex] (Xsn) at (1, 0.25) {$\rv{s}_t$};
+        \node[random variable, observed, xshift=4ex] (Xan) at (1, 0.25) {$\rv{a}_t$};
+
+        \begin{scope}[on background layer]
+            \node[
+                plate, inner sep=4pt,
+                fit=(Xsn)(Xan)
+                ] (Xn) {};
+        \end{scope}
+        \node[random variable, observed] (yn) at (.8, -3) {$\rv{s}_{t+1}$};
+
+        \node[random variable, latent] (fnm) at (0, -1) {$\rv{f}_t^{\pix{k}}$};
+        \node[random variable, latent] (sigmanm) at (1, -1) {$\rv{\sigma}_t^{\pix{k}}$};
+        \node[random variable, latent] (ynm) at (0, -2) {$\rv{s}_{t+1}^{\pix{k}}$};
+
+        \node[random variable, latent] (alphanm) at (2, -1) {$\rv{\lambda}_t^{\pix{k}}$};
+        \node[random variable, latent] (an) at (2, -3) {$\rv{l}_t$};
+
+        \draw[edge, directed] (Xn) -| (fnm);
+        \draw[edge, directed] (Xn) -- (sigmanm);
+        \draw[edge, directed] (sigmanm) -- (ynm);
+        \draw[edge, directed] (Xn) -| (alphanm);
+        \draw[edge, directed] (fnm) -- (ynm);
+        \draw[edge, directed] (alphanm) -- (an);
+        \draw[edge, directed] (ynm) |- (yn);
+        \draw[edge, directed] (an) -- (yn);
+
+        % ---
+
+        \node[random variable, variational, small] (um) at (-1, -1) {};
+        \node[random variable, variational, small] (usigmam) at (1, -2) {};
+        \node[random variable, variational, small] (ualpham) at (3, -1) {};
+
+        \draw[edge, directed] (um.east) -- (fnm.west);
+        \draw[edge, directed] (usigmam) -- (sigmanm);
+        \draw[edge, directed] (ualpham.west) -- (alphanm.east);
+
+        % ---
+
+        \begin{scope}[on background layer]
+            % \node[
+            %     plate,
+            %     fit=(Xn)(fnm)(yn)(an),
+            %     label={[anchor=south east]south east:$N$}
+            % ] {};
+            \node[
+                plate, inner ysep=8pt, yshift=2pt,
+                fit=(um)(ualpham)(usigmam)(fnm)(ynm),
+                label={[anchor=south east]south east:$K$}
+            ] {};
+            % \node[
+            %     plate, inner sep=8pt, yshift=2pt,
+            %     fit=(alphanm)(fnm)(ynm),
+            %     label={[anchor=south east]south east:$K$}
+            % ] {};
+        \end{scope}
+    \end{scope}
+\end{tikzpicture}
+\end{document}

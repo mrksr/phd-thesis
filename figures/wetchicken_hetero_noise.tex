@@ -1,0 +1,34 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+\def\datapath{\figurepath/data/wetchicken}
+\begin{axis}[
+    wetchicken system plot,
+    ylabel=,
+    yticklabels={,,},
+    colormap/YlGn,
+    slim colorbar right,
+    point meta min=0.,
+    point meta max=1.5,
+    ]
+
+    \addplot[
+        surf,
+        mesh/rows=35,
+        mesh/cols=35,
+        point meta={\thisrow{std} * \thisrow{a0}},
+        % point meta={\thisrow{std}},
+        ] table[
+        ignore chars={\#}, col sep=space, x=Y, y=X,
+        ] {\datapath/hetero_noise.dat};
+
+    \addwaterfall
+\end{axis}
+\end{tikzpicture}
+\end{document}

@@ -283,9 +283,9 @@ Importantly, we only need a small number of Monte Carlo samples at every iterati
 
 \subsection{Results}
 \label{sub:interpretable_reinforcement_learning:results}
-\begin{figure}[t]
+\begin{figure}[tp]
     \centering
-    \begin{subfigure}[b]{.495\linewidth}
+    \begin{subfigure}[b]{\halffigurewidth}
         \centering
         \includestandalone{wetchicken_speed_mean}
         \caption{
@@ -295,16 +295,15 @@ Importantly, we only need a small number of Monte Carlo samples at every iterati
         }
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{.495\linewidth}
+    \begin{subfigure}[b]{\halffigurewidth}
         \centering
         \includestandalone{wetchicken_hetero_noise}
         \caption{
             \label{fig:interpretable_reinforcement_learning:wetchicken:hetero}
             Heteroscedastic turbulence $\mat{\sigma}_x$
         }
-    \end{subfigure}
-    \\[.45\baselineskip]
-    \begin{subfigure}[b]{.495\linewidth}
+    \end{subfigure}\\[\figureskip]
+    \begin{subfigure}[b]{\halffigurewidth}
         \centering
         \includestandalone{wetchicken_drop_mean}
         \caption{
@@ -313,7 +312,7 @@ Importantly, we only need a small number of Monte Carlo samples at every iterati
         }
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{.495\linewidth}
+    \begin{subfigure}[b]{\halffigurewidth}
         \centering
         \includestandalone{wetchicken_falldown_probabilities}
         \caption{
@@ -374,7 +373,7 @@ As most turbulence into the direction of the waterfall leads to a drop, the post
 
 \subsubsection{Policy Learning}
 \label{sub:interpretable_reinforcement_learning:policy_learning}
-\begin{figure}[t]
+\begin{figure}[tp]
     \centering
     \begin{subfigure}[b]{\linewidth}
         \centering
@@ -406,7 +405,7 @@ As most turbulence into the direction of the waterfall leads to a drop, the post
             \label{fig:interpretable_reinforcement_learning:wetchicken:table}
             Comparison of expected returns
         }
-    \end{subfigure}\\[3ex]
+    \end{subfigure}\\[\figureskip]
     \begin{subfigure}[b]{\linewidth}
         \centering
         \includestandalone{wetchicken_policy_quiver}
@@ -423,7 +422,7 @@ As most turbulence into the direction of the waterfall leads to a drop, the post
         The chosen optimal movement direction of a successful policy (right) is denoted by both the arrows and background color.
     }
 \end{figure}
-\begin{figure}[t]
+\begin{figure}[tp]
     \centering
     \begin{subfigure}[b]{\linewidth}
         \centering
@@ -451,7 +450,7 @@ As most turbulence into the direction of the waterfall leads to a drop, the post
             \label{fig:interpretable_reinforcement_learning:wetchicken:conservative_table}
             Drop risk reduction with reward shaping
         }
-    \end{subfigure}\\[3ex]
+    \end{subfigure}\\[\figureskip]
     \begin{subfigure}[b]{\linewidth}
         \centering
         \includestandalone{wetchicken_conservative_policy_quiver}
@@ -567,7 +566,7 @@ The interpretable nature of the dynamics models have allowed us to easily influe
           \label{fig:interpretable_reinforcement_learning:wetchicken:good_cut}
           Transition model with $K=4$ and successful policy training
         }
-    \end{subfigure}\\[2ex]
+    \end{subfigure}\\[\figureskip]
     \begin{subfigure}[t]{\linewidth}
         \centering
         \includestandalone{wetchicken_misspecification_bad_cut_5_0}

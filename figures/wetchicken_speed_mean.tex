@@ -1,0 +1,36 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+\def\datapath{\figurepath/data/wetchicken}
+\begin{axis}[
+    wetchicken system plot,
+    % colormap/YlGn,
+    % colormap/YlGnBu,
+    colormap/RdYlBu,
+    slim colorbar right,
+    point meta min=-3,
+    point meta max=3,
+    ]
+
+    \addplot[
+        surf,
+        mesh/rows=35,
+        mesh/cols=35,
+        % point meta={\thisrow{speed} * \thisrow{a0}},
+        % point meta={\thisrow{speed}},
+        % point meta={max(0, \thisrow{speed_diff})},
+        point meta={\thisrow{speed_diff}},
+        ] table[
+        ignore chars={\#}, col sep=space, x=Y, y=X,
+        ] {\datapath/speed_mean.dat};
+
+    \addwaterfall
+\end{axis}
+\end{tikzpicture}
+\end{document}

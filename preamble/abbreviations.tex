@@ -164,3 +164,13 @@
 }
 
 \DeclarePairedDelimiterXPP{\pix}[1]{\begingroup\scriptscriptstyle}{(}{)}{\endgroup}{\mkern-1mu#1\mkern-1mu}
+
+% NOTE(mrksr): See https://tex.stackexchange.com/a/112212/34265
+\makeatletter
+\DeclareRobustCommand{\rvdots}{%
+  \vbox{
+    \baselineskip4\p@\lineskiplimit\z@
+    \kern-\p@
+    \hbox{.}\hbox{.}\hbox{.}
+  }}
+\makeatother

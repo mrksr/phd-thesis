@@ -26,6 +26,13 @@
     fill opacity=.5,
     sStoneDark,
 }}
+\pgfplotsset{tiny data/.style = {
+    only marks,
+    mark=*,
+    mark size=.35pt,
+    draw opacity=0,
+    fill opacity=.85,
+}}
 \pgfplotsset{default plot/.style = {
     grid=major,
     ylabel style={rotate=-90},
@@ -43,9 +50,15 @@
 \pgfplotsset{half plot/.style = {
     default plot,
     % NOTE(mrksr): Due to width calculations in pgfplots, two of these next to
-    % each other are not wider than the full width.
+    % each other are not wider than the full width if there is no ylabel.
     width=.55\plotfullwidth,
     height=.325\plotfullheight,
+}}
+
+\pgfplotsset{half label plot/.style = {
+    half plot,
+    % NOTE(mrksr): We need to reserve some space for the label.
+    width=.49\plotfullwidth,
 }}
 
 \pgfplotsset{third plot/.style = {
@@ -56,9 +69,10 @@
     height=.325\plotfullheight,
 }}
 
-\tikzstyle{true function} = [line width=4pt, densely dashed, smooth]
+\tikzstyle{true function} = [semithick, dashed]
 
 \tikzstyle{mean} = [thick]
+\tikzstyle{weak mean} = [thin, smooth]
 \tikzstyle{std} = [thin]
 \tikzstyle{first} = [sTealDark]
 \tikzstyle{first fill} = [sTealDark, opacity=0.3]
@@ -66,9 +80,9 @@
 \tikzstyle{second} = [sGreenDark]
 \tikzstyle{second fill} = [sGreenDark, opacity=0.3]
 \tikzstyle{second full} = [sGreenDark, fill=sGreenDark]
-\tikzstyle{third} = [sRedLight]
-\tikzstyle{third fill} = [sRedLight, opacity=0.3]
-\tikzstyle{third full} = [sRedLight, fill=sRedLight]
+\tikzstyle{third} = [sRedDark]
+\tikzstyle{third fill} = [sRedDark, opacity=0.3]
+\tikzstyle{third full} = [sRedDark, fill=sRedDark]
 \tikzstyle{fourth} = [sYellowDark]
 \tikzstyle{fourth fill} = [sYellowDark, opacity=0.3]
 \tikzstyle{fourth full} = [sYellowDark, fill=sYellowDark]
@@ -79,6 +93,7 @@
 \tikzstyle{sample 2} = [sample, hannah2]
 \tikzstyle{sample 3} = [sample, hannah3]
 \tikzstyle{sample 4} = [sample, hannah4]
+\tikzstyle{tiny sample} = [sample, very thin]
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,5 +165,54 @@
     default plot,
     height=120pt,
     enlarge x limits=false,
+    xlabel style={overlay=false},
+    ylabel style={overlay=false},
 }}
+
+\pgfplotsset{wind joint plot/.style = {
+    default plot,
+    height=.25\plotfullheight,
+    width=.95\plotfullwidth,
+    enlarge x limits=false,
+    xlabel style={overlay=false},
+    ylabel style={overlay=false},
+}}
+
+\pgfplotsset{wind sample plot/.style = {
+    half label plot,
+    height=.25\plotfullheight,
+    xlabel style={overlay=false},
+    ylabel style={overlay=false},
+}}
+
 \tikzstyle{wind data} = [thick]
+
+\pgfplotsset{wind decomposition/.style = {
+    grid=major,
+    try min ticks=3,
+    enlarge x limits=false,
+    width=110pt,
+    height=75pt,
+    ylabel style={at={(ticklabel* cs:0.5)},rotate=-90},
+    xlabel style={at={(ticklabel* cs:0.5)}},
+    tick label style={font=\small},
+    label style={font=\small},
+}}
+
+\pgfplotsset{wind decomposition joint plot/.style = {
+    grid=major,
+    height=75pt,
+    enlarge x limits=false,
+    ylabel style={rotate=-90},
+    ytick pos=left,
+    xmin=0, xmax=1,
+    xtick={0, 0.5, 1},
+    xticklabels={0, , 1},
+    ymin=-1.5, ymax=1.5,
+    ytick={-1, 0, 1},
+    yticklabels={-1, , 1},
+    ylabel style={at={(ticklabel* cs:0.5)}},
+    xlabel style={at={(ticklabel* cs:0.5)}},
+    tick label style={font=\small},
+    label style={font=\small},
+}}

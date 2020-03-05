@@ -7,17 +7,17 @@ Prerequisites?
 \end{itemize}
 
 \section{Bayesian Probabilistic Numerics}
-\label{sec:probabilistic_numerics}
+\label{sec:probabilistic_numerics:probabilistic_numerics}
 \begin{figure}[t]
     \centering
     \includestandalone{figures/quantities_of_interest}
     \caption[Quantities of interest]{
         Quantities of interest.
-        \label{fig:quantities_of_interest}
+        \label{fig:probabilistic_numerics:quantities_of_interest}
     }
 \end{figure}
 \begin{definition}[Numerical Method]
-    \label{def:numerical_method}
+    \label{def:probabilistic_numerics:numerical_method}
     Let $\Uc$, $\Yc$ and $\Qc$ be measurable spaces and $Q: \Uc \to \Qc$ a measurable function.
     A \emph{numerical method} $(Y, A)$ for estimation of a quantity of interest $Q$ consists of
     \begin{labeling}{Information operator $Y$\quad}
@@ -67,11 +67,11 @@ We will show now how this motivation can be put in a probabilistic context.
     \includestandalone{figures/probabilistic_numerics}
     \caption[Probabilistic Numerics]{
         Probabilistic Numerics.
-        \label{fig:probabilistic_numerics}
+        \label{fig:probabilistic_numerics:probabilistic_numerics}
     }
 \end{figure}
 \begin{definition}[Probabilistic Numerical Method]
-    \label{def:probabilistic_numerical_method}
+    \label{def:probabilistic_numerics:probabilistic_numerical_method}
     Let $\Uc$, $\Yc$ and $\Qc$ be measurable spaces and let $Q: \Uc \to \Qc$ be a measurable function.
     A \emph{probabilistic numerical method} $(Y, B)$ for estimation of a quantity of interest $Q$ consists of
     \begin{labeling}{Belief update operator $B$\quad}
@@ -96,7 +96,7 @@ This is an extension to conditionings of Random variables to the case where $\Uc
 Existence of disintegrations is guaranteed under weak conditions.
 
 \begin{definition}[Bayesian Probabilistic Numerical Method]
-    \label{def:bayesian_probabilistic_numerical_method}
+    \label{def:probabilistic_numerics:bayesian_probabilistic_numerical_method}
     A probabilistic numerical method $M = (Y, B)$ is called \emph{Bayesian} for a quantity of interest $Q$ if for all $p \in \Probs{\Uc}$ and for $Y_\#p$-almost-all $y \in \Yc$
     \begin{align}
         \Fun*{B}{p, y} = Q_\#p^y.
@@ -115,7 +115,7 @@ Explain Trapezodial Rule here.
 
 
 \section{Reinforcement Learning}
-\label{sec:reinforcement_learning}
+\label{sec:reinforcement_learning:reinforcement_learning}
 \parencite{bertsekas_stochastic_1978}
 
 \begin{definition}[Reinforcement Learning Problem]
@@ -134,18 +134,18 @@ We remove the control constraint because nobody cares.
 
 
 \subsection{Reinforcement Learning}
-\label{sub:reinforcement_learning}
+\label{sub:reinforcement_learning:reinforcement_learning}
 \begin{figure}[t]
     \centering
     \includestandalone{figures/agent_environment_interaction}
     \caption[Agent-environment interaction]{
         The interaction between an agent and its environment in reinforcement learning happens at discrete time steps.
     }
-    \label{fig:agent_environment_interaction}
+    \label{fig:reinforcement_learning:agent_environment_interaction}
 \end{figure}
 Reinforcement learning describes the general problem of learning to control a system by interaction in order to achieve a predefined goal.
 An \emph{agent} has to decide on specific \emph{actions} to influence their \emph{environment}.
-The boundary between agent and environment is shown in \cref{fig:agent_environment_interaction}.
+The boundary between agent and environment is shown in \cref{fig:reinforcement_learning:agent_environment_interaction}.
 They interact at specific discrete \emph{time steps} $t \in \Nb$.
 At every such time step, the agent observes the environment via the \emph{state} $\mat{s}_t \in \Sc$, where $\Sc$ is the space of all possible states.
 Based on this information, the agent has to decide which action $\mat{a}_t \in \Ac$ to perform.
@@ -168,7 +168,7 @@ This implies that given the same initial state $\mat{s}_0$ and policy $\pi$ it m
 Together with the state and action spaces, the transition dynamics fulfill the Markov property.
 That is, the distribution of $\mat{s}_{t+1}$ is independent of all states before $\mat{s}_t$ given $\mat{s}_t$.
 \begin{definition}[Transition Dynamics]
-    \label{def:transition_dynamics}
+    \label{def:reinforcement_learning:transition_dynamics}
     The \emph{transition dynamics $f$} of a system encode its physical behaviour.
     These dynamics
     \begin{align}
@@ -184,7 +184,7 @@ The higher the reward, the better the state transition is considered to be, inde
 In the following, we consider $r_{t+1}$ to be independent of the state $\mat{s}_t$ and the action $\mat{a}_t$ and only depend on $\mat{s}_{t+1}$.
 It is obtained from a real-valued and known \emph{reward function $r$} such that $r_{t+1} = r(\mat{s}_{t+1})$.
 \begin{definition}[Reward Function]
-    \label{def:reward_function}
+    \label{def:reinforcement_learning:reward_function}
     The \emph{reward function $r$} assigns a quality to each state in the state space
     \begin{align}
         r : \Sc \to \Rb.
@@ -209,7 +209,7 @@ The larger the time horizon, the more far-sighted an agent has to be to be succe
 For large values of $T$, it can be helpful to focus on rewards earned in the near future and to weight potential rewards further along with a smaller factor.
 This is achieved with a constant discount factor $\gamma$.
 \begin{definition}[Value Function]
-    \label{def:old_value_function}
+    \label{def:reinforcement_learning:old_value_function}
     Given transition dynamics $f$, a policy $\pi$, a time horizon $T \in \Nb \cup \left\{ \infty \right\}$ and a discount factor $0 \leq \gamma \leq 1$, the \emph{(expected) value function $J^\pi$} denotes the expected accumulated reward of a state and is given by
     \begin{align}
         J^\pi : \left\{
@@ -228,7 +228,7 @@ Note that extensions to partially observable MDPs (POMDPs) are regularly conside
 The objective of the reinforcement learning problem is to find the best policy in this decision process under the assumption that the transition dynamics are unknown a priori.
 The \emph{optimal policy} $\pi^*$ maximizes the expected value under the distribution of initial states, that is it solves the optimization problem
 \begin{align}
-    \label{eq:optimal_policy}
+    \label{eq:reinforcement_learning:optimal_policy}
     \begin{split}
         \pi^\ast &\in \argmax_{\pi} \Moment*{\E_{\Prob{\mat{s}_0}}}{J^\pi(\mat{s}_0)} \\
         &= \argmax_{\pi} \int J^\pi(\mat{s}_0) \Prob{\mat{s}_0} \diff \mat{s}_0.
@@ -237,19 +237,19 @@ The \emph{optimal policy} $\pi^*$ maximizes the expected value under the distrib
 
 
 \subsection{Probabilistic Reinforcement Learning}
-\label{sub:probabilistic_reinforcement_learning}
+\label{sub:reinforcement_learning:probabilistic_reinforcement_learning}
 \begin{figure}[t]
     \centering
     \includestandalone{figures/quantities_of_interest_rl}
     \caption[Quantities of interest in reinforcement learning]{
         Quantities of interest in reinforcement learning.
-        \label{fig:quantities_of_interest_rl}
+        \label{fig:reinforcement_learning:quantities_of_interest_rl}
     }
 \end{figure}
 \begin{table}[t]
     \centering
     \caption{Great Table!}
-    \label{tab:label}
+    \label{tab:reinforcement_learning:label}
     \newcolumntype{Y}{>{\centering\arraybackslash}X}
     \begin{tabularx}{\textwidth}{cYY}
         \toprule
@@ -268,4 +268,4 @@ The \emph{optimal policy} $\pi^*$ maximizes the expected value under the distrib
 
 
 \subsection{Bayesian Reinforcement Learning}
-\label{sub:bayesian_reinforcement_learning}
+\label{sub:reinforcement_learning:bayesian_reinforcement_learning}

@@ -6,628 +6,6 @@ Prerequisites?
     \item Function Spaces
 \end{itemize}
 
-\section{Interpretable Reinforcement Learning}
-\label{sec:interpretable_reinforcement_learning}
-In this paper, we present a model-based reinforcement learning system where the transition model is treated in a Bayesian manner.
-The approach naturally lends itself to exploit expert knowledge by introducing priors to impose structure on the underlying learning task.
-The additional information introduced to the system means that we can learn from small amounts of data, recover an interpretable model and, importantly, provide predictions with an associated uncertainty.
-To show the benefits of the approach, we use a challenging data set where the dynamics of the underlying system exhibit both operational phase shifts and heteroscedastic noise.
-Comparing our model to NFQ and BNN+LV, we show how our approach yields human-interpretable insight about the underlying dynamics while also increasing data-efficiency.
-
-
-\subsection{Introduction}
-\label{sub:interpretable_reinforcement_learning:introduction}
-Machine learning methods \parencite{shalev-shwartz_understanding_2014} are designed to solve tasks where the underlying system we want to model is only partly known or understood.
-The hope when using machine learning methods is that we can reduce this uncertainty by exploiting statistical patterns in data generated from the underlying system.
-
-Reinforcement learning (RL)~\parencite{sutton_reinforcement_2018} is a machine learning paradigm designed to learn in a dynamic environment where we can specify a goal or have a notion of what a desirable behaviour is.
-The goal of RL is to learn a policy which dynamically chooses actions in the environment in order to achieve a goal or a behaviour.
-Specifically, an RL agent's task is to learn a policy $\pi$ which, given the current state $\mat{s}$ of an environment, chooses an action $\mat{a}$ to achieve the goal specified by a reward function $r$ mapping system states to numerical rewards.
-To learn a policy, any RL system needs to understand the underlying dynamics governing the system, how the transition between states is effected by the actions taken.
-The next state $\mat{s}^\prime$ is determined by the latent and possibly stochastic transition function $\mat{s}^\prime = \Fun*{f}{\mat{s}, \mat{a}}$.
-How the dynamical system is treated is one of the main distinctions among different approaches to RL.
-In model-based RL, the dynamic model is an explicit part of the system, while in the model-free counterpart the transition dynamics are implicit and cannot be disentangled from the system.
-
-Applying RL in an industrial setting often implies trying to derive an alternative more efficient controller for an already existing system.
-In a critical application it is unlikely that we will be able to deploy an untested policy as this can lead to safety issues.
-This means that in practice we are often limited by previously collected data created by a different, possibly known, control mechanism in order to learn our model.
-In the literature, this scenario is referred to as batch RL~\parencite{lange_batch_2012}, where we are presented with a set of state transitions $\Dc = \Set{(\mat{s}_n, \mat{a}_n, \mat{s}_n^\prime)}_{n=1}^N$ and are unable to interact with the original system to find a policy.
-In order to be able to derive an efficient policy in this scenario, we need to use the available data as efficiently as possible.
-Data efficiency in machine learning comes from reducing the search space of solutions.
-In other words, data efficiency arises from being able to exploit as much prior knowledge of the system as possible \parencite{shalev-shwartz_understanding_2014}.
-
-To be able to use the available data as efficiently as possible we therefore need a model which provides explicit and interpretable handles such that we can easily introduce priors.
-The model-based approach to RL describes each component of the system in a modular fashion thereby providing an interface to incorporate prior knowledge.
-The challenge is how these priors should be specified and how they should be included such that the hypothesis space can be limited in a manner coherent with our knowledge of the system.
-
-Gaussian processes (GPs) are stochastic processes that can be used to specify probability distributions over the space of functions.
-While a GP specifies a distribution with support for all functions, it efficiently concentrates its probability mass to functions with specific characteristics.
-These characteristics make GPs well suited for RL as they do not impose hard constraints while still placing a significant structure on the space of functions.
-In \parencite{deisenroth_pilco_2011} the authors propose a model-based RL method where Gaussian processes are used as priors for the dynamics.
-They provide a principled approach of taking model uncertainty into account when evaluating the performance of a policy, thereby reducing the impact of model-bias.
-However, the approach has several restrictions, transition dynamics are modelled as standard Gaussian processes (GPs) and policies and rewards must be of specific forms.
-
-In this work, we will show how we can alleviate some of the limitations of \parencite{deisenroth_pilco_2011} to provide a richer and more efficient RL model.
-We will show how we can introduce additional constraints on the dynamic model allowing for multiple transitional signatures to be active simultaneously.
-Incorporating this knowledge facilitates learning by allowing us to more precisely state what we want to learn thereby significantly reducing the data requirements.
-Furthermore, decomposing the transition model into several parts allows us to use reward shaping \parencite{sutton_reinforcement_2018} in order to discourage policies based on dynamic characteristics.
-
-Introducing constraints on the dynamic model based on abstract knowledge is an inherently problem-dependent process.
-This work explores this process for the heteroscedastic and bimodal Wet-Chicken benchmark~\parencite{tresp_wet_1994,hans_efficient_2009} which is both easy to understand and challenging to model.
-A central challenge in this benchmark is how to formulate a model which can represent bimodalities.
-One approach is presented in~\parencite{bishop_mixture_1994}, where multimodal regression tasks are interpreted as a density estimation problem.
-A high number of candidate distributions is reweighed to match the observed data without modeling the underlying generative process.
-Reformulated in a Bayesian framework using latent variables, this approach has been applied to the Wet-Chicken benchmark in~\parencite{depeweg_learning_2016,depeweg_decomposition_2018}.
-However, such models are hard to interpret as they do not yield explicit models for the different modalities or their relative importance.
-In this work, we are interested in formulating a dynamics model which yields new interpretable insights about the underlying system.
-We formulate a probabilistic model which contains such explicit models by interpreting the Wet-Chicken benchmark as a data association problem~\parencite{barshalom_tracking_1990,cox_review_1993}.
-While many probabilistic interpretations of this problem assume that the relative importance of different modes is constant~\parencite{lazaro-gredilla_overlapping_2012,bodin_latent_2017}, we base our formulation on the DAGP model~\parencite{kaiser_data_2018} which learns a non-parametric model of each mode and where the associations between the modes themselves is further controlled by a non-stationary stochastic process.
-
-The paper is outlined as follows.
-After introducing the Wet-Chicken benchmark, we show how high-level knowledge about this system can be used to impose Bayesian structure.
-We derive an efficient inference scheme for both the dynamics model and for probabilistic policy search based on variational inference.
-We show that this approach yields interpretable models and policies and is significantly more data-efficient than less interpretable alternatives.
-
-
-\subsection{The Wet-Chicken Benchmark}
-\label{sub:interpretable_reinforcement_learning:wetchicken}
-In the Wet-Chicken problem~\parencite{tresp_wet_1994,hans_efficient_2009}, a canoeist is paddling in a two-dimensional river.
-The canoeist's position at time $t$ is given by $\mat{s}_t = (x_t, y_t) \in \Rb^2$, where $x_t$ denotes the position along the river and $y_t$ the position across it.
-The river is bounded by its length $l = 5$ and width $w = 5$.
-There is a waterfall at the end of the river at $x = l$.
-The canoeist wants to get close to the waterfall to maximize the reward $\Fun*{r}{\mat{s}_t} = r_t = x_t$.
-However, if the canoeist falls down the waterfall, he has to start over at the initial position $(0, 0)$.
-
-The river's flow consists of a deterministic velocity $v_t = y_t \cdot \sfrac{3}{w}$ and stochastic turbulence $b_t = 3.5 - v_t$, both of which depend on the position on the $y$-axis.
-The higher $y_t$ is, the faster the river flows but also the less turbulent it becomes.
-The canoeist chooses his paddle direction and intensity via an action $\mat{a}_t = (a_{t,x}, a_{t,y}) \in [-1, 1]^2$.
-The transition function $f : (\mat{s}_t, \mat{a}_t) \mapsto \mat{s}_{t+1} = (x_{t+1}, y_{t+1})$ is given by
-\begin{align}
-    x_{t+1} &= \begin{cases}
-        0 & \text{if } \hat{x}_{t+1} > l \\
-        0 & \text{if } \hat{x}_{t+1} < 0 \\
-        \hat{x}_{t+1} & \text{otherwise}
-    \end{cases} &
-    y_{t+1} &= \begin{cases}
-        0 & \text{if } \hat{x}_{t+1} > l \text{ or } \hat{y}_{t+1} < 0 \\
-        w & \text{if } \hat{y}_{t+1} > w \\
-        \hat{y}_{t+1} & \text{otherwise}
-    \end{cases}
-\end{align}
-where
-\begin{align}
-\begin{split}
-    \hat{x}_{t+1} &= x_t + (1.5 \cdot a_{t, x} - 0.5)  + v_t + b_t \cdot \tau_t, \\
-    \hat{y}_{t+1} &= y_t + a_{t, y},
-\end{split}
-\end{align}
-and $\tau_t \sim \Fun*{\Uni}{-1, 1}$ is a uniform random variable that represents the turbulence.
-
-There is almost no turbulence at $y = w$, but the velocity is too high to paddle back.
-Similarly, the velocity is zero at $y = 0$, but the canoeist can fall down the waterfall unpredictably due to the high turbulence.
-A successful canoeist must find a balance between handling the stochasticity and velocities within the capabilities of the canoeist to get as close to the waterfall as possible.
-However, as the canoeist moves closer to the waterfall, the distribution over the next states become increasingly more bi-modal as the probability of falling down increases.
-Together with the heteroscedasticity introduced by the turbulence dependent on the current position, these properties make the Wet-Chicken problem especially difficult for model-based reinforcement learning problems.
-
-
-\subsection{Probabilistic Policy Search}
-\label{sub:interpretable_reinforcement_learning:probabilistic_policy_search}
-\begin{figure}[t]
-    \centering
-    \includestandalone{wetchicken_graphical_model_rl}
-    \caption{
-        \label{fig:interpretable_reinforcement_learning:graphical_model:rl}
-        The generative process for the return $J^\pi$, where violet nodes are observed and parameters are shown in yellow.
-        It shows how starting from $\mat{s}_0$, a trajectory of length $T$ is generated with the policy parameterized by $\mat{\theta}_\pi$.
-        The return is generated by the rewards which depend on their respective states only.
-    }
-\end{figure}
-We are interested in finding a policy specified by the parameters $\mat{\theta}_\pi$ which maximizes the discounted return
-$J^\pi(\mat{\theta}_\pi) = \sum_{t=0}^T \gamma^t \Fun*{r}{\mat{s}_t} = \sum_{t=0}^T \gamma^t r_t$ with a constant discount factor $\gamma \in [0, 1]$.
-Starting from an initial state $\mat{s}_0$ we generate a trajectory of states $\mat{s}_0, \ldots, \mat{s}_T$ obtained by applying the action $\mat{a}_t = \Fun*{\pi}{\mat{s}_t}$ at every time step $t$.
-The next state is generated using the (latent) transition function $f$, yielding $\mat{s}_{t+1} = \Fun*{f}{\mat{s}_t, \mat{a}_t}$.
-
-Many environments have stochastic elements, such as the random drift in the Wet-Chicken benchmark from \cref{sub:interpretable_reinforcement_learning:wetchicken}.
-We take this stochasticity into account by interpreting the problem from a Bayesian perspective where the discounted return specifies a generative model whose graphical model is shown in \cref{fig:interpretable_reinforcement_learning:graphical_model:rl}.
-Because of the Markov property assumed in RL, conditional independences between the states yield a recursive definition of the state probabilities given by
-\begin{align}
-\begin{split}
-    \Prob{\mat{s}_{t+1} \given f, \mat{\theta}_\pi} &= \int \Prob{\Fun{f}{\mat{s}_t, \mat{a}_t} \given \mat{s}_t, \mat{a}_t} \Prob{\mat{a}_t \given \mat{s}_t, \mat{\theta}_\pi} \Prob{\mat{s}_t} \diff \mat{a}_t \diff \mat{s}_t, \\
-    \Prob{r_t \given \mat{\theta}_\pi} &= \int \Prob{\Fun*{r}{\mat{s}_t} \given \mat{s}_t} \Prob{\mat{s}_t \given \mat{\theta}_\pi} \diff \mat{s}_t.
-\end{split}
-\end{align}
-With stochasticity or an uncertain transition model, the discounted return becomes uncertain and the goal can be reformulated to optimize the expected return
-\begin{align}
-    \Moment*{\E}{\Fun*{J^\pi}{\mat{\theta}_\pi}} = \sum_{t=0}^T \gamma^t \Moment*{\E_{\Prob{\mat{s}_t \given \mat{\theta}_\pi}}}{r_t}.
-\end{align}
-
-A model-based policy search method consists of two key parts~\parencite{deisenroth_pilco_2011}.
-First, a dynamics model is learned from state transition data.
-Second, this dynamics model is used to learn the parameters $\mat{\theta}_\pi$ of the policy $\pi$ which maximize the expected return $\Moment*{\E}{\Fun*{J^\pi}{\mat{\theta}_\pi}}$.
-We discuss both steps in the following.
-
-
-\subsubsection{An Interpretable Transition Model}
-\label{sub:interpretable_reinforcement_learning:mdgp}
-\begin{figure}[t]
-    \centering
-    \includestandalone{wetchicken_graphical_model_mdgp}
-    \caption{
-        \label{fig:interpretable_reinforcement_learning:graphical_model:mdgp}
-        The graphical model for the DAGP-based transition model, where violet nodes are observed and variational parameters are blue.
-        This model separates the flow-behaviour of the river $\mat{f}_t$, the heteroscedastic noise process $\mat{\sigma}_t$ and the possibility of falling down $\mat{\lambda}_t$.
-        Latent variables $\mat{l}_t$ represent the belief that the $\nth{t}$ data point is a drop event.
-    }
-\end{figure}
-We formulate a probabilistic transition model-based on high-level knowledge about the Wet-Chicken benchmark.
-Importantly, we do not formulate a specific parametric dynamics model as would be required to derive a controller.
-Instead, we make assumptions on a level typically available from domain experts.
-
-We encode that given a pair of current state and action $\mat{\hat{s}}_t = \left( \mat{s}_t, \mat{a}_t \right)$, the next state $\mat{s}_{t+1}$ is generated via the combination of three things:
-the deterministic flow-behaviour of the river $\mat{f}_t$, some heteroscedastic noise process $\mat{\sigma}_t$ and the possibility of falling down $\mat{\lambda}_t$.
-This prior imposes structure which allows us to explicitly state what we want to learn from the data and where we do not assume prior knowledge:
-How does the river flow?
-What kind of turbulences exist?
-When does the canoeist fall down?
-How do the actions influence the system?
-
-Each question is explicitly answered by one of the model's components.
-In \cref{sub:interpretable_reinforcement_learning:results} we will visualize these components and discuss how they can be used by experts to gain new insights about the system.
-Additionally, interpretable transition models help to build trust in derived policies:
-Since experts can assess the plausibility of the transition model, successful policies are unlikely to behave unexpectedly on the true system.
-
-We formulate a graphical model in \cref{fig:interpretable_reinforcement_learning:graphical_model:mdgp} using the data association with GPs (DAGP) model~\parencite{kaiser_data_2018}, which allows us to handle the multi-modality introduced by falling down the waterfall.
-We specify this separation via the marginal likelihood
-\begin{align}
-\begin{split}
-    \label{eq:interpretable_reinforcement_learning:true_marginal_likelihood}
-    &\Prob*{\mat{s}_{t+1} \given \mat{\hat{s}}_t} =
-    \int
-    \Prob*{\mat{s}_{t+1} \given \mat{\sigma}_t, \mat{f}_t, \mat{l}_t}
-    \Prob*{\mat{l}_t \given \mat{\hat{s}}_t}
-    \Prob*{\mat{\sigma}_t \given \mat{\hat{s}}_t}
-    \Prob*{\mat{f}_t \given \mat{\hat{s}}_t}
-    \diff \mat{\sigma}_t \diff \mat{l}_t \diff \mat{f}_t,
-\end{split}
-\end{align}
-where $\mat{f}_t = \left( \mat{f}_t^{\pix{1}}, \dots, \mat{f}_t^{\pix{K}} \right)$.
-The marginal likelihood consists of the two GPs $\Prob*{\mat{\sigma}_t \given \mat{\hat{s}}_t}$ and $\Prob*{\mat{f}_t \given \mat{\hat{s}}_t}$ and the two likelihoods
-\begin{align}
-\begin{split}
-    &\Prob*{\mat{s}_{t+1} \given \mat{\sigma}_t, \mat{f}_t, \mat{l}_t} =
-    \prod_{k=1}^K
-    \Gaussian*{\mat{s}_{t+1} \given \mat{f}_t^{\pix{k}}, \left(\mat{\sigma}_t^{\pix{k}}\right)^2}_{^{\displaystyle,}}^{\Fun{\Ind}{l_t^{\pix{k}} = 1}} \\
-    %
-    &\qquad\qquad\Prob*{\mat{l}_t \given \mat{\hat{s}}_t} =
-    \int \Multinomial*{\mat{l}_t \given \Fun{\softmax}{\mat{\lambda}_t}} \Prob*{\mat{\lambda}_t \given \mat{\hat{s}}_t} \diff \rv{\lambda}_t
-\end{split}
-\end{align}
-where $\Multi$ denotes a multinomial distribution.
-These likelihood describe the regression and classification tasks implied by the problem respectively:
-In our case, we use $K = 2$ modes, one for staying in the river and one for falling down the waterfall.
-For every data point we infer a posterior belief $\Prob{\mat{l}_t}$ about which mode the data point belongs to, as we assume this separation can not be predetermined using expert knowledge.
-
-We place independent GP priors on the $\mat{f}^{\pix{k}}$, $\mat{\sigma}^{\pix{k}}$ and $\mat{\lambda}^{\pix{k}}$.
-Given the data a fixed set of assignments $\mat{L}$, our modelling assumptions imply independence between the $K$ modes.
-However, this independence is lost if the assignments are unknown and a discrete optimization problem has to be solved when doing joint inference over the different modes and the association problem.
-We approximate the exact posterior via a factorized variational distribution
-\begin{align}
-    \Variat*{\mat{f}, \mat{\lambda}, \mat{\sigma}, \mat{U}} &=
-    \prod_{k=1}^K\prod_{t=1}^T \Variat{\mat{f}_t^{\pix{k}}, \mat{u}^{\pix{k}}} \Variat{\mat{\lambda}_t^{\pix{k}}, \mat{u_\lambda}^{\pix{k}}} \Variat{\mat{\sigma}_t^{\pix{k}}, \mat{u_\sigma}^{\pix{k}}}
-\end{align}
-which introduces variational inducing inputs and outputs $\mat{U}$ as described in~\parencite{damianou_deep_2013,hensman_scalable_2015,kaiser_data_2018}.
-These inducing inputs independently characterize the respective model parts and enable us to do inference via stochastic optimization.
-
-The variational parameters are optimized by minimizing a lower bound to the marginal likelihood which can be efficiently computed via sampling and enables stochastic optimization.
-\begin{align}
-\begin{split}
-    \label{eq:interpretable_reinforcement_learning:variational_bound}
-    \Lc_{\text{DAGP}} &= \Moment*{\E_{\Variat*{\mat{F}, \mat{\lambda}, \mat{\sigma}, \mat{U}}}}{\log\frac{\Prob*{\mat{S}^\prime, \mat{F}, \mat{\lambda}, \mat{\sigma}, \mat{U} \given \mat{\hat{S}}}}{\Variat*{\mat{F}, \mat{\lambda}, \mat{\sigma}, \mat{U}}}} \\
-    &=
-    \sum_{t=1}^T \Moment*{\E_{\Variat*{\mat{f}_t}}}{\log \Prob*{\mat{s}^\prime_t \given \mat{f}_t, \mat{\lambda}_t, \mat{\sigma}_t}}
-    + \sum_{t=1}^T \Moment*{\E_{\Variat*{\mat{\lambda}_t}}}{\log \Prob*{\mat{l}_t \given \mat{\lambda}_t}} \\
-    &\quad
-    - \sum_{k=1}^K \KL{\Variat*{\mat{u}^{\pix{k}}, \mat{u_\lambda}^{\pix{k}}, \mat{u_\sigma}^{\pix{k}}}}{\Prob*{\mat{u}^{\pix{k}}, \mat{u_\lambda}^{\pix{k}}, \mat{u_\sigma}^{\pix{k}}}}
-\end{split}
-\end{align}
-To gain informative gradients with respect to the assignments $\mat{l}$ and assignment process $\mat{\lambda}$, we use a continuous relaxation based on Concrete random variables~\parencite{maddison_concrete_2016}.
-We represent the belief about $\mat{l}_t$ as a $K$-dimensional discrete distribution $\Variat{\mat{l}_t}$.
-Instead of drawing discrete samples from $\Variat{\mat{l}_t}$ when calculating $\Lc_{\text{DAGP}}$, we draw samples $\mat{\hat{l}}_t$ from a concrete random variable.
-Based on a temperature parameter, concrete random variables yield samples which are almost discrete but which still yield informative gradients.
-For details we refer to~\parencite{kaiser_data_2018}.
-
-We obtain an explicit representation of the GP posteriors during variational inference which allows us to efficiently propagate samples through the model to simulate trajectories used for policy search.
-Predictions for an unknown state $\mat{\hat{s}}_\ast$ are mixtures of $K$ independent Gaussians given by,
-\begin{align}
-\begin{split}
-    \label{eq:interpretable_reinforcement_learning:predictions}
-    \Variat{\mat{s}^\prime_\ast \given \mat{\hat{s}}_\ast}
-    &= \int \sum_{k=1}^K \Variat{l_\ast^{\pix{k}} \given \mat{\hat{s}}_\ast} \Variat{\mat{s}_\ast^{\prime\pix{k}} \given \mat{\hat{s}}_\ast} \diff \mat{l}_\ast \\
-    &= \int \sum_{k=1}^K \Variat{l_\ast^{\pix{k}} \given \mat{\hat{s}}_\ast} \Variat{\mat{s}_\ast^{\prime\pix{k}} \given \mat{f}_\ast^{\pix{k}} \mat{\sigma}_\ast^{\pix{k}}} \Variat{\mat{f}_\ast^{\pix{k}}, \mat{\sigma}_\ast^{\pix{k}} \given \mat{\hat{s}}_\ast} \diff \mat{l}_\ast \diff \mat{f}_\ast \diff \mat{\sigma}_\ast \\
-    &\approx \sum_{k=1}^K \tilde{l}_\ast^{\pix{k}} \mat{\tilde{s}}_\ast^{\prime\pix{k}}.
-\end{split}
-\end{align}
-We sample from the assignment process $\mat{l}_\ast$ and heteroscedastic noise process $\mat{\sigma}_\ast$.
-The $K$ predictive posteriors $\Variat{\mat{s}_\ast^{\prime\pix{k}} \given \mat{f}_\ast^{\pix{k}} \mat{\sigma}_\ast^{\pix{k}}}$ are then given by $K$ independent shallow GPs and can be computed analytically.
-
-
-\subsubsection{Policy Learning}
-\label{sub:interpretable_reinforcement_learning:policy}
-After training a transition model, we use the variational posterior $\Variat{\mat{s}_{t+1} \given \mat{\hat{s}}_t}$ to train a policy by sampling roll-outs and optimizing policy parameters via stochastic gradient descent on the expected return $\Moment*{\E}{\Fun*{J^\pi}{\mat{\theta}_\pi}}$.
-The expected return is approximated using the variational posterior given by
-\begin{align}
-\begin{split}
-    \label{eq:interpretable_reinforcement_learning:policy_training}
-    \Moment*{\E}{\Fun*{J^\pi}{\mat{\theta}_\pi}}
-    &= \sum_{t=0}^T \gamma^t \Moment*{\E_{\Prob{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t}
-    \approx \sum_{t=0}^T \gamma^t \Moment*{\E_{\Variat{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t} \\
-    &= \int \sum_{t=0}^T \Bigg[ \gamma^t \Moment*{\E_{\Variat{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t} \Bigg] \Prob{\mat{s_0}} \prod_{t=0}^{T-1} \Variat{\mat{s}_{t+1} \given \mat{s}_t, \mat{\theta}_\pi} \diff \mat{s}_0 \dots \diff\mat{s}_T \\
-    &\approx \frac{1}{P} \sum_{p=1}^P \sum_{t=0}^T \gamma^t r_t^p.
-\end{split}
-\end{align}
-We expand the expectation to explicitly show the marginalization of the states in the trajectory.
-Due to the Markovian property of the transition dynamics, the integral factorizes along $t$.
-The integral is approximated by averaging over $P$ samples propagated through the model starting from a known distribution of initial states $\Prob{\mat{s}_0}$.
-State transitions can be efficiently sampled from the variational posterior of the dynamics model by repeatedly taking independent samples of the different GPs.
-
-The expected return in \cref{eq:interpretable_reinforcement_learning:policy_training} can be optimized using stochastic gradient descent via the gradients
-\begin{align}
-    \label{eq:interpretable_reinforcement_learning:policy_gradients}
-    \nabla_{\theta_\pi} \Fun*{J^\pi}{\theta_\pi} \approx \frac{1}{P} \sum_{p=1}^P \sum_{t=0}^T \gamma^t \nabla_{\theta_\pi} r_t^p
-\end{align}
-of the Monte Carlo approximation as they are an unbiased estimator of the true gradient.
-The gradients of the samples can be obtained using automatic differentiation tools such as TensorFlow \parencite{tensorflow2015-whitepaper}.
-The $P$ roll-outs can be trivially parallelized.
-Importantly, we only need a small number of Monte Carlo samples at every iteration, since we use the gradients of the samples directly.
-
-
-\subsection{Results}
-\label{sub:interpretable_reinforcement_learning:results}
-\begin{figure}[tp]
-    \centering
-    \begin{subfigure}[b]{\halffigurewidth}
-        \centering
-        \includestandalone{wetchicken_speed_mean}
-        \caption{
-            \label{fig:interpretable_reinforcement_learning:wetchicken:speed}
-            % Flow $\Moment{\E}{\Delta\mat{x}_{t+1} \given \text{no drop}}$
-            Flow $\Delta\mat{x}^{\pix{1}}$
-        }
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{\halffigurewidth}
-        \centering
-        \includestandalone{wetchicken_hetero_noise}
-        \caption{
-            \label{fig:interpretable_reinforcement_learning:wetchicken:hetero}
-            Heteroscedastic turbulence $\mat{\sigma}_x$
-        }
-    \end{subfigure}\\[\figureskip]
-    \begin{subfigure}[b]{\halffigurewidth}
-        \centering
-        \includestandalone{wetchicken_drop_mean}
-        \caption{
-            \label{fig:interpretable_reinforcement_learning:wetchicken:drop}
-            Drop $\mat{x}^{\prime\pix{2}}$
-        }
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{\halffigurewidth}
-        \centering
-        \includestandalone{wetchicken_falldown_probabilities}
-        \caption{
-            \label{fig:interpretable_reinforcement_learning:wetchicken:falldown}
-            Drop probability $\mat{\lambda}^{\pix{2}}$
-        }
-    \end{subfigure}
-    \caption{
-        \label{fig:interpretable_reinforcement_learning:wetchicken:dynamics}
-        The separation of different aspects of the Wet-Chicken in DAGP-based transition models benchmark yields new and interpretable information about the underlying dynamics.
-        The different parts of the model explicitly show flow speeds (\cref{fig:interpretable_reinforcement_learning:wetchicken:speed}), turbulence (\cref{fig:interpretable_reinforcement_learning:wetchicken:hetero}), drop behaviour (\cref{fig:interpretable_reinforcement_learning:wetchicken:drop}) and drop probabilities (\cref{fig:interpretable_reinforcement_learning:wetchicken:falldown}) with respect to the current position in the river and action $a = 0$.
-        The model has learned that the river is turbulent on the left and fast on the right, leading to consistent medium drop probabilities on the left due to stochasticity and a sharp boundary on the right, where the flow speed dominates.
-        Note that a drop resets the position to the initial state irrespective of the current state.
-        It is therefore correctly learned to be represented by the constant zero function (\cref{fig:interpretable_reinforcement_learning:wetchicken:drop}).
-    }
-\end{figure}
-\begin{figure}[tp]
-    \centering
-    \includestandalone{wetchicken_cut_0_0}
-    \includestandalone{wetchicken_cut_1_0}
-    \includestandalone{wetchicken_cut_2_5}
-    \includestandalone{wetchicken_cut_4_0}
-    \includestandalone{wetchicken_cut_5_0}
-    \caption{
-        \label{fig:interpretable_reinforcement_learning:wetchicken:cut}
-        Linear cuts through the DAGP-based transition model with the waterfall on the right at $x_t = 5$.
-        The plots show the dependency between $x_t$ and $x_{t+1}$ with respect to the action $a_t = 0$ and, from top to bottom, $y_t \in \Set{0, 1, 2.5, 4, 5}$.
-        The DAGP-based transition model successfully separates the two modes introduced through flow (blue) and drop (green) behaviours and predicts the probability of being assigned to the drop mode (violet).
-        While drops can be modelled using a constant noiseless function, the flow speed (gradient and bias) and heteroscedastic noise (variance) varies in the different cuts.
-        For low $y_t$, the river flows slowly but is very turbulent, while for high $y_t$, the river flows fast but deterministically.
-    }
-\end{figure}
-To solve the Wet-Chicken problem, we first train the dynamics model on batch data sampled from the true dynamics and then optimize neural policies with respect to this dynamics model.
-As the DAGP-based dynamics model is designed to be interpretable, we first discuss how, additionally to a joint posterior, the independent posteriors of its components yield insights about the Wet-Chicken problem.
-We then show how successful policies can be found with less data compared to the model-free NFQ~\parencite{riedmiller_neural_2005} and model-based Bayesian Neural Networks with latent variables (BNN+LV)~\parencite{depeweg_learning_2016}, two approaches which do not makes use of high-level expert knowledge.
-Thirdly, we show how the human-interpretable components of the dynamics models can be used for reward shaping, allowing us to easily formulate a requirement for conservative policies.
-
-
-\subsubsection{Dynamics Model}
-\label{sub:interpretable_reinforcement_learning:dynamics_model}
-The benchmark has two-dimensional state and action spaces from which we sample uniform random transitions with varying $N$ in the range \numrange{100}{5000}.
-For $N \geq 250$, our model is able to identify the underlying dynamics.
-In \cref{fig:interpretable_reinforcement_learning:wetchicken:cut} we show the joint predictive posterior of a DAGP-based transition model.
-The different plots show linear cuts through the Wet-Chicken system with respect to the action $a_t = 0$ and $y_t \in \Set{0, 1, 2.5, 4, 5}$.
-The transition model has successfully identified the two modes introduced through flow and drop behaviours and their relative importance.
-These cuts require additional examination to recover new knowledge about the system's behaviour.
-In contrast, the separation of the learning problem in the DAGP-based dynamics model gives us explicit and separate posteriors about the different system components via the independent GP posteriors shown in \cref{fig:interpretable_reinforcement_learning:wetchicken:dynamics}.
-This belief can directly be reasoned about with experts to evaluate the environment in which policies will be trained, raising confidence in their correctness.
-
-While drops can be modelled using a constant noiseless function, the flow speed and heteroscedastic turbulence varies throughout the system.
-For low $y$ the river flows slowly but is very turbulent while for high $y$ the river flows fast but deterministically.
-In the turbulent regime, falling down is possible but not certain for most $x$, while in the flow dominated regime, a drop becomes highly probable under a certain distance from the waterfall.
-Note that even though the turbulence as defined in \cref{sub:interpretable_reinforcement_learning:wetchicken} is independent of $x$, the heteroscedastic noise process has uncovered the implicit dependency for high $x$ as most possible turbulence values lead to falling down and thus assignment to the other mode.
-Similarly, the flow speed shown in \cref{fig:interpretable_reinforcement_learning:wetchicken:speed} is negative in the top left corner.
-This is due to the fact that the flow mode models the position after one step under the condition of not falling.
-As most turbulence into the direction of the waterfall leads to a drop, the posterior mean is further away from the waterfall as the turbulence dominates the low flow speed on the left side of the river.
-
-
-\subsubsection{Policy Learning}
-\label{sub:interpretable_reinforcement_learning:policy_learning}
-\begin{figure}[tp]
-    \centering
-    \begin{subfigure}[b]{\linewidth}
-        \centering
-        \sisetup{
-            table-format=-1.2(2),
-            table-number-alignment=center,
-            separate-uncertainty,
-            % table-align-uncertainty,
-            table-figures-uncertainty=1,
-            detect-weight,
-        }
-        % \newcolumntype{H}{>{\setbox0=\hbox\bgroup}c<{\egroup}@{}}
-        % \footnotesize
-        % \setlength{\tabcolsep}{1pt}
-        \begin{tabular}{cSSSS}
-            \toprule
-            {N} & {NFQ} & {BNN+LV} & {GP} & {DAGP} \\
-            \midrule
-            100  & 0.66 \pm 0.16           & {---}                   & \bfseries 1.41 \pm 0.01 & 1.18 \pm 0.09 \\
-            250  & 1.71 \pm 0.07           & 1.62 \pm 0.20           & 1.54 \pm 0.01           & \bfseries 2.33 \pm 0.01 \\
-            500  & 1.60 \pm 0.10           & 2.18 \pm 0.07           & 1.56 \pm 0.01           & \bfseries 2.25 \pm 0.01 \\
-            1000 & 1.99 \pm 0.06           & 2.27 \pm 0.01           & 2.13 \pm 0.01           & \bfseries 2.32 \pm 0.01 \\
-            2500 & 2.26 \pm 0.02           & \bfseries 2.30 \pm 0.01 & 1.91 \pm 0.01           & 2.28 \pm 0.01 \\
-            5000 & \bfseries 2.33 \pm 0.01 & 2.30 \pm 0.01           & 1.91 \pm 0.01           & 2.28 \pm 0.01 \\
-            \bottomrule
-        \end{tabular}
-        \vspace*{1ex}
-        \caption{
-            \label{fig:interpretable_reinforcement_learning:wetchicken:table}
-            Comparison of expected returns
-        }
-    \end{subfigure}\\[\figureskip]
-    \begin{subfigure}[b]{\linewidth}
-        \centering
-        \includestandalone{wetchicken_policy_quiver}
-        \caption{
-            \label{fig:interpretable_reinforcement_learning:wetchicken:policy}
-            A successful Wet-Chicken policy
-        }
-    \end{subfigure}
-    \caption{
-        \label{fig:interpretable_reinforcement_learning:wetchicken_policy}
-        Using interpretable DAGP-based transition models with structurally informative priors, successful policies can be learned based on 250 observations.
-        In contrast, about 2500 observations are needed to find a policy using the model-free NFQ.
-        As GP based transition models are not capable of representing bimodal dynamics, training does not yield successful policies.
-        The chosen optimal movement direction of a successful policy (right) is denoted by both the arrows and background color.
-    }
-\end{figure}
-\begin{figure}[tp]
-    \centering
-    \begin{subfigure}[b]{\linewidth}
-        \centering
-        \sisetup{
-            table-format=-1.2(2),
-            table-number-alignment=center,
-            separate-uncertainty,
-            % table-align-uncertainty,
-            table-figures-uncertainty=1,
-            detect-weight,
-        }
-        % \footnotesize
-        % \setlength{\tabcolsep}{1pt}
-        \begin{tabular}{cSSS[table-format=2.1(1)]}
-            \toprule
-            {Training} & {Original} & {Conservative} & {Drop} \\
-            {Reward} & {Return}  & {Return} & {\%} \\
-            \midrule
-            {$r_\text{orig}$} & \bfseries 2.32 \pm 0.01 & -1.22 \pm 0.02 & 21.8 \pm 0.2 \\
-            {$r_\text{cons}$} & 2.17 \pm 0.01 & \bfseries -1.00 \pm 0.01 & \bfseries 18.9 \pm 0.1 \\
-            \bottomrule
-        \end{tabular}
-        \vspace*{1ex}
-        \caption{
-            \label{fig:interpretable_reinforcement_learning:wetchicken:conservative_table}
-            Drop risk reduction with reward shaping
-        }
-    \end{subfigure}\\[\figureskip]
-    \begin{subfigure}[b]{\linewidth}
-        \centering
-        \includestandalone{wetchicken_conservative_policy_quiver}
-        \caption{
-            \label{fig:interpretable_reinforcement_learning:wetchicken:conservative_policy}
-            A conservative Wet-Chicken policy
-        }
-    \end{subfigure}
-    \caption{
-        \label{fig:interpretable_reinforcement_learning:conservative_wetchicken_policy}
-        As the different components of a DAGP-based transition model are easily interpretable, they can be used for reward shaping.
-        We formulate a conservative reward function $r_\text{cons}$ which penalizes drops and can easily be evaluated in the transition model.
-        A resulting policy (right) has worse return with respect to the original reward function $r_\text{orig}$ but effectively reduces the risk of falling.
-    }
-\end{figure}
-Given a posterior for the dynamics model, we now train a neural policy using probabilistic model rollouts.
-We sample initial states from the training data, use a horizon of $T = 5$ steps and average over $P = 20$ samples with $\gamma = 0.9$.
-We use a two-layer neural network with 20 ReLU-activated units each as our policy parametrization.
-For every state transition, we sample independently from the different model components to generate a sample for the next state using \cref{eq:interpretable_reinforcement_learning:predictions}.
-This incorporates both the stochasticity in the system introduced via heteroscedastic noise and the Bayesian uncertainty about the correct model in the policy search.
-During training, the policy thus implicitly learns to consider the stochasticity of the Wet-Chicken benchmark as different sample-trajectories generate gradients with respect to different realizations of the stochasticity of the Wet-Chicken benchmark.
-\Cref{fig:interpretable_reinforcement_learning:wetchicken:policy} shows how a successful policy has found a trade-off between the unpredictability on the left and the uncontrollable speed on the right.
-
-In Table~\ref{fig:interpretable_reinforcement_learning:wetchicken:table}, we compare policy search based on the DAGP-based dynamics model with a standard GP dynamics model and NFQ.
-We present expected returns for training runs with different amounts of data averaged over 10 experiments together with standard errors.
-A policy applying uniformly random actions yields a return of about \num{1.5} and a return above \num{2.2} indicates that a successful policy has been found.
-We ran NFQ for 20 full model learning and sampling iterations using a neural network with one 10-unit hidden layer with sigmoid activations.
-
-A standard GP cannot model heteroscedastic noise or multi-modality.
-For any point in the input space, the GP can therefore only predict that the agent will always fall down, never fall down or, via very high uncertainties, that any state in system is possible.
-None of these possibilities represent the dynamics well enough to allow the policy search to derive a policy, illustrating our need for a more structured model.
-For $N \geq 250$, the DAGP-based dynamics model identifies the underlying dynamics well and policies can be found reliably.
-
-BNN+LV is a more expressive model that can represent both heteroscedasticity and multi-modality.
-Due to the model's structure however, it is hard to incorporate high-level expert knowledge and therefore, more sturcture has to be learned from the data.
-BNN+LV reliably finds good policies for $N \geq 1000$ and sometimes finds good policies for $N = 500$.
-As this approach is model-based and formulates a reasonable general-purpose prior on the wfor the dynamics, the results fall between the more informed DAGP, which is successful with less data, and NFQ, which is more uninformed.
-
-NFQ is a model-free approach.
-Instead of learning a dynamics model and using rollouts in that model to find a good policy, NFQ directly models the optimal Q-function and thus the optimal policy.
-A Q-function represents the expected return after taking a specified action in a specified state.
-Since the expected return already takes into account both the heteroscedasticity and multi-modality of the system, the Q-function itself can be modelled with a standard function approximator such as a neural network.
-Thus, no special modelling is needed when applying NFQ to the Wet-Chicken benchmark and given enough data, NFQ is able to find successful policies.
-However, at the same time, not modelling the dynamics explicitly also prevents us from utilising the high-level expert knowledge we have about the system, thus increasing the required amount of data:
-Using DAGP-based dynamics models, a successful policy can be found with about an order of magnitude less data.
-
-
-\subsubsection{Reward Shaping}
-\label{sub:interpretable_reinforcement_learning:reward_shaping}
-We have shown how a dynamics model informed by high-level expert knowledge increases data efficiency.
-A further advantage of the decomposition of the dynamics model in interpretable components is that the predictions of these components can be used to influence the policy search.
-In this example, we want to find a more conservative policy which, when compared to \cref{fig:interpretable_reinforcement_learning:wetchicken:policy}, sacrifices some return in order to avoid falling down the waterfall.
-
-Any successful agent has the implicit incentive to avoid drops as they move the canoeist away from the waterfall.
-However, a successful policy still accepts that it will fall down sometimes due to turbulence.
-To encourage more conservative behaviour, we use a conservative reward
-\begin{align}
-    \Fun*{r_\text{cons}}{\mat{s}} =
-    \Fun*{r_\text{orig}}{\mat{s}} \cdot \left(1 - \Prob{\text{drop} \given \mat{s}}\right)
-    - 5 \cdot \Prob{\text{drop} \given \mat{s}}
-\end{align}
-which includes the original Wet-Chicken reward function $\Fun*{r_\text{orig}}{(x, y)} = x$.
-For every state, the DAGP-based dynamics model yields an explicit drop-probability which can easily be evaluated.
-The conservative reward punishes a high drop probability reweighed with the maximum original reward $\max_{\mat{s}} r_\text{orig}(\mat{s}) = 5$.
-
-\Cref{fig:interpretable_reinforcement_learning:conservative_wetchicken_policy} shows a resulting conservative policy.
-Such a policy avoids both the turbulent states on the left and the fast flowing states on the right.
-It tries to reach a sweet spot, which, compared to \cref{fig:interpretable_reinforcement_learning:wetchicken:policy}, is further away from the waterfall and therefore safer.
-We compare 10 runs with $N=1000$ observations using the original reward and the conservative reward.
-The resulting conservative policies yield lower return than the more aggressive default policies but reliably reduce drop probabilities as well.
-The interpretable nature of the dynamics models have allowed us to easily influence policy behaviours.
-
-
-\subsubsection{Effects of Model Misspecification}
-\label{sub:interpretable_reinforcement_learning:model_misspecification}
-\begin{table}[t]
-    \centering
-    \caption{
-      \label{tab:interpretable_reinforcement_learning:wetchicken:mode_table}
-      Comparison of expected returns for different settings of $K$
-    }
-    \sisetup{
-        table-format=-1.2(2),
-        table-number-alignment=center,
-        separate-uncertainty,
-        % table-align-uncertainty,
-        table-figures-uncertainty=1,
-        detect-weight,
-    }
-    \newcolumntype{H}{>{\setbox0=\hbox\bgroup}c<{\egroup}@{}}
-    % \footnotesize
-    \begin{tabular}{cSSSSS}
-        \toprule
-        {} & \multicolumn{5}{c}{DAGP} \\
-        \cmidrule(lr){2-6}
-        {N} & {$K=1$} & {$\mat{K=2}$} & {$K=3$} & {$K=4$} & {$K=5$} \\
-        \midrule
-        250  & 1.41 \pm 0.01 & \bfseries 2.33 \pm 0.01 & 1.64 \pm 0.38 & 1.31 \pm 0.25 & 1.65 \pm 0.08 \\
-        500  & 1.54 \pm 0.01 & \bfseries 2.25 \pm 0.01 & 1.97 \pm 0.23 & 1.48 \pm 0.21 & 2.14 \pm 0.10 \\
-        1000 & 2.13 \pm 0.01 & \bfseries 2.32 \pm 0.01 & 1.99 \pm 0.17 & 2.09 \pm 0.12 & 2.16 \pm 0.09 \\
-        2500 & 1.91 \pm 0.01 & \bfseries 2.28 \pm 0.01 & 2.15 \pm 0.03 & 2.06 \pm 0.12 & 2.17 \pm 0.03 \\
-        5000 & 1.91 \pm 0.01 & \bfseries 2.28 \pm 0.01 & 2.19 \pm 0.06 & 1.95 \pm 0.16 & 2.08 \pm 0.13 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-\begin{figure}[tp]
-    \centering
-    \begin{subfigure}[t]{\linewidth}
-        \centering
-        \includestandalone{wetchicken_misspecification_good_cut_5_0}
-        \includestandalone{wetchicken_misspecification_good_assignment_5_0}
-        \caption{
-          \label{fig:interpretable_reinforcement_learning:wetchicken:good_cut}
-          Transition model with $K=4$ and successful policy training
-        }
-    \end{subfigure}\\[\figureskip]
-    \begin{subfigure}[t]{\linewidth}
-        \centering
-        \includestandalone{wetchicken_misspecification_bad_cut_5_0}
-        \includestandalone{wetchicken_misspecification_bad_assignment_5_0}
-        \caption{
-          \label{fig:interpretable_reinforcement_learning:wetchicken:bad_cut}
-          Transition model with $K=4$ and failed policy training
-        }
-    \end{subfigure}
-    \caption{
-      \label{fig:interpretable_reinforcement_learning:wetchicken:cut_comparison}
-      Comparison of linear cuts through two DAGP-based transition models with $K=4$ at $y_t = 5$ and $a_t=0$.
-      The respective upper plots show the predictive posterior of the different modes while the lower plots show assignment probabilities to the different modes.
-      For both models, one mode (green, dotted) model drops and two modes (blue and yellow, dashed) represent flow behaviour.
-      A third more uninformed mode (violet) is almost irrelevant in the first model but explains some data through a high noise variance in the second model.
-      A significant amount of predictions from the second model are uninformed, leading to the failure of the policy search.
-    }
-\end{figure}
-In \cref{sub:interpretable_reinforcement_learning:probabilistic_policy_search} we have formulated a dynamics model informed by high-level expert knowledge.
-One important insight we assumed is the bimodal nature of the Wet-Chicken problem introduced by the waterfall.
-In \cref{sub:interpretable_reinforcement_learning:policy_learning}, we compared our model to standard GPs and showed that modelling multi-modality is critical to solve Wet-Chicken.
-We extend this comparison in this experiment and discuss the effects of model misspecification on our model's performance.
-Specifically, we investigate the case where additional modes are available to dynamics model to solve the underlying data association problem.
-
-\Cref{tab:interpretable_reinforcement_learning:wetchicken:mode_table} shows results for $K \in \Set{1, \dots, 5}$, where $K=1$ is equivalent to standard GPs.
-All models have been trained for the same number of iterations and, for $K > 1$, all models have comparable marginal likelihoods.
-While $250$ data points are enough with $K=2$ to reliably solve the Wet-Chicken problem, more data is needed until working policies can be found with $K>2$ (e.g.\ for $K=5$, double the data was needed until one of the runs found a working policy).
-Most notably, performance fluctuates significantly with misspecified models for different repetitions of the same experiment and good policies can not be found reliably.
-
-Using the additional modes available, the model can now find representations of the systems where multiple modes jointly represent the river's flow.
-This showcases how data association problems are inherently ill-posed in general~\parencite{barshalom_tracking_1990,cox_review_1993}.
-The additional representative power for $K>2$ introduces symmetries in the optimization landscape which both significantly complicate training~\parencite{lazaro-gredilla_overlapping_2012,minka_expectation_2001} and lead to undesired generalization behaviour which is not driven by knowledge about the underlying system.
-
-An example for undesired generalization is shown in \cref{fig:interpretable_reinforcement_learning:wetchicken:cut_comparison} which compares two models trained with $K=4$ and $N=2500$.
-While both models explain the overall training data well, the cuts through the system at $y_t = 5$ give an intuition why the first model leads to a successful policy, while the second model does not.
-Both models represent drops via one of the modes and share the remaining three modes to jointly explain the flow behaviour.
-In the first model, two alternating modes have learned essentially equivalent models and a third more uninformed mode is almost irrelevant.
-The second model is similar, but the uninformed mode's model is closer to the RBF prior and more relevant.
-Note that due to the high noise variance, this choice of model still explains the data only slightly worse.
-Still, the second model does not generalize according to the underlying system.
-A significant amount of predictions from the second model are uninformed, leading to the failure of the policy search.
-
-Significantly longer training or specialized optimization schemes may lead to robust inference for $K>2$.
-However, this experiment shows the significance of encoding available abstract prior knowledge to avoid pathologic model behaviours.
-Models for $K=2$ both reliably identify the system using standard optimization methods and yield immediately interpretable results.
-
-
-\subsection{Conclusion and Discussion}
-\label{sub:interpretable_reinforcement_learning:conclusion}
-In this paper we have presented a Bayesian reinforcement learning model-based on non-parametric Gaussian process priors.
-The model is motivated by the observation that in real world scenarios high-level prior knowledge of the system dynamics is often available.
-We believe that many tasks are characterised by dynamics that can be decomposed into several attributes.
-For example, when a physical structure is excited by a force oscillating at its natural frequency its response will change drastically.
-The approach we have presented is based on learning a modular dynamic model which decomposes this type of transitional behaviour into separate components.
-The model learns both the individual components and the underlying structure of how the components interact within the system.
-The use of Gaussian process priors to quantify the uncertainty within components allows us to perform probabilistic policy search.
-
-The interpretable structure of our model facilitates data efficient learning by easily incorporating prior knowledge.
-We showed experimentally how this significantly reduces the data requirements compared to a model free approach.
-Furthermore, the same knowledge can be used as a means for directing the policy search by discouraging solutions which exhibit a specific dynamic, such as avoiding falling down the waterfall in the Wet-Chicken benchmark.
-
 
 \section{Probabilistic Numerics}
 \label{sec:probabilistic_numerics:probabilistic_numerics}
@@ -734,7 +112,521 @@ Explain Trapezodial Rule here.
 
 \section{Bayesian Optimization}
 \label{sec:bayesian_optimization}
-\emph{Crickets and Tumbleweed.}
+Bayesian optimization (BO) methods often rely on the assumption that the objective function is well-behaved,
+but in practice, this is seldom true for real-world objectives even if noise-free observations can be collected.
+Common approaches, which try to model the objective as precisely as possible, often fail to make progress by spending too many evaluations modeling irrelevant details.
+We address this issue by proposing surrogate models that focus on the well-behaved structure in the objective function, which is informative for search, while ignoring detrimental structure that is challenging to model from few observations.
+First, we demonstrate that surrogate models with appropriate noise distributions can absorb challenging structures in the objective function by treating them as irreducible uncertainty.
+Secondly, we show that a latent Gaussian process is an excellent surrogate for this purpose, comparing with Gaussian processes with standard noise distributions.
+We perform numerous experiments on a range of BO benchmarks and find that our approach improves reliability and performance when faced with challenging objective functions.
+
+\subsection{Introduction}
+\label{sub:bayesian_optimization:introduction}
+\begin{figure}[t]
+    \centering
+    \raisebox{-0.5\height}{\includegraphics[trim=15 15 0 0, clip, width=0.25\textwidth]{robust_bo_erik/illustrative_figure/gp.pdf}}
+    \raisebox{-0.5\height}{\includegraphics[trim=15 15 0 0, clip, width=0.25\textwidth]{robust_bo_erik/illustrative_figure/homo_gp.pdf}}
+    \raisebox{-0.5\height}{\includegraphics[trim=15 15 0 0, clip, width=0.25\textwidth]{robust_bo_erik/illustrative_figure/modulating_lgp.pdf}}
+    \raisebox{-0.45\height}{{\includegraphics[width=0.20\textwidth]{robust_bo_erik/illustrative_figure/legend_compact.pdf}}}
+    \caption{
+    \label{fig:bayesian_optimization:posterior}
+    An illustrative example of the posterior surrogate function density obtained given observations of a 1D nonsmooth function
+    using a noise-free GP, a GP with homoscedastic Gaussian noise, and using a LGP model.
+    The posterior belief for the noise-free and homoscedastic GP surrogates results in the EI acquisition function,
+    shown in blue,
+    making poorly informed decisions for the next query.
+    In contrast, the LGP using our proposed setup is able to reduce the influence of the rapid oscillations that do not match the GP prior by explaining part of the variation using the latent input.
+    As a result, the acquisition function can utilize a confidently discovered global trend to increase the efficiency of the search.
+    In this example, $\sigma_h$ is set to $\frac{1}{50}$ of the domain range to allow ignorance of oscillations at that scale.
+    }
+\end{figure}
+Bayesian optimization (BO)~\parencite{snoek_practical_2012} is a method for finding the optimum of functions that are unknown and expensive to evaluate.
+By fitting a surrogate model to the samples of an unknown objective, the BO procedure iteratively picks the new samples of the objective believed to be the most informative about where the optimum is located.
+
+Model misspecification has significant negative implications for any machine learning tasks.
+This is especially true for sequential decision making tasks such as BO, where the model is used not only to locate the optimum based on the collected data but also to decide where to collect data for future decisions.
+If the surrogate model is misspecified, it is likely to acquire samples that are less informative about the optimum, which will lead to a less efficient optimization.
+Therefore the quality of the surrogate model is essential to achieve both efficient and reliable results.
+
+Many works have been done towards avoiding model misspecification in the surrogate model for BO, such as handling non-stationary objective functions with warpings~\parencite{snoek_input_2014}, tree-structured dependencies in the search space~\parencite{jenatton_bayesian_2017}, and searching the optimum from piecewise comparisons~\parencite{gonzalez_preferential_2017}.
+Comparing with the Gaussian process (GP) regression model in the standard BO setting, these methods avoid model misspecification in real-world problems by using more sophisticated surrogate models that are suitable for the corresponding problems.
+Bayesian inference with more sophisticated surrogate models will often require additional data to reduce uncertainty and confirm beliefs, because it considers more possibilities.
+Importantly the ultimate goal of BO is to find the optimum, not to model the unknown objective as precisely as possible.
+In practice, this means that using a surrogate with high complexity might perform worse compared to a simpler class
+even if the former contains the true objective function.
+
+Instead of building a complex surrogate model with minimal model misspecification,
+we propose an alternative approach which allows trading off accuracy in modeling the objective with efficiency of capturing informative structures from small amounts of data.
+For example, we observe that structures such as local oscillations and discontinuities are less important to capture for the purposes of BO.
+Such details often require a lot of data to be closely captured in a surrogate model but do not help the search for the optimum,
+unless the search reaches the last stage of pinpointing the exact location of the optimum.
+To ignore these details, we associate an independent random \emph{input} variable with every evaluation of the unknown function.
+As the random variables associated with new evaluations are conditionally independent of the posterior random variables associated with observed data given the function,
+this is referred to as \emph{irreducible uncertainty}.
+Such variables are similar to the noise variables in regression models, which are used to capture measurement noise and the data variance that cannot be attributed to the input variables.
+In contrast to noise variables for noisy outcomes,
+where there is irreducible uncertainty about the data, there is now irreducible uncertainty in the model of the function.
+
+We propose to use the surrogate models that are specified over well-behaved approximations of the objectives,
+which can be more useful for the search of the optimum (see \cref{fig:bayesian_optimization:posterior}), augmented with flexible ``noise" distributions.
+We will demonstrate that, using the same function approximation, a surrogate model with a more flexible noise distribution is more robust against challenging structures.
+In this paper we focus on noise-free objectives with complicated, oscillatory or discontinuous structures.
+In particular, we propose to use a Latent Gaussian process (LGP)~\parencite{pfingsten_nonstationary_2006,wang_gaussian_2012,yousefi_unsupervised_2016,bodin_latent_2017} as the surrogate model due to its flexible noise distribution and show that it outperforms the surrogate models with less flexible noise distributions such as GPs with additive noise.
+LGP allows us to disentangle the complicated structures a GP surrogate struggles to model while highlighting important structures.
+
+Our main contributions are:
+\begin{itemize}
+    \item We propose to address challenging objective functions for BO by using a distribution in the surrogate model to explain structure that is challenging to model with few observations.
+    \item We propose to use latent Gaussian processes (LGP) as surrogate models, which support non-stationary and non-Gaussian residuals.
+    \item With experiments on multiple BO benchmarks, we show that our method significantly outperforms existing approaches.
+\end{itemize}
+
+\subsection{Modulating Surrogates}
+\label{sub:bayesian_optimization:modulated_objectives}
+
+Let $f : \Xc \to \Rb$ be an unknown, noise-free objective function defined on a bounded subset $\Xc \subset \Rb^Q$.
+The goal of BO is to solve the global optimization problem of finding
+\begin{equation}
+    \mat{x}_{\text{min}} = \argmin_{\mat{x} \in \Xc} f(\mat{x}).
+\end{equation}
+In real world problems,
+the objective function is often not a well-behaved function and a suitable model is difficult to specify.
+Instead of applying an automated model selection method~\parencite{malkomes_automating_2018},
+we propose to model only the essential structure of the objective function that is well-behaved and leave the rest of the function details to be absorbed in a noise distribution.
+
+We consider the family of objective functions $f$ that can be represented as a composition of a well-behaved function and another arbitrary, latent function capturing the challenging details, i.e.
+\begin{equation}
+    \label{eq:bayesian_optimization:well_behaved}
+    f(\mat{x}) := g(\mat{x}, \mat{h}), \quad \mat{h}:=h(\mat{x}),
+\end{equation}
+where $g$ is a well-behaved function that can be nicely modeled by a surrogate model of choice,
+which is a Gaussian process (GP) in this paper,
+and the vector-valued function $h(\mat{x})$ encodes the structures which the surrogate model struggles to capture.
+In general this composition allows for complicated interactions between $\mat{x}$ and $\mat{h}$, producing complicated realizations of the function
+which is observed through data.
+A simple, special case of such a function composition is additive structure
+\footnote{Note that in the additive case, $h(\mat{x})$ must match the output in shape, i.e.~be one-dimensional.},
+i.e.\ $f(\mat{x}) = g(\mat{x}) + h(\mat{x})$.
+%which has been exploited for BO~\parencite{gardner_discovering_2017, mutny2018efficient}.
+
+Instead of modeling $h(\mat{x})$ as part of the surrogate model,
+we propose to \textit{ignore} the structure of the objective function in $h(\mat{x})$ by replacing $h(\mat{x})$ with a random variable $\mat{h}$ per data point.
+The random variables $\mat{h}$ for different data points  are independent among each other.
+The objective function becomes a function of two variables $g(\mat{x}, \mat{h})$,
+in which $\mat{h}$ is a random variable which explain the data variance that cannot be explained by $\mat{x}$.
+In this paper, we use a normal distribution for the prior of $\mat{h}$, $\mat{h} \sim \mathcal{N}(0,  \mathbb{I})$.
+Note that, although the distribution of $h(\mat{x})$ induced by the data distribution for $\mat{x}$ may not be zero-mean and unit-variance, it is easy to reformulate it as a linear transformation of a normal distribution with zero-mean and unit-variance and the resulting linear transformation can be absorbed into the function $g$.
+For further details on the definition, see the supplement.
+
+With the above formulation, a BO method can be developed by constructing a surrogate model for the well-behaved function $g$.
+At each step of the BO optimization, a set of input and output pairs of the objective function has been collected, denoted as $\mat{X} = (\mat{x}_1, \ldots, \mat{x}_N)^\top$ and $\mat{F} = (\mat{f}_1, \ldots, \mat{f}_N)^\top$.
+The output $\mat{F}$ denotes the noise-free observations of the objective function, which is the assumption in this paper but is straight-forward to extend to the case of noisy observations.
+The Bayesian inference of the surrogate model aims at inferring the posterior distribution
+\begin{equation}
+    \Prob{ \mat{H}, \mat{\theta} \given \mat{X}, \mat{F}}  \propto \Prob{\mat{F} \given \mat{X}, \mat{H}, \mat{\theta} }\Prob{\mat{H}}  \Prob{\mat{\theta}}
+\end{equation}
+where $\mat{\theta}$ are the hyper parameters of the surrogate model and $\mat{H} = (\mat{h}_1, \ldots, \mat{h}_N)^\top$ is the concatenation of the noise variables of individual data points.
+The location of the next evaluation is determined according to an acquisition function,
+which uses the predictive distribution $\Prob{\mat{f}_* \given \mat{x}_*,  \mat{X}, \mat{F}}$ of the surrogate model,
+where $\mat{x}_*$ is the input of the prediction and $\mat{f}_*$ is the noise-free observation at the location $\mat{x}_*$.
+The standard formulation of such a predictive distribution is
+\begin{align}
+    \begin{split}
+        \MoveEqLeft\Prob{\mat{f}_* \given \mat{x}_*,  \mat{X}, \mat{F}} =
+        \int \Prob{\mat{f}_* \given \mat{x}_*, \mat{h}_*, \mat{X}, \mat{F},\mat{H}, \mat{\theta}}\\
+        &\qquad\Prob{\mat{H}, \mat{\theta} \given \mat{X}, \mat{F}} \Prob{\mat{h}_*} \diff{\mat{H}}\diff{\mat{\theta}}\diff{\mat{h}_*},
+    \end{split}
+\end{align}
+where $\mat{h}_*$ is the noise variable corresponding to the input $\mat{x}_*$.
+The above distribution of $\mat{f}_*$ contains the uncertainty that comes from the randomness of $\mat{h}_*$.
+This is \textit{undesirable} because the uncertainty due to $\mat{h}_*$ is irreducible uncertainty (see \cref{sub:bayesian_optimization:introduction}), which is not helpful in terms of finding the optimum of the objective function with respect to $\mat{x}$.
+A failure mode is that the BO search gets stuck by repeatedly collecting evaluations at the location where the uncertainty due to $\mat{h}_*$ is high as this uncertainty cannot be reduced.
+In some cases, including such irreducible uncertainty can completely mislead the search~\parencite{gonzalez_preferential_2017}.
+We propose to remove the uncertainty contributed by $\mat{h}_*$ by collapsing the prior distribution of $\mat{h}_*$ into a Dirac delta distribution, $\hat{p}(\mat{h}_*) = \delta(\mat{h}_*)$.
+With this modified prior distribution, the predictive distribution of $\mat{f}_*$ can be obtained without the uncertainty from $\mat{h}_*$,
+\begin{align}
+    \begin{split}
+        \MoveEqLeft\hProb{\mat{f}_* \given \mat{x}_*,  \mat{X}, \mat{F}} =
+        \int \Prob{\mat{f}_* \given \mat{x}_*,\mat{h}_*,  \mat{X}, \mat{F},\mat{H}, \mat{\theta}} \\
+        &\qquad\qquad\Prob{\mat{H}, \mat{\theta} \given \mat{X}, \mat{F}} \hProb{\mat{h}_*} \diff{\mat{\theta}}\diff{\mat{H}}\diff{\mat{h}_*} \\
+        &= \int \Prob{\mat{f}_* \given \mat{x}_*,\mat{h}_*=\mat{0},  \mat{X}, \mat{F},\mat{H}, \mat{\theta}} \\
+        &\qquad\qquad\Prob{\mat{H}, \mat{\theta} \given \mat{X}, \mat{F}} \diff{\mat{\theta}}\diff{\mat{H}}.
+    \end{split}
+\end{align}
+In the supplement we provide an example illustrating the effect of including such irreducible uncertainty,
+together with further details.
+
+With the above predictive distribution, the new expectation of the acquisition function can be derived as
+\begin{align}
+    \begin{split}
+        \label{eq:bayesian_optimization:utility}
+        \MoveEqLeft[1]\alpha(\mat{x}_\ast) =
+        \int
+        \mathbb{U}(\mat{f}_\ast, \mat{x}_\ast, \mat{X}, \mat{F}) \hat{p}(\mat{f}_\ast | \mat{x}_\ast, \mat{X}, \mat{F}) \diff{\mat{f}_\ast},
+    \end{split}
+\end{align}
+where the acquisition function of choice is denoted $\mathbb{U}$.
+Note that the predictive distribution due to the marginalization over $\mat{H}$ and $\mat{\theta}$ generally has a complicated form
+and that the above integral often requires approximate methods.
+
+\subsection{Latent GP surrogates and other choices}
+\label{sub:bayesian_optimization:latent_gp_surrogate}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[trim={0.5cm 0.5cm 0 0},clip, width=0.19\textwidth]{robust_bo_erik/z_varying_eps_1_div_10000000000.pdf}
+    \includegraphics[trim={0.5cm 0.5cm 0 0},clip, width=0.19\textwidth]{robust_bo_erik/z_varying_eps_1_div_1000.pdf}
+    \includegraphics[trim={0.5cm 0.5cm 0 0},clip, width=0.19\textwidth]{robust_bo_erik/z_varying_eps_1_div_500.pdf}
+    \includegraphics[trim={0.5cm 0.5cm 0 0},clip, width=0.19\textwidth]{robust_bo_erik/z_varying_eps_1_div_100.pdf}
+    \includegraphics[trim={0.5cm 0.5cm 0 0},clip, width=0.19\textwidth]{robust_bo_erik/z_varying_eps_1_div_20.pdf}\\
+    \hspace{-0.01cm}
+    \includegraphics[trim={0.5cm 0.5cm 0 0},clip, width=0.19\textwidth]{robust_bo_erik/z_varying_eps_1_div_15.pdf}
+    \includegraphics[trim={0.5cm 0.5cm 0 0},clip, width=0.19\textwidth]{robust_bo_erik/z_varying_eps_1_div_10.pdf}
+    \includegraphics[trim={0.5cm 0.5cm 0 0},clip, width=0.19\textwidth]{robust_bo_erik/z_varying_eps_1_div_5.pdf}
+    \includegraphics[trim={0.5cm 0.5cm 0 0},clip, width=0.19\textwidth]{robust_bo_erik/z_varying_eps_1_div_3.pdf}
+    \includegraphics[trim={0.5cm 0.5cm 0 0},clip, width=0.19\textwidth]{robust_bo_erik/z_varying_eps_1_div_2.pdf}
+    \caption{
+    \label{fig:bayesian_optimization:varying_z_sigma}
+    Input-related invariance.
+    Each plot is showing the resulting modulated function posterior using the LGP model and setting $\sigma_h$ in $p(\mat{h})$ to a size corresponding to the
+    red line at the bottom of respective plot.
+    The posterior is shown with mean and two standard deviations.
+    The true function is shown in black.
+    Note how the value of the prior $\sigma_h$ sets the scale in relation to $\Xc$ on how much detail is ignored.
+    A connection can be made to low-pass filtering of higher frequencies, but where the filter varies between observations as of the posterior and where each filter is implicitly determined
+    by fit to the function prior.
+    }
+\end{figure}
+
+In the previous subsection we presented the BO formulation.
+We will now proceed to implement the formulation, and address the choice of surrogate model for the function \cref{eq:bayesian_optimization:well_behaved}.
+
+\textbf{Additive noise model.}
+As briefly mentioned in the previous subsection, a simple case of the composition \cref{eq:bayesian_optimization:well_behaved} is an additive structure, $f(\mat{x}) = g(\mat{x})+h(\mat{x})$.
+Following the process of replacing $h(\mat{x})$ with the random variable $\mat{h}$, the resulting surrogate model of the objective function is
+\begin{equation}
+    f(\mat{x}) = g(\mat{x}) + h, \quad h \sim \mathcal{N}(0, \sigma(\mat{x})^2),
+\end{equation}
+where the variance of $h$ is assumed to be $\sigma^2$ in order to adapt to the value range of $f$.
+With a GP surrogate model for $g$, the above model recovers the GP regression model with the Gaussian likelihood.
+%The major difference in our approach is that we infer the noise variance $\sigma^2$ even though the objective function is noise-free.
+
+A typical choice in the above model is to assume $\sigma^2$ to be constant, leading to a homoscedastic model.
+A limitation of noise variances being the same across all the datapoints is that it limits the capability of the model in terms of absorbing irregular variance.
+A straight-forward extension of the above model is the GP with heteroscedastic noise, in which the noise variance $\sigma^2$ is allowed to be different among data points \parencite{goldberg_regression_1998,lazaro-gredilla_variational_2011}.
+Another choice could be specifying a GP prior for $h(\mat{x})$ and thus recover an additive GP model for $f$~\parencite{bernardo_regression_1998,duvenaud_additive_2011}.
+Other available choices for an additive noise model include Student's t-distribution~\parencite{jylanki_robust_2011}, Laplace~\parencite{kuss_gaussian_2006} or
+mixture of Gaussian likelihoods as~\parencite{kuss_gaussian_2006, stegle_gaussian_2008, naish-guzman_robust_2008} where~\parencite{naish-guzman_robust_2008} considers the heteroscedastic case.
+
+\textbf{Latent Gaussian process.}
+A major limitation of the additive noise models in general is the inability to capture the interaction between the input $\mat{x}$ and the noise $\mat{h}$.
+Another choice that produces a more flexible noise distribution is to introduce additive noise in the \emph{input} of a GP~\parencite{mchutchon_gaussian_2011,girard_gaussian_2003,girard_approximate_2004}.
+This would correspond to the case of $f(\mat{x}) = g(\mat{x} + \mat{h})$.
+A further more general case of the proposed methodology is to allow non-linear interactions between the random variable $\mat{h}$ and $\mat{x}$.
+This can be formulated as
+\begin{equation}
+    f(\mat{x}) = g(\mat{x}, \mat{h}),\quad g \sim \mathcal{GP},\quad \mat{h} \sim \mathcal{N}(0, \mathbb{I}). \label{eqn:bayesian_optimization:lgp}
+\end{equation}
+This formulation aligns with the general assumptions proposed in the previous subsection.
+In particular, the well-behaved function $g$ is assumed to follow a GP prior distribution,
+and the random variable derived from the challenging details of the objective function $\mat{h}$ feeds directly into the GP surrogate model.
+This allows for an arbitrary interaction between $\mat{h}$ and $\mat{x}$, as specified by the covariance function.
+The introduction of the random variable $\mat{h}$ in the input results in a flexible noise distribution, as the GP model can warp the normal distribution of $\mat{h}$ into a sophisticated distribution and allow non-linear interactions between $\mat{h}$ and $\mat{x}$.
+%
+This GP model in \cref{eqn:bayesian_optimization:lgp} is also known as a latent Gaussian process (LGP)~\parencite{pfingsten_nonstationary_2006,wang_gaussian_2012,yousefi_unsupervised_2016,bodin_latent_2017}, which is developed for regression with heteroscedastic noise and non-Gaussian residuals.
+The non-Gaussian marginals arise as a consequence of the latent covariates and their nonlinear transformation through the covariance function.
+
+%Now we will show how we can interpret and parameterize such a model to implicitly encode beliefs about function structures that are informative for the search of the optimum.
+
+\paragraph{Function modulation via $\Zc$}
+If we assume a stationary kernel over the product space $\Xc \times \Zc$, a constant $\mat{h}_n$ for all observations can be interpreted as the $\Zc$ subspace having no influence.
+This is due to the stationary property of the kernel, where covariances are determined only by the distances between points.
+
+With everything else held constant, if an observation is moved away from other observations in the $\Zc$ space, the covariances between that observation and the others are reduced.
+Similarly, if the length scale in $\Xc$-direction is shortened, the covariances between that observation and the others can be equally reduced, but that also reduces the covariances between \emph{all other} observations due to the global influence of the hyperparameter.
+
+Structures in the data could be explained solely by reducing the $\Xc$-direction length scale adequately.
+In that case, evaluating the posterior at $\mat{h}_\ast = \mat{0}$ would yield exactly the posterior of a standard GP.
+Conversely, structures could be explained solely as observations being adequately far from each other in the $\Zc$ space while maintaining a longer $\Xc$ length scale.
+Evaluating the posterior at $\mat{h}_\ast = \mat{0}$ then yields a posterior that is both influenced by the longer length scale and which has lower covariances with the data, effectively producing a posterior over smoother functions.
+If the posterior inputs $\mat{H}$ are sufficiently far away with respect to the $\Zc$-direction length scale,
+all data variation will be captured in $\Zc$ and the posterior of the function at $\mat{h}_\ast = \mat{0}$ will in effect ignore the data.
+
+The posterior weighting over this range of solutions is determined by the trade-off between the GP function prior and the prior of the latent inputs.
+As such, by controlling this trade-off, we can control properties of structures to be ignored and the ones to be used for search (see \cref{fig:bayesian_optimization:varying_z_sigma}).
+Important to note is that the mentioned data ignorance effect affects \emph{individual} data points via the posterior of the corresponding latent input $\mat{h}_n$,
+which is influenced by the local and global fit of the function prior.
+
+\paragraph{Reparameterization of LGP for ease of specifying the modulation prior}
+In a BO setting, some prior knowledge about what constitutes a significant change in the input space is often available.
+We would like to specify a joint prior of the GP and the latent inputs to ignore structures at the appropriate scale.
+In order to do this, we (re)-parametererise it in the following way.
+We set the lengthscale in the $\Zc$-direction to be the same as in the $\Xc$-direction and parameterize the latent input prior as $\mathcal{N}(\mat{h}_n|\mat{0}, \sigma_h^2\mathbb{I})$ instead of a unit Gaussian.
+There is an equivalence between parameterizing $\sigma_h$ or setting this trade-off via a separate lengthscale for $\Zc$ as in~\parencite{wang_gaussian_2012}.
+However, by using the above parameterization there is a direct correspondence in covariance reduction from moving an observation in $\Zc$ as in $\Xc$, and the prior for the latent inputs can be interpreted as a prior over the coarseness of the function we wish to exploit for search.
+As such, intuitions about the scale in $\Xc$ directly translate into the parameterization of the prior.
+See \cref{fig:bayesian_optimization:varying_z_sigma} for a visualization of how changing $\sigma_h$ in the prior affects the modulated function posterior.
+To make the $\sigma_h$ parameterization relevant across input sizes and dimensionalities,
+we rescale the input domain $\Xc$ to be a unit hyper-cube and set $\sigma_h$ proportionally to the length of the diagonal of the domain $\sqrt{Q}$ (where $Q$ is the number of dimensions).
+
+\textbf{Posterior inference and acquisition calculation.}
+In BO we assume that $N$ pairs of inputs and outputs $\mat{X} = (\mat{x}_1, \ldots, \mat{x}_N)^\top$ and $\mat{F} = (\mat{f}_1, \ldots, \mat{f}_N)^\top$ have been collected.
+To suggest the location for the next evaluation, we first need to infer the posterior distribution of the latent variables, which are $\mat{H}$ and $\mat{\theta}$ in LGP, and then search for the maximum of the acquisition function $\alpha(\mat{x})$.
+
+Given the observed data, the probabilistic model of LGP is formulated as
+\begin{align}
+    \begin{split}
+        \Prob{\mat{F} \given \mat{X}, \mat{H}, \mat{\theta}} = \mathcal{N}(\mat{F} | \mat{0}, \mat{K}),\\
+        \Prob{\mat{H}} = \prod_{n=1}^N \mathcal{N}(\mat{h}_n | \mat{0}, \sigma_h^2\mathbb{I}),
+    \end{split}
+\end{align}
+where $\mat{K}$ is the covariance matrix computed using a chosen kernel function $k(\cdot, \cdot)$ over the set of data points $\{\bar{\mat{x}}_n\}_{n=1}^N$, and $\bar{\mat{x}}_n$ is the concatenation of two vectors $(\mat{x}_n^\top, \mat{h}_n^\top)^\top$.
+Because $\mat{h}_n^\top$ enters the kernel function non-linearly, it is clear that the posterior distribution $\Prob{\mat{H}, \mat{\theta} \given \mat{F}, \mat{X}}$ is intractable.
+To ensure the quality of the acquisition function, usually, BO methods draw posterior samples of latent variables via Markov Chain Monte Carlo (MCMC) methods such as slice sampling~\parencite{snoek_practical_2012} or Hamiltonian Monte Carlo~\parencite{duane_hybrid_1987}.
+We follow this practice and provide details in the supplement.
+
+With the approximate posterior samples $\{\mat{H}_i, \mat{\theta}_i\}_{i=1}^M$, we approximate the acquisition function with LGP in \cref{eq:bayesian_optimization:utility} with Monte Carlo samples,
+\begin{align}
+    \alpha(\mat{x}_\ast) &\approx
+    \frac{1}{M}\sum_{i=1}^M \hat{\alpha}(\mat{x}_*, \mat{H}_i, \mat{\theta}_i),
+\end{align}
+where $\hat{\alpha}(\mat{x}_*, \mat{H}_i, \mat{\theta}_i)$ is the acquisition function given the latent variables of LGP, which is closed-form for common acquisition functions such as expected improvement (EI) and upper confidence bound (UCB).
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.195\textwidth]{robust_bo_erik/regret_plots_spiky_functions/cross_in_tray_alpha_low_res.png}
+    \includegraphics[width=0.195\textwidth]{robust_bo_erik/regret_plots_spiky_functions/griewank_alpha_low_res.png}
+    \includegraphics[width=0.195\textwidth]{robust_bo_erik/regret_plots_spiky_functions/shubert_alpha_low_res.png}
+    \frame{
+    \includegraphics[width=0.195\textwidth]{robust_bo_erik/regret_plots_spiky_functions/2d_versions/weierstrass_alpha_low_res.png}
+    \includegraphics[width=0.195\textwidth]{robust_bo_erik/regret_plots_spiky_functions/2d_versions/deflected_corrugated_spring_alpha_low_res.png}
+    }
+    \caption{
+    Surface plots of the benchmark functions Cross In Tray, Griewank, Shubert, Weierstrass and Deflected Corrugated Spring~\parencite{mccourt_optimization_2016}, from the left.
+    The two right-most functions are available in multiple dimensionalities, where 8D and 10D is used in the experiments, respectively.
+    \label{fig:bayesian_optimization:functions_plots}
+    }
+\end{figure}
+\begin{figure}[t]
+    \centering
+
+    \includegraphics[width=0.235\textwidth]{robust_bo_erik/regret_plots_spiky_functions/holder_table_alpha_cropped_low_res.png}
+    \includegraphics[width=0.235\textwidth]{robust_bo_erik/regret_plots_spiky_functions/corrupted_holder_table_alpha_cropped_low_res.png}\\
+    \vspace{-2cm}
+    \includegraphics[width=0.235\textwidth]{robust_bo_erik/regret_plots_spiky_functions/corrupted_example/HOLDER_TABLE_2D_all_with_large_legend.pdf}
+    \includegraphics[width=0.235\textwidth]{robust_bo_erik/regret_plots_spiky_functions/corrupted_example/CORRUPTED_HOLDER_TABLE_2D_all_faded.pdf}
+    \caption{
+    A comparison of experiments on the Holder Table benchmark~\parencite{mccourt_optimization_2016} (left) and a corrupted version with added nonsmooth structure (right).
+    We show plots of the respective functions and performance in terms of regret so far (over 20 repetitions).
+    We show both mean regret (line) and standard deviation (shading).
+    The nonsmooth structure is challenging for a noiseless GP to model and leads to a high variance in-between runs.
+    Warped and homoscedasic GPs explain away the corruption, but their performance plateaus as no informative trends can be identified.
+    LGP reliably identifies these trends and reliably finds good solutions.
+    }
+
+    \label{fig:bayesian_optimization:corrupted_holder}
+\end{figure}
+
+\subsection{Related Work}
+\label{subsection:bayesian_optimization:related_work}
+Performing BO on an objective function that is not well-behaved is very challenging.
+Our method takes a Bayesian approach by incorporating a flexible noise distribution and
+utilising Bayesian inference to assign the challenging details of the objective function to the noise distribution.
+An alternative approach to this problem is to perform a model selection for the surrogate model, such that the choice of the surrogate model becomes a trade-off between the complexity of the model and the ability to locate the optimum under limited data, which has been explored in~\parencite{malkomes_automating_2018}.
+The approach uses a compositional kernel grammar from~\parencite{duvenaud_structure_2013} to induce a space of GP models to choose from.
+Although this and other model selection procedures~\parencite{malkomes_bayesian_2016,duvenaud_structure_2013,grosse_exploiting_2012,gardner_discovering_2017} themselves have shown promise,
+in addition to the computational overhead, the procedures are still reliant on the existence of suitable models in this space.
+It remains challenging to handle cases where the objective function contains structure that is both hard to specify a-priori, and that is unhelpful in guiding the search to the optimum.
+
+The idea of making use of noise models for dealing with model mismatch to noise-free data is not in itself new.
+In~\parencite{gramacy_cases_2010} it was shown that introducing noise in the modelling of noise-free computer experiments can lead
+to models with better statistical properties such as predictive accuracy and coverage.
+In that work, homoscedatic noise was addressed and used in a regression context.
+
+In this paper we consider noise-free functions and address model misspecification of the function surrogate,
+but many works have been done to make BO resilient to noisy experiments.
+For example, robust noise distributions such as Student's t-distribution have been used to make BO more resilient to noise outliers~\parencite{martinez-cantin_robust_2017,martinez-cantin_practical_2017}.
+
+Hierarchical surrogate models with input warping have been proposed to tackle BO for a non-stationary objective function~\parencite{snoek_input_2014,oh_bock_2018,calandra_manifold_2016}.
+A particularly successful application is hyperparameter optimization for machine learning methods, in which the parameters are often presented in logarithmic scales.
+In this case, the Beta cumulative distribution function, which only has two parameters, serves as a good warping function~\parencite{snoek_input_2014}.
+Such augmentation in surrogate models requires strong domain knowledge of the objective function, and one often still has to control the increased complexity of the surrogate model, which is orthogonal to our approach.
+
+\subsection{Experiments}
+
+In this subsection we will demonstrate the benefit of our approach empirically.
+As the approach is motivated by robustness to the presence of challenging structures in the objective function,
+we will test its ability to improve search efficiency on a range of functions exhibiting such structure.
+Visual examples of functions with typical properties are shown in \cref{fig:bayesian_optimization:functions_plots}.
+As we will show,
+our approach increases reliability in the search when faced with detrimental structure (see \cref{fig:bayesian_optimization:corrupted_holder})
+that has a large negative impact on traditional surrogates.
+
+\paragraph{Baselines and metric}
+We compare with and without function modulation (\cref{sub:bayesian_optimization:modulated_objectives})
+-~implemented as in \cref{sub:bayesian_optimization:latent_gp_surrogate}~-
+on a popular GP model setup for BO.
+In addition, we compare the LGP against other methods of handling challenging structure in the objective function,
+namely (i) a noiseless GP,
+(ii) a GP with homoscedastic noise,
+(iii) a GP with heteroscedastic noise and
+(iv) a non-stationary,
+Warped GP~\parencite{snoek_input_2014}.
+
+We follow the standard practice to compare across benchmarks and provide the \emph{mean gap} estimated over 20 runs as in~\parencite{malkomes_automating_2018}.
+The gap measure is defined as $\frac{f(x_{\text{first}}) - f(x_{\text{best}})}{f(x_{\text{first}}) - f(x_{\text{optimum}})}$,
+where $f(x_{\text{first}})$ is the minimum function value among the first initial random points,
+$f(x_{\text{best}})$ is the best function value found within the evaluation budget and $f(x_{\text{optimum}})$ is the function's true optimum.
+Methods are judged to have very similar or equivalent performance to the best performing if not significantly different,
+determined by a two-sided paired Wilcoxon signed-rank test at 5\% significance~\parencite{malkomes_automating_2018}.
+We also report regret (with mean and standard deviation) in the supplement.
+
+We use the Mat\'{e}rn 5/2 kernel for all surrogates, the expected improvement acquisition function (where not otherwise stated) and Bayesian hyperparameter marginalisation as in~\parencite{snoek_practical_2012}.
+For the maximization of the expected utility with respect to input location,
+we use $\delta$-cover sampling, as in~\parencite{de_freitas_exponential_2012}.
+The Warped GP implementation and inference is from the Spearmint package~\parencite{snoek_input_2014}.
+For further details, we refer to the supplement.
+
+\begin{table*}[t]
+    \centering
+    \caption{
+    \label{tab:bayesian_optimization:z_table}
+    Mean gap performance for various test functions; higher is better.
+    The upper table shows the results after 50 objective function evaluations and the lower table after 100 evaluations.
+    Due to computational cost, Warped GP results are only reported for 50 evaluations.
+    Methods not significantly different from the best performing method with respect by a two-sided paired Wilcoxon signed-rank test at a 5\% significance level over 20 repetitions are shown in bold~\parencite{malkomes_automating_2018}.
+    For results in terms of regret, see the supplement.
+    }
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lrrlrr|rrr}
+        \toprule
+        {Benchmark} & Evals & Dim & \multicolumn{1}{c}{Properties} & \multicolumn{1}{c}{GP} & \multicolumn{1}{c}{Warped GP} & \multicolumn{1}{c}{Homosced GP} &  \multicolumn{1}{c}{Heterosced GP} & \multicolumn{1}{c}{LGP} \\
+        \midrule
+        Hartmann           & 50 & 6 & boring     &             \textbf{0.959} &     0.537 &   0.881 &     \textbf{0.973} &     \textbf{0.937} \\
+        Griewank           & 50 & 2  & oscillatory             &           \textbf{0.914} &     0.493 &   0.752 &   \textbf{0.913} &       \textbf{0.897} \\
+        Shubert            & 50 & 2 & oscillatory &            0.378 &     0.158 &   \textbf{0.378} &     \textbf{0.480} &     \textbf{0.593} \\
+        Ackley $[-10, 30]^d$ & 50 & 2  & complicated, oscillatory                    &        \textbf{0.924} &     0.274 &   \textbf{0.892} &       \textbf{0.912} &   \textbf{0.927} \\
+        Cross In Tray      & 50 & 2  & complicated, oscillatory             &            \textbf{0.954} &     0.385 &   0.929 &     \textbf{0.977}  &     \textbf{0.945} \\
+        Holder table       & 50 & 2 & complicated, oscillatory         &            0.939 &     0.896 &   0.900 &     0.931 &          \textbf{0.993} \\
+        Corrupted Holder Table & 50 & 2 & complicated, oscillatory &        0.741 &     0.798 &   0.826 &      0.729 &      \textbf{0.896} \\
+        \midrule
+        Branin01           & 100     & 2 &  none            &               \textbf{1.000} &&          \textbf{1.000} &                  \textbf{1.000} &            \textbf{1.000} \\
+        Branin02           & 100     & 2 &  none            &               \textbf{0.991} &&   0.964 &          \textbf{0.990} &   \textbf{0.981} \\
+        Beale              & 100     & 2 &  boring        &              \textbf{0.987} &&   \textbf{0.982} &         \textbf{0.987} &   \textbf{0.988} \\
+        Hartmann           & 100     & 6 &  boring            &               \textbf{0.987} &&   0.947 &           \textbf{0.984} &   \textbf{0.979} \\
+        Griewank           & 100     & 2 &  oscillatory            &              \textbf{0.967} &&   0.875 &         \textbf{0.969} &     \textbf{0.946} \\
+        Levy               & 100     & 2 &  oscillatory            &               \textbf{0.997} &&   \textbf{0.999} &        \textbf{0.998} &      \textbf{0.998} \\
+        Deflected Corrugated Spring & 100 & 10 &  oscillatory    &               0.347 &&   \textbf{0.840} &      0.406 &        0.697 \\
+        Shubert $[-10, 10]^d$           & 100     & 2 &  oscillatory            &               0.510 &&   0.511 &          \textbf{0.672} &    \textbf{0.877} \\
+        Weierstrass        & 100     & 8 &  complicated            &               0.600 &&   \textbf{0.704} &         0.577 &     0.625 \\
+        Cross In Tray      & 100     & 2 &  complicated, oscillatory            &               \textbf{1.000} &&            0.995 &               \textbf{1.000} &               \textbf{1.000} \\
+        Holder Table       & 100     & 2 &  complicated, oscillatory            &               0.971 &&            0.963 &                     \textbf{0.964} &         \textbf{1.000} \\
+        Ackley $[-10, 30]^d$ & 100     & 2 &  complicated, oscillatory            &               \textbf{0.971} &&            0.914 &          \textbf{0.980} &                    \textbf{0.974} \\
+        Ackley $[-10, 30]^d$ & 100     & 6 &  complicated, oscillatory            &               0.459 &&            \textbf{0.789} &                      0.442 &        \textbf{0.712} \\
+        Corrupted Holder Table  & 100 & 2 & complicated, oscillatory            &              0.844 &&   0.889 &        0.822 &      \textbf{0.918} \\
+        Corrupted Exponential & 100 & 8 &   complicated, oscillatory          &               0.580 &&   \textbf{0.847} &          0.581 &    \textbf{0.806} \\
+        \midrule
+        HPO: NN Boston          & 100     & 9 &  unknown  &           \textbf{0.720} &&   \textbf{0.761} &      \textbf{0.810} &        \textbf{0.770} \\
+        HPO: NN Climate Model Crashes & 100 & 9 &  unknown  &          0.629 &&   \textbf{0.717} &        \textbf{0.683} &      \textbf{0.678} \\
+        Active learning: Robot Pushing & 100 & 4 &  unknown  &          0.877 &&   0.745 &        \textbf{0.907} &      \textbf{0.932} \\
+        \bottomrule
+    \end{tabular}
+    }
+    \medskip
+\end{table*}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.31\textwidth]{robust_bo_erik/robot_pushing/robot_pushing_initial_angle.pdf}
+    \includegraphics[width=0.31\textwidth]{robust_bo_erik/robot_pushing/robot_pushing_x_position.pdf}
+    \includegraphics[width=0.335\textwidth]{robust_bo_erik/robot_pushing/robot_pushing_with_legend.pdf}
+    %    \includegraphics[width=0.45\textwidth]{robust_bo_erik/real_world/legend.pdf}\\
+    %    \vspace{-0.3cm}
+    \caption{
+    Active learning: Robot pushing.
+    The objective function to be optimized takes as input the pushing action of a robot within a simulation,
+    and outputs the distance of the pushed object to the goal location.
+    The two plots on the left show that the task surface, resulting from the dynamic system, is nonsmooth and non-trivial.
+    The right plot shows the mean regret and standard deviations for the different surrogates.
+    As can be seen, the LGP found good solutions with low variance, improving reliability of the search.
+    The 1D slices of the 4D function (the two from the left) was generated by fixing the initial y-position (param.) to the one of the goal position,
+    the simulation steps (param.) to the center of its domain, and varying the initial angle (param.) or the x-position (param.), respectively,
+    while keeping the other fixed at zero.
+    Slicing the 4D function differently produced similar nonsmooth response curves.\\
+    \label{fig:bayesian_optimization:real_world}
+    }
+\end{figure}
+
+\paragraph{Benchmark datasets}
+We perform the comparisons on benchmarks from~\parencite{mccourt_optimization_2016,head_scikit-optimize_2018} using the default domains provided by respective benchmark, detailed in the supplement.
+%Some problems are available in different dimensionalities, which are denoted in with the results.
+%We note that in experiments in other work, domains are sometimes restricted, which changes the characteristics and difficulty of the benchmark problem.
+In addition, problems are marked with the descriptive properties given in~\parencite{mccourt_optimization_2016} and in the supplement that can reflect the relative difficulty of the task.
+
+\paragraph{Priors on the latent input variables}
+The prior $\Prob{\mat{h}_n} = \Gaussian{\mat{0}, \sigma_h^2\mathbb{I}}$ can be parameterized in relation to the relative scale of the characteristics to be ignored.
+We specify the function prior over the product space $\Xc \times \Zc$ using a kernel with common parameters for $\mat{x}_n$ and $\mat{h}_n$.
+Thus, the standard deviation of the prior $\sigma_h$ relates directly to distances in the $\Xc$-direction.
+When domain-specific knowledge is available, $\Prob{\mat{H}}$ may be specified at an appropriate scale.
+However, we often do not have access to such knowledge.
+In all our experiments, we adopt a hierarchical prior approach whereby $\sigma_h$ is sampled uniformly from a small candidate set at each evaluation.
+Specifically, $\sigma_h \sim \Uniform{\Set{0.1 d, 0.01 d, 0}}$ where $d = \sqrt{Q}$, the length of the diagonal of the unit Q-dimensional hypercube.
+We found that this approach performed well empirically and is applied consistently across all our experiments where not otherwise specified.
+A choice of $\sigma_h \to 0$ corresponds to a noiseless GP without latent covariates.
+
+\paragraph{Evaluation on benchmark suite}
+\Cref{tab:bayesian_optimization:z_table} presents results across a wide range of benchmark functions consisting of the SigOpt benchmark suite~\parencite{mccourt_optimization_2016}.
+Three additional real-world benchmarks~\parencite{head_scikit-optimize_2018,malkomes_automating_2018,kaelbling_learning_2017} are included in the bottom subsection of the table.
+The benchmarks from~\parencite{mccourt_optimization_2016} are popular functions used in both black-box optimization as well as classic optimization literature.
+As of the focus of the paper, benchmarks from the literature exhibiting challenging properties such as oscillatory local structures were included,
+in addition to simpler functions for reference.
+
+In general, the noise-free, homoscedastic and heteroscedastic noise GPs tend to either share best place with the LGP or be outperformed by
+it.
+The Warped GP, which warps the input space to obtain a tight fit to the data, consistently struggle with the complicated and oscillatory benchmarks.
+On some benchmarks there are large differences in favour of using noisy surrogates on the noise-free benchmarks.
+Such an example is Ackley 6D, which in the dataset is described as \enquote{technically oscillatory, but with such a short wavelength that its behavior probably seems more like noise}~\parencite{mccourt_optimization_2016}.
+Another example is the Shubert function, which has multiple sharp local optima surrounded by large oscillations.
+On 2 of 18 benchmarks, the LGP was not best (or within the two-sided Wilcoxon test), but instead the homoscedastic GP.
+These functions were Weierstrass, which has a homoscedastic characteristic (see \cref{fig:bayesian_optimization:functions_plots}),
+and Deflected Corrugated Spring, on both of which the LGP obtained the second highest mean gap.
+In contrast to the LGP and the heteroscedastic GP, the noise model of the homoscedastic GP sometimes hurt performance in relation to the noise-free GP.
+Given the black-box nature of functions in BO, it is important that the surrogate noise model 'turns off' adequately when not needed.
+The heteroscedastic GP provided significant benefit on two benchmarks over the GP,
+whereas the LGP provided such benefit on \emph{eight} benchmarks.
+
+\paragraph{Real-world} Apart from widely used synthetic functions,
+we also compare our method on three real-world problems.
+The results are shown in the last three rows of \cref{tab:bayesian_optimization:z_table}.
+One of the benchmarks is an active learning task of a robot pushing a box within a simulation.
+As we show in \cref{fig:bayesian_optimization:real_world}, the benchmark's response surface is both nonsmooth and oscillatory.
+The LGP reliably found good solutions on the benchmark, while the other surrogates sometimes failed, resulting in high variances.
+The homoscedastic GP performed the worst,
+which we suspect is due to the nonsmooth and heavily oscillatory structures forces a high global noise level,
+which may lead to failure in utilising informative structure in other regions.
+
+\paragraph{Other aquisition functions} We suggest that the problem with structures challenging to model is relevant to address irrespective of the acquisition function.
+To confirm that the method is applicable also using other acquisition functions we ran the Corrupted Exponential benchmark
+using both Expected Improvement (EI) and Lower Confidence Bound (LCB) with the default exploration weight ($=2.0$) from GPyOpt~\parencite{gpyopt_gpyopt_2016}.
+As can be seen in \cref{tab:bayesian_optimization:z_table}, in the case of EI, the GP and the heteroscedastic GP performed worse than the homoscedastic GP and the LGP.
+The homoscedastic GP achieved the highest mean gap, but the difference was not significant under the Wilcoxon test to the LGP which obtained a similar mean gap.
+Using the LCB acquisition function the performance for the homescedastic GP decreased to $0.818$ and the LGP increased to $0.858$,
+and their difference in rank in favour of the LGP was significant under the test.
+The heteroscedastic GP increased using LCB to $0.797$ and the GP to $0.751$, remaining as worst performing.
+
+As the experimental evaluation demonstrates,
+our suggested approach for handling challenging structures in the objective function consistently improved reliability and performance
+over the traditional surrogate on a wide range of benchmarks.
+Importantly, on benchmarks where the extended methodology were not needed the performance aligned with that of the traditional surrogate.
+When it was needed, it was shown to often have a large positive impact on overall efficiency of the search.
+
+\subsection{Conclusion}
+We have presented an approach to Bayesian Optimization where the surrogate model is alleviated from needing to explain the observed objective function values perfectly,
+which is challenging for complicated or nonsmooth functions.
+Instead, we model the essential structure of the objective function that is well-behaved and leave the rest of the function details to be absorbed in a noise distribution.
+We show experimentally how our approach is able to solve synthetic and real-world benchmarks with challenging local structures reliably.
+Importantly our methodology can be applied to any surrogate model used for BO,
+and the specific case addressed in the paper can be included in any Gaussian process-based surrogate.
 
 
 \section{Reinforcement Learning}

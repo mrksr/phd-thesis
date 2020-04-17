@@ -44,18 +44,18 @@ Here are a few well-known choices:
 Here, no explicit assumption about the form of $u$ are made.
 \begin{align}
     \mat{x}
-        &\sim \Uniform{[a, b]^N}
-        &\Fun*{A_{\text{MC}}}{(\mat{x}, u(\mat{x})}
-        &= \frac{1}{N} \sum_n u(x_n)
+     & \sim \Uniform{[a, b]^N}
+     & \Fun*{A_{\text{MC}}}{(\mat{x}, u(\mat{x})}
+     & = \frac{1}{N} \sum_n u(x_n)
 \end{align}
 
 \paragraph{Trapezodial Rule}
 The trapezodial rule approximates a function via a piecewise linear surrogate which is then integrated.
 \begin{align}
     \mat{x}
-    &= a + \frac{b - a}{N - 1} \cdot (0, 1, \cdots, N - 1)
-    &\Fun*{A_{\text{TZ}}}{(\mat{x}, u(\mat{x})}
-    &= \sum_{n=0}^{N - 1} \frac{b - a}{2} \left( u(x_{n-1}) + u(x_n) \right)
+     & = a + \frac{b - a}{N - 1} \cdot (0, 1, \cdots, N - 1)
+     & \Fun*{A_{\text{TZ}}}{(\mat{x}, u(\mat{x})}
+     & = \sum_{n=0}^{N - 1} \frac{b - a}{2} \left( u(x_{n-1}) + u(x_n) \right)
 \end{align}
 
 Note that all of these choices up to here are completely arbitrary, so none of those methods need to be particularly good.
@@ -112,8 +112,7 @@ Explain Trapezodial Rule here.
 
 \section{Bayesian Optimization}
 \label{sec:bayesian_optimization}
-Bayesian optimization (BO) methods often rely on the assumption that the objective function is well-behaved,
-but in practice, this is seldom true for real-world objectives even if noise-free observations can be collected.
+Bayesian optimization (BO) methods often rely on the assumption that the objective function is well-behaved, but in practice, this is seldom true for real-world objectives even if noise-free observations can be collected.
 Common approaches, which try to model the objective as precisely as possible, often fail to make progress by spending too many evaluations modeling irrelevant details.
 We address this issue by proposing surrogate models that focus on the well-behaved structure in the objective function, which is informative for search, while ignoring detrimental structure that is challenging to model from few observations.
 First, we demonstrate that surrogate models with appropriate noise distributions can absorb challenging structures in the objective function by treating them as irreducible uncertainty.
@@ -129,15 +128,15 @@ We perform numerous experiments on a range of BO benchmarks and find that our ap
     \raisebox{-0.5\height}{\includegraphics[trim=15 15 0 0, clip, width=0.25\textwidth]{robust_bo_erik/illustrative_figure/modulating_lgp.pdf}}
     \raisebox{-0.45\height}{{\includegraphics[width=0.20\textwidth]{robust_bo_erik/illustrative_figure/legend_compact.pdf}}}
     \caption{
-    \label{fig:bayesian_optimization:posterior}
-    An illustrative example of the posterior surrogate function density obtained given observations of a 1D nonsmooth function
-    using a noise-free GP, a GP with homoscedastic Gaussian noise, and using a LGP model.
-    The posterior belief for the noise-free and homoscedastic GP surrogates results in the EI acquisition function,
-    shown in blue,
-    making poorly informed decisions for the next query.
-    In contrast, the LGP using our proposed setup is able to reduce the influence of the rapid oscillations that do not match the GP prior by explaining part of the variation using the latent input.
-    As a result, the acquisition function can utilize a confidently discovered global trend to increase the efficiency of the search.
-    In this example, $\sigma_h$ is set to $\frac{1}{50}$ of the domain range to allow ignorance of oscillations at that scale.
+        \label{fig:bayesian_optimization:posterior}
+        An illustrative example of the posterior surrogate function density obtained given observations of a 1D nonsmooth function
+        using a noise-free GP, a GP with homoscedastic Gaussian noise, and using a LGP model.
+        The posterior belief for the noise-free and homoscedastic GP surrogates results in the EI acquisition function,
+        shown in blue,
+        making poorly informed decisions for the next query.
+        In contrast, the LGP using our proposed setup is able to reduce the influence of the rapid oscillations that do not match the GP prior by explaining part of the variation using the latent input.
+        As a result, the acquisition function can utilize a confidently discovered global trend to increase the efficiency of the search.
+        In this example, $\sigma_h$ is set to $\frac{1}{50}$ of the domain range to allow ignorance of oscillations at that scale.
     }
 \end{figure}
 Bayesian optimization (BO)~\parencite{snoek_practical_2012} is a method for finding the optimum of functions that are unknown and expensive to evaluate.
@@ -286,15 +285,15 @@ and that the above integral often requires approximate methods.
     \includegraphics[trim={0.5cm 0.5cm 0 0},clip, width=0.19\textwidth]{robust_bo_erik/z_varying_eps_1_div_3.pdf}
     \includegraphics[trim={0.5cm 0.5cm 0 0},clip, width=0.19\textwidth]{robust_bo_erik/z_varying_eps_1_div_2.pdf}
     \caption{
-    \label{fig:bayesian_optimization:varying_z_sigma}
-    Input-related invariance.
-    Each plot is showing the resulting modulated function posterior using the LGP model and setting $\sigma_h$ in $p(\mat{h})$ to a size corresponding to the
-    red line at the bottom of respective plot.
-    The posterior is shown with mean and two standard deviations.
-    The true function is shown in black.
-    Note how the value of the prior $\sigma_h$ sets the scale in relation to $\Xc$ on how much detail is ignored.
-    A connection can be made to low-pass filtering of higher frequencies, but where the filter varies between observations as of the posterior and where each filter is implicitly determined
-    by fit to the function prior.
+        \label{fig:bayesian_optimization:varying_z_sigma}
+        Input-related invariance.
+        Each plot is showing the resulting modulated function posterior using the LGP model and setting $\sigma_h$ in $p(\mat{h})$ to a size corresponding to the
+        red line at the bottom of respective plot.
+        The posterior is shown with mean and two standard deviations.
+        The true function is shown in black.
+        Note how the value of the prior $\sigma_h$ sets the scale in relation to $\Xc$ on how much detail is ignored.
+        A connection can be made to low-pass filtering of higher frequencies, but where the filter varies between observations as of the posterior and where each filter is implicitly determined
+        by fit to the function prior.
     }
 \end{figure}
 
@@ -387,7 +386,7 @@ We follow this practice and provide details in the supplement.
 
 With the approximate posterior samples $\{\mat{H}_i, \mat{\theta}_i\}_{i=1}^M$, we approximate the acquisition function with LGP in \cref{eq:bayesian_optimization:utility} with Monte Carlo samples,
 \begin{align}
-    \alpha(\mat{x}_\ast) &\approx
+    \alpha(\mat{x}_\ast) & \approx
     \frac{1}{M}\sum_{i=1}^M \hat{\alpha}(\mat{x}_*, \mat{H}_i, \mat{\theta}_i),
 \end{align}
 where $\hat{\alpha}(\mat{x}_*, \mat{H}_i, \mat{\theta}_i)$ is the acquisition function given the latent variables of LGP, which is closed-form for common acquisition functions such as expected improvement (EI) and upper confidence bound (UCB).
@@ -398,13 +397,13 @@ where $\hat{\alpha}(\mat{x}_*, \mat{H}_i, \mat{\theta}_i)$ is the acquisition fu
     \includegraphics[width=0.195\textwidth]{robust_bo_erik/regret_plots_spiky_functions/griewank_alpha_low_res.png}
     \includegraphics[width=0.195\textwidth]{robust_bo_erik/regret_plots_spiky_functions/shubert_alpha_low_res.png}
     \frame{
-    \includegraphics[width=0.195\textwidth]{robust_bo_erik/regret_plots_spiky_functions/2d_versions/weierstrass_alpha_low_res.png}
-    \includegraphics[width=0.195\textwidth]{robust_bo_erik/regret_plots_spiky_functions/2d_versions/deflected_corrugated_spring_alpha_low_res.png}
+        \includegraphics[width=0.195\textwidth]{robust_bo_erik/regret_plots_spiky_functions/2d_versions/weierstrass_alpha_low_res.png}
+        \includegraphics[width=0.195\textwidth]{robust_bo_erik/regret_plots_spiky_functions/2d_versions/deflected_corrugated_spring_alpha_low_res.png}
     }
     \caption{
-    Surface plots of the benchmark functions Cross In Tray, Griewank, Shubert, Weierstrass and Deflected Corrugated Spring~\parencite{mccourt_optimization_2016}, from the left.
-    The two right-most functions are available in multiple dimensionalities, where 8D and 10D is used in the experiments, respectively.
-    \label{fig:bayesian_optimization:functions_plots}
+        Surface plots of the benchmark functions Cross In Tray, Griewank, Shubert, Weierstrass and Deflected Corrugated Spring~\parencite{mccourt_optimization_2016}, from the left.
+        The two right-most functions are available in multiple dimensionalities, where 8D and 10D is used in the experiments, respectively.
+        \label{fig:bayesian_optimization:functions_plots}
     }
 \end{figure}
 \begin{figure}[t]
@@ -416,12 +415,12 @@ where $\hat{\alpha}(\mat{x}_*, \mat{H}_i, \mat{\theta}_i)$ is the acquisition fu
     \includegraphics[width=0.235\textwidth]{robust_bo_erik/regret_plots_spiky_functions/corrupted_example/HOLDER_TABLE_2D_all_with_large_legend.pdf}
     \includegraphics[width=0.235\textwidth]{robust_bo_erik/regret_plots_spiky_functions/corrupted_example/CORRUPTED_HOLDER_TABLE_2D_all_faded.pdf}
     \caption{
-    A comparison of experiments on the Holder Table benchmark~\parencite{mccourt_optimization_2016} (left) and a corrupted version with added nonsmooth structure (right).
-    We show plots of the respective functions and performance in terms of regret so far (over 20 repetitions).
-    We show both mean regret (line) and standard deviation (shading).
-    The nonsmooth structure is challenging for a noiseless GP to model and leads to a high variance in-between runs.
-    Warped and homoscedasic GPs explain away the corruption, but their performance plateaus as no informative trends can be identified.
-    LGP reliably identifies these trends and reliably finds good solutions.
+        A comparison of experiments on the Holder Table benchmark~\parencite{mccourt_optimization_2016} (left) and a corrupted version with added nonsmooth structure (right).
+        We show plots of the respective functions and performance in terms of regret so far (over 20 repetitions).
+        We show both mean regret (line) and standard deviation (shading).
+        The nonsmooth structure is challenging for a noiseless GP to model and leads to a high variance in-between runs.
+        Warped and homoscedasic GPs explain away the corruption, but their performance plateaus as no informative trends can be identified.
+        LGP reliably identifies these trends and reliably finds good solutions.
     }
 
     \label{fig:bayesian_optimization:corrupted_holder}
@@ -490,47 +489,47 @@ For further details, we refer to the supplement.
 \begin{table*}[t]
     \centering
     \caption{
-    \label{tab:bayesian_optimization:z_table}
-    Mean gap performance for various test functions; higher is better.
-    The upper table shows the results after 50 objective function evaluations and the lower table after 100 evaluations.
-    Due to computational cost, Warped GP results are only reported for 50 evaluations.
-    Methods not significantly different from the best performing method with respect by a two-sided paired Wilcoxon signed-rank test at a 5\% significance level over 20 repetitions are shown in bold~\parencite{malkomes_automating_2018}.
-    For results in terms of regret, see the supplement.
+        \label{tab:bayesian_optimization:z_table}
+        Mean gap performance for various test functions; higher is better.
+        The upper table shows the results after 50 objective function evaluations and the lower table after 100 evaluations.
+        Due to computational cost, Warped GP results are only reported for 50 evaluations.
+        Methods not significantly different from the best performing method with respect by a two-sided paired Wilcoxon signed-rank test at a 5\% significance level over 20 repetitions are shown in bold~\parencite{malkomes_automating_2018}.
+        For results in terms of regret, see the supplement.
     }
     \resizebox{\textwidth}{!}{%
-    \begin{tabular}{lrrlrr|rrr}
-        \toprule
-        {Benchmark} & Evals & Dim & \multicolumn{1}{c}{Properties} & \multicolumn{1}{c}{GP} & \multicolumn{1}{c}{Warped GP} & \multicolumn{1}{c}{Homosced GP} &  \multicolumn{1}{c}{Heterosced GP} & \multicolumn{1}{c}{LGP} \\
-        \midrule
-        Hartmann           & 50 & 6 & boring     &             \textbf{0.959} &     0.537 &   0.881 &     \textbf{0.973} &     \textbf{0.937} \\
-        Griewank           & 50 & 2  & oscillatory             &           \textbf{0.914} &     0.493 &   0.752 &   \textbf{0.913} &       \textbf{0.897} \\
-        Shubert            & 50 & 2 & oscillatory &            0.378 &     0.158 &   \textbf{0.378} &     \textbf{0.480} &     \textbf{0.593} \\
-        Ackley $[-10, 30]^d$ & 50 & 2  & complicated, oscillatory                    &        \textbf{0.924} &     0.274 &   \textbf{0.892} &       \textbf{0.912} &   \textbf{0.927} \\
-        Cross In Tray      & 50 & 2  & complicated, oscillatory             &            \textbf{0.954} &     0.385 &   0.929 &     \textbf{0.977}  &     \textbf{0.945} \\
-        Holder table       & 50 & 2 & complicated, oscillatory         &            0.939 &     0.896 &   0.900 &     0.931 &          \textbf{0.993} \\
-        Corrupted Holder Table & 50 & 2 & complicated, oscillatory &        0.741 &     0.798 &   0.826 &      0.729 &      \textbf{0.896} \\
-        \midrule
-        Branin01           & 100     & 2 &  none            &               \textbf{1.000} &&          \textbf{1.000} &                  \textbf{1.000} &            \textbf{1.000} \\
-        Branin02           & 100     & 2 &  none            &               \textbf{0.991} &&   0.964 &          \textbf{0.990} &   \textbf{0.981} \\
-        Beale              & 100     & 2 &  boring        &              \textbf{0.987} &&   \textbf{0.982} &         \textbf{0.987} &   \textbf{0.988} \\
-        Hartmann           & 100     & 6 &  boring            &               \textbf{0.987} &&   0.947 &           \textbf{0.984} &   \textbf{0.979} \\
-        Griewank           & 100     & 2 &  oscillatory            &              \textbf{0.967} &&   0.875 &         \textbf{0.969} &     \textbf{0.946} \\
-        Levy               & 100     & 2 &  oscillatory            &               \textbf{0.997} &&   \textbf{0.999} &        \textbf{0.998} &      \textbf{0.998} \\
-        Deflected Corrugated Spring & 100 & 10 &  oscillatory    &               0.347 &&   \textbf{0.840} &      0.406 &        0.697 \\
-        Shubert $[-10, 10]^d$           & 100     & 2 &  oscillatory            &               0.510 &&   0.511 &          \textbf{0.672} &    \textbf{0.877} \\
-        Weierstrass        & 100     & 8 &  complicated            &               0.600 &&   \textbf{0.704} &         0.577 &     0.625 \\
-        Cross In Tray      & 100     & 2 &  complicated, oscillatory            &               \textbf{1.000} &&            0.995 &               \textbf{1.000} &               \textbf{1.000} \\
-        Holder Table       & 100     & 2 &  complicated, oscillatory            &               0.971 &&            0.963 &                     \textbf{0.964} &         \textbf{1.000} \\
-        Ackley $[-10, 30]^d$ & 100     & 2 &  complicated, oscillatory            &               \textbf{0.971} &&            0.914 &          \textbf{0.980} &                    \textbf{0.974} \\
-        Ackley $[-10, 30]^d$ & 100     & 6 &  complicated, oscillatory            &               0.459 &&            \textbf{0.789} &                      0.442 &        \textbf{0.712} \\
-        Corrupted Holder Table  & 100 & 2 & complicated, oscillatory            &              0.844 &&   0.889 &        0.822 &      \textbf{0.918} \\
-        Corrupted Exponential & 100 & 8 &   complicated, oscillatory          &               0.580 &&   \textbf{0.847} &          0.581 &    \textbf{0.806} \\
-        \midrule
-        HPO: NN Boston          & 100     & 9 &  unknown  &           \textbf{0.720} &&   \textbf{0.761} &      \textbf{0.810} &        \textbf{0.770} \\
-        HPO: NN Climate Model Crashes & 100 & 9 &  unknown  &          0.629 &&   \textbf{0.717} &        \textbf{0.683} &      \textbf{0.678} \\
-        Active learning: Robot Pushing & 100 & 4 &  unknown  &          0.877 &&   0.745 &        \textbf{0.907} &      \textbf{0.932} \\
-        \bottomrule
-    \end{tabular}
+        \begin{tabular}{lrrlrr|rrr}
+            \toprule
+            {Benchmark}                    & Evals & Dim & \multicolumn{1}{c}{Properties} & \multicolumn{1}{c}{GP} & \multicolumn{1}{c}{Warped GP} & \multicolumn{1}{c}{Homosced GP} & \multicolumn{1}{c}{Heterosced GP} & \multicolumn{1}{c}{LGP} \\
+            \midrule
+            Hartmann                       & 50    & 6   & boring                         & \textbf{0.959}         & 0.537                         & 0.881                           & \textbf{0.973}                    & \textbf{0.937}          \\
+            Griewank                       & 50    & 2   & oscillatory                    & \textbf{0.914}         & 0.493                         & 0.752                           & \textbf{0.913}                    & \textbf{0.897}          \\
+            Shubert                        & 50    & 2   & oscillatory                    & 0.378                  & 0.158                         & \textbf{0.378}                  & \textbf{0.480}                    & \textbf{0.593}          \\
+            Ackley $[-10, 30]^d$           & 50    & 2   & complicated, oscillatory       & \textbf{0.924}         & 0.274                         & \textbf{0.892}                  & \textbf{0.912}                    & \textbf{0.927}          \\
+            Cross In Tray                  & 50    & 2   & complicated, oscillatory       & \textbf{0.954}         & 0.385                         & 0.929                           & \textbf{0.977}                    & \textbf{0.945}          \\
+            Holder table                   & 50    & 2   & complicated, oscillatory       & 0.939                  & 0.896                         & 0.900                           & 0.931                             & \textbf{0.993}          \\
+            Corrupted Holder Table         & 50    & 2   & complicated, oscillatory       & 0.741                  & 0.798                         & 0.826                           & 0.729                             & \textbf{0.896}          \\
+            \midrule
+            Branin01                       & 100   & 2   & none                           & \textbf{1.000}         &                               & \textbf{1.000}                  & \textbf{1.000}                    & \textbf{1.000}          \\
+            Branin02                       & 100   & 2   & none                           & \textbf{0.991}         &                               & 0.964                           & \textbf{0.990}                    & \textbf{0.981}          \\
+            Beale                          & 100   & 2   & boring                         & \textbf{0.987}         &                               & \textbf{0.982}                  & \textbf{0.987}                    & \textbf{0.988}          \\
+            Hartmann                       & 100   & 6   & boring                         & \textbf{0.987}         &                               & 0.947                           & \textbf{0.984}                    & \textbf{0.979}          \\
+            Griewank                       & 100   & 2   & oscillatory                    & \textbf{0.967}         &                               & 0.875                           & \textbf{0.969}                    & \textbf{0.946}          \\
+            Levy                           & 100   & 2   & oscillatory                    & \textbf{0.997}         &                               & \textbf{0.999}                  & \textbf{0.998}                    & \textbf{0.998}          \\
+            Deflected Corrugated Spring    & 100   & 10  & oscillatory                    & 0.347                  &                               & \textbf{0.840}                  & 0.406                             & 0.697                   \\
+            Shubert $[-10, 10]^d$          & 100   & 2   & oscillatory                    & 0.510                  &                               & 0.511                           & \textbf{0.672}                    & \textbf{0.877}          \\
+            Weierstrass                    & 100   & 8   & complicated                    & 0.600                  &                               & \textbf{0.704}                  & 0.577                             & 0.625                   \\
+            Cross In Tray                  & 100   & 2   & complicated, oscillatory       & \textbf{1.000}         &                               & 0.995                           & \textbf{1.000}                    & \textbf{1.000}          \\
+            Holder Table                   & 100   & 2   & complicated, oscillatory       & 0.971                  &                               & 0.963                           & \textbf{0.964}                    & \textbf{1.000}          \\
+            Ackley $[-10, 30]^d$           & 100   & 2   & complicated, oscillatory       & \textbf{0.971}         &                               & 0.914                           & \textbf{0.980}                    & \textbf{0.974}          \\
+            Ackley $[-10, 30]^d$           & 100   & 6   & complicated, oscillatory       & 0.459                  &                               & \textbf{0.789}                  & 0.442                             & \textbf{0.712}          \\
+            Corrupted Holder Table         & 100   & 2   & complicated, oscillatory       & 0.844                  &                               & 0.889                           & 0.822                             & \textbf{0.918}          \\
+            Corrupted Exponential          & 100   & 8   & complicated, oscillatory       & 0.580                  &                               & \textbf{0.847}                  & 0.581                             & \textbf{0.806}          \\
+            \midrule
+            HPO: NN Boston                 & 100   & 9   & unknown                        & \textbf{0.720}         &                               & \textbf{0.761}                  & \textbf{0.810}                    & \textbf{0.770}          \\
+            HPO: NN Climate Model Crashes  & 100   & 9   & unknown                        & 0.629                  &                               & \textbf{0.717}                  & \textbf{0.683}                    & \textbf{0.678}          \\
+            Active learning: Robot Pushing & 100   & 4   & unknown                        & 0.877                  &                               & 0.745                           & \textbf{0.907}                    & \textbf{0.932}          \\
+            \bottomrule
+        \end{tabular}
     }
     \medskip
 \end{table*}
@@ -543,17 +542,17 @@ For further details, we refer to the supplement.
     %    \includegraphics[width=0.45\textwidth]{robust_bo_erik/real_world/legend.pdf}\\
     %    \vspace{-0.3cm}
     \caption{
-    Active learning: Robot pushing.
-    The objective function to be optimized takes as input the pushing action of a robot within a simulation,
-    and outputs the distance of the pushed object to the goal location.
-    The two plots on the left show that the task surface, resulting from the dynamic system, is nonsmooth and non-trivial.
-    The right plot shows the mean regret and standard deviations for the different surrogates.
-    As can be seen, the LGP found good solutions with low variance, improving reliability of the search.
-    The 1D slices of the 4D function (the two from the left) was generated by fixing the initial y-position (param.) to the one of the goal position,
-    the simulation steps (param.) to the center of its domain, and varying the initial angle (param.) or the x-position (param.), respectively,
-    while keeping the other fixed at zero.
-    Slicing the 4D function differently produced similar nonsmooth response curves.\\
-    \label{fig:bayesian_optimization:real_world}
+        Active learning: Robot pushing.
+        The objective function to be optimized takes as input the pushing action of a robot within a simulation,
+        and outputs the distance of the pushed object to the goal location.
+        The two plots on the left show that the task surface, resulting from the dynamic system, is nonsmooth and non-trivial.
+        The right plot shows the mean regret and standard deviations for the different surrogates.
+        As can be seen, the LGP found good solutions with low variance, improving reliability of the search.
+        The 1D slices of the 4D function (the two from the left) was generated by fixing the initial y-position (param.) to the one of the goal position,
+        the simulation steps (param.) to the center of its domain, and varying the initial angle (param.) or the x-position (param.), respectively,
+        while keeping the other fixed at zero.
+        Slicing the 4D function differently produced similar nonsmooth response curves.\\
+        \label{fig:bayesian_optimization:real_world}
     }
 \end{figure}
 
@@ -715,7 +714,7 @@ Given a policy and an initial state, it is defined as the expected sum of reward
 Since the transition dynamics are assumed to be probabilistic, the states at all time steps greater than zero can be random variables.
 Given a distribution of the state $\mat{s_t}$, the distribution for the next state $\mat{s_{t+1}}$ is
 \begin{align}
-    \Prob{\mat{s_{t+1}}} &= \int \Fun{f}{\mat{s_{t+1}} \given \mat{s_t}, \pi}\Prob{\mat{s_t}} \diff \mat{s_t},
+    \Prob{\mat{s_{t+1}}} & = \int \Fun{f}{\mat{s_{t+1}} \given \mat{s_t}, \pi}\Prob{\mat{s_t}} \diff \mat{s_t},
 \end{align}
 where $f\Cond{\mat{s_{t+1}} \given \mat{s_t}, \pi(\mat{s_t})}$ denotes the probability of $\mat{s_{t+1}}$ under the distribution $f(\mat{s_t}, \pi(\mat{s_t}))$.
 
@@ -728,10 +727,10 @@ This is achieved with a constant discount factor $\gamma$.
     Given transition dynamics $f$, a policy $\pi$, a time horizon $T \in \Nb \cup \left\{ \infty \right\}$ and a discount factor $0 \leq \gamma \leq 1$, the \emph{(expected) value function $J^\pi$} denotes the expected accumulated reward of a state and is given by
     \begin{align}
         J^\pi : \left\{
-            \begin{aligned}
-                \Sc &\to \Rb \\
-                \mat{s} &\mapsto \Moment*{\E}{\sum_{t=1}^T \gamma^t r(\mat{s}_t) \given f, \pi, \mat{s}_t = \mat{s}}.
-            \end{aligned}
+        \begin{aligned}
+            \Sc     & \to \Rb                                                                                      \\
+            \mat{s} & \mapsto \Moment*{\E}{\sum_{t=1}^T \gamma^t r(\mat{s}_t) \given f, \pi, \mat{s}_t = \mat{s}}.
+        \end{aligned}
         \right.
     \end{align}
     If the time horizon is infinite, $\gamma$ must be smaller than 1.
@@ -768,15 +767,15 @@ The \emph{optimal policy} $\pi^*$ maximizes the expected value under the distrib
     \newcolumntype{Y}{>{\centering\arraybackslash}X}
     \begin{tabularx}{\textwidth}{cYY}
         \toprule
-        & Probabilistic Numerics & Reinforcement Learning \\
+                          & Probabilistic Numerics & Reinforcement Learning \\
         \midrule
-        $\Uc$ & Latent function & True system-dynamics \\
-        $\Qc$ & Definite Integral & Optimal value \\
-        $\Yc$ & Function evaluations & Batch/Online data \\
+        $\Uc$             & Latent function        & True system-dynamics   \\
+        $\Qc$             & Definite Integral      & Optimal value          \\
+        $\Yc$             & Function evaluations   & Batch/Online data      \\
         \midrule
-        $Q : \Uc \to \Qc$ & Integration & Bellman principle \\
-        $Y : \Uc \to \Yc$ & Observation & Exploration \\
-        $B : \Yc \to \Qc$ & Quadrature & Policy search \\
+        $Q : \Uc \to \Qc$ & Integration            & Bellman principle      \\
+        $Y : \Uc \to \Yc$ & Observation            & Exploration            \\
+        $B : \Yc \to \Qc$ & Quadrature             & Policy search          \\
         \bottomrule
     \end{tabularx}
 \end{table}

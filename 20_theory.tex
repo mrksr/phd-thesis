@@ -51,8 +51,8 @@ An infinite number of possibly dependent random variables mapping from the same 
     Given a probability space $(\Omega, \mathcal{F}, P)$, an index set $T$ and a measurable space $Y$, a \emph{stochastic process $\rv{X}$} is a function
     \begin{align}
         \rv{X} \colon \left\{\begin{aligned}
-            T \times \Omega &\to Y \\
-            (t, \omega) &\mapsto \rv{X_t}(\omega)
+            T \times \Omega & \to Y                    \\
+            (t, \omega)     & \mapsto \rv{X_t}(\omega)
         \end{aligned}\right.
     \end{align}
     mapping indices $t$ to $Y$-valued random-variables.
@@ -134,16 +134,16 @@ According to the definition of Gaussian processes, for any two input numbers $x$
     \begin{pmatrix}
         \rv{f_x} \\ \rv{f_y}
     \end{pmatrix} \sim \Gaussian*{\mat{0}, \begin{bmatrix}
-        \K(x, x) & \K(x, y) \\
-        \K(y, x) & \K(y, y)
-    \end{bmatrix}}
+            \K(x, x) & \K(x, y) \\
+            \K(y, x) & \K(y, y)
+        \end{bmatrix}}
 \end{align}
 where $\K = \K_{\text{linear}}$.
 Assuming that both $x$ and $y$ are not equal to zero, the correlation coefficient $\corr$ of these two variables is given by
 \begin{align}
     \begin{split}
         \Moment{\corr}{\rv{f_x}, \rv{f_y}} &= \frac{\Moment{\cov}{\rv{f_x}, \rv{f_y}}}{\sqrt{\Moment{\var}{\rv{f_x}\vphantom{\rv{f_y}}}}\sqrt{\Moment{\var}{\rv{f_y}}}} \\
-              &= \frac{\K(x, y)}{\sqrt{\K(x, x)} \sqrt{\K(y, y)}} = \frac{xy}{\sqrt{\vphantom{y^2}x^2}\sqrt{\vphantom{y^2}y^2}} \in \left\{ -1, 1 \right\}.
+        &= \frac{\K(x, y)}{\sqrt{\K(x, x)} \sqrt{\K(y, y)}} = \frac{xy}{\sqrt{\vphantom{y^2}x^2}\sqrt{\vphantom{y^2}y^2}} \in \left\{ -1, 1 \right\}.
     \end{split}
 \end{align}
 A correlation coefficient of plus or minus one implies that the value of one of the random variables is a linear function of the other.
@@ -260,28 +260,28 @@ Now consider a set of test points $\mat{X_\ast}$ for which the predictive poster
 By definition, the latent function values $\mat{f}$ of the training set and the latent function values of the test set $\mat{f_\ast} = f(\mat{X_\ast})$ have the joint Gaussian distribution
 \begin{align}
     \Prob*{\begin{pmatrix}
-        \mat{f} \\
-        \mat{f_\ast}
-    \end{pmatrix} \given \mat{X}, \mat{X_\ast}, \mat{\theta}} &= \Gaussian*{\begin{pmatrix}
-        \mat{f} \\
-        \mat{f_\ast}
-    \end{pmatrix} \given \mat{0}, \begin{bmatrix}
-        \mat{K_N} & \mat{K_{N\ast}} \\
-        \mat{K_{\ast N}} & \mat{K_{\ast}}
-    \end{bmatrix}}.
+            \mat{f} \\
+            \mat{f_\ast}
+        \end{pmatrix} \given \mat{X}, \mat{X_\ast}, \mat{\theta}} & = \Gaussian*{\begin{pmatrix}
+            \mat{f} \\
+            \mat{f_\ast}
+        \end{pmatrix} \given \mat{0}, \begin{bmatrix}
+            \mat{K_N}        & \mat{K_{N\ast}} \\
+            \mat{K_{\ast N}} & \mat{K_{\ast}}
+        \end{bmatrix}}.
 \end{align}
 Adding the noise model to this distribution leads to the joint Gaussian of training outputs $\mat{y}$ and test outputs $\mat{f_\ast}$ which is given by
 \begin{align}
     \Prob*{\begin{pmatrix}
-        \mat{y} \\
-        \mat{f_\ast}
-    \end{pmatrix} \given \mat{X}, \mat{X_\ast}, \mat{\theta}} &= \Gaussian*{\begin{pmatrix}
-        \mat{y} \\
-        \mat{f_\ast}
-    \end{pmatrix} \given \mat{0}, \begin{bmatrix}
-        \mat{K_N} + \sigma_n^2 \Eye & \mat{K_{N\ast}} \\
-        \mat{K_{\ast N}} & \mat{K_{\ast}}
-    \end{bmatrix}}.
+            \mat{y} \\
+            \mat{f_\ast}
+        \end{pmatrix} \given \mat{X}, \mat{X_\ast}, \mat{\theta}} & = \Gaussian*{\begin{pmatrix}
+            \mat{y} \\
+            \mat{f_\ast}
+        \end{pmatrix} \given \mat{0}, \begin{bmatrix}
+            \mat{K_N} + \sigma_n^2 \Eye & \mat{K_{N\ast}} \\
+            \mat{K_{\ast N}}            & \mat{K_{\ast}}
+        \end{bmatrix}}.
 \end{align}
 
 In this distribution, the training outputs $\mat{y}$ are known.
@@ -348,8 +348,8 @@ A major advantage of Gaussian processes is the ability to select hyperparameters
 
 In a fully Bayesian setup, the correct way to model uncertainty about hyperparameters is to assign them a prior $\Prob{\mat{\theta}}$ and marginalize it to derive the dependent distributions
 \begin{align}
-    \Prob{f} &= \int \Prob{f \given \mat{\theta}} \Prob{\mat{\theta}} \diff \mat{\theta} \\
-    \Prob{\mat{y} \given \mat{X}} &= \int \Prob{\mat{y} \given \mat{X}, \mat{\theta}} \Prob{\mat{\theta}} \diff \mat{\theta}. \label{eq:theory:gp:theta_posterior_integration}
+    \Prob{f}                      & = \int \Prob{f \given \mat{\theta}} \Prob{\mat{\theta}} \diff \mat{\theta}                                                                  \\
+    \Prob{\mat{y} \given \mat{X}} & = \int \Prob{\mat{y} \given \mat{X}, \mat{\theta}} \Prob{\mat{\theta}} \diff \mat{\theta}. \label{eq:theory:gp:theta_posterior_integration}
 \end{align}
 Updating the belief about the distribution of the hyperparameters then becomes part of the process of obtaining a posterior model.
 A new distribution is obtained by combining the prior with the likelihood of the training data observed using Bayes' theorem:
@@ -396,7 +396,7 @@ For practical reasons, it is convenient to minimize the negative logarithm of th
 \end{align}
 The estimation of hyperparameters is the solution of the optimization problem
 \begin{align}
-    \mat{\theta}^\ast &\in \argmin_{\mat{\theta}} \Lc(\mat{\theta})
+    \mat{\theta}^\ast & \in \argmin_{\mat{\theta}} \Lc(\mat{\theta})
 \end{align}
 and is calculated using standard approaches to non-convex optimization such as scaled conjugate gradient (SCD) techniques, since finding the derivatives of $\Lc$ is comparatively easy \cite{rasmussen_gaussian_2006}.
 The computational complexity of evaluating the likelihood term and its derivatives is dominated by the inversion of $\mat{K_N} + \sigma_n^2 \Eye$.
@@ -425,7 +425,7 @@ Since they are not true observations, they are assumed to be noise-free.
 
 With known positions of the pseudo inputs and fixed hyperparameters $\mat{\theta}$, the predictive posterior of a Gaussian process based on this pseudo data set for test points $(\mat{X_\ast}, \mat{f_\ast})$ is given by
 \begin{align}
-    \Prob{\mat{f_\ast} \given \mat{X_\ast}, \ps{\mat{X}}, \ps{\mat{f}}, \mat{\theta}} &= \Gaussian{\mat{K_{\ast M}}\mat{K_M}^{-1} \ps{\mat{f}}, \mat{K_\ast} - \mat{K_{\ast M}} \mat{K_M}^{-1} \mat{K_{M \ast}}}
+    \Prob{\mat{f_\ast} \given \mat{X_\ast}, \ps{\mat{X}}, \ps{\mat{f}}, \mat{\theta}} & = \Gaussian{\mat{K_{\ast M}}\mat{K_M}^{-1} \ps{\mat{f}}, \mat{K_\ast} - \mat{K_{\ast M}} \mat{K_M}^{-1} \mat{K_{M \ast}}}
 \end{align}
 according to \cref{lem:theory:gp:gp_posterior} with the notation $\mat{K_M} = \K(\ps{\mat{X}}, \ps{\mat{X}})$ meaning the Gram matrix of the pseudo inputs compared to $\mat{K_N} = \K(\mat{X}, \mat{X})$, the Gram matrix of the original training data.
 

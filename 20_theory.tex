@@ -1,11 +1,11 @@
 \chapter{Theoretical Background}
-\label{cha:theory}
+\label{toc:theory}
 
 \section{The Bayesian Paradigm}
-\label{sec:theory:bayes}
+\label{toc:theory:bayes}
 
 \section{Gaussian Processes}
-\label{sec:theory:gp}
+\label{toc:theory:gp}
 \todoi{Rewrite GP section}
 The transition dynamics $f \colon \Sc \times \Ac \to \Probs{\Sc^+}$ is a function mapping states and actions to a probability distribution of following states.
 In order to estimate them using Gaussian processes, some assumptions about the structure of this function are needed.
@@ -545,10 +545,10 @@ This technique is presented in the next section.
 
 
 \section{Hierarchical Gaussian Processes}
-\label{sec:theory:dgp}
+\label{toc:theory:dgp}
 
 \subsection{Variational Approximation}
-\label{sub:theory:dgp:variational_approximation}
+\label{toc:theory:dgp:variational_approximation}
 Since exact inference in this model is intractable, we discuss a variational approximation to the model's true marginal likelihood and posterior in this section.
 Analogously to $\mat{y}$, we denote the random vectors which contain the function values of the respective functions and outputs as $\rv{a}$ and $\rv{f}$.
 The joint probability distribution of the data can then be written as
@@ -569,7 +569,7 @@ To approximate a single deep GP, \Textcite{hensman_nested_2014} proposed nested 
 While this forces a variational approximation of all intermediate outputs of the stacked processes, it has the appealing property that it allows optimization via stochastic gradient descent \parencite{hensman_gaussian_2013} and the variational approximation can after training be used independently of the original training data.
 
 \subsection{Augmented Model}
-\label{sub:theory:dgp:augmented_model}
+\label{toc:theory:dgp:augmented_model}
 Nested variational compression focuses on augmenting a full GP model by introducing sets of \emph{inducing variables} $\mat{u}$ with their \emph{inducing inputs} $\mat{Z}$.
 Those variables are assumed to be latent observations of the same functions and are thus jointly Gaussian with the observed data.
 
@@ -592,7 +592,7 @@ These inducing variables play a crucial role in sharing information between the 
 
 
 \subsection{Nested Variational Compression}
-\label{sub:theory:nvc}
+\label{toc:theory:nvc}
 To derive the desired variational lower bound for the log marginal likelihood of the complete model, multiple steps are necessary.
 First, we will consider the innermost GPs $a_d$ describing the alignment functions.
 We derive the Scalable Variational GP (SVGP), a lower bound for this model part which can be calculated efficiently and can be used for stochastic optimization, first introduced by \textcite{hensman_gaussian_2013}.
@@ -600,7 +600,7 @@ In order to apply this bound recursively, we will both show how to propagate the
 While \citeauthor{hensman_nested_2014} considered standard deep GP models, we will show how to apply their results to CPs.
 
 \paragraph{The First Layer}
-\label{sub:theory:nvc:first_layer}
+\label{toc:theory:nvc:first_layer}
 Since the inputs $\mat{X}$ are fully known, we do not need to propagate uncertainty through the GPs $a_d$.
 Instead, the uncertainty about the $\rv{a_d}$ comes from the uncertainty about the correct functions $a_d$ and is introduced by the processes themselves.
 To derive a lower bound on the marginal log likelihood of $\rv{a_d}$, we assume a variational distribution $\Variat{\rv{u_{a, d}}} \sim \Gaussian{\mat{m_{a, d}}, \mat{S_{a, d}}}$ approximating $\Prob{\rv{u_{a, d}}}$ and additionally assume that $\Variat{\rv{\hat{a}_d}, \rv{u_{a, d}}} = \Prob{\rv{\hat{a}_d} \given \rv{u_{a, d}}}\Variat{\rv{u_{a, d}}}$.
@@ -661,7 +661,7 @@ However, for all subsequent layers, the bound is not directly applicable, since 
 It is therefore necessary to propagate their uncertainty and also handle the interdependencies between the layers introduced by the latent function values $\rv{a}$, $\rv{f}$ and $\rv{g}$.
 
 \paragraph{The Second and Third Layer}
-\label{sub:theory:nvc:other_layers}
+\label{toc:theory:nvc:other_layers}
 Our next goal is to derive a bound on the outputs of the second layer
 \begin{align}
     \begin{split}
@@ -725,7 +725,7 @@ The expectations with respect to $\Variat{\rv{a}}$ involve expectations of kerne
     \end{split}
 \end{align}
 These $\Psi$-statistics can be computed analytically for multiple kernels, including the squared exponential kernel.
-In \cref{sub:theory:nvc:kernel_expectations} we show closed-form solutions for these $\Psi$-statistics for the implicit kernel defined in the CP layer.
+In \cref{toc:theory:nvc:kernel_expectations} we show closed-form solutions for these $\Psi$-statistics for the implicit kernel defined in the CP layer.
 To obtain the final formulation of the desired bound for $\log \Prob{\rv{f} \given \rv{u_f}}$ we substitute \cref{eq:theory:nvc:psi_statistics} into \cref{eq:theory:nvc:f_marginal_likelihood} and get the analytically tractable bound
 \begin{align}
     \begin{split}
@@ -760,7 +760,7 @@ In order to derive a bound for $\log \Prob{\rv{y} \given \rv{u_g}}$ we apply the
 
 
 \subsection{Doubly Stochastic Variational Inference}
-\label{sub:theory:dsvi}
+\label{toc:theory:dsvi}
 Exact inference is intractable in this model.
 Instead, we formulate a variational approximation following ideas from~\parencite{hensman_gaussian_2013, salimbeni_doubly_2017}.
 Because of the rich structure in our model, finding a variational lower bound which is both faithful and can be evaluated analytically is hard.
@@ -839,10 +839,10 @@ This bound has complexity $\Fun*{\Oh}{NM^2K}$ to evaluate.
 
 
 \section{Composite Uncertainties}
-\label{sec:theory:composite_uncertainties}
+\label{toc:theory:composite_uncertainties}
 ?
 
 
 \section{Reinforcement Learning}
-\label{sec:theory:rl}
+\label{toc:theory:rl}
 ?

@@ -1,5 +1,5 @@
 \chapter{Structure from Composite Tasks}
-\label{cha:structure_from_composite_tasks}
+\label{toc:structure_from_composite_tasks}
 Prerequisites?
 \begin{itemize}
     \item Measureable spaces
@@ -8,7 +8,7 @@ Prerequisites?
 
 
 \section{Probabilistic Numerics}
-\label{sec:probabilistic_numerics:probabilistic_numerics}
+\label{toc:probabilistic_numerics:probabilistic_numerics}
 \begin{figure}[t]
     \centering
     \includestandalone{figures/quantities_of_interest}
@@ -111,7 +111,7 @@ Explain Trapezodial Rule here.
 
 
 \section{Bayesian Optimization}
-\label{sec:bayesian_optimization}
+\label{toc:bayesian_optimization}
 Bayesian optimization (BO) methods often rely on the assumption that the objective function is well-behaved, but in practice, this is seldom true for real-world objectives even if noise-free observations can be collected.
 Common approaches, which try to model the objective as precisely as possible, often fail to make progress by spending too many evaluations modeling irrelevant details.
 We address this issue by proposing surrogate models that focus on the well-behaved structure in the objective function, which is informative for search, while ignoring detrimental structure that is challenging to model from few observations.
@@ -120,7 +120,7 @@ Secondly, we show that a latent Gaussian process is an excellent surrogate for t
 We perform numerous experiments on a range of BO benchmarks and find that our approach improves reliability and performance when faced with challenging objective functions.
 
 \subsection{Introduction}
-\label{sub:bayesian_optimization:introduction}
+\label{toc:bayesian_optimization:introduction}
 \begin{figure}[t]
     \centering
     \raisebox{-0.5\height}{\includegraphics[trim=15 15 0 0, clip, width=0.25\textwidth]{robust_bo_erik/illustrative_figure/gp.pdf}}
@@ -181,7 +181,7 @@ Our main contributions are:
 \end{itemize}
 
 \subsection{Modulating Surrogates}
-\label{sub:bayesian_optimization:modulated_objectives}
+\label{toc:bayesian_optimization:modulated_objectives}
 
 Let $f : \Xc \to \Rb$ be an unknown, noise-free objective function defined on a bounded subset $\Xc \subset \Rb^Q$.
 The goal of BO is to solve the global optimization problem of finding
@@ -238,7 +238,7 @@ The standard formulation of such a predictive distribution is
 \end{align}
 where $\mat{h}_*$ is the noise variable corresponding to the input $\mat{x}_*$.
 The above distribution of $\mat{f}_*$ contains the uncertainty that comes from the randomness of $\mat{h}_*$.
-This is \textit{undesirable} because the uncertainty due to $\mat{h}_*$ is irreducible uncertainty (see \cref{sub:bayesian_optimization:introduction}), which is not helpful in terms of finding the optimum of the objective function with respect to $\mat{x}$.
+This is \textit{undesirable} because the uncertainty due to $\mat{h}_*$ is irreducible uncertainty (see \cref{toc:bayesian_optimization:introduction}), which is not helpful in terms of finding the optimum of the objective function with respect to $\mat{x}$.
 A failure mode is that the BO search gets stuck by repeatedly collecting evaluations at the location where the uncertainty due to $\mat{h}_*$ is high as this uncertainty cannot be reduced.
 In some cases, including such irreducible uncertainty can completely mislead the search~\parencite{gonzalez_preferential_2017}.
 We propose to remove the uncertainty contributed by $\mat{h}_*$ by collapsing the prior distribution of $\mat{h}_*$ into a Dirac delta distribution, $\hat{p}(\mat{h}_*) = \delta(\mat{h}_*)$.
@@ -269,7 +269,7 @@ Note that the predictive distribution due to the marginalization over $\mat{H}$ 
 and that the above integral often requires approximate methods.
 
 \subsection{Latent GP surrogates and other choices}
-\label{sub:bayesian_optimization:latent_gp_surrogate}
+\label{toc:bayesian_optimization:latent_gp_surrogate}
 
 \begin{figure}[t]
     \centering
@@ -462,8 +462,8 @@ our approach increases reliability in the search when faced with detrimental str
 that has a large negative impact on traditional surrogates.
 
 \paragraph{Baselines and metric}
-We compare with and without function modulation (\cref{sub:bayesian_optimization:modulated_objectives})
--~implemented as in \cref{sub:bayesian_optimization:latent_gp_surrogate}~-
+We compare with and without function modulation (\cref{toc:bayesian_optimization:modulated_objectives})
+-~implemented as in \cref{toc:bayesian_optimization:latent_gp_surrogate}~-
 on a popular GP model setup for BO.
 In addition, we compare the LGP against other methods of handling challenging structure in the objective function,
 namely (i) a noiseless GP,
@@ -629,7 +629,7 @@ and the specific case addressed in the paper can be included in any Gaussian pro
 
 
 \section{Reinforcement Learning}
-\label{sec:reinforcement_learning:reinforcement_learning}
+\label{toc:reinforcement_learning:reinforcement_learning}
 \parencite{bertsekas_stochastic_1978}
 
 \begin{definition}[Reinforcement Learning Problem]
@@ -648,7 +648,7 @@ We remove the control constraint because nobody cares.
 
 
 \subsection{Reinforcement Learning}
-\label{sub:reinforcement_learning:reinforcement_learning}
+\label{toc:reinforcement_learning:reinforcement_learning}
 \begin{figure}[t]
     \centering
     \includestandalone{figures/agent_environment_interaction}
@@ -751,7 +751,7 @@ The \emph{optimal policy} $\pi^*$ maximizes the expected value under the distrib
 
 
 \subsection{Probabilistic Reinforcement Learning}
-\label{sub:reinforcement_learning:probabilistic_reinforcement_learning}
+\label{toc:reinforcement_learning:probabilistic_reinforcement_learning}
 \begin{figure}[t]
     \centering
     \includestandalone{figures/quantities_of_interest_rl}
@@ -782,5 +782,5 @@ The \emph{optimal policy} $\pi^*$ maximizes the expected value under the distrib
 
 
 \subsection{Bayesian Reinforcement Learning}
-\label{sub:reinforcement_learning:bayesian_reinforcement_learning}
+\label{toc:reinforcement_learning:bayesian_reinforcement_learning}
 ?

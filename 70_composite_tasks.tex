@@ -8,7 +8,7 @@ Prerequisites?
 
 
 \section{Probabilistic Numerics}
-\label{toc:probabilistic_numerics:probabilistic_numerics}
+\label{toc:probabilistic_numerics}
 \begin{figure}[t]
     \centering
     \includestandalone{figures/quantities_of_interest}
@@ -629,7 +629,7 @@ and the specific case addressed in the paper can be included in any Gaussian pro
 
 
 \section{Reinforcement Learning}
-\label{toc:reinforcement_learning:reinforcement_learning}
+\label{toc:bayesian_rl}
 \parencite{bertsekas_stochastic_1978}
 
 \begin{definition}[Reinforcement Learning Problem]
@@ -648,14 +648,14 @@ We remove the control constraint because nobody cares.
 
 
 \subsection{Reinforcement Learning}
-\label{toc:reinforcement_learning:reinforcement_learning}
+\label{toc:bayesian_rl:reinforcement_learning}
 \begin{figure}[t]
     \centering
     \includestandalone{figures/agent_environment_interaction}
     \caption[Agent-environment interaction]{
         The interaction between an agent and its environment in reinforcement learning happens at discrete time steps.
     }
-    \label{fig:reinforcement_learning:agent_environment_interaction}
+    \label{fig:bayesian_rl:agent_environment_interaction}
 \end{figure}
 Reinforcement learning describes the general problem of learning to control a system by interaction in order to achieve a predefined goal.
 An \emph{agent} has to decide on specific \emph{actions} to influence their \emph{environment}.
@@ -682,7 +682,7 @@ This implies that given the same initial state $\mat{s}_0$ and policy $\pi$ it m
 Together with the state and action spaces, the transition dynamics fulfill the Markov property.
 That is, the distribution of $\mat{s}_{t+1}$ is independent of all states before $\mat{s}_t$ given $\mat{s}_t$.
 \begin{definition}[Transition Dynamics]
-    \label{def:reinforcement_learning:transition_dynamics}
+    \label{def:bayesian_rl:transition_dynamics}
     The \emph{transition dynamics $f$} of a system encode its physical behaviour.
     These dynamics
     \begin{align}
@@ -698,7 +698,7 @@ The higher the reward, the better the state transition is considered to be, inde
 In the following, we consider $r_{t+1}$ to be independent of the state $\mat{s}_t$ and the action $\mat{a}_t$ and only depend on $\mat{s}_{t+1}$.
 It is obtained from a real-valued and known \emph{reward function $r$} such that $r_{t+1} = r(\mat{s}_{t+1})$.
 \begin{definition}[Reward Function]
-    \label{def:reinforcement_learning:reward_function}
+    \label{def:bayesian_rl:reward_function}
     The \emph{reward function $r$} assigns a quality to each state in the state space
     \begin{align}
         r : \Sc \to \Rb.
@@ -723,7 +723,7 @@ The larger the time horizon, the more far-sighted an agent has to be to be succe
 For large values of $T$, it can be helpful to focus on rewards earned in the near future and to weight potential rewards further along with a smaller factor.
 This is achieved with a constant discount factor $\gamma$.
 \begin{definition}[Value Function]
-    \label{def:reinforcement_learning:old_value_function}
+    \label{def:bayesian_rl:old_value_function}
     Given transition dynamics $f$, a policy $\pi$, a time horizon $T \in \Nb \cup \left\{ \infty \right\}$ and a discount factor $0 \leq \gamma \leq 1$, the \emph{(expected) value function $J^\pi$} denotes the expected accumulated reward of a state and is given by
     \begin{align}
         J^\pi : \left\{
@@ -742,7 +742,7 @@ Note that extensions to partially observable MDPs (POMDPs) are regularly conside
 The objective of the reinforcement learning problem is to find the best policy in this decision process under the assumption that the transition dynamics are unknown a priori.
 The \emph{optimal policy} $\pi^*$ maximizes the expected value under the distribution of initial states, that is it solves the optimization problem
 \begin{align}
-    \label{eq:reinforcement_learning:optimal_policy}
+    \label{eq:bayesian_rl:optimal_policy}
     \begin{split}
         \pi^\ast &\in \argmax_{\pi} \Moment*{\E_{\Prob{\mat{s}_0}}}{J^\pi(\mat{s}_0)} \\
         &= \argmax_{\pi} \int J^\pi(\mat{s}_0) \Prob{\mat{s}_0} \diff \mat{s}_0.
@@ -751,19 +751,19 @@ The \emph{optimal policy} $\pi^*$ maximizes the expected value under the distrib
 
 
 \subsection{Probabilistic Reinforcement Learning}
-\label{toc:reinforcement_learning:probabilistic_reinforcement_learning}
+\label{toc:bayesian_rl:probabilistic_reinforcement_learning}
 \begin{figure}[t]
     \centering
     \includestandalone{figures/quantities_of_interest_rl}
     \caption[Quantities of interest in reinforcement learning]{
         Quantities of interest in reinforcement learning.
-        \label{fig:reinforcement_learning:quantities_of_interest_rl}
+        \label{fig:bayesian_rl:quantities_of_interest_rl}
     }
 \end{figure}
 \begin{table}[t]
     \centering
     \caption{Great Table!}
-    \label{tab:reinforcement_learning:label}
+    \label{tab:bayesian_rl:label}
     \newcolumntype{Y}{>{\centering\arraybackslash}X}
     \begin{tabularx}{\textwidth}{cYY}
         \toprule
@@ -782,5 +782,5 @@ The \emph{optimal policy} $\pi^*$ maximizes the expected value under the distrib
 
 
 \subsection{Bayesian Reinforcement Learning}
-\label{toc:reinforcement_learning:bayesian_reinforcement_learning}
+\label{toc:bayesian_rl:bayesian_reinforcement_learning}
 ?

@@ -1,5 +1,5 @@
-\section{Non-Linear Timeseries Alignment}
-\label{toc:timeseries_alignment}
+\chapter{Non-Linear Timeseries Alignment}
+\label{toc:alignment}
 We propose a novel Bayesian approach to modelling nonlinear alignments of time series based on latent shared information.
 We apply the method to the real-world problem of finding common structure in the sensor data of wind turbines introduced by the underlying latent and turbulent wind field.
 The proposed model allows for both arbitrary alignments of the inputs and non-parametric output warpings to transform the observations.
@@ -8,7 +8,7 @@ We present an efficient variational approximation based on nested variational co
 We show results for an artificial data set and real-world data of two wind turbines.
 
 
-\subsection{Introduction}
+\section{Introduction}
 Many real-world systems are inherently hierarchical and connected.
 Ideally, a machine learning method should model and recognize such dependencies.
 Take wind power production, which is one of the major providers for renewable energy today, as an example:
@@ -34,13 +34,13 @@ In \cref{toc:timeseries_alignment:model}, we propose a hierarchical, warped and 
 In \cref{toc:timeseries_alignment:variational_approximation}, we present an efficient learning scheme via an approximation to the marginal likelihood which allows us to fully exploit the regularization provided by our structure, yielding highly interpretable results.
 We show these properties for an artificial data set and for real-world data of two wind turbines in \cref{toc:timeseries_alignment:experiments}.
 
-\subsection{Model Definition}
-\label{toc:timeseries_alignment:model}
+\section{Model Definition}
+\label{toc:alignment:model}
 \begin{figure}[t]
     \centering
     \includestandalone{figures/wind_graphical_model}
     \caption{
-        \label{fig:timeseries_alignment:graphical_model_supervised}
+        \label{fig:alignment:graphical_model_supervised}
         The graphical model of AMO-GP with variational parameters (blue).
         A CP, informed by $R$ latent processes, models shared information between multiple data sets with nonlinear alignments and warpings.
         This CP connects multiple deep GPs through a shared layer.
@@ -50,7 +50,7 @@ We show these properties for an artificial data set and for real-world data of t
     \centering
     \includestandalonewithpath{figures/dampened_sine_decomposition_true}
     \caption{
-        \label{fig:timeseries_alignment:dampened_sine_decomposition}
+        \label{fig:alignment:dampened_sine_decomposition}
         An artificial example of hierarchical composite data with multiple observations of shared latent information.
         This hierarchy generates two data sets using a dampened sine function which is never observed directly.
     }
@@ -92,15 +92,15 @@ Under this prior, the $f_d$ are also GPs with zero mean and $\Moment{\cov}{f_d(\
 Using the squared exponential kernel for all $T_{d, r}$, the integral can be shown to have a closed form solution.
 With $\Set{\sigma_{d,r}, \mat{\ell_{d, r}}}$ denoting the kernel hyper parameters associated with $T_{d,r}$, it is given by
 \begin{align}
-    \label{eq:timeseries_alignment:dependent_kernel}
+    \label{eq:alignment:dependent_kernel}
     \begin{split}
         \MoveEqLeft[1] \Moment{\cov}{f_d(\mat{x}), f_{d^\prime}(\mat{x^\prime})} = \sum_{r=1}^R \frac{(2\pi)^{\frac{K}{2}}\sigma_{d, r}\sigma_{d^\prime, r}}{\prod_{k=1}^K \hat{\ell}_{d, d^\prime, r, k}\inv} \Fun*{\exp}{-\frac{1}{2} \sum_{k=1}^K \frac{(x_k - x^\prime_k)^2}{\hat{\ell}_{d, d^\prime, r, k}^2}},
     \end{split}
 \end{align}
 where $\mat{x}$ is $K$-dimensional and $\hat{\ell}_{d, d^\prime, r, k} = \sqrt{\ell_{d, r, k}^2 + \ell_{d^\prime, r, k}^2}$.
 
-\subsection{Convolution Kernel Expectations}
-\label{toc:timeseries_alignment:kernel_expectations}
+\section{Convolution Kernel Expectations}
+\label{toc:alignment:kernel_expectations}
 In \cref{toc:timeseries_alignment:model} we assumed the latent processes $w_r$ to be white noise processes and the smoothing kernel functions $T_{d, r}$ to be squared exponential kernels, leading to an explicit closed form formulation for the covariance between outputs shown in \cref{eq:timeseries_alignment:dependent_kernel}.
 In this section, we derive the $\Psi$-statistics for this generalized squared exponential kernel needed to evaluate \cref{eq:timeseries_alignment:full_bound}.
 
@@ -149,8 +149,8 @@ If all the data belong to the same output, the $\Psi$-statistics of the standard
 It is used to propagate the uncertainties through the output-specific warpings $\rv{g}$.
 
 
-\subsection{Approximative Predictions}
-\label{toc:timeseries_alignment:predictions}
+\section{Approximative Predictions}
+\label{toc:alignment:predictions}
 Using the variational lower bound in \cref{eq:timeseries_alignment:full_bound}, our model can be fitted to data, resulting in appropriate choices of the kernel hyper parameters and variational parameters.
 Now assume we want to predict approximate function values $\mat{g_{d, \star}}$ for previously unseen points $\mat{X_{d, \star}}$ associated with output $d$, which are given by $ \mat{g_{d, \star}} = g_d(f_d(a_d(\mat{X_{d, \star}})))$.
 
@@ -194,8 +194,8 @@ Given the approximation of $\rv{f_{d, \star}}$, the approximation of $\rv{g_{d, 
 This yields an approximate prediction for the final function values.
 
 
-\subsection{Model Interpretation}
-\label{toc:timeseries_alignment:interpretation}
+\section{Model Interpretation}
+\label{toc:alignment:interpretation}
 The graphical model shown in \cref{fig:timeseries_alignment:graphical_model_supervised} illustrates that the presented model can be interpreted as a group of $D$ deep GPs all of which share one layer which is a CP.
 This CP acts as an interface to share information between the different GPs which are otherwise conditionally independent.
 This modelling-choice introduces a new quality to the model when compared to standard deep GPs with multiple output dimensions, since the latter are not able in principle to learn dependencies between the different outputs.
@@ -215,8 +215,8 @@ The bound reflects the dependencies of the different outputs as the sharing of i
 Our main contribution for the inference scheme is the derivation of a closed-form solution for the $\Psi$-statistics of the convolution kernel in \cref{eq:timeseries_alignment:psi_statistics}.
 
 
-\subsection{Experiments}
-\label{toc:timeseries_alignment:experiments}
+\section{Experiments}
+\label{toc:alignment:experiments}
 \begin{figure}[tp]
     \centering
     \begin{subfigure}{\halffigurewidth}
@@ -224,7 +224,7 @@ Our main contribution for the inference scheme is the derivation of a closed-for
         \includestandalonewithpath{figures/dampened_sine_decomposition_shallow_gp}
         \caption{
             Shallow GP with RBF kernel.
-            \label{fig:timeseries_alignment:dampened_sine_model_decomposition:a}
+            \label{fig:alignment:dampened_sine_model_decomposition:a}
         }
     \end{subfigure}
     \hfill
@@ -233,7 +233,7 @@ Our main contribution for the inference scheme is the derivation of a closed-for
         \includestandalonewithpath{figures/dampened_sine_decomposition_mo_gp}
         \caption{
             Multi-Output GP with dependent RBF kernel.
-            \label{fig:timeseries_alignment:dampened_sine_model_decomposition:b}
+            \label{fig:alignment:dampened_sine_model_decomposition:b}
         }
     \end{subfigure}
     \\[\baselineskip]
@@ -242,7 +242,7 @@ Our main contribution for the inference scheme is the derivation of a closed-for
         \includestandalonewithpath{figures/dampened_sine_decomposition_dgp}
         \caption{
             Deep GP with RBF kernels.
-            \label{fig:timeseries_alignment:dampened_sine_model_decomposition:c}
+            \label{fig:alignment:dampened_sine_model_decomposition:c}
         }
     \end{subfigure}
     \hfill
@@ -251,11 +251,11 @@ Our main contribution for the inference scheme is the derivation of a closed-for
         \includestandalonewithpath{figures/dampened_sine_decomposition_ours}
         \caption{
             AMO-GP with (dependent) RBF kernels.
-            \label{fig:timeseries_alignment:dampened_sine_model_decomposition:d}
+            \label{fig:alignment:dampened_sine_model_decomposition:d}
         }
     \end{subfigure}
     \caption{
-        \label{fig:timeseries_alignment:dampened_sine_model_decomposition}
+        \label{fig:alignment:dampened_sine_model_decomposition}
         A comparison of the AMO-GP with other GP models.
         The plots show mean predictions and a shaded area of two standard deviations.
         If available, the ground truth is displayed as a dashed line.
@@ -272,8 +272,8 @@ We will first apply the AMO-GP to an artificial data set in which we define a de
 We will show that our model is able to recover this decomposition from the training data and compare the results to other approaches of modeling the data.
 Then we focus on a real world data set of a neighbouring pair of wind turbines in a wind farm, where the model is able to recover a representation of the latent prevailing wind condition and the relative timings of wind fronts at the two turbines.
 
-\subsection{Artificial data set}
-\label{toc:timeseries_alignment:artificial_example}
+\section{Artificial data set}
+\label{toc:alignment:artificial_example}
 Our data set consists of two time series $\Tc_1$ and $\Tc_2$ generated by a dampened sine function.
 \begin{align}
     f : \left\{ \begin{aligned}
@@ -309,13 +309,13 @@ As discussed in \cref{toc:timeseries_alignment:model} however, it is constrained
 Because of this, the model cannot recover the latent sine function and can only model one of the two outputs.
 
 
-\subsection{Pairs of wind turbines}
-\label{toc:timeseries_alignment:wind_example}
+\section{Pairs of wind turbines}
+\label{toc:alignment:wind_example}
 \begin{figure}[tp]
     \centering
     \includestandalonewithpath{figures/wind_joint_model}
     \caption{
-        \label{fig:timeseries_alignment:wind_joint_model}
+        \label{fig:alignment:wind_joint_model}
         The joint posterior for two time series $\rv{y_1}$ and $\rv{y_2}$ of power production for a pair of wind turbines.
         The top and bottom plots show the two observed time series with training data and dashed missing data.
         The AMO-GP recovers an uncertain relative alignment of the two time series shown in the middle plot.
@@ -328,7 +328,7 @@ Because of this, the model cannot recover the latent sine function and can only 
         \centering
         \includestandalonewithpath{figures/wind_shallow_gp_samples_left}
         \caption{
-            \label{fig:timeseries_alignment:wind_samples:a}
+            \label{fig:alignment:wind_samples:a}
             Samples from a GP.
         }
     \end{subfigure}
@@ -337,7 +337,7 @@ Because of this, the model cannot recover the latent sine function and can only 
         \centering
         \includestandalonewithpath{figures/wind_mo_gp_samples_left}
         \caption{
-            \label{fig:timeseries_alignment:wind_samples:b}
+            \label{fig:alignment:wind_samples:b}
             Samples from a MO-GP.
         }
     \end{subfigure}\\[\figureskip]
@@ -345,7 +345,7 @@ Because of this, the model cannot recover the latent sine function and can only 
         \centering
         \includestandalonewithpath{figures/wind_dgp_samples_left}
         \caption{
-            \label{fig:timeseries_alignment:wind_samples:c}
+            \label{fig:alignment:wind_samples:c}
             Samples from a DGP.
         }
     \end{subfigure}
@@ -354,12 +354,12 @@ Because of this, the model cannot recover the latent sine function and can only 
         \centering
         \includestandalonewithpath{figures/wind_alignment_samples_left}
         \caption{
-            \label{fig:timeseries_alignment:wind_samples:d}
+            \label{fig:alignment:wind_samples:d}
             Samples from the AMO-GP.
         }
     \end{subfigure}
     \caption{
-        \label{fig:timeseries_alignment:wind_samples}
+        \label{fig:alignment:wind_samples}
         A comparison of noiseless samples drawn from a GP, a MO-GP, a DGP and the AMO-GP.
         The separation of uncertainties implied by the model structure of AMP-GP gives rise to an informative model.
         Since the uncertainty in the generative process is mainly placed in the relative alignment shown in \cref{fig:timeseries_alignment:wind_joint_model}, all samples in \cref{fig:timeseries_alignment:wind_samples:d} resemble the underlying data in structure.
@@ -368,7 +368,7 @@ Because of this, the model cannot recover the latent sine function and can only 
 \begin{table}[tp]
     \centering
     \caption{
-        \label{tab:timeseries_alignment:dampened_sine_model_log_likelihoods}
+        \label{tab:alignment:dampened_sine_model_log_likelihoods}
         Test-log-likelihoods for the models presented in \cref{toc:timeseries_alignment:experiments}.
     }
     \newcolumntype{Y}{>{\centering\arraybackslash}X}
@@ -429,8 +429,8 @@ Due to the constraints imposed by the model, more robust inference leads to a mo
 Samples show that it has learned that a maximum which is missing in the training data has to exist somewhere, but the uncertainty about the correct alignment due to the local turbulence means that different samples place the maximum at different locations in $\mat{X}$-direction.
 
 
-\subsection{Conclusion}
-\label{toc:timeseries_alignment:conclusion}
+\section{Conclusion}
+\label{toc:alignment:conclusion}
 We have proposed the warped and aligned multi-output Gaussian process (AMO-GP), in which MO-GPs are embedded in a hierarchy to find shared structure in latent spaces.
 We extended convolution processes \parencite{boyle_dependent_2004} with conditionally independent Gaussian processes on both the input and output sides, giving rise to a highly structured deep GP model.
 This structure can be used to both regularize the model and encode expert knowledge about specific parts of the system.

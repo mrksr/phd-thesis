@@ -1,5 +1,5 @@
-\section{Data Association}
-\label{toc:data_association:data_association}
+\chapter{Data Association}
+\label{toc:data_association}
 The data association problem is concerned with separating data coming from different generating processes, for example when data comes from different data sources, contain significant noise, or exhibit multimodality.
 We present a fully Bayesian approach to this problem.
 Our model is capable of simultaneously solving the data association problem and the induced supervised learning problem.
@@ -7,7 +7,7 @@ Underpinning our approach is the use of Gaussian process priors to encode the st
 We present an efficient learning scheme based on doubly stochastic variational inference and discuss how it can be applied to deep Gaussian process priors.
 
 
-\subsection{Introduction}
+\section{Introduction}
 \label{toc:data_association:introduction}
 Real-world data often include multiple operational regimes of the considered system, for example a wind turbine or gas turbine~\parencite{hein_benchmark_2017}.
 As an example, consider a model describing the lift resulting from airflow around the wing profile of an airplane as a function of the attack angle.
@@ -58,7 +58,7 @@ In \cref{toc:data_association:variational_approximation}, we present an efficien
 We demonstrate our model on a noise separation problem, an artificial multimodal data set, and a multi-regime regression problem based on the cart-pole benchmark in \cref{toc:data_association:experiments}.
 
 
-\subsection{Data Association with Gaussian Processes}
+\section{Data Association with Gaussian Processes}
 \label{toc:data_association:model}
 \begin{figure}[t]
     \centering
@@ -134,7 +134,7 @@ Going further, we can also use deep GP as priors for the $f^{\pix{k}}$~\parencit
 Since many real word systems are inherently hierarchical, prior knowledge can often be formulated more easily using composite functions~\parencite{kaiser_bayesian_2018}.
 
 
-\subsection{Optimization of the Lower Bound}
+\section{Optimization of the Lower Bound}
 \label{toc:data_association:computation}
 An important property of the variational bound for DSVI~\parencite{salimbeni_doubly_2017} is that taking samples for single data points is straightforward and can be implemented efficiently.
 Specifically, for some $k$ and $n$, samples $\mat{\hat{f}_n^{\pix{k}}}$ from $\Variat*{\mat{f_n^{\pix{k}}}}$ are independent of all other parts of the model and can be drawn using samples from univariate unit Gaussians using reparametrizations~\parencite{kingma_variational_2015,rezende_stochastic_2014}.
@@ -162,7 +162,7 @@ First, we approximate the expectations using Monte Carlo samples $\mat{\hat{f}_n
 And second, the factorization of the bound along the data allows us to use mini-batches for optimization~\parencite{salimbeni_doubly_2017, hensman_gaussian_2013}.
 
 
-\subsection{Approximate Predictions}
+\section{Approximate Predictions}
 \label{toc:data_association:predictions}
 Predictions for a test location $\mat{x_\ast}$ are mixtures of $K$ independent Gaussians, given by,
 \begin{align}
@@ -178,7 +178,7 @@ Samples from the predictive density over $\Variat*{\mat{a_\ast} \given \mat{x_\a
 The distribution $\Variat*{\mat{a_\ast} \given \mat{x_\ast}}$ reflects the model's belief about how many and which of the $K$ generative processes are relevant at the test location $\mat{x_\ast}$ and their relative probability.
 
 
-\subsection{Deep Gaussian Processes}
+\section{Deep Gaussian Processes}
 \label{toc:data_association:deep_gp}
 For clarity, we have described the variational bound in terms of a shallow GP.
 However, as long as their variational bound can be efficiently sampled, any model can be used in place of shallow GPs for the $f^{\pix{k}}$.
@@ -229,7 +229,7 @@ To calculate the first term, samples have to be propagated through the deep GP s
 This extended bound thus has complexity $\Fun*{\Oh}{NM^2LK}$ to evaluate in the general case and complexity $\Fun*{\Oh}{NM^2\cdot\Fun{\max}{L, K}}$ if the assignments $\mat{a_n}$ take binary values.
 
 
-\subsection{Experiments}
+\section{Experiments}
 \label{toc:data_association:experiments}
 \begin{table}[t]
     \centering
@@ -292,7 +292,7 @@ DAGP successfully learns an informative joint posterior by solving the underlyin
 We show that the DAGP posterior contains two separate models for the two original operational regimes.
 
 
-\subsection{Noise Separation}
+\section{Noise Separation}
 \label{toc:data_association:choicenet}
 %
 \begin{table}[t]
@@ -364,7 +364,7 @@ For high outlier rates, stronger prior knowledge about the signal is required to
 While the function has still been identified well, some of the noise is also explained using this process, thereby introducing slight errors in the predictions.
 
 
-\subsection{Multimodal Data}
+\section{Multimodal Data}
 \label{toc:data_association:semi_bimodal}
 %
 \begin{figure}[tp]
@@ -404,7 +404,7 @@ The DAGP is implicitly incentivized to explain the data using as few modes as po
 At $x = -10$ the inferred modes and assignment processes start reverting to their respective priors away from the data.
 
 
-\subsection{Mixed Cart-pole Systems}
+\section{Mixed Cart-pole Systems}
 \label{toc:data_association:cartpole}
 \begin{table}[t]
     \centering
@@ -489,7 +489,7 @@ Given this separation, shallow and deep models for the two modes show comparable
 The more expressive deep GPs model the default system slightly better while sacrificing performance on the more difficult short-pole system.
 
 
-\subsection{Conclusion}
+\section{Conclusion}
 \label{toc:data_association:conclusion}
 We have presented a fully Bayesian model for the data association problem.
 Our model factorises the observed data into a set of independent processes and provides a model over both the processes and their association to the observed data.
@@ -498,5 +498,3 @@ In this paper, we make use of interpretable GP priors allowing global a priori i
 Importantly, our model is able to exploit information both about the underlying functions and the association structure.
 We have derived a principled approximation to the marginal likelihood which allows us to perform inference for flexible hierarchical processes.
 In future work, we would like to incorporate the proposed model in a reinforcement learning scenario where we study a dynamical system with different operational regimes.
-
-

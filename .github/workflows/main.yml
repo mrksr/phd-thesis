@@ -9,14 +9,14 @@ jobs:
       - name: Create phony file for latex-action check
         uses: finnp/create-file-action@master
         env:
-          FILE_NAME: all
+          FILE_NAME: github
           FILE_DATA: # Empty
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@master
         with:
           extra_system_packages: make
           compiler: make
-          root_file: all
+          root_file: github
           args: -j
       - name: Upload PDF
         uses: actions/upload-artifact@v1

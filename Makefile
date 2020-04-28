@@ -18,6 +18,10 @@ $(JOB).pdf: $(FMT) figures
 preview: all
 	latexmk -pvc
 
+# For time reasons, assume that figures are precompiled in the github CI
+github: $(FMT)
+	latexmk
+
 clean:
 	$(RM) $(FMT)
 	$(MAKE) -C figures clean

@@ -7,36 +7,36 @@
 
 \begin{document}
 \begin{tikzpicture}
-\def\datapath{\figurepath/data/wetchicken}
-\begin{axis}[
-    wetchicken system plot,
-    colormap/RdYlBu,
-    ymin=-0.5,
-    ymax=6.0,
-    ]
+    \def\datapath{\figurepath/data/wetchicken}
+    \begin{axis}[
+            wetchicken system plot,
+            colormap/RdYlBu,
+            ymin=-0.5,
+            ymax=6.0,
+        ]
 
-    \addplot[
-    surf,
-    mesh/rows=20,
-    mesh/cols=20,
-    opacity=0.75,
-    point meta={-abs(\thisrow{aR})},
-    ] table[
-    ignore chars={\#}, col sep=space, x=Y, y=X,
-    ] {\datapath/conservative_policy_quiver.dat};
+        \addplot[
+            surf,
+            mesh/rows=20,
+            mesh/cols=20,
+            opacity=0.75,
+            point meta={-abs(\thisrow{aR})},
+        ] table[
+                ignore chars={\#}, col sep=space, x=Y, y=X,
+            ] {\datapath/conservative_policy_quiver.dat};
 
-    \addplot[
-    quiver={%
-        u={\thisrow{aX}},
-        v={\thisrow{aY}},
-        scale arrows=0.2,
-        every arrow/.append style={quiver arrow, sStoneDark},
-    },
-    ] table[
-    ignore chars={\#}, col sep=space, x=Y, y=X,
-    ] {\datapath/conservative_policy_quiver.dat};
+        \addplot[
+            quiver={%
+                    u={\thisrow{aX}},
+                    v={\thisrow{aY}},
+                    scale arrows=0.2,
+                    every arrow/.append style={quiver arrow, sStoneDark},
+                },
+        ] table[
+                ignore chars={\#}, col sep=space, x=Y, y=X,
+            ] {\datapath/conservative_policy_quiver.dat};
 
-    \addwaterfall
-\end{axis}
+        \addwaterfall
+    \end{axis}
 \end{tikzpicture}
 \end{document}

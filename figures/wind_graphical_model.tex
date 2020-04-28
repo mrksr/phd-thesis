@@ -15,17 +15,17 @@
     component align=center,
     component sep=1.5em,
     ] {
-        {
-            M/$\rv{m^a_d}$[variational] --[draw=none] P/$\rv{m^f_d}$[variational] --[draw=none] Q/$\rv{m^g_d}$[variational],
-            X/$\rv{X_d}$[observed] -> A/$\rv{a_d}$ -> F/$\rv{f_d}$ -> G/$\rv{g_d}$ -> Y/$\rv{y_d}$[observed],
-            Us/""[plate] //[
-                tree layout,
-                component direction=down, component sep=.5ex,
-                nodes={latent},
-                ] {U1/$\rv{w_1}$, U2/\rvdots[draw=none, fill=none], U3/$\rv{w_R}$},
-            Xp/$\rv{X_{d^\prime}}$[observed] -> Ap/$\rv{a_{d^\prime}}$ -> Fp/$\rv{f_{d^\prime}}$ -> Gp/$\rv{g_{d^\prime}}$ -> Yp/$\rv{y_{d^\prime}}$[observed],
-            Mp/$\rv{m^a_{d^\prime}}$[variational] --[draw=none] Pp/$\rv{m^f_{d^\prime}}$[variational] --[draw=none] Qp/$\rv{m^g_{d^\prime}}$[variational],
-        };
+    {
+    M/$\rv{m^a_d}$[variational] --[draw=none] P/$\rv{m^f_d}$[variational] --[draw=none] Q/$\rv{m^g_d}$[variational],
+    X/$\rv{X_d}$[observed] -> A/$\rv{a_d}$ -> F/$\rv{f_d}$ -> G/$\rv{g_d}$ -> Y/$\rv{y_d}$[observed],
+    Us/""[plate] //[
+    tree layout,
+    component direction=down, component sep=.5ex,
+    nodes={latent},
+    ] {U1/$\rv{w_1}$, U2/\rvdots[draw=none, fill=none], U3/$\rv{w_R}$},
+    Xp/$\rv{X_{d^\prime}}$[observed] -> Ap/$\rv{a_{d^\prime}}$ -> Fp/$\rv{f_{d^\prime}}$ -> Gp/$\rv{g_{d^\prime}}$ -> Yp/$\rv{y_{d^\prime}}$[observed],
+    Mp/$\rv{m^a_{d^\prime}}$[variational] --[draw=none] Pp/$\rv{m^f_{d^\prime}}$[variational] --[draw=none] Qp/$\rv{m^g_{d^\prime}}$[variational],
+    };
     };
 
     \draw[edge, directed] (Us) -- (F);

@@ -344,7 +344,7 @@ A major advantage of Gaussian processes is the ability to select hyperparameters
 
 In a fully Bayesian setup, the correct way to model uncertainty about hyperparameters is to assign them a prior $\Prob{\mat{\theta}}$ and marginalize it to derive the dependent distributions
 \begin{align}
-    \Prob{f}                      & = \int \Prob{f \given \mat{\theta}} \Prob{\mat{\theta}} \diff \mat{\theta}                                                                  \\
+    \Prob{f}                      & = \int \Prob{f \given \mat{\theta}} \Prob{\mat{\theta}} \diff \mat{\theta}                                                           \\
     \Prob{\mat{y} \given \mat{X}} & = \int \Prob{\mat{y} \given \mat{X}, \mat{\theta}} \Prob{\mat{\theta}} \diff \mat{\theta}. \label{eq:gp:theta_posterior_integration}
 \end{align}
 Updating the belief about the distribution of the hyperparameters then becomes part of the process of obtaining a posterior model.

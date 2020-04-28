@@ -21,25 +21,25 @@
     \tikzstyle{test data} = [smooth, very thick, dashed]
     \tikzstyle{sample} = [smooth, thin]
     \begin{axis}[
-        at={(0.5\figurewidth, 0.6\figureheight)},
-        anchor=center,
-        height=1.1\figureheight,
-        width=1.1\figurewidth,
-        axis x line=none,
-        axis y line=none,
-        xmin=-0.6, xmax=-0.3,
-        ymin=-1.5, ymax=2.5,
+            at={(0.5\figurewidth, 0.6\figureheight)},
+            anchor=center,
+            height=1.1\figureheight,
+            width=1.1\figurewidth,
+            axis x line=none,
+            axis y line=none,
+            xmin=-0.6, xmax=-0.3,
+            ymin=-1.5, ymax=2.5,
         ]
 
         \addplot[std, name path=plus]
-            table[
-            ignore chars={\#}, col sep=space,
-            x=X, y expr=\thisrow{mu} + \thisrow{2std}
+        table[
+                ignore chars={\#}, col sep=space,
+                x=X, y expr=\thisrow{mu} + \thisrow{2std}
             ] {data/wind/wind_one_joint_sample.dat};
         \addplot[std, name path=minus]
-            table[
-            ignore chars={\#}, col sep=space,
-            x=X, y expr=\thisrow{mu} - \thisrow{2std}
+        table[
+                ignore chars={\#}, col sep=space,
+                x=X, y expr=\thisrow{mu} - \thisrow{2std}
             ] {data/wind/wind_one_joint_sample.dat};
         \addplot[std fill] fill between[of=plus and minus, soft clip={domain=-0.6:-0.3}];
         % \addplot[mean]
@@ -51,24 +51,24 @@
 
         \addplot[
             training data,
-            ] table[
-            ignore chars={\#}, col sep=space,
-            restrict x to domain=-.7:-.5,
-            x=X, y=Y
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=-.7:-.5,
+                x=X, y=Y
             ] {data/wind/wind_one_data.dat};
         \addplot[
             training data,
-            ] table[
-            ignore chars={\#}, col sep=space,
-            restrict x to domain=-.4:-.2,
-            x=X, y=Y
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=-.4:-.2,
+                x=X, y=Y
             ] {data/wind/wind_one_data.dat};
         \addplot[
             test data,
-            ] table[
-            ignore chars={\#}, col sep=space,
-            restrict x to domain=-.5:-.4,
-            x=X, y=Y
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=-.5:-.4,
+                x=X, y=Y
             ] {data/wind/wind_hole_data.dat};
 
         \foreach \ix in {0,...,4}

@@ -7,55 +7,55 @@
 
 \begin{document}
 \begin{tikzpicture}[tight background]
-\def\datapath{\figurepath/data/semi_bimodal_fancy}
-\begin{axis}[
-    semi bimodal plot,
-    xlabel=$\rv{X}$, ylabel=$\rv{y}$,
-    ymin=-4, ymax=3,
-    xmin=-11, xmax=11,
-    ]
+    \def\datapath{\figurepath/data/semi_bimodal_fancy}
+    \begin{axis}[
+            semi bimodal plot,
+            xlabel=$\rv{X}$, ylabel=$\rv{y}$,
+            ymin=-4, ymax=3,
+            xmin=-11, xmax=11,
+        ]
 
-    \pgfplotsset{marked/.style = {
-        fill opacity=0,
-        mark size=1.25pt,
-        thin,
-    }}
+        \pgfplotsset{marked/.style = {
+                    fill opacity=0,
+                    mark size=1.25pt,
+                    thin,
+                }}
 
-    \addplot[
-    data,
-    fourth,
-    mark=square*,
-    marked,
-    ] table[
-    ignore chars={\#}, col sep=space, x=X, y=Y
-    ] {\datapath/Xs_Ys_attrib_separated_1.dat};
+        \addplot[
+            data,
+            fourth,
+            mark=square*,
+            marked,
+        ] table[
+                ignore chars={\#}, col sep=space, x=X, y=Y
+            ] {\datapath/Xs_Ys_attrib_separated_1.dat};
 
-    \addplot[
-    data,
-    third,
-    mark=triangle*,
-    marked,
-    ] table[
-    ignore chars={\#}, col sep=space, x=X, y=Y
-    ] {\datapath/Xs_Ys_attrib_separated_0.dat};
+        \addplot[
+            data,
+            third,
+            mark=triangle*,
+            marked,
+        ] table[
+                ignore chars={\#}, col sep=space, x=X, y=Y
+            ] {\datapath/Xs_Ys_attrib_separated_0.dat};
 
-    \addplot[
-    data,
-    second,
-    mark=diamond*,
-    marked,
-    ] table[
-    ignore chars={\#}, col sep=space, x=X, y=Y
-    ] {\datapath/Xs_Ys_attrib_separated_2.dat};
+        \addplot[
+            data,
+            second,
+            mark=diamond*,
+            marked,
+        ] table[
+                ignore chars={\#}, col sep=space, x=X, y=Y
+            ] {\datapath/Xs_Ys_attrib_separated_2.dat};
 
-    \addplot[
-    data,
-    first,
-    mark=pentagon*,
-    marked,
-    ] table[
-    ignore chars={\#}, col sep=space, x=X, y=Y
-    ] {\datapath/Xs_Ys_attrib_separated_3.dat};
-\end{axis}
+        \addplot[
+            data,
+            first,
+            mark=pentagon*,
+            marked,
+        ] table[
+                ignore chars={\#}, col sep=space, x=X, y=Y
+            ] {\datapath/Xs_Ys_attrib_separated_3.dat};
+    \end{axis}
 \end{tikzpicture}
 \end{document}

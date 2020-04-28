@@ -112,13 +112,13 @@
 
 \providecommand\given{}
 \DeclarePairedDelimiterX{\Cond}[1]{(}{)}{
-\renewcommand\given{%
-  \nonscript\mkern2mu
-  \delimsize\vert
-  \nonscript\mkern2mu
-  \mathopen{}
-  \allowbreak}
-#1
+    \renewcommand\given{%
+        \nonscript\mkern2mu
+        \delimsize\vert
+        \nonscript\mkern2mu
+        \mathopen{}
+        \allowbreak}
+    #1
 }
 
 \makeatletter
@@ -139,29 +139,29 @@
 \newcommand{\Indicator}{\Ind\Cond}
 
 \DeclarePairedDelimiterX{\KLdelim}[2]{(}{)}{%
-  #1\mkern2mu\delimsize\|\mkern2mu#2%
+    #1\mkern2mu\delimsize\|\mkern2mu#2%
 }
 \newcommand{\KL}{\KLdiv\KLdelim}
 
 \DeclarePairedDelimiterXPP{\Moment}[2]{#1}{[}{]}{}{
 \renewcommand\given{%
-  \nonscript\mkern2mu
-  \delimsize\vert
-  \nonscript\mkern2mu
-  \mathopen{}
-  \allowbreak}
+    \nonscript\mkern2mu
+    \delimsize\vert
+    \nonscript\mkern2mu
+    \mathopen{}
+    \allowbreak}
 #2
 }
 
 \providecommand\with{}
 \DeclarePairedDelimiterX{\Set}[1]{\{}{\}}{
-\renewcommand\with{%
-  \nonscript\mkern2mu
-  \delimsize\vert
-  \nonscript\mkern2mu
-  \mathopen{}
-  \allowbreak}
-#1
+    \renewcommand\with{%
+        \nonscript\mkern2mu
+        \delimsize\vert
+        \nonscript\mkern2mu
+        \mathopen{}
+        \allowbreak}
+    #1
 }
 
 \DeclarePairedDelimiterXPP{\pix}[1]{\begingroup\scriptscriptstyle}{(}{)}{\endgroup}{\mkern-1mu#1\mkern-1mu}
@@ -169,9 +169,9 @@
 % NOTE(mrksr): See https://tex.stackexchange.com/a/112212/34265
 \makeatletter
 \DeclareRobustCommand{\rvdots}{%
-  \vbox{
-    \baselineskip4\p@\lineskiplimit\z@
-    \kern-\p@
-    \hbox{.}\hbox{.}\hbox{.}
-  }}
+    \vbox{
+        \baselineskip4\p@\lineskiplimit\z@
+        \kern-\p@
+        \hbox{.}\hbox{.}\hbox{.}
+    }}
 \makeatother

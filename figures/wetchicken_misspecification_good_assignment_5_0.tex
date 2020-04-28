@@ -7,43 +7,43 @@
 
 \begin{document}
 \begin{tikzpicture}[tight background]
-\def\datapath{\figurepath/data/wetchicken/good_4_modes}
-\pgfplotsset{restrict/.style = {
-    % each nth point=10,
-    restrict x to domain=-0.01:3.51,
-}}
+    \def\datapath{\figurepath/data/wetchicken/good_4_modes}
+    \pgfplotsset{restrict/.style = {
+                % each nth point=10,
+                restrict x to domain=-0.01:3.51,
+            }}
 
-\begin{axis}[
-    wetchicken cut plot,
-    xmax=3.5,
-    ylabel=$\Prob{\mat{l}}$,
-    ymin=-0.2,
-    ymax=1.2,
-    ytick={0, 0.1, 0.5, 1},
-    yticklabels={, 0.1, 0.5, 1},
-    ]
-    \path [name path=zero] (0, 0) -- (5, 0);
+    \begin{axis}[
+            wetchicken cut plot,
+            xmax=3.5,
+            ylabel=$\Prob{\mat{l}}$,
+            ymin=-0.2,
+            ymax=1.2,
+            ytick={0, 0.1, 0.5, 1},
+            yticklabels={, 0.1, 0.5, 1},
+        ]
+        \path [name path=zero] (0, 0) -- (5, 0);
 
-    \begin{scope}[densely dotted, opacity=0.6]
-        \addplot[restrict, mean, second, name path=assign]
+        \begin{scope}[densely dotted, opacity=0.6]
+            \addplot[restrict, mean, second, name path=assign]
             table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{a3}] {\datapath/cut_data_5.0.dat};
-        \addplot[restrict, second fill] fill between[of=assign and zero];
-    \end{scope}
+            \addplot[restrict, second fill] fill between[of=assign and zero];
+        \end{scope}
 
-    \begin{scope}[dashed, opacity=0.6]
-        \addplot[restrict, mean, fourth, name path=assign]
+        \begin{scope}[dashed, opacity=0.6]
+            \addplot[restrict, mean, fourth, name path=assign]
             table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{a2}] {\datapath/cut_data_5.0.dat};
-        \addplot[restrict, fourth fill] fill between[of=assign and zero];
+            \addplot[restrict, fourth fill] fill between[of=assign and zero];
 
-        \addplot[restrict, mean, first, name path=assign]
+            \addplot[restrict, mean, first, name path=assign]
             table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{a0}] {\datapath/cut_data_5.0.dat};
-        \addplot[restrict, first fill] fill between[of=assign and zero];
-    \end{scope}
+            \addplot[restrict, first fill] fill between[of=assign and zero];
+        \end{scope}
 
-    \addplot[restrict, mean, third, name path=assign]
+        \addplot[restrict, mean, third, name path=assign]
         table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{a1}] {\datapath/cut_data_5.0.dat};
-    \addplot[restrict, third fill] fill between[of=assign and zero];
-\end{axis}
+        \addplot[restrict, third fill] fill between[of=assign and zero];
+    \end{axis}
 
 \end{tikzpicture}
 \end{document}

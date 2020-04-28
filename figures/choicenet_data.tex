@@ -7,17 +7,17 @@
 
 \begin{document}
 \begin{tikzpicture}[tight background]
-\def\datapath{\figurepath/data/choicenet_noisy_0.6}
-\begin{axis}[
-    choicenet plot,
-    clip mode=individual,
-    ]
+    \def\datapath{\figurepath/data/choicenet_noisy_0.6}
+    \begin{axis}[
+            choicenet plot,
+            clip mode=individual,
+        ]
 
-    \addplot[
-    data,
-    ] table[
-    ignore chars={\#}, col sep=space, x=X, y=Y
-    ] {\datapath/Xs_Ys.dat};
-\end{axis}
+        \addplot[
+            data,
+        ] table[
+                ignore chars={\#}, col sep=space, x=X, y=Y
+            ] {\datapath/Xs_Ys.dat};
+    \end{axis}
 \end{tikzpicture}
 \end{document}

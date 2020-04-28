@@ -7,201 +7,201 @@
 
 \begin{document}
 \begin{tikzpicture}[tight background]
-\def\datapath{\figurepath/data/dampened_sine}
-\begin{axis}[
-    at={(0, 0)},
-    wind decomposition,
-    xlabel=$\rv{X}$, ylabel=$\rv{a}$,
-    xmin=-0.1, xmax=1.1,
-    xticklabel pos=top,
-    xticklabels={,0, , 1},
-    ymin=-2.2, ymax=2.2,
-    ytick={-2, 0, 2},
-    yticklabels={-2, , 2},
-    ytick pos=left,
-    name=first_alignment,
-    ]
+    \def\datapath{\figurepath/data/dampened_sine}
+    \begin{axis}[
+            at={(0, 0)},
+            wind decomposition,
+            xlabel=$\rv{X}$, ylabel=$\rv{a}$,
+            xmin=-0.1, xmax=1.1,
+            xticklabel pos=top,
+            xticklabels={,0, , 1},
+            ymin=-2.2, ymax=2.2,
+            ytick={-2, 0, 2},
+            yticklabels={-2, , 2},
+            ytick pos=left,
+            name=first_alignment,
+        ]
 
-    \addplot[std, first, name path=first_plus] table[restrict x to domain=0:1, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_layer_0_output_0.dat};
-    \addplot[std, first, name path=first_minus] table[restrict x to domain=0:1, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_layer_0_output_0.dat};
-    \addplot[first fill] fill between[of=first_plus and first_minus, on layer={axis background}];
-    \addplot[weak mean, first] table[restrict x to domain=0:1, ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_18_deep_gp_0/sine_layer_0_output_0.dat};
-\end{axis}
+        \addplot[std, first, name path=first_plus] table[restrict x to domain=0:1, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_layer_0_output_0.dat};
+        \addplot[std, first, name path=first_minus] table[restrict x to domain=0:1, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_layer_0_output_0.dat};
+        \addplot[first fill] fill between[of=first_plus and first_minus, on layer={axis background}];
+        \addplot[weak mean, first] table[restrict x to domain=0:1, ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_18_deep_gp_0/sine_layer_0_output_0.dat};
+    \end{axis}
 
-\begin{axis}[
-    at={(75pt, 0)},
-    wind decomposition,
-    xlabel=$\rv{X}$, ylabel=,
-    xmin=-0.1, xmax=1.1,
-    xticklabel pos=top,
-    xticklabels={, 0, , 1},
-    ymin=-2.2, ymax=2.2,
-    ytick={-2, 0, 2},
-    yticklabels={-2, , 2},
-    ytick pos=right,
-    name=second_alignment,
-    ]
+    \begin{axis}[
+            at={(75pt, 0)},
+            wind decomposition,
+            xlabel=$\rv{X}$, ylabel=,
+            xmin=-0.1, xmax=1.1,
+            xticklabel pos=top,
+            xticklabels={, 0, , 1},
+            ymin=-2.2, ymax=2.2,
+            ytick={-2, 0, 2},
+            yticklabels={-2, , 2},
+            ytick pos=right,
+            name=second_alignment,
+        ]
 
-    \addplot[std, second, name path=second_plus] table[restrict x to domain=0:1, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_layer_0_output_0.dat};
-    \addplot[std, second, name path=second_minus] table[restrict x to domain=0:1, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_layer_0_output_0.dat};
-    \addplot[second fill] fill between[of=second_plus and second_minus, on layer={axis background}];
-    \addplot[weak mean, second] table[restrict x to domain=0:1, ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_19_deep_gp_1/sine_layer_0_output_0.dat};
-\end{axis}
+        \addplot[std, second, name path=second_plus] table[restrict x to domain=0:1, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_layer_0_output_0.dat};
+        \addplot[std, second, name path=second_minus] table[restrict x to domain=0:1, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_layer_0_output_0.dat};
+        \addplot[second fill] fill between[of=second_plus and second_minus, on layer={axis background}];
+        \addplot[weak mean, second] table[restrict x to domain=0:1, ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_19_deep_gp_1/sine_layer_0_output_0.dat};
+    \end{axis}
 
-\begin{axis}[
-    at={(0, -45pt)},
-    wind decomposition,
-    xlabel=, ylabel=$\rv{f}$,
-    xmin=-2.5, xmax=2.5,
-    xtick={-2, 0, 2},
-    xticklabels={-2, , 2},
-    xticklabel pos=top,
-    ymin=-5.5, ymax=5.5,
-    ytick={-5, 0, 5},
-    yticklabels={-5, , 5},
-    ytick pos=left,
-    name=first_third,
-    ]
+    \begin{axis}[
+            at={(0, -45pt)},
+            wind decomposition,
+            xlabel=, ylabel=$\rv{f}$,
+            xmin=-2.5, xmax=2.5,
+            xtick={-2, 0, 2},
+            xticklabels={-2, , 2},
+            xticklabel pos=top,
+            ymin=-5.5, ymax=5.5,
+            ytick={-5, 0, 5},
+            yticklabels={-5, , 5},
+            ytick pos=left,
+            name=first_third,
+        ]
 
-    \addplot[std, third, name path=third_plus] table[restrict x to domain=-2.5:2.5, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_layer_1_output_0.dat};
-    \addplot[std, third, name path=third_minus] table[restrict x to domain=-2.5:2.5, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_layer_1_output_0.dat};
-    \addplot[third fill] fill between[of=third_plus and third_minus, on layer={axis background}];
-    \addplot[weak mean, third] table[restrict x to domain=-2.5:2.5, ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_18_deep_gp_0/sine_layer_1_output_0.dat};
-\end{axis}
+        \addplot[std, third, name path=third_plus] table[restrict x to domain=-2.5:2.5, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_layer_1_output_0.dat};
+        \addplot[std, third, name path=third_minus] table[restrict x to domain=-2.5:2.5, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_layer_1_output_0.dat};
+        \addplot[third fill] fill between[of=third_plus and third_minus, on layer={axis background}];
+        \addplot[weak mean, third] table[restrict x to domain=-2.5:2.5, ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_18_deep_gp_0/sine_layer_1_output_0.dat};
+    \end{axis}
 
-\begin{axis}[
-    at={(75pt, -45pt)},
-    wind decomposition,
-    xlabel=, ylabel=,
-    xmin=-2.5, xmax=2.5,
-    xtick={-2, 0, 2},
-    xticklabels={-2, , 2},
-    xticklabel pos=top,
-    ymin=-5.5, ymax=5.5,
-    ytick={-5, 0, 5},
-    yticklabels={-5, , 5},
-    ytick pos=right,
-    name=second_third,
-    ]
+    \begin{axis}[
+            at={(75pt, -45pt)},
+            wind decomposition,
+            xlabel=, ylabel=,
+            xmin=-2.5, xmax=2.5,
+            xtick={-2, 0, 2},
+            xticklabels={-2, , 2},
+            xticklabel pos=top,
+            ymin=-5.5, ymax=5.5,
+            ytick={-5, 0, 5},
+            yticklabels={-5, , 5},
+            ytick pos=right,
+            name=second_third,
+        ]
 
-    \addplot[std, third, name path=third_plus] table[restrict x to domain=-2.5:2.5, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_layer_1_output_0.dat};
-    \addplot[std, third, name path=third_minus] table[restrict x to domain=-2.5:2.5, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_layer_1_output_0.dat};
-    \addplot[third fill] fill between[of=third_plus and third_minus, on layer={axis background}];
-    \addplot[weak mean, third] table[restrict x to domain=-2.5:2.5, ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_19_deep_gp_1/sine_layer_1_output_0.dat};
-\end{axis}
+        \addplot[std, third, name path=third_plus] table[restrict x to domain=-2.5:2.5, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_layer_1_output_0.dat};
+        \addplot[std, third, name path=third_minus] table[restrict x to domain=-2.5:2.5, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_layer_1_output_0.dat};
+        \addplot[third fill] fill between[of=third_plus and third_minus, on layer={axis background}];
+        \addplot[weak mean, third] table[restrict x to domain=-2.5:2.5, ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_19_deep_gp_1/sine_layer_1_output_0.dat};
+    \end{axis}
 
-\begin{axis}[
-    at={(0, -90pt)},
-    wind decomposition,
-    xlabel=, ylabel=$\rv{g_1}$,
-    xmin=-3.5, xmax=3.5,
-    xtick={-3, 0, 3},
-    xticklabels={-3, , 3},
-    xticklabel pos=top,
-    ymin=-1.2, ymax=1.2,
-    yticklabels={,-1, , 1},
-    ytick pos=left,
-    name=first_warp,
-    ]
+    \begin{axis}[
+            at={(0, -90pt)},
+            wind decomposition,
+            xlabel=, ylabel=$\rv{g_1}$,
+            xmin=-3.5, xmax=3.5,
+            xtick={-3, 0, 3},
+            xticklabels={-3, , 3},
+            xticklabel pos=top,
+            ymin=-1.2, ymax=1.2,
+            yticklabels={,-1, , 1},
+            ytick pos=left,
+            name=first_warp,
+        ]
 
-    \addplot[std, first, name path=first_plus] table[restrict x to domain=-3:3, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_layer_2_output_0.dat};
-    \addplot[std, first, name path=first_minus] table[restrict x to domain=-3:3, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_layer_2_output_0.dat};
-    \addplot[first fill] fill between[of=first_plus and first_minus, on layer={axis background}];
-    \addplot[weak mean, first] table[restrict x to domain=-3:3, ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_18_deep_gp_0/sine_layer_2_output_0.dat};
-\end{axis}
+        \addplot[std, first, name path=first_plus] table[restrict x to domain=-3:3, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_layer_2_output_0.dat};
+        \addplot[std, first, name path=first_minus] table[restrict x to domain=-3:3, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_layer_2_output_0.dat};
+        \addplot[first fill] fill between[of=first_plus and first_minus, on layer={axis background}];
+        \addplot[weak mean, first] table[restrict x to domain=-3:3, ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_18_deep_gp_0/sine_layer_2_output_0.dat};
+    \end{axis}
 
-\begin{axis}[
-    at={(75pt, -90pt)},
-    wind decomposition,
-    xlabel=, ylabel=$\rv{g_2}$,
-    xmin=-3.5, xmax=3.5,
-    xtick={-3, 0, 3},
-    xticklabels={-3, , 3},
-    xticklabel pos=top,
-    ymin=-1.2, ymax=1.2,
-    yticklabels={,-1, , 1},
-    ytick pos=right,
-    name=second_warp,
-    ]
+    \begin{axis}[
+            at={(75pt, -90pt)},
+            wind decomposition,
+            xlabel=, ylabel=$\rv{g_2}$,
+            xmin=-3.5, xmax=3.5,
+            xtick={-3, 0, 3},
+            xticklabels={-3, , 3},
+            xticklabel pos=top,
+            ymin=-1.2, ymax=1.2,
+            yticklabels={,-1, , 1},
+            ytick pos=right,
+            name=second_warp,
+        ]
 
-    \addplot[std, second, name path=second_plus] table[restrict x to domain=-3:3, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_layer_2_output_0.dat};
-    \addplot[std, second, name path=second_minus] table[restrict x to domain=-3:3, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_layer_2_output_0.dat};
-    \addplot[second fill] fill between[of=second_plus and second_minus, on layer={axis background}];
-    \addplot[weak mean, second] table[restrict x to domain=-3:3, ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_19_deep_gp_1/sine_layer_2_output_0.dat};
-\end{axis}
+        \addplot[std, second, name path=second_plus] table[restrict x to domain=-3:3, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_layer_2_output_0.dat};
+        \addplot[std, second, name path=second_minus] table[restrict x to domain=-3:3, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_layer_2_output_0.dat};
+        \addplot[second fill] fill between[of=second_plus and second_minus, on layer={axis background}];
+        \addplot[weak mean, second] table[restrict x to domain=-3:3, ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_19_deep_gp_1/sine_layer_2_output_0.dat};
+    \end{axis}
 
-\tikzstyle{connector} = [
+    \tikzstyle{connector} = [
     shorten <= 1pt, shorten >= 1pt,
     arrows={-latex}, line width=1.5pt,
-]
-\draw[connector, first] (first_alignment.south) -- (first_third.north);
-\draw[connector, second] (second_alignment.south) -- (second_third.north);
-\draw[connector, first] (first_third.south) -- (first_warp.north);
-\draw[connector, second] (second_third.south) -- (second_warp.north);
-
-% \draw[third, line width=2pt] (first_third.east) -- (second_third.west);
-
-
-%%%
-
-
-\begin{axis}[
-    at={(0pt, -125pt)},
-    wind decomposition joint plot,
-    width=185pt,
-    xlabel=, ylabel=$\rv{y_1}$,
-    xticklabels={,,},
     ]
+    \draw[connector, first] (first_alignment.south) -- (first_third.north);
+    \draw[connector, second] (second_alignment.south) -- (second_third.north);
+    \draw[connector, first] (first_third.south) -- (first_warp.north);
+    \draw[connector, second] (second_third.south) -- (second_warp.north);
 
-    \addplot[
-    true function, sStoneDark
-    ] table[
-    ignore chars={\#}, col sep=space,
-    x=X, y=Y
-    ] {\datapath/sine_latent_first.dat};
+    % \draw[third, line width=2pt] (first_third.east) -- (second_third.west);
 
-    \addplot[
-    tiny data, sStoneDark
-    ] table[
-    ignore chars={\#}, col sep=space,
-    x=X, y=Y
-    ] {\datapath/sine_train_first.dat};
 
-    \addplot[std, first, name path=first_plus] table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_zero_joint_sampled.dat};
-    \addplot[std, first, name path=first_minus] table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_zero_joint_sampled.dat};
-    \addplot[first fill] fill between[of=first_plus and first_minus];
-    \addplot[mean, first] table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_18_deep_gp_0/sine_zero_joint_sampled.dat};
-\end{axis}
+    %%%
 
-\begin{axis}[
-    at={(0pt, -160pt)},
-    wind decomposition joint plot,
-    width=185pt,
-    xlabel=$\rv{X}$, ylabel=$\rv{y_2}$,
-    ]
 
-    \addplot[
-    true function, sStoneDark
-    ] table[
-    ignore chars={\#}, col sep=space,
-    x=X, y=Y
-    ] {\datapath/sine_latent_second.dat};
+    \begin{axis}[
+            at={(0pt, -125pt)},
+            wind decomposition joint plot,
+            width=185pt,
+            xlabel=, ylabel=$\rv{y_1}$,
+            xticklabels={,,},
+        ]
 
-    \addplot[
-    tiny data, sStoneDark
-    ] table[
-    ignore chars={\#}, col sep=space,
-    x=X, y=Y
-    ] {\datapath/sine_train_second.dat};
+        \addplot[
+            true function, sStoneDark
+        ] table[
+                ignore chars={\#}, col sep=space,
+                x=X, y=Y
+            ] {\datapath/sine_latent_first.dat};
 
-    \addplot[std, second, name path=second_plus] table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_one_joint_sampled.dat};
-    \addplot[std, second, name path=second_minus] table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_one_joint_sampled.dat};
-    \addplot[second fill] fill between[of=second_plus and second_minus];
-    \addplot[mean, second] table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_19_deep_gp_1/sine_one_joint_sampled.dat};
+        \addplot[
+            tiny data, sStoneDark
+        ] table[
+                ignore chars={\#}, col sep=space,
+                x=X, y=Y
+            ] {\datapath/sine_train_first.dat};
 
-    \addplot[tiny sample, hannah0] table[ignore chars={\#}, col sep=space, x=X, y=0] {\datapath/exp_19_deep_gp_1/sine_one_joint_sampled_samples.dat};
-    \addplot[tiny sample, hannah2] table[ignore chars={\#}, col sep=space, x=X, y=1] {\datapath/exp_19_deep_gp_1/sine_one_joint_sampled_samples.dat};
-    \addplot[tiny sample, hannah3] table[ignore chars={\#}, col sep=space, x=X, y=2] {\datapath/exp_19_deep_gp_1/sine_one_joint_sampled_samples.dat};
-\end{axis}
+        \addplot[std, first, name path=first_plus] table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_zero_joint_sampled.dat};
+        \addplot[std, first, name path=first_minus] table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_18_deep_gp_0/sine_zero_joint_sampled.dat};
+        \addplot[first fill] fill between[of=first_plus and first_minus];
+        \addplot[mean, first] table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_18_deep_gp_0/sine_zero_joint_sampled.dat};
+    \end{axis}
+
+    \begin{axis}[
+            at={(0pt, -160pt)},
+            wind decomposition joint plot,
+            width=185pt,
+            xlabel=$\rv{X}$, ylabel=$\rv{y_2}$,
+        ]
+
+        \addplot[
+            true function, sStoneDark
+        ] table[
+                ignore chars={\#}, col sep=space,
+                x=X, y=Y
+            ] {\datapath/sine_latent_second.dat};
+
+        \addplot[
+            tiny data, sStoneDark
+        ] table[
+                ignore chars={\#}, col sep=space,
+                x=X, y=Y
+            ] {\datapath/sine_train_second.dat};
+
+        \addplot[std, second, name path=second_plus] table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_one_joint_sampled.dat};
+        \addplot[std, second, name path=second_minus] table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/exp_19_deep_gp_1/sine_one_joint_sampled.dat};
+        \addplot[second fill] fill between[of=second_plus and second_minus];
+        \addplot[mean, second] table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/exp_19_deep_gp_1/sine_one_joint_sampled.dat};
+
+        \addplot[tiny sample, hannah0] table[ignore chars={\#}, col sep=space, x=X, y=0] {\datapath/exp_19_deep_gp_1/sine_one_joint_sampled_samples.dat};
+        \addplot[tiny sample, hannah2] table[ignore chars={\#}, col sep=space, x=X, y=1] {\datapath/exp_19_deep_gp_1/sine_one_joint_sampled_samples.dat};
+        \addplot[tiny sample, hannah3] table[ignore chars={\#}, col sep=space, x=X, y=2] {\datapath/exp_19_deep_gp_1/sine_one_joint_sampled_samples.dat};
+    \end{axis}
 \end{tikzpicture}
 \end{document}

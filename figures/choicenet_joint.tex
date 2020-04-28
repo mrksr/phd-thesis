@@ -7,41 +7,41 @@
 
 \begin{document}
 \begin{tikzpicture}[tight background]
-\def\datapath{\figurepath/data/choicenet_noisy_0.6}
-\begin{axis}[
-    choicenet plot,
-    clip mode=individual,
-    ylabel=,
-    yticklabels={,,},
-    ]
+    \def\datapath{\figurepath/data/choicenet_noisy_0.6}
+    \begin{axis}[
+            choicenet plot,
+            clip mode=individual,
+            ylabel=,
+            yticklabels={,,},
+        ]
 
-    \addplot[
-    data,
-    ] table[
-    ignore chars={\#}, col sep=space, x=X, y=Y
-    ] {\datapath/Xs_Ys.dat};
+        \addplot[
+            data,
+        ] table[
+                ignore chars={\#}, col sep=space, x=X, y=Y
+            ] {\datapath/Xs_Ys.dat};
 
-    \pgfplotsset{restrict/.style = {
-        % each nth point=10,
-    }}
+        \pgfplotsset{restrict/.style = {
+                    % each nth point=10,
+                }}
 
-    \addplot[std, second, restrict, name path=minus]
-    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/Xt_mode_1.dat};
-    \addplot[std, second, restrict, name path=plus]
-    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/Xt_mode_1.dat};
-    \addplot[second fill]
-    fill between[of=plus and minus];
-    \addplot[mean, second, restrict]
-    table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/Xt_mode_1.dat};
+        \addplot[std, second, restrict, name path=minus]
+        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/Xt_mode_1.dat};
+        \addplot[std, second, restrict, name path=plus]
+        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/Xt_mode_1.dat};
+        \addplot[second fill]
+        fill between[of=plus and minus];
+        \addplot[mean, second, restrict]
+        table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/Xt_mode_1.dat};
 
-    \addplot[std, first, restrict, name path=plus]
-    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/Xt_mode_0.dat};
-    \addplot[std, first, restrict, name path=minus]
-    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/Xt_mode_0.dat};
-    \addplot[first fill]
-    fill between[of=plus and minus];
-    \addplot[mean, first, restrict]
-    table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/Xt_mode_0.dat};
-\end{axis}
+        \addplot[std, first, restrict, name path=plus]
+        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/Xt_mode_0.dat};
+        \addplot[std, first, restrict, name path=minus]
+        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/Xt_mode_0.dat};
+        \addplot[first fill]
+        fill between[of=plus and minus];
+        \addplot[mean, first, restrict]
+        table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/Xt_mode_0.dat};
+    \end{axis}
 \end{tikzpicture}
 \end{document}

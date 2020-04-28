@@ -7,25 +7,25 @@
 
 \begin{document}
 \begin{tikzpicture}[
-    x=4.5em, y=13ex,
+        x=4.5em, y=13ex,
     ]
 
     \tikzset{%
         cascaded/.style = {%
-            general shadow = {%
-                shadow scale = 1,
-                shadow xshift = 1.2ex,
-                shadow yshift = -1.2ex,
-                random variable,
-                #1
-                },
-            general shadow = {%
-                shadow scale = 1,
-                shadow xshift = .6ex,
-                shadow yshift = -.6ex,
-                random variable,
-                #1
-                },
+                general shadow = {%
+                        shadow scale = 1,
+                        shadow xshift = 1.2ex,
+                        shadow yshift = -1.2ex,
+                        random variable,
+                        #1
+                    },
+                general shadow = {%
+                        shadow scale = 1,
+                        shadow xshift = .6ex,
+                        shadow yshift = -.6ex,
+                        random variable,
+                        #1
+                    },
             }}
 
     \node[random variable, observed, yshift=-1ex] (Xn) at (1, 0) {$\rv{x_n}$};

@@ -46,8 +46,8 @@
             skipabove=\parskip,
             skipbelow=0pt,
         ]%
-}
-{
+        }
+        {
     \end{mdframed}%
 }
 
@@ -70,10 +70,10 @@
 \renewenvironment{definition}
 {
     \begin{defaultColourFrame}{layoutDefinition}{layoutDefinition}
-    \begin{DefBox}
-}
-{
-    \end{DefBox}
+        \begin{DefBox}
+            }
+            {
+        \end{DefBox}
     \end{defaultColourFrame}
 }
 \renewenvironment{Definition}{\begin{definition}}{\end{definition}}
@@ -81,10 +81,10 @@
 \newenvironment{problem}
 {
     \begin{defaultColourFrame}{layoutTheorem}{layoutTheorem}
-    \begin{ProbBox}
-}
-{
-    \end{ProbBox}
+        \begin{ProbBox}
+            }
+            {
+        \end{ProbBox}
     \end{defaultColourFrame}
 }
 \newenvironment{Problem}{\begin{problem}}{\end{problem}}
@@ -92,10 +92,10 @@
 \renewenvironment{theorem}
 {
     \begin{defaultColourFrame}{layoutTheorem}{layoutTheorem}
-    \begin{TheoBox}
-}
-{
-    \end{TheoBox}
+        \begin{TheoBox}
+            }
+            {
+        \end{TheoBox}
     \end{defaultColourFrame}
 }
 \renewenvironment{Theorem}{\begin{theorem}}{\end{theorem}}
@@ -103,10 +103,10 @@
 \renewenvironment{lemma}%
 {
     \begin{defaultColourFrame}{layoutTheorem}{layoutTheorem}
-    \begin{LemBox}
-}
-{
-    \end{LemBox}
+        \begin{LemBox}
+            }
+            {
+        \end{LemBox}
     \end{defaultColourFrame}
 }
 \renewenvironment{Lemma}{\begin{lemma}}{\end{lemma}}
@@ -154,15 +154,15 @@
 {
     \begin{otherlanguage}{#1}
         \chapter{\abstractname}
-}
-{
+        }
+        {
     \end{otherlanguage}
 }
 
 \DeclareRobustCommand{\qed}{%
-  \ifmmode \square%\mathqed
-  \else
-    \leavevmode\unskip\penalty9999 \hbox{}\nobreak\hfill
-    \quad\hbox{$\square$}%
-  \fi
+    \ifmmode \square%\mathqed
+    \else
+        \leavevmode\unskip\penalty9999 \hbox{}\nobreak\hfill
+        \quad\hbox{$\square$}%
+    \fi
 }

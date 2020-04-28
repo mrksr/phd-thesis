@@ -7,186 +7,186 @@
 
 \begin{document}
 \begin{tikzpicture}
-\def\datapath{\figurepath/data/wind}
-\tikzstyle{alignment node} = [draw=sStoneDark, thick, rectangle, inner sep=0pt, minimum size=6pt]
-\tikzstyle{alignment connection} = [draw=sStoneDark, thick]
+    \def\datapath{\figurepath/data/wind}
+    \tikzstyle{alignment node} = [draw=sStoneDark, thick, rectangle, inner sep=0pt, minimum size=6pt]
+    \tikzstyle{alignment connection} = [draw=sStoneDark, thick]
 
-\begin{axis}[
-    wind joint plot,
-    name=first,
-    xlabel=, ylabel=$\rv{y_1}$,
-    xlabel style={overlay},
-    xtick={-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8},
-    xticklabels={,,},
-    ytick={-2, 0, 2},
-    yticklabels={$0.4$, $0.8$, $1.2$},
-    ytick pos=left,
-    y unit=W,
-    y unit prefix=M,
-    ylabel style={at={(ticklabel* cs:0.5)},rotate=90,yshift=25pt},
-    xmin=-1.6, xmax=0.8,
-    ymin=-2.5, ymax=2.5,
-    ]
-    \addplot[
-    wind data,
-    ] table[
-    ignore chars={\#}, col sep=space,
-    x=X, y=Y
-    ] {\datapath/wind_zero_data.dat};
+    \begin{axis}[
+            wind joint plot,
+            name=first,
+            xlabel=, ylabel=$\rv{y_1}$,
+            xlabel style={overlay},
+            xtick={-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8},
+            xticklabels={,,},
+            ytick={-2, 0, 2},
+            yticklabels={$0.4$, $0.8$, $1.2$},
+            ytick pos=left,
+            y unit=W,
+            y unit prefix=M,
+            ylabel style={at={(ticklabel* cs:0.5)},rotate=90,yshift=25pt},
+            xmin=-1.6, xmax=0.8,
+            ymin=-2.5, ymax=2.5,
+        ]
+        \addplot[
+            wind data,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                x=X, y=Y
+            ] {\datapath/wind_zero_data.dat};
 
-    \addplot[std, first, name path=first_plus]
-    table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
-    {\datapath/wind_zero_joint.dat};
-    \addplot[std, first, name path=first_minus]
-    table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
-    {\datapath/wind_zero_joint.dat};
-    \addplot[first fill] fill between[of=first_plus and first_minus, on layer={axis background}];
-    \addplot[mean, first]
-    table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y=mu]
-    {\datapath/wind_zero_joint.dat};
+        \addplot[std, first, name path=first_plus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
+            {\datapath/wind_zero_joint.dat};
+        \addplot[std, first, name path=first_minus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
+            {\datapath/wind_zero_joint.dat};
+        \addplot[first fill] fill between[of=first_plus and first_minus, on layer={axis background}];
+        \addplot[mean, first]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y=mu]
+            {\datapath/wind_zero_joint.dat};
 
-    \coordinate (a1) at (-1.35, 0.383);
-    \coordinate (a2) at (-0.6, 1.13);
-    \coordinate (a3) at (0.544, -1.06);
-    \coordinate (a4) at (-0.2, 0.884);
-\end{axis}
+        \coordinate (a1) at (-1.35, 0.383);
+        \coordinate (a2) at (-0.6, 1.13);
+        \coordinate (a3) at (0.544, -1.06);
+        \coordinate (a4) at (-0.2, 0.884);
+    \end{axis}
 
-\begin{axis}[
-    wind joint plot,
-    name=alignment,
-    at={(first.below south west)},
-    anchor=north west,
-    xlabel=, ylabel=$\Delta \mat{X}$,
-    xlabel style={overlay},
-    xtick={-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8},
-    xticklabels={,,},
-    ymin=-0.25, ymax=0.25,
-    ytick pos=left,
-    ytick={-0.2, -0.1, 0, 0.1, 0.2},
-    yticklabels={$-7.5$, , $0$, , $7.5$},
-    y unit=min,
-    ylabel style={at={(ticklabel* cs:0.5)},rotate=90,yshift=25pt},
-    % ylabel shift=-10pt,
-    xmin=-1.6, xmax=0.8,
-    ]
+    \begin{axis}[
+            wind joint plot,
+            name=alignment,
+            at={(first.below south west)},
+            anchor=north west,
+            xlabel=, ylabel=$\Delta \mat{X}$,
+            xlabel style={overlay},
+            xtick={-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8},
+            xticklabels={,,},
+            ymin=-0.25, ymax=0.25,
+            ytick pos=left,
+            ytick={-0.2, -0.1, 0, 0.1, 0.2},
+            yticklabels={$-7.5$, , $0$, , $7.5$},
+            y unit=min,
+            ylabel style={at={(ticklabel* cs:0.5)},rotate=90,yshift=25pt},
+            % ylabel shift=-10pt,
+            xmin=-1.6, xmax=0.8,
+        ]
 
-    \addplot[sStoneDark, thick] {0};
+        \addplot[sStoneDark, thick] {0};
 
-    \addplot[std, third, name path=third_plus]
-    table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
-    {\datapath/wind_relative_alignment.dat};
-    \addplot[std, third, name path=third_minus]
-    table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
-    {\datapath/wind_relative_alignment.dat};
-    \addplot[third fill] fill between[of=third_plus and third_minus, on layer={axis background}];
-    \addplot[mean, third]
-    table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y=mu]
-    {\datapath/wind_relative_alignment.dat};
+        \addplot[std, third, name path=third_plus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
+            {\datapath/wind_relative_alignment.dat};
+        \addplot[std, third, name path=third_minus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
+            {\datapath/wind_relative_alignment.dat};
+        \addplot[third fill] fill between[of=third_plus and third_minus, on layer={axis background}];
+        \addplot[mean, third]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y=mu]
+            {\datapath/wind_relative_alignment.dat};
 
-    \coordinate (b1) at (-1.4, .05);
-    \coordinate (b2) at (-0.6, 0.);
-    \coordinate (b3) at (0.6, -.056);
-    \coordinate (b4) at (-0.3, 0.1);
-\end{axis}
+        \coordinate (b1) at (-1.4, .05);
+        \coordinate (b2) at (-0.6, 0.);
+        \coordinate (b3) at (0.6, -.056);
+        \coordinate (b4) at (-0.3, 0.1);
+    \end{axis}
 
-\begin{axis}[
-    wind joint plot,
-    at={(alignment.below south west)},
-    anchor=north west,
-    xlabel=$\rv{X}$, ylabel=$\rv{y_2}$,
-    xtick={-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8},
-    % xticklabels={$-1.2$,,$-0.8$,,$-0.4$,,$0$,,$0.4$,,$0.8$,,$1.2$},
-    xticklabels={0,,15,,30,,45,,60,,75,,90},
-    x unit={min},
-    xmin=-1.6, xmax=0.8,
-    ymin=-2.5, ymax=2.5,
-    ytick={-2, 0, 2},
-    yticklabels={$0.4$, $0.8$, $1.2$},
-    ytick pos=left,
-    y unit=W,
-    y unit prefix=M,
-    ylabel style={at={(ticklabel* cs:0.5)},rotate=90,yshift=25pt},
-    ]
-    \addplot[
-    wind data,
-    ] table[
-    ignore chars={\#}, col sep=space,
-    restrict x to domain=-1.6:-.5,
-    x=X, y=Y
-    ] {\datapath/wind_one_data.dat};
-    \addplot[
-    wind data,
-    ] table[
-    ignore chars={\#}, col sep=space,
-    restrict x to domain=-.4:.1,
-    x=X, y=Y
-    ] {\datapath/wind_one_data.dat};
-    \addplot[
-    wind data,
-    ] table[
-    ignore chars={\#}, col sep=space,
-    restrict x to domain=.1:0.8,
-    x=X, y=Y
-    ] {\datapath/wind_one_data.dat};
-    \addplot[
-    wind data, dashed,
-    ] table[
-    ignore chars={\#}, col sep=space,
-    restrict x to domain=-.5:-.4,
-    x=X, y=Y
-    ] {\datapath/wind_hole_data.dat};
-    \addplot[
-    wind data, dashed,
-    ] table[
-    ignore chars={\#}, col sep=space,
-    restrict x to domain=.1:.4,
-    x=X, y=Y
-    ] {\datapath/wind_hole_data.dat};
+    \begin{axis}[
+            wind joint plot,
+            at={(alignment.below south west)},
+            anchor=north west,
+            xlabel=$\rv{X}$, ylabel=$\rv{y_2}$,
+            xtick={-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8},
+            % xticklabels={$-1.2$,,$-0.8$,,$-0.4$,,$0$,,$0.4$,,$0.8$,,$1.2$},
+            xticklabels={0,,15,,30,,45,,60,,75,,90},
+            x unit={min},
+            xmin=-1.6, xmax=0.8,
+            ymin=-2.5, ymax=2.5,
+            ytick={-2, 0, 2},
+            yticklabels={$0.4$, $0.8$, $1.2$},
+            ytick pos=left,
+            y unit=W,
+            y unit prefix=M,
+            ylabel style={at={(ticklabel* cs:0.5)},rotate=90,yshift=25pt},
+        ]
+        \addplot[
+            wind data,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=-1.6:-.5,
+                x=X, y=Y
+            ] {\datapath/wind_one_data.dat};
+        \addplot[
+            wind data,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=-.4:.1,
+                x=X, y=Y
+            ] {\datapath/wind_one_data.dat};
+        \addplot[
+            wind data,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=.1:0.8,
+                x=X, y=Y
+            ] {\datapath/wind_one_data.dat};
+        \addplot[
+            wind data, dashed,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=-.5:-.4,
+                x=X, y=Y
+            ] {\datapath/wind_hole_data.dat};
+        \addplot[
+            wind data, dashed,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=.1:.4,
+                x=X, y=Y
+            ] {\datapath/wind_hole_data.dat};
 
-    \addplot[std, second, name path=second_plus]
-    table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
-    {\datapath/wind_one_joint_sample.dat};
-    \addplot[std, second, name path=second_minus]
-    table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
-    {\datapath/wind_one_joint_sample.dat};
-    \addplot[second fill] fill between[of=second_plus and second_minus, on layer={axis background}];
-    \addplot[mean, second]
-    table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y=mu]
-    {\datapath/wind_one_joint_sample.dat};
+        \addplot[std, second, name path=second_plus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
+            {\datapath/wind_one_joint_sample.dat};
+        \addplot[std, second, name path=second_minus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
+            {\datapath/wind_one_joint_sample.dat};
+        \addplot[second fill] fill between[of=second_plus and second_minus, on layer={axis background}];
+        \addplot[mean, second]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y=mu]
+            {\datapath/wind_one_joint_sample.dat};
 
-    \coordinate (c1) at (-1.4, 0.22);
-    \coordinate (c2) at (-0.6, 1.01);
-    \coordinate (c3) at (0.6, -1.25);
-    \coordinate (c4) at (-0.3, 0.70);
-\end{axis}
+        \coordinate (c1) at (-1.4, 0.22);
+        \coordinate (c2) at (-0.6, 1.01);
+        \coordinate (c3) at (0.6, -1.25);
+        \coordinate (c4) at (-0.3, 0.70);
+    \end{axis}
 
-\begin{scope}
-    \draw (a1) node[alignment node] (A1) {};
-    \draw (b1) node[alignment node] (B1) {};
-    \draw (c1) node[alignment node] (C1) {};
-    \draw[alignment connection] (A1.south) -- (B1.north);
-    \draw[alignment connection] (B1.south) -- (C1.north);
-\end{scope}
-\begin{scope}
-    \draw (a2) node[alignment node] (A2) {};
-    \draw (b2) node[alignment node] (B2) {};
-    \draw (c2) node[alignment node] (C2) {};
-    \draw[alignment connection] (A2.south) -- (B2.north);
-    \draw[alignment connection] (B2.south) -- (C2.north);
-\end{scope}
-\begin{scope}
-    \draw (a3) node[alignment node] (A3) {};
-    \draw (b3) node[alignment node] (B3) {};
-    \draw (c3) node[alignment node] (C3) {};
-    \draw[alignment connection] (A3.south) -- (B3.north);
-    \draw[alignment connection] (B3.south) -- (C3.north);
-\end{scope}
-\begin{scope}
-    \draw (a4) node[alignment node] (A4) {};
-    \draw (b4) node[alignment node] (B4) {};
-    \draw (c4) node[alignment node] (C4) {};
-    \draw[alignment connection] (A4.south) -- (B4.north);
-    \draw[alignment connection] (B4.south) -- (C4.north);
-\end{scope}
+    \begin{scope}
+        \draw (a1) node[alignment node] (A1) {};
+        \draw (b1) node[alignment node] (B1) {};
+        \draw (c1) node[alignment node] (C1) {};
+        \draw[alignment connection] (A1.south) -- (B1.north);
+        \draw[alignment connection] (B1.south) -- (C1.north);
+    \end{scope}
+    \begin{scope}
+        \draw (a2) node[alignment node] (A2) {};
+        \draw (b2) node[alignment node] (B2) {};
+        \draw (c2) node[alignment node] (C2) {};
+        \draw[alignment connection] (A2.south) -- (B2.north);
+        \draw[alignment connection] (B2.south) -- (C2.north);
+    \end{scope}
+    \begin{scope}
+        \draw (a3) node[alignment node] (A3) {};
+        \draw (b3) node[alignment node] (B3) {};
+        \draw (c3) node[alignment node] (C3) {};
+        \draw[alignment connection] (A3.south) -- (B3.north);
+        \draw[alignment connection] (B3.south) -- (C3.north);
+    \end{scope}
+    \begin{scope}
+        \draw (a4) node[alignment node] (A4) {};
+        \draw (b4) node[alignment node] (B4) {};
+        \draw (c4) node[alignment node] (C4) {};
+        \draw[alignment connection] (A4.south) -- (B4.north);
+        \draw[alignment connection] (B4.south) -- (C4.north);
+    \end{scope}
 \end{tikzpicture}
 \end{document}

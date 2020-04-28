@@ -7,84 +7,84 @@
 
 \begin{document}
 \begin{tikzpicture}[tight background]
-\def\datapath{\figurepath/data/wetchicken/good_4_modes}
-\pgfplotsset{restrict/.style = {
-    % each nth point=10,
-    restrict x to domain=-0.01:3.51,
-}}
+    \def\datapath{\figurepath/data/wetchicken/good_4_modes}
+    \pgfplotsset{restrict/.style = {
+                % each nth point=10,
+                restrict x to domain=-0.01:3.51,
+            }}
 
-\begin{axis}[
-    wetchicken cut plot,
-    xlabel=,
-    xlabel style={overlay},
-    xmax=3.5,
-    clip mode=individual,
-    ]
+    \begin{axis}[
+            wetchicken cut plot,
+            xlabel=,
+            xlabel style={overlay},
+            xmax=3.5,
+            clip mode=individual,
+        ]
 
-    \addplot[
-    restrict,
-    data,
-    ] table[
-    ignore chars={\#}, col sep=space, x=X, y=Y
-    ] {\datapath/cut_plot_data_5.0.dat};
+        \addplot[
+            restrict,
+            data,
+        ] table[
+                ignore chars={\#}, col sep=space, x=X, y=Y
+            ] {\datapath/cut_plot_data_5.0.dat};
 
-  \begin{scope}[densely dotted]
-      \addplot[restrict, std, second, name path=minus]
-      table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/cut_model_5.0_3.dat};
-      \addplot[restrict, std, second, name path=plus]
-      table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/cut_model_5.0_3.dat};
-      \addplot[restrict, second fill]
-      fill between[of=plus and minus];
-      \addplot[restrict, mean, second]
-      table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/cut_model_5.0_3.dat};
-  \end{scope}
+        \begin{scope}[densely dotted]
+            \addplot[restrict, std, second, name path=minus]
+            table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/cut_model_5.0_3.dat};
+            \addplot[restrict, std, second, name path=plus]
+            table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/cut_model_5.0_3.dat};
+            \addplot[restrict, second fill]
+            fill between[of=plus and minus];
+            \addplot[restrict, mean, second]
+            table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/cut_model_5.0_3.dat};
+        \end{scope}
 
-  \begin{scope}[dashed, opacity=0.6]
-        % \addplot[restrict, std, fourth, name path=minus]
-        % table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/cut_model_5.0_2.dat};
-        % \addplot[restrict, std, fourth, name path=plus]
-        % table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/cut_model_5.0_2.dat};
-        % \addplot[restrict, fourth fill]
-        % fill between[of=plus and minus];
-        \addplot[restrict, std, fourth, name path=fullminus]
-        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2fullstd}] {\datapath/cut_model_5.0_2.dat};
-        \addplot[restrict, std, fourth, name path=fullplus]
-        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2fullstd}] {\datapath/cut_model_5.0_2.dat};
-        \addplot[restrict, fourth fill]
+        \begin{scope}[dashed, opacity=0.6]
+            % \addplot[restrict, std, fourth, name path=minus]
+            % table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/cut_model_5.0_2.dat};
+            % \addplot[restrict, std, fourth, name path=plus]
+            % table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/cut_model_5.0_2.dat};
+            % \addplot[restrict, fourth fill]
+            % fill between[of=plus and minus];
+            \addplot[restrict, std, fourth, name path=fullminus]
+            table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2fullstd}] {\datapath/cut_model_5.0_2.dat};
+            \addplot[restrict, std, fourth, name path=fullplus]
+            table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2fullstd}] {\datapath/cut_model_5.0_2.dat};
+            \addplot[restrict, fourth fill]
+            fill between[of=fullplus and fullminus];
+            \addplot[restrict, mean, fourth]
+            table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/cut_model_5.0_2.dat};
+
+            % \addplot[restrict, std, first, name path=minus]
+            % table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/cut_model_5.0_0.dat};
+            % \addplot[restrict, std, first, name path=plus]
+            % table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/cut_model_5.0_0.dat};
+            % \addplot[restrict, first fill]
+            % fill between[of=plus and minus];
+            \addplot[restrict, std, first, name path=fullminus]
+            table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2fullstd}] {\datapath/cut_model_5.0_0.dat};
+            \addplot[restrict, std, first, name path=fullplus]
+            table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2fullstd}] {\datapath/cut_model_5.0_0.dat};
+            \addplot[restrict, first fill]
+            fill between[of=fullplus and fullminus];
+            \addplot[restrict, mean, first]
+            table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/cut_model_5.0_0.dat};
+        \end{scope}
+
+        \addplot[restrict, std, third, name path=minus]
+        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/cut_model_5.0_1.dat};
+        \addplot[restrict, std, third, name path=plus]
+        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/cut_model_5.0_1.dat};
+        \addplot[restrict, third fill]
+        fill between[of=plus and minus];
+        \addplot[restrict, std, third, name path=fullminus]
+        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2fullstd}] {\datapath/cut_model_5.0_1.dat};
+        \addplot[restrict, std, third, name path=fullplus]
+        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2fullstd}] {\datapath/cut_model_5.0_1.dat};
+        \addplot[restrict, third fill]
         fill between[of=fullplus and fullminus];
-        \addplot[restrict, mean, fourth]
-        table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/cut_model_5.0_2.dat};
-
-        % \addplot[restrict, std, first, name path=minus]
-        % table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/cut_model_5.0_0.dat};
-        % \addplot[restrict, std, first, name path=plus]
-        % table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/cut_model_5.0_0.dat};
-        % \addplot[restrict, first fill]
-        % fill between[of=plus and minus];
-        \addplot[restrict, std, first, name path=fullminus]
-        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2fullstd}] {\datapath/cut_model_5.0_0.dat};
-        \addplot[restrict, std, first, name path=fullplus]
-        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2fullstd}] {\datapath/cut_model_5.0_0.dat};
-        \addplot[restrict, first fill]
-        fill between[of=fullplus and fullminus];
-        \addplot[restrict, mean, first]
-        table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/cut_model_5.0_0.dat};
-    \end{scope}
-
-    \addplot[restrict, std, third, name path=minus]
-    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}] {\datapath/cut_model_5.0_1.dat};
-    \addplot[restrict, std, third, name path=plus]
-    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}] {\datapath/cut_model_5.0_1.dat};
-    \addplot[restrict, third fill]
-    fill between[of=plus and minus];
-    \addplot[restrict, std, third, name path=fullminus]
-    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2fullstd}] {\datapath/cut_model_5.0_1.dat};
-    \addplot[restrict, std, third, name path=fullplus]
-    table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2fullstd}] {\datapath/cut_model_5.0_1.dat};
-    \addplot[restrict, third fill]
-    fill between[of=fullplus and fullminus];
-    \addplot[restrict, mean, third]
-    table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/cut_model_5.0_1.dat};
-\end{axis}
+        \addplot[restrict, mean, third]
+        table[ignore chars={\#}, col sep=space, x=X, y=mu] {\datapath/cut_model_5.0_1.dat};
+    \end{axis}
 \end{tikzpicture}
 \end{document}

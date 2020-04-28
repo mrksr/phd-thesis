@@ -7,21 +7,21 @@
 
 \begin{document}
 \begin{tikzpicture}[tight background]
-\def\datapath{\figurepath/data/choicenet_noisy_0.4}
-\begin{axis}[
-    choicenet plot,
-    clip mode=individual,
-    xticklabel style={overlay},
-    xlabel style={overlay},
-    xlabel=,
-    xticklabels={,,},
-    ]
+    \def\datapath{\figurepath/data/choicenet_noisy_0.4}
+    \begin{axis}[
+            choicenet plot,
+            clip mode=individual,
+            xticklabel style={overlay},
+            xlabel style={overlay},
+            xlabel=,
+            xticklabels={,,},
+        ]
 
-    \addplot[
-    data,
-    ] table[
-    ignore chars={\#}, col sep=space, x=X, y=Y
-    ] {\datapath/Xs_Ys.dat};
-\end{axis}
+        \addplot[
+            data,
+        ] table[
+                ignore chars={\#}, col sep=space, x=X, y=Y
+            ] {\datapath/Xs_Ys.dat};
+    \end{axis}
 \end{tikzpicture}
 \end{document}

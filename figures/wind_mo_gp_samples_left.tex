@@ -7,63 +7,63 @@
 
 \begin{document}
 \begin{tikzpicture}
-\def\datapath{\figurepath/data/wind}
-\begin{axis}[
-    wind sample plot,
-    xlabel=$\rv{X}$, ylabel=$\rv{y_2}$,
-    x unit={min},
-    xtick={-0.55, -0.45, -0.35},
-    xticklabels={39, , 47},
-    ytick pos=right,
-    ytick={-1, 0, 1, 2},
-    yticklabels={0.6, 0.8, 1, 1.2},
-    ylabel style={rotate=90},
-    y unit=W,
-    y unit prefix=M,
-    xmin=-0.55, xmax=-0.35,
-    ymin=-1.5, ymax=2.5,
-    xlabel style={at={(ticklabel* cs:0.5)}},
-    ]
+    \def\datapath{\figurepath/data/wind}
+    \begin{axis}[
+            wind sample plot,
+            xlabel=$\rv{X}$, ylabel=$\rv{y_2}$,
+            x unit={min},
+            xtick={-0.55, -0.45, -0.35},
+            xticklabels={39, , 47},
+            ytick pos=right,
+            ytick={-1, 0, 1, 2},
+            yticklabels={0.6, 0.8, 1, 1.2},
+            ylabel style={rotate=90},
+            y unit=W,
+            y unit prefix=M,
+            xmin=-0.55, xmax=-0.35,
+            ymin=-1.5, ymax=2.5,
+            xlabel style={at={(ticklabel* cs:0.5)}},
+        ]
 
-    \addplot[std, second, name path=second_plus]
-    table[restrict x to domain=-0.601:-0.3, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
-    {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint.dat};
-    \addplot[std, second, name path=second_minus]
-    table[restrict x to domain=-0.601:-0.3, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
-    {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint.dat};
-    \addplot[second fill] fill between[of=second_plus and second_minus];
-    % \addplot[weak mean, second]
-    % table[restrict x to domain=-0.6:-0.3, ignore chars={\#}, col sep=space, x=X, y=mu]
-    % {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint.dat};
+        \addplot[std, second, name path=second_plus]
+        table[restrict x to domain=-0.601:-0.3, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
+            {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint.dat};
+        \addplot[std, second, name path=second_minus]
+        table[restrict x to domain=-0.601:-0.3, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
+            {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint.dat};
+        \addplot[second fill] fill between[of=second_plus and second_minus];
+        % \addplot[weak mean, second]
+        % table[restrict x to domain=-0.6:-0.3, ignore chars={\#}, col sep=space, x=X, y=mu]
+        % {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint.dat};
 
-    \addplot[
-    wind data,
-    ] table[
-    ignore chars={\#}, col sep=space,
-    restrict x to domain=-.7:-.5,
-    x=X, y=Y
-    ] {\datapath/wind_one_data.dat};
-    \addplot[
-    wind data,
-    ] table[
-    ignore chars={\#}, col sep=space,
-    restrict x to domain=-.4:-.2,
-    x=X, y=Y
-    ] {\datapath/wind_one_data.dat};
-    \addplot[
-    wind data, dashed,
-    ] table[
-    ignore chars={\#}, col sep=space,
-    restrict x to domain=-.5:-.4,
-    x=X, y=Y
-    ] {\datapath/wind_hole_data.dat};
+        \addplot[
+            wind data,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=-.7:-.5,
+                x=X, y=Y
+            ] {\datapath/wind_one_data.dat};
+        \addplot[
+            wind data,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=-.4:-.2,
+                x=X, y=Y
+            ] {\datapath/wind_one_data.dat};
+        \addplot[
+            wind data, dashed,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=-.5:-.4,
+                x=X, y=Y
+            ] {\datapath/wind_hole_data.dat};
 
 
-    \addplot[sample, hannah0] table[ignore chars={\#}, col sep=space, x=X, y=0] {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint_sampled_samples.dat};
-    \addplot[sample, hannah2] table[ignore chars={\#}, col sep=space, x=X, y=1] {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint_sampled_samples.dat};
-    \addplot[sample, hannah3] table[ignore chars={\#}, col sep=space, x=X, y=2] {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint_sampled_samples.dat};
-    % \addplot[sample, hannah3] table[ignore chars={\#}, col sep=space, x=X, y=3] {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint_sampled_samples.dat};
-    % \addplot[sample, hannah4] table[ignore chars={\#}, col sep=space, x=X, y=4] {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint_sampled_samples.dat};
-\end{axis}
+        \addplot[sample, hannah0] table[ignore chars={\#}, col sep=space, x=X, y=0] {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint_sampled_samples.dat};
+        \addplot[sample, hannah2] table[ignore chars={\#}, col sep=space, x=X, y=1] {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint_sampled_samples.dat};
+        \addplot[sample, hannah3] table[ignore chars={\#}, col sep=space, x=X, y=2] {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint_sampled_samples.dat};
+        % \addplot[sample, hannah3] table[ignore chars={\#}, col sep=space, x=X, y=3] {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint_sampled_samples.dat};
+        % \addplot[sample, hannah4] table[ignore chars={\#}, col sep=space, x=X, y=4] {\datapath/wind_exp_14_shallow_multioutput_gp/wind_one_joint_sampled_samples.dat};
+    \end{axis}
 \end{tikzpicture}
 \end{document}

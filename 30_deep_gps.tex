@@ -95,7 +95,7 @@ We apply this bound to the expectation to get
         &\quad {} + \frac{1}{2\sigma_a^2}\Fun*{\tr}{\mat{K_{au}}\mat{K_{uu}}\inv\mat{S}\mat{K_{uu}}\inv\mat{K_{ua}}}.
     \end{split}
 \end{align}
-Resubstituting this result into \cref{eq:nvc:svgp_log_likelihood} yields the final bound
+Resubstituting this result into \cref{eq:var_compression:svgp_log_likelihood} yields the final bound
 \begin{align}
     \label{eq:var_compression:svgp_bound}
     \begin{split}
@@ -110,7 +110,7 @@ This bound, which depends on the hyper parameters of the kernel and likelihood $
 It factorizes along the data points which enables stochastic optimization.
 
 In order to obtain a bound on the full model, we apply the same techniques to the other processes.
-Since the alignment processes $a_d$ are assumed to be independent, we have $\log \Prob{\rv{a_1}, \dots, \rv{a_D} \given \mat{X}} = \sum_{d=1}^D \log \Prob{\rv{a_d} \given \mat{X}}$, where every term can be approximated using the bound in \cref{eq:nvc:svgp_bound}.
+Since the alignment processes $a_d$ are assumed to be independent, we have $\log \Prob{\rv{a_1}, \dots, \rv{a_D} \given \mat{X}} = \sum_{d=1}^D \log \Prob{\rv{a_d} \given \mat{X}}$, where every term can be approximated using the bound in \cref{eq:var_compression:svgp_bound}.
 However, for all subsequent layers, the bound is not directly applicable, since the inputs are no longer known but instead are given by the outputs of the previous process.
 It is therefore necessary to propagate their uncertainty and also handle the interdependencies between the layers introduced by the latent function values $\rv{a}$, $\rv{f}$ and $\rv{g}$.
 
@@ -179,8 +179,8 @@ The expectations with respect to $\Variat{\rv{a}}$ involve expectations of kerne
     \end{split}
 \end{align}
 These $\Psi$-statistics can be computed analytically for multiple kernels, including the squared exponential kernel.
-In \cref{toc:nvc:kernel_expectations} we show closed-form solutions for these $\Psi$-statistics for the implicit kernel defined in the CP layer.
-To obtain the final formulation of the desired bound for $\log \Prob{\rv{f} \given \rv{u_f}}$ we substitute \cref{eq:nvc:psi_statistics} into \cref{eq:nvc:f_marginal_likelihood} and get the analytically tractable bound
+In \cref{toc:var_compression:kernel_expectations} we show closed-form solutions for these $\Psi$-statistics for the implicit kernel defined in the CP layer.
+To obtain the final formulation of the desired bound for $\log \Prob{\rv{f} \given \rv{u_f}}$ we substitute \cref{eq:var_compression:psi_statistics} into \cref{eq:nvc:f_marginal_likelihood} and get the analytically tractable bound
 \begin{align}
     \begin{split}
         \log \Prob{\rv{f} \given \rv{u_f}} \geq

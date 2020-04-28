@@ -119,8 +119,8 @@ $J^\pi(\mat{\theta}_\pi) = \sum_{t=0}^T \gamma^t \Fun*{r}{\mat{s}_t} = \sum_{t=0
 Starting from an initial state $\mat{s}_0$ we generate a trajectory of states $\mat{s}_0, \ldots, \mat{s}_T$ obtained by applying the action $\mat{a}_t = \Fun*{\pi}{\mat{s}_t}$ at every time step $t$.
 The next state is generated using the (latent) transition function $f$, yielding $\mat{s}_{t+1} = \Fun*{f}{\mat{s}_t, \mat{a}_t}$.
 
-Many environments have stochastic elements, such as the random drift in the Wet-Chicken benchmark from \cref{toc:interpretable_reinforcement_learning:wetchicken}.
-We take this stochasticity into account by interpreting the problem from a Bayesian perspective where the discounted return specifies a generative model whose graphical model is shown in \cref{fig:interpretable_reinforcement_learning:graphical_model:rl}.
+Many environments have stochastic elements, such as the random drift in the Wet-Chicken benchmark from \cref{toc:interpretable_rl:wetchicken}.
+We take this stochasticity into account by interpreting the problem from a Bayesian perspective where the discounted return specifies a generative model whose graphical model is shown in \cref{fig:interpretable_rl:graphical_model:rl}.
 Because of the Markov property assumed in RL, conditional independences between the states yield a recursive definition of the state probabilities given by
 \begin{align}
     \begin{split}
@@ -164,11 +164,11 @@ When does the canoeist fall down?
 How do the actions influence the system?
 
 Each question is explicitly answered by one of the model's components.
-In \cref{toc:interpretable_reinforcement_learning:results} we will visualize these components and discuss how they can be used by experts to gain new insights about the system.
+In \cref{toc:interpretable_rl:results} we will visualize these components and discuss how they can be used by experts to gain new insights about the system.
 Additionally, interpretable transition models help to build trust in derived policies:
 Since experts can assess the plausibility of the transition model, successful policies are unlikely to behave unexpectedly on the true system.
 
-We formulate a graphical model in \cref{fig:interpretable_reinforcement_learning:graphical_model:mdgp} using the data association with GPs (DAGP) model~\parencite{kaiser_data_2018}, which allows us to handle the multi-modality introduced by falling down the waterfall.
+We formulate a graphical model in \cref{fig:interpretable_rl:graphical_model:mdgp} using the data association with GPs (DAGP) model~\parencite{kaiser_data_2018}, which allows us to handle the multi-modality introduced by falling down the waterfall.
 We specify this separation via the marginal likelihood
 \begin{align}
     \begin{split}
@@ -262,7 +262,7 @@ Due to the Markovian property of the transition dynamics, the integral factorize
 The integral is approximated by averaging over $P$ samples propagated through the model starting from a known distribution of initial states $\Prob{\mat{s}_0}$.
 State transitions can be efficiently sampled from the variational posterior of the dynamics model by repeatedly taking independent samples of the different GPs.
 
-The expected return in \cref{eq:interpretable_reinforcement_learning:policy_training} can be optimized using stochastic gradient descent via the gradients
+The expected return in \cref{eq:interpretable_rl:policy_training} can be optimized using stochastic gradient descent via the gradients
 \begin{align}
     \label{eq:interpretable_rl:policy_gradients}
     \nabla_{\theta_\pi} \Fun*{J^\pi}{\theta_\pi} \approx \frac{1}{P} \sum_{p=1}^P \sum_{t=0}^T \gamma^t \nabla_{\theta_\pi} r_t^p
@@ -315,10 +315,10 @@ Importantly, we only need a small number of Monte Carlo samples at every iterati
     \caption{
         \label{fig:interpretable_rl:wetchicken:dynamics}
         The separation of different aspects of the Wet-Chicken in DAGP-based transition models benchmark yields new and interpretable information about the underlying dynamics.
-        The different parts of the model explicitly show flow speeds (\cref{fig:interpretable_reinforcement_learning:wetchicken:speed}), turbulence (\cref{fig:interpretable_reinforcement_learning:wetchicken:hetero}), drop behaviour (\cref{fig:interpretable_reinforcement_learning:wetchicken:drop}) and drop probabilities (\cref{fig:interpretable_reinforcement_learning:wetchicken:falldown}) with respect to the current position in the river and action $a = 0$.
+        The different parts of the model explicitly show flow speeds (\cref{fig:interpretable_rl:wetchicken:speed}), turbulence (\cref{fig:interpretable_rl:wetchicken:hetero}), drop behaviour (\cref{fig:interpretable_reinforcement_learning:wetchicken:drop}) and drop probabilities (\cref{fig:interpretable_reinforcement_learning:wetchicken:falldown}) with respect to the current position in the river and action $a = 0$.
         The model has learned that the river is turbulent on the left and fast on the right, leading to consistent medium drop probabilities on the left due to stochasticity and a sharp boundary on the right, where the flow speed dominates.
         Note that a drop resets the position to the initial state irrespective of the current state.
-        It is therefore correctly learned to be represented by the constant zero function (\cref{fig:interpretable_reinforcement_learning:wetchicken:drop}).
+        It is therefore correctly learned to be represented by the constant zero function (\cref{fig:interpretable_rl:wetchicken:drop}).
     }
 \end{figure}
 \begin{figure}[tp]
@@ -347,18 +347,18 @@ Thirdly, we show how the human-interpretable components of the dynamics models c
 \label{toc:interpretable_rl:dynamics_model}
 The benchmark has two-dimensional state and action spaces from which we sample uniform random transitions with varying $N$ in the range \numrange{100}{5000}.
 For $N \geq 250$, our model is able to identify the underlying dynamics.
-In \cref{fig:interpretable_reinforcement_learning:wetchicken:cut} we show the joint predictive posterior of a DAGP-based transition model.
+In \cref{fig:interpretable_rl:wetchicken:cut} we show the joint predictive posterior of a DAGP-based transition model.
 The different plots show linear cuts through the Wet-Chicken system with respect to the action $a_t = 0$ and $y_t \in \Set{0, 1, 2.5, 4, 5}$.
 The transition model has successfully identified the two modes introduced through flow and drop behaviours and their relative importance.
 These cuts require additional examination to recover new knowledge about the system's behaviour.
-In contrast, the separation of the learning problem in the DAGP-based dynamics model gives us explicit and separate posteriors about the different system components via the independent GP posteriors shown in \cref{fig:interpretable_reinforcement_learning:wetchicken:dynamics}.
+In contrast, the separation of the learning problem in the DAGP-based dynamics model gives us explicit and separate posteriors about the different system components via the independent GP posteriors shown in \cref{fig:interpretable_rl:wetchicken:dynamics}.
 This belief can directly be reasoned about with experts to evaluate the environment in which policies will be trained, raising confidence in their correctness.
 
 While drops can be modelled using a constant noiseless function, the flow speed and heteroscedastic turbulence varies throughout the system.
 For low $y$ the river flows slowly but is very turbulent while for high $y$ the river flows fast but deterministically.
 In the turbulent regime, falling down is possible but not certain for most $x$, while in the flow dominated regime, a drop becomes highly probable under a certain distance from the waterfall.
-Note that even though the turbulence as defined in \cref{toc:interpretable_reinforcement_learning:wetchicken} is independent of $x$, the heteroscedastic noise process has uncovered the implicit dependency for high $x$ as most possible turbulence values lead to falling down and thus assignment to the other mode.
-Similarly, the flow speed shown in \cref{fig:interpretable_reinforcement_learning:wetchicken:speed} is negative in the top left corner.
+Note that even though the turbulence as defined in \cref{toc:interpretable_rl:wetchicken} is independent of $x$, the heteroscedastic noise process has uncovered the implicit dependency for high $x$ as most possible turbulence values lead to falling down and thus assignment to the other mode.
+Similarly, the flow speed shown in \cref{fig:interpretable_rl:wetchicken:speed} is negative in the top left corner.
 This is due to the fact that the flow mode models the position after one step under the condition of not falling.
 As most turbulence into the direction of the waterfall leads to a drop, the posterior mean is further away from the waterfall as the turbulence dominates the low flow speed on the left side of the river.
 
@@ -461,10 +461,10 @@ As most turbulence into the direction of the waterfall leads to a drop, the post
 Given a posterior for the dynamics model, we now train a neural policy using probabilistic model rollouts.
 We sample initial states from the training data, use a horizon of $T = 5$ steps and average over $P = 20$ samples with $\gamma = 0.9$.
 We use a two-layer neural network with 20 ReLU-activated units each as our policy parametrization.
-For every state transition, we sample independently from the different model components to generate a sample for the next state using \cref{eq:interpretable_reinforcement_learning:predictions}.
+For every state transition, we sample independently from the different model components to generate a sample for the next state using \cref{eq:interpretable_rl:predictions}.
 This incorporates both the stochasticity in the system introduced via heteroscedastic noise and the Bayesian uncertainty about the correct model in the policy search.
 During training, the policy thus implicitly learns to consider the stochasticity of the Wet-Chicken benchmark as different sample-trajectories generate gradients with respect to different realizations of the stochasticity of the Wet-Chicken benchmark.
-\Cref{fig:interpretable_reinforcement_learning:wetchicken:policy} shows how a successful policy has found a trade-off between the unpredictability on the left and the uncontrollable speed on the right.
+\Cref{fig:interpretable_rl:wetchicken:policy} shows how a successful policy has found a trade-off between the unpredictability on the left and the uncontrollable speed on the right.
 
 In Table~\ref{fig:interpretable_rl:wetchicken:table}, we compare policy search based on the DAGP-based dynamics model with a standard GP dynamics model and NFQ.
 We present expected returns for training runs with different amounts of data averaged over 10 experiments together with standard errors.
@@ -494,7 +494,7 @@ Using DAGP-based dynamics models, a successful policy can be found with about an
 \label{toc:interpretable_rl:reward_shaping}
 We have shown how a dynamics model informed by high-level expert knowledge increases data efficiency.
 A further advantage of the decomposition of the dynamics model in interpretable components is that the predictions of these components can be used to influence the policy search.
-In this example, we want to find a more conservative policy which, when compared to \cref{fig:interpretable_reinforcement_learning:wetchicken:policy}, sacrifices some return in order to avoid falling down the waterfall.
+In this example, we want to find a more conservative policy which, when compared to \cref{fig:interpretable_rl:wetchicken:policy}, sacrifices some return in order to avoid falling down the waterfall.
 
 Any successful agent has the implicit incentive to avoid drops as they move the canoeist away from the waterfall.
 However, a successful policy still accepts that it will fall down sometimes due to turbulence.
@@ -508,9 +508,9 @@ which includes the original Wet-Chicken reward function $\Fun*{r_\text{orig}}{(x
 For every state, the DAGP-based dynamics model yields an explicit drop-probability which can easily be evaluated.
 The conservative reward punishes a high drop probability reweighed with the maximum original reward $\max_{\mat{s}} r_\text{orig}(\mat{s}) = 5$.
 
-\Cref{fig:interpretable_reinforcement_learning:conservative_wetchicken_policy} shows a resulting conservative policy.
+\Cref{fig:interpretable_rl:conservative_wetchicken_policy} shows a resulting conservative policy.
 Such a policy avoids both the turbulent states on the left and the fast flowing states on the right.
-It tries to reach a sweet spot, which, compared to \cref{fig:interpretable_reinforcement_learning:wetchicken:policy}, is further away from the waterfall and therefore safer.
+It tries to reach a sweet spot, which, compared to \cref{fig:interpretable_rl:wetchicken:policy}, is further away from the waterfall and therefore safer.
 We compare 10 runs with $N=1000$ observations using the original reward and the conservative reward.
 The resulting conservative policies yield lower return than the more aggressive default policies but reliably reduce drop probabilities as well.
 The interpretable nature of the dynamics models have allowed us to easily influence policy behaviours.
@@ -577,13 +577,13 @@ The interpretable nature of the dynamics models have allowed us to easily influe
         A significant amount of predictions from the second model are uninformed, leading to the failure of the policy search.
     }
 \end{figure}
-In \cref{toc:interpretable_reinforcement_learning:probabilistic_policy_search} we have formulated a dynamics model informed by high-level expert knowledge.
+In \cref{toc:interpretable_rl:probabilistic_policy_search} we have formulated a dynamics model informed by high-level expert knowledge.
 One important insight we assumed is the bimodal nature of the Wet-Chicken problem introduced by the waterfall.
-In \cref{toc:interpretable_reinforcement_learning:policy_learning}, we compared our model to standard GPs and showed that modelling multi-modality is critical to solve Wet-Chicken.
+In \cref{toc:interpretable_rl:policy_learning}, we compared our model to standard GPs and showed that modelling multi-modality is critical to solve Wet-Chicken.
 We extend this comparison in this experiment and discuss the effects of model misspecification on our model's performance.
 Specifically, we investigate the case where additional modes are available to dynamics model to solve the underlying data association problem.
 
-\Cref{tab:interpretable_reinforcement_learning:wetchicken:mode_table} shows results for $K \in \Set{1, \dots, 5}$, where $K=1$ is equivalent to standard GPs.
+\Cref{tab:interpretable_rl:wetchicken:mode_table} shows results for $K \in \Set{1, \dots, 5}$, where $K=1$ is equivalent to standard GPs.
 All models have been trained for the same number of iterations and, for $K > 1$, all models have comparable marginal likelihoods.
 While $250$ data points are enough with $K=2$ to reliably solve the Wet-Chicken problem, more data is needed until working policies can be found with $K>2$ (e.g.\ for $K=5$, double the data was needed until one of the runs found a working policy).
 Most notably, performance fluctuates significantly with misspecified models for different repetitions of the same experiment and good policies can not be found reliably.
@@ -592,7 +592,7 @@ Using the additional modes available, the model can now find representations of 
 This showcases how data association problems are inherently ill-posed in general~\parencite{barshalom_tracking_1990,cox_review_1993}.
 The additional representative power for $K>2$ introduces symmetries in the optimization landscape which both significantly complicate training~\parencite{lazaro-gredilla_overlapping_2012,minka_expectation_2001} and lead to undesired generalization behaviour which is not driven by knowledge about the underlying system.
 
-An example for undesired generalization is shown in \cref{fig:interpretable_reinforcement_learning:wetchicken:cut_comparison} which compares two models trained with $K=4$ and $N=2500$.
+An example for undesired generalization is shown in \cref{fig:interpretable_rl:wetchicken:cut_comparison} which compares two models trained with $K=4$ and $N=2500$.
 While both models explain the overall training data well, the cuts through the system at $y_t = 5$ give an intuition why the first model leads to a successful policy, while the second model does not.
 Both models represent drops via one of the modes and share the remaining three modes to jointly explain the flow behaviour.
 In the first model, two alternating modes have learned essentially equivalent models and a third more uninformed mode is almost irrelevant.

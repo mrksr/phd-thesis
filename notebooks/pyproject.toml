@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "phd-thesis"
+version = "1"
+description = "Notebook environment for my PhD thesis"
+authors = ["Markus Kaiser <markus.kaiser@siemens.com>"]
+
+[tool.poetry.dependencies]
+jupyterlab = "^2.0.1"
+keras-dgp = {git = "ssh://git@code.siemens.com/markus.kaiser/keras-dgp.git"}
+python = "~3.7"
+scikit-learn = "^0.22.2"
+seaborn = "^0.10.0"
+tensorflow = {version = "~2.2.0-rc", allow-prereleases = true}
+tfp_nightly = {version = "~0.10.0-dev", allow-prereleases = true}
+
+[tool.poetry.dev-dependencies]
+black = "^19.10b0"
+isort = "^4.3.21"
+pre-commit = "^2.1.1"
+pylint = "^2.4.4"
+
+[tool.black]
+line-length = 80
+skip-string-normalization = true
+
+[tool.isort]
+include_trailing_comma = true
+force_grid_wrap = 0
+force_single_line = true
+multi_line_output = 3
+use_parentheses = true
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

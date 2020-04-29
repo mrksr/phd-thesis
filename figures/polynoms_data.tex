@@ -1,0 +1,21 @@
+\documentclass{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \def\datapath{\figurepath/data/notebooks/10_polynomial_interpolation}
+    \begin{axis}[
+            polynomial plot,
+        ]
+
+        \addplot[data] table[numpy, x=X, y=Y] {\datapath/training_data.dat};
+
+        % \addplot[true function] table[numpy, x=X, y=true] {\datapath/test_data.dat};
+        \addplot[smooth, first, semithick] table[numpy, x=X, y=lagrange] {\datapath/test_data.dat};
+    \end{axis}
+\end{tikzpicture}
+\end{document}

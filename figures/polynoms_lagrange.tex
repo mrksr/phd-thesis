@@ -10,20 +10,18 @@
     \def\datapath{\figurepath/data/notebooks/10_polynomial_interpolation}
     \begin{axis}[
             polynomial plot,
-            legend columns=2,
             legend pos=north west,
         ]
 
         \addplot[data, forget plot] table[numpy, x=X, y=Y] {\datapath/training_data.dat};
 
-        \addplot[densely dashed, first, semithick] table[numpy, x=X, y=LS] {\datapath/test_data.dat};
-        \addplot[densely dotted, second, semithick] table[numpy, x=X, y=LAE] {\datapath/test_data.dat};
-        \addplot[third, semithick] table[numpy, x=X, y=PCA] {\datapath/test_data.dat};
+        % \addplot[true function] table[numpy, x=X, y=true] {\datapath/test_data.dat};
+        \addplot[first, semithick] table[numpy, x=X, y=interpolate] {\datapath/test_data.dat};
+        \addplot[smooth, second, semithick] table[numpy, x=X, y=lagrange] {\datapath/test_data.dat};
 
         \legend{
-            LS,
-            LAE,
-            PCA,
+            Linear Interpolation,
+            Lagrange Polynomial,
         }
     \end{axis}
 \end{tikzpicture}

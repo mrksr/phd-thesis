@@ -1,7 +1,5 @@
 \chapter{Bayesian Machine Learning}
 \label{toc:bayesian_ml}
-Everything is awesome, everything is cool when you're part of a team.
-Everything is awesome, when you're living out a dream.
 
 \begin{itemize}
     \item Machine Learning is an extension of algorithmics (and numerics) with different goals
@@ -44,8 +42,29 @@ Everything is awesome, when you're living out a dream.
     \item Industrial ML motivates our thesis, where we want to formulate models that are inherently interpretable and trustworthy
     \item It will turn out that in this space, judging whether a model is good is actually very tricky.
 \end{itemize}
+One of the roots of machine learning (ML) lies in the study of algorithms in theoretical computer science.
+An algorithm is a well-defined sequence of computational steps transforming a set of inputs to a set of outputs.
+It is a tool for solving a computational problem, which is defined by an abstract definition of admissable inputs and expected outputs.
+An algorithm solves such a problem if for every possible input, the algorithm provably yields the correct output.
 
-\begin{figure}[tp]
+Consider the computational problem of sorting a list of numbers in ascending order.
+One possible definition~\parencite{cormen_introduction_2009} of the sorting problem is:
+\begin{labeling}{Output:}
+    \item[Input:] A sequence of $n$ integers $\mat{I} = (i_1, \dots, i_n)$
+    \item[Output:] A reordering of $\mat{I}$ called $\mat{O} = (o_1, \dots, o_n)$ such that $o_1 \leq \dots \leq o_n$.
+\end{labeling}
+For example, for the input $\mat{\hat{I}}=(12, 8, 23, 4)$ the correct output is $\mat{\hat{O}}=(4, 8, 12, 23)$.
+A concrete input $\mat{\hat{I}}$ is called an instance of a problem.
+Importantly, such an instance contains all the required information to compute the unique output $\mat{\hat{O}}$.
+The correctness of the output can be checked via the formal problem definition.
+The various available (correct) sorting algorithms only differ in which and how many computational steps they take to arrive at the output, not in the output itself.
+
+Machine learning can be seen as an extension of algorithmics towards problems where a formal description of a uniquely defined solution does not exist.
+Instead, problems in ML are characterized by the observation of finitely many examples or data.
+The objective is to derive knowledge about how these examples were generated.
+This knowledge can then be used to describe common patterns in the data or generate new examples that conform to previous observations.
+
+\begin{figure}[t]
     \begin{subfigure}[b]{\halffigurewidth}
         \centering
         \includestandalonewithpath{figures/polynoms_data}
@@ -68,13 +87,16 @@ Everything is awesome, when you're living out a dream.
     }
 \end{figure}
 
-\begin{figure}[tp]
+As an example, consider the data shown in \cref{fig:bayesian_ml:polynoms:data}.
+The figure depicts a dataset $\Dc = \Set*{\left(x_n, y_n\right)}_{n=1}^N \subseteq \Rb^2$ of $N$ pairs of real numbers.
+
+\begin{figure}[t]
     \begin{subfigure}[b]{\halffigurewidth}
         \centering
         \includestandalonewithpath{figures/polynoms_linear}
         \caption{
             Linear ML
-            \label{fig:bayesian_ml:polynoms:data}
+            \label{fig:bayesian_ml:polynoms:linear}
         }
     \end{subfigure}
     \hfill

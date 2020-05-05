@@ -10,8 +10,6 @@
     \def\datapath{\figurepath/data/notebooks/10_polynomial_interpolation}
     \begin{axis}[
             polynomial plot,
-            legend columns=2,
-            legend pos=north west,
         ]
 
         \addplot[data, forget plot] table[numpy, x=X, y=Y] {\datapath/training_data.dat};

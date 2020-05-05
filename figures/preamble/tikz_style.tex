@@ -45,6 +45,8 @@
             % NOTE(mrksr): Do not consider labels for axis bounding boxes
             xlabel style={overlay},
             ylabel style={overlay},
+            %
+            legend style={font=\footnotesize},
         }}
 
 \pgfplotsset{half plot/.style = {
@@ -99,11 +101,17 @@
 %                                Intro                                %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \pgfplotsset{polynomial plot/.style = {
-            half plot,
+            half label plot,
             ymin=-3.5,
             ymax=6.5,
             xmin=-2.2,
             xmax=2.2,
+            xlabel={$x$},
+            ylabel={$y$},
+            xlabel style={overlay=false},
+            ylabel style={overlay=false},
+            legend columns=2,
+            legend pos=north west,
         }}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

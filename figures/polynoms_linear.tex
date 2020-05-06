@@ -16,12 +16,12 @@
 
         \addplot[densely dashed, first, semithick] table[numpy, x=X, y=LS] {\datapath/test_data.dat};
         \addplot[densely dotted, second, semithick] table[numpy, x=X, y=LAE] {\datapath/test_data.dat};
-        \addplot[third, semithick] table[numpy, x=X, y=PCA] {\datapath/test_data.dat};
+        \addplot[third, semithick] table[numpy, x=X, y=Ridge] {\datapath/test_data.dat};
 
         \legend{
             LS,
             LAE,
-            PCA,
+            Ridge,
         }
     \end{axis}
 \end{tikzpicture}

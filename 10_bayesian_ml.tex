@@ -44,24 +44,27 @@
 \end{itemize}
 One of the roots of machine learning (ML) lies in the study of algorithms in theoretical computer science.
 An algorithm is a well-defined sequence of computational steps transforming a set of inputs to a set of outputs.
-It is a tool for solving a computational problem, which is defined by an abstract definition of admissable inputs and expected outputs.
+It is a tool for solving a computational problem, which is defined by an abstract problem of admissable inputs and expected outputs.
 An algorithm solves such a problem if for every possible input, the algorithm provably yields the correct output.
 
 Consider the computational problem of sorting a list of numbers in ascending order.
-One possible definition~\parencite{cormen_introduction_2009} of the sorting problem is:
+One possible problem~\parencite{cormen_introduction_2009} of the sorting problem is:
+\begin{problem}[Sorting]
+\label{prob:bayesian_ml:sorting}
 \begin{labeling}{Output:}
-    \item[Input:] A sequence of $n$ integers $\mat{I} = (i_1, \dots, i_n)$
-    \item[Output:] A reordering of $\mat{I}$ called $\mat{O} = (o_1, \dots, o_n)$ such that $o_1 \leq \dots \leq o_n$.
+    \item[Input:] A sequence of $N$ integers $\mat{I} = (i_1, \dots, i_N)$
+    \item[Output:] A reordering of $\mat{I}$ called $\mat{O} = (o_1, \dots, o_N)$ such that $o_1 \leq \dots \leq o_N$.
 \end{labeling}
+\end{problem}
 For example, for the input $\mat{\hat{I}}=(12, 8, 23, 4)$ the correct output is $\mat{\hat{O}}=(4, 8, 12, 23)$.
 A concrete input $\mat{\hat{I}}$ is called an instance of a problem.
 Importantly, such an instance contains all the required information to compute the unique output $\mat{\hat{O}}$.
-The correctness of the output can be checked via the formal problem definition.
+The correctness of the output can be checked via the formal problem problem.
 The various available (correct) sorting algorithms only differ in which and how many computational steps they take to arrive at the output, not in the output itself.
 
+\section{Machine learning problems}
 Machine learning can be seen as an extension of algorithmics towards problems where a formal description of a uniquely defined solution does not exist.
-Instead, problems in ML are characterized by the observation of finitely many examples or data.
-The objective is to derive knowledge about how these examples were generated.
+Instead, problems in ML are characterized by the observation of finitely many examples or data together with the objective to derive knowledge about how these examples were generated.
 This knowledge can then be used to describe common patterns in the data or generate new examples that conform to previous observations.
 
 \begin{figure}[t]
@@ -84,11 +87,47 @@ This knowledge can then be used to describe common patterns in the data or gener
     \end{subfigure}
     \caption[Algorithmic Interpolation]{
         ???
+        \label{fig:bayesian_ml:polynoms:ml}
     }
 \end{figure}
 
-As an example, consider the data shown in \cref{fig:bayesian_ml:polynoms:data}.
-The figure depicts a dataset $\Dc = \Set*{\left(x_n, y_n\right)}_{n=1}^N \subseteq \Rb^2$ of $N$ pairs of real numbers.
+As an example, consider the data shown in \cref{fig:bayesian_ml:polynoms:data}, a set of $N$ pairs of real numbers for which we assume that all $x_i$ are pairwise different.
+The knowledge about this data to be uncovered is the functional dependency between the two data dimensions that was used to generate the data.
+This is called a regression problem and is strongly under-specified:
+There exist uncountably many functions on the real numbers that explain any finite set of observed points.
+The problem
+\begin{problem}[Regression]
+\label{prob:bayesian_ml:regression}
+\begin{labeling}{Output:}
+    \item[Input:] A set of $N$ pairs of real numbers $\Dc = \Set*{\left(x_n, y_n\right)}_{n=1}^N \subseteq \Xc \times \Yc$
+    \item[Output:] The functional dependency $f : \Xc \to \Yc$ used to generate the data.
+\end{labeling}
+\end{problem}
+is therefore not a computational problem and asking for a solution or algorithm for this problem is not a well-posed question.
+
+One can however derive computational problems from the regression problem by making assumptions about nature of the function $f$ that characterize a unique solution.
+For example, one could ask for the simplest polynomial that explains the data.
+\begin{problem}[Lagrange Polynomial]
+\label{prob:bayesian_ml:lagrange}
+\begin{labeling}{Output:}
+    \item[Input:] A set of $N$ pairs of real numbers $\Dc = \Set*{\left(x_n, y_n\right)}_{n=1}^N \subseteq \Xc \times \Yc$
+    \item[Output:] The polynomial of smallest degree for which $f(x_n) = y_n$ holds for all $(x_n, y_n) \in \Dc$.
+\end{labeling}
+\end{problem}
+It can be shown that this is indeed a well-posed computational problem whose unique solution is the Lagrange polynomial $L$~\parencite{waring_vii._1779} given by the explicit form
+\begin{align}
+    \begin{split}
+        L(x) &= \sum_{i=0}^N y_i \ell_i(x)\text{, with} \\
+        \ell_i &= \prod_{\substack{j = 0\\j \neq i}}^N \frac{x - x_j}{x_i - x_j}.
+    \end{split}
+    \label{eq:bayesian_ml:lagrange}
+\end{align}
+\Cref{fig:bayesian_ml:polynoms:lagrange} shows the Lagrange polynomial interpolating the example dataset.
+The figure also shows another derived computational problem of linear interpolation.
+Here, the function is defined as being piecewise linear between the different data points, thus also reproducing the data.
+
+Both of these problems and derived algorithms would typically not be identified as ML approaches as it can be argued that they do not derive new insights from data.
+Because of the explicit nature of their algorithms as seen in \cref{eq:bayesian_ml:lagrange}, they much more closely resemble classical algorithms such as sorting algorithms.
 
 \begin{figure}[t]
     \begin{subfigure}[b]{\halffigurewidth}
@@ -110,5 +149,43 @@ The figure depicts a dataset $\Dc = \Set*{\left(x_n, y_n\right)}_{n=1}^N \subset
     \end{subfigure}
     \caption[ML Interpolation]{
         ???
+        \label{fig:bayesian_ml:polynoms:ml}
     }
 \end{figure}
+A common approach to formulating a problem that lets the data speak for itself is to formulate more implicit requirements.
+Instead of describing exactly one possible function (such as the Lagrange Polynomial), one can choose a broader set of candidate functions or hypotheses $\Hc$ and then select one of the candidates $f \in \Hc$ that is optimal with respect to some measure of performance.
+For example, a common assumption about the process used to generate the data is that it separates into two additive components
+\begin{align}
+    y_n = f(x_n) + \epsilon(x_n).
+\end{align}
+The first summand $f$ captures the truly informative functional dependency between $x$ and $y$ that applies for all observations while the second term $\epsilon$ captures local error or noise that can be ignored.
+
+A direct consequence of this assumption is that output of the regression problem $f$ need no longer interpolate the data perfectly.
+However, this introduces the need for additional assumptions about how far from the data $f$ is allowed to be or, equivalently, about the shape of $\epsilon$.
+One can choose $f$ to be a linear function, giving rise to the linear regression problem.
+\begin{problem}[Linear regression]
+\begin{labeling}{Output:}
+    \item[Input:] A set of $N$ pairs of real numbers $\Dc = \Set*{\left(x_n, y_n\right)}_{n=1}^N \subseteq \Xc \times \Yc$ and an error function $e : \Hc \times \Xc \times \Yc \to \Rb$
+    \item[Output:] A function $f$ such that
+    \begin{align}
+        f \in \argmin_{f \in \Hc} e(f, \Dc)
+    \end{align}
+    with $\Hc$ being the set of linear functions.
+\end{labeling}
+\end{problem}
+\Cref{fig:bayesian_ml:polynoms:linear} shows the results of three algorithms with different choises of error functions $e$.
+With $f(x) = \mat{W}x + b$ those are
+\begin{labeling}{Least Absolute Error:}
+    \item[Least Squares:] $e(f, \Dc) = \sum_{n=1}^N (y_n - f(x_n))^2$
+    \item[Least Absolute Error:] $e(f, \Dc) = \sum_{n=1}^N \abs{y_n - f(x_n)}$
+    \item[Ridge:] $e(f, \Dc) = \sum_{n=1}^N (y_n - f(x_n))^2 - \norm{\mat{W}}_2 - b^2$.
+\end{labeling}
+
+
+\section{Statistical learning}
+
+\section{Bayesian machine learning}
+
+\section{Industrial applications of machine learning}
+
+\section{Thesis outline}

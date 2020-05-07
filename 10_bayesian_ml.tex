@@ -45,6 +45,22 @@
 
 \todo[inline]{Industrial Applications of ML as a start?}
 
+Machine learning methods have seen great success recently in a wide range of digital domains such as speech recognition, computer vision or translation.
+However, bridging the gap to applications in the physical world has proved challenging.
+Problem domains like robotics, industrial control, decision support systems or the natural sciences introduce a new set of requirements.
+ML-systems which operate in safety-critical areas, interact with people or carry responsibility must be robust, trustworthy and assessable.
+Besides optimizing for good average-case performance, a responsible system needs to reason about plausible worst-cases and reliably avoid or inform about them.
+
+In this workshop, we will identify a list of properties required in real-world scenarios and discuss how they can be evaluated.
+We aim to address challenges arising from the need for interaction of machine learning researchers and domain experts in successful applications.
+How do we design models which facilitate communication with experts and how do we evaluate interpretability?
+How can we benchmark the trustworthiness and robustness of a model and ensure that it can cope with unobserved situations?
+What do uncertainties mean in practice and how do we make use of them to reason about worst-case performance?
+
+We want to bring together computer scientists, mathematicians and statisticians with domain experts to discuss approaches that facilitate interdisciplinary dialogue.
+We welcome contributions on explainable and interpretable models, human-in-the-loop learning, uncertainty quantification and learning guarantees.
+We hope to introduce open problems to a broader community and discuss benchmarks and success criteria for requirements driven by machine learning problems in the physical world.
+
 \section{Machine learning problems}
 
 One of the roots of machine learning (ML) lies in the study of algorithms in theoretical computer science.
@@ -195,10 +211,79 @@ This subjectiveness is represented in multiple choices:
     \item The space of hypotheses for valid solutions.
     \item The algorithm used to select from these hypotheses.
 \end{enumerate}
-In the following, statistical learning theory and Bayesian machine learning are introduced as tools to formalize these choices and establish a mathematical framework.
+In the following, statistical learning and Bayesian machine learning are introduced as tools to formalize these choices and establish a mathematical framework.
 
 \section{Statistical learning}
+\begin{figure}[t]
+    \centering
+    \includestandalonewithpath{figures/quantities_of_interest_statistical_learning}
+    \caption{
+        Statistical Learning
+        \label{fig:bayesian_ml:statistical_learning}
+    }
+\end{figure}
+The objective of machine learning is to derive knowledge about a process generating data from a limited set of observations.
+Knowledge is represented as a model that both explains existing observations and is able to generalize to new data points.
+Statistical learning theory offers a set of tools to reason about generalization and to formulate what it means for a model to be good.
+This section presents an interpretation of statistical learning theory similar to the definition of probabilistic numerics in~\parencite{oates_modern_2019,cockayne_bayesian_2019}.
+
+In the following, we denote the space of probability measures over a set $\Zc$ as $\Probs{\Zc}$.
+We adopt an overloaded notation common in machine learning where $\Prob*{\mat{z}}$ can both refer to a probability measure and the evaluation of the same probability measure on a specific point $\mat{z} \in \Zc$ depending on the context.
+Similarly, $\mat{z}$ can both refer to a random variable with the distribution $\Prob*{\mat{z}}$ and an element $\mat{z} \in \Zc$.
+That is, $\mat{k} \sim \Prob*{\mat{z}}$ denotes that the distribution of the random variable $\mat{k}$ is $\Prob*{\mat{z}}$ and $\Moment*{\E}{\mat{z}} = \int \mat{z} \Prob*{\mat{z}} \diff \mat{z}$ denotes the expected value of the random variable $\mat{z}$ under the distribution $\Prob*{\mat{z}}$.
+In less ambiguous notation one would assume a random variable $\mat{Z}$ with distribution $\Prob*{\mat{Z}}$ and denote the expected value as $\Moment*{\E}{\mat{Z}} = \int_{\Zc} z \Prob*{\mat{Z} = z} \diff z$.
+Here, $\mat{Z}$ and $z$ are identified with each other as $\mat{z}$.
+
+Assume an unknown data-generating distribution $\Prob{\mat{z}} \in \Probs{\Zc}$ over a known space of observations $\Zc$.
+The task in a machine learning problem is to infer properties of this distribution given only a set of observations $\Dc \in \Sc$ obtained via some sampling operator $S : \Probs{\Zc} \to \Sc$.
+A common choice of $S$ is a draw of $N$ independent points $\Dc = \Set*{\mat{z_1}, \dots, \mat{z_N} \with \mat{z_i} \sim \Prob{\mat{z}}} \subseteq \Zc$ with $\Sc = \Zc^N$.
+Depending on the machine learning problem, the task might not be to identify $\Prob*{\mat{z}}$ as a whole but instead identify some functional $f \in \Fc$ obtained via the functional operator $F : \Probs{\Zc} \to \Fc$.
+$f$ might be one of the moments of the distribution such as the mean
+\begin{align}
+    F_{\text{mean}}(\Prob*{\mat{z}}) = \int \mat{z} \Prob*{\mat{z}} \diff \mat{z},
+\end{align}
+with $\Fc = \Zc$.
+Alternatively, assuming that $\Zc = \Xc \times \Yc$ separates into tuples of inputs $\Xc$ and outputs $\Yc$ and choosing
+\begin{align}
+    F_{\text{reg}}[\Prob*{\mat{x}, \mat{y}}](\mat{x_\ast}) = \Prob*{\mat{y_\ast} \given \mat{x_\ast}}
+\end{align}
+with $\Fc = \Xc \to \Probs{\Yc}$ gives rise to the regression problem discussed above.
+
+A machine learning Algorithm $A : \Sc \to \Fc$ is a function mapping from the space of samples to the space of functionals, thereby recovering structure from data.
+Such an algorithm is successful if it recovers the correct functional $f \in F$ given observations $\Dc$.
+\Cref{fig:bayesian_ml:statistical_learning} shows the introduced components in a directed diagram.
+An algorithm is successful if this diagram (approximately) commutes such that $A \circ D \simeq F$.
+Similarly, a model $f_A \in \Fc$ can be considered good if it is similar to the true functional~$f$.
+
+The similarity of two functionals can be measured via a distance measure in $\Fc$.
+In the case of learning about global properties such as the mean of $\Prob*{\mat{z}}$, a possible choice is the standard euclidean norm.
+Considering the regression case, where $\Fc$ is a function space mapping inputs to (possibly distributions over) outputs, the effects of choosing a distance measure is more subtle.
+While it is reasonable to require pointwise similarity, the choice of which points to evaluate allows us to define what we mean by generalization:
+Besides explaining the observations in $\Dc$, a good model should yield correct predictions for the complete data distribution $\Prob*{\mat{z}} = \Prob*{\mat{x}, \mat{y}}$.
+The concept of risk minimization is based on this observation.
+
+\begin{definition}[Risk minimization in the regression problem]
+    \label{def:risk_minimization}
+    $\ell: \Yc \times \Yc \to \Rb$, $\Hc$
+    \begin{align}
+        \begin{split}
+            \risk(f_A) &\coloneqq \int \Fun*{\ell}{\mat{y}, f_A(\mat{x})} \Prob{\mat{x}, \mat{y}} \diff \mat{x} \diff \mat{y} \\
+            \hat{f}_A &\in \argmin_{f_A \in \Hc} \risk(f_A)
+        \end{split}
+    \end{align}
+\end{definition}
+
+\begin{definition}[Empirical risk minimization in the regression problem]
+    \label{def:empirical_risk_minimization}
+    \begin{align}
+        \begin{split}
+            \emprisk(f) &\coloneqq \frac{1}{N} \sum_{i=1}^N \Fun*{\ell}{f(\mat{z}), F(\mat{z})} \\
+            \hat{f} &\in \argmin_{f \in \Hc} \emprisk(f)
+        \end{split}
+    \end{align}
+\end{definition}
 
 \section{Bayesian machine learning}
 
 \section{Thesis outline}
+\todo[inline]{Is it finished yet?}

@@ -1,0 +1,18 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}[x=12em,y=16ex]
+    \node[random variable, minimum size=26pt, latent] at (0, 0) (U) {$\Prob*{\mat{z}}$};
+    \node[random variable, minimum size=26pt, observed] at (1, 0) (Y) {$\Sc$};
+    \node[random variable, minimum size=26pt, variational] at (1, -1) (Q) {$\Fc$};
+
+    \draw[edge, directed] (U) -- node[midway, above] {S} (Y);
+    \draw[edge, directed] (U) -- node[midway, below] {F} (Q);
+    \draw[edge, directed, dashed] (Y) -- node[midway, right] {A} (Q);
+\end{tikzpicture}
+\end{document}

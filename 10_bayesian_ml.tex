@@ -42,6 +42,11 @@
     \item Industrial ML motivates our thesis, where we want to formulate models that are inherently interpretable and trustworthy
     \item It will turn out that in this space, judging whether a model is good is actually very tricky.
 \end{itemize}
+
+\todo[inline]{Industrial Applications of ML as a start?}
+
+\section{Machine learning problems}
+
 One of the roots of machine learning (ML) lies in the study of algorithms in theoretical computer science.
 An algorithm is a well-defined sequence of computational steps transforming a set of inputs to a set of outputs.
 It is a tool for solving a computational problem, which is defined by an abstract problem of admissable inputs and expected outputs.
@@ -62,7 +67,6 @@ Importantly, such an instance contains all the required information to compute t
 The correctness of the output can be checked via the formal problem problem.
 The various available (correct) sorting algorithms only differ in which and how many computational steps they take to arrive at the output, not in the output itself.
 
-\section{Machine learning problems}
 Machine learning can be seen as an extension of algorithmics towards problems where a formal description of a uniquely defined solution does not exist.
 Instead, problems in ML are characterized by the observation of finitely many examples or data together with the objective to derive knowledge about how these examples were generated.
 This knowledge can then be used to describe common patterns in the data or generate new examples that conform to previous observations.
@@ -173,19 +177,28 @@ One can choose $f$ to be a linear function, giving rise to the linear regression
     with $\Hc$ being the set of linear functions.
 \end{labeling}
 \end{problem}
-\Cref{fig:bayesian_ml:polynoms:linear} shows the results of three algorithms with different choises of error functions $e$.
+\Cref{fig:bayesian_ml:polynoms:linear} shows the different results of three algorithms with different choices of error functions $e$.
 With $f(x) = \mat{W}x + b$ those are
-\begin{labeling}{Least Absolute Error:}
-    \item[Least Squares:] $e(f, \Dc) = \sum_{n=1}^N (y_n - f(x_n))^2$
-    \item[Least Absolute Error:] $e(f, \Dc) = \sum_{n=1}^N \abs{y_n - f(x_n)}$
+\begin{labeling}{Absolute error:}
+    \item[Squared error:] $e(f, \Dc) = \sum_{n=1}^N (y_n - f(x_n))^2$
+    \item[Absolute error:] $e(f, \Dc) = \sum_{n=1}^N \abs{y_n - f(x_n)}$
     \item[Ridge:] $e(f, \Dc) = \sum_{n=1}^N (y_n - f(x_n))^2 - \norm{\mat{W}}_2 - b^2$.
 \end{labeling}
+Altering the set of hypotheses $\Hc$ between linear, quadratic and cubic polynomials together with the squared error function results in the functions shown in \cref{fig:bayesian_ml:polynoms:polynomial}.
 
+It is important to note that none of these proposed algorithms and plotted functions is \emph{ojectively} the correct solution to the regression problem.
+None of them is equal to the function that was used to generate the data and even if it was, there would be no way to tell.
+A core property of machine learning problems is that what characterizes the correct solution is an inherently \emph{subjective} question.
+This subjectiveness is represented in multiple choices:
+\begin{enumerate}
+    \item The assumed structure underlying the data.
+    \item The space of hypotheses for valid solutions.
+    \item The algorithm used to select from these hypotheses.
+\end{enumerate}
+In the following, statistical learning theory and Bayesian machine learning are introduced as tools to formalize these choices and establish a mathematical framework.
 
 \section{Statistical learning}
 
 \section{Bayesian machine learning}
-
-\section{Industrial applications of machine learning}
 
 \section{Thesis outline}

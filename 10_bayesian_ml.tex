@@ -62,6 +62,7 @@ We welcome contributions on explainable and interpretable models, human-in-the-l
 We hope to introduce open problems to a broader community and discuss benchmarks and success criteria for requirements driven by machine learning problems in the physical world.
 
 \section{Machine learning problems}
+\label{toc:bayesian_ml:ml_problems}
 
 One of the roots of machine learning (ML) lies in the study of algorithms in theoretical computer science.
 An algorithm is a well-defined sequence of computational steps transforming a set of inputs to a set of outputs.
@@ -107,7 +108,7 @@ This knowledge can then be used to describe common patterns in the data or gener
     \end{subfigure}
     \caption[Algorithmic Interpolation]{
         ???
-        \label{fig:bayesian_ml:polynoms:ml}
+        \label{fig:bayesian_ml:polynoms}
     }
 \end{figure}
 
@@ -202,7 +203,7 @@ With $f(x) = \mat{W}x + b$ those are
 \end{labeling}
 Altering the set of hypotheses $\Hc$ between linear, quadratic and cubic polynomials together with the squared error function results in the functions shown in \cref{fig:bayesian_ml:polynoms:polynomial}.
 
-It is important to note that none of these proposed algorithms and plotted functions is \emph{ojectively} the correct solution to the regression problem.
+It is important to note that none of these proposed algorithms and plotted functions is \emph{objectively} the correct solution to the regression problem.
 None of them is equal to the function that was used to generate the data and even if it was, there would be no way to tell.
 A core property of machine learning problems is that what characterizes the correct solution is an inherently \emph{subjective} question.
 This subjectiveness is represented in multiple choices:
@@ -237,17 +238,39 @@ Here, $\mat{Z}$ and $z$ are identified with each other as $\mat{z}$.
 Assume an unknown data-generating distribution $\Prob{\mat{z}} \in \Probs{\Zc}$ over a known space of observations $\Zc$.
 The task in a machine learning problem is to infer properties of this distribution given only a set of observations $\Dc \in \Sc$ obtained via some sampling operator $S : \Probs{\Zc} \to \Sc$.
 A common choice of $S$ is a draw of $N$ independent points $\Dc = \Set*{\mat{z_1}, \dots, \mat{z_N} \with \mat{z_i} \sim \Prob{\mat{z}}} \subseteq \Zc$ with $\Sc = \Zc^N$.
+Other choices include $S$ into the learning problem such as in active learning~\parencite{murphy_machine_2012} or reinforcement learning~\parencite{sutton_reinforcement_2018} settings.
 Depending on the machine learning problem, the task might not be to identify $\Prob*{\mat{z}}$ as a whole but instead identify some functional $f \in \Fc$ obtained via the functional operator $F : \Probs{\Zc} \to \Fc$.
-$f$ might be one of the moments of the distribution such as the mean
-\begin{align}
-    F_{\text{mean}}(\Prob*{\mat{z}}) = \int \mat{z} \Prob*{\mat{z}} \diff \mat{z},
-\end{align}
-with $\Fc = \Zc$.
-Alternatively, assuming that $\Zc = \Xc \times \Yc$ separates into tuples of inputs $\Xc$ and outputs $\Yc$ and choosing
-\begin{align}
-    F_{\text{reg}}[\Prob*{\mat{x}, \mat{y}}](\mat{x_\ast}) = \Prob*{\mat{y_\ast} \given \mat{x_\ast}}
-\end{align}
-with $\Fc = \Xc \to \Probs{\Yc}$ gives rise to the regression problem discussed above.
+This formulation encompasses a large number of different machine learning problems via different choices for the spaces and operators.
+We give a few examples here.
+
+\begin{problem}[Common machine learning problems]
+\begin{description}
+    \item[Parameter estimation]
+          In a simple case, the functional $f$ can be chosen to be some constant statistic of $\Prob*{\mat{z}}$ such as the mean
+          \begin{align}
+              F_{\text{mean}}[\Prob*{\mat{z}}] = \int \mat{z} \Prob*{\mat{z}} \diff \mat{z},
+          \end{align}
+          with $\Fc = \Zc$.
+    \item[Regression]
+          Alternatively, assuming that $\Zc = \Xc \times \Yc$ separates into tuples of inputs $\Xc$ and continuous outputs $\Yc$ and choosing
+          \begin{align}
+              F_{\text{reg}}[\Prob*{\mat{x}, \mat{y}}](\mat{x_\ast}) = \Prob*{\mat{y_\ast} \given \mat{x_\ast}}
+          \end{align}
+          with $\Fc = \Xc \to \Probs{\Yc}$ gives rise to the regression problem discussed in~\cref{toc:bayesian_ml:ml_problems}.
+    \item[Classification]
+          Classification is a closely related to regression and assumes the same separation $\Zc = \Xc \times \Yc$.
+          In contrast to regression, $\Yc$ is assumed to be discrete, often without a known order.
+    \item[Dimensionality Reduction]
+          In the dimensionality reduction or manifold learning problem, the assumption is that the support of the data distribution $\Prob*{\mat{z}}$ is a low dimensional manifold in $\Zc$.
+          The task is to find a distribution $\Prob*{\mat{m}} \in \Probs{\Mc}$ and a mapping $f : \Mc \to \Zc$ with
+          \begin{align}
+              F_{\text{dim}}[\Prob*{\mat{z}}] &= (\Prob*{\mat{m}}, f)\text{, such that} \\
+              f(\Prob*{\mat{m}}) &= \Prob*{\mat{z}}
+          \end{align}
+          and $\Fc = \Probs{\Mc} \times (\Mc \to \Zc)$ and a space $\Mc$ of lower dimensionality than $\Zc$.
+          If $\Mc = \Zc$ this problem is called density estimation.
+\end{description}
+\end{problem}
 
 A machine learning Algorithm $A : \Sc \to \Fc$ is a function mapping from the space of samples to the space of functionals, thereby recovering structure from data.
 Such an algorithm is successful if it recovers the correct functional $f \in F$ given observations $\Dc$.
@@ -261,27 +284,72 @@ Considering the regression case, where $\Fc$ is a function space mapping inputs 
 While it is reasonable to require pointwise similarity, the choice of which points to evaluate allows us to define what we mean by generalization:
 Besides explaining the observations in $\Dc$, a good model should yield correct predictions for the complete data distribution $\Prob*{\mat{z}} = \Prob*{\mat{x}, \mat{y}}$.
 The concept of risk minimization is based on this observation.
-
 \begin{definition}[Risk minimization in the regression problem]
     \label{def:risk_minimization}
-    $\ell: \Yc \times \Yc \to \Rb$, $\Hc$
+    Given a loss function $\ell: \Yc \times \Yc \to \Rb$ and a data distribution $\Prob*{\mat{x}, \mat{y}}$ for a regression problem, the \emph{risk} relative to $\ell$ is defined as
     \begin{align}
-        \begin{split}
-            \risk(f_A) &\coloneqq \int \Fun*{\ell}{\mat{y}, f_A(\mat{x})} \Prob{\mat{x}, \mat{y}} \diff \mat{x} \diff \mat{y} \\
-            \hat{f}_A &\in \argmin_{f_A \in \Hc} \risk(f_A)
-        \end{split}
+        \risk_\ell & : \left\{
+        \begin{aligned}
+            \Fc & \to \Rb                                                                                              \\
+            f_A & \mapsto \int \Fun*{\ell}{\mat{y}, f_A(\mat{x})} \Prob{\mat{x}, \mat{y}} \diff \mat{x} \diff \mat{y}.
+        \end{aligned}
+        \right.
+    \end{align}
+    \emph{Risk minimization} for a hypothesis space $\Hc \subseteq \Fc$ selects a hypothesis $\hat{f}_A$ with smallest possible risk
+    \begin{align}
+        \hat{f}_A & \in \argmin_{f_A \in \Hc} \risk_\ell(f_A).
     \end{align}
 \end{definition}
+
+A model generalizes with respect to a loss function $\ell$ if it does not only explain the specific dataset $\Dc$ well but all possible choices of $\Dc$ via $S$.
+While risk minimization is a theoretical tool to define generalization, it does not immediately yield a learning algorithm.
+Since it includes an expectation over the unknown data distribution, the risk-term cannot be evaluated directly.
+Instead, calculating a Monte-Carlo estimate over the training data $\Dc$ gives rise to a fundamental machine learning algorithm, empirical risk minimization.
 
 \begin{definition}[Empirical risk minimization in the regression problem]
     \label{def:empirical_risk_minimization}
+    Given a loss function $\ell: \Yc \times \Yc \to \Rb$ and a data distribution $\Prob*{\mat{x}, \mat{y}}$ for a regression problem, the \emph{empirical risk} relative to $\ell$ is defined as
     \begin{align}
-        \begin{split}
-            \emprisk(f) &\coloneqq \frac{1}{N} \sum_{i=1}^N \Fun*{\ell}{f(\mat{z}), F(\mat{z})} \\
-            \hat{f} &\in \argmin_{f \in \Hc} \emprisk(f)
-        \end{split}
+        \risk^{\text{emp}}_\ell & : \left\{
+        \begin{aligned}
+            \Fc & \to \Rb                                                             \\
+            f_A & \mapsto \frac{1}{N} \sum_{i=1}^N \Fun*{\ell}{\mat{y}, f_A(\mat{z})}
+        \end{aligned}
+        \right.
+    \end{align}
+    \emph{Empirical risk minimization} for a hypothesis space $\Hc \subseteq \Fc$ selects a hypothesis $\hat{f}_A$ with smallest possible risk
+    \begin{align}
+        \hat{f}_A & \in \argmin_{f_A \in \Hc} \risk^{\text{emp}}_\ell(f_A).
     \end{align}
 \end{definition}
+
+Intuitively, risk minimization describes global properties of $f_A$ which get approximated by a number of local properties at the observations in empirical risk minimization.
+The two questions
+\begin{enumerate}
+    \item under which conditions $\risk^{\text{emp}}$ converges to $\risk$ for $N \to \infty$ and
+    \item if so, what the convergence rates are
+\end{enumerate}
+underpin (statistical) learning theory~\parencite{vapnik_principles_1992}.
+It is safe to assume that for small $N$, $\risk^{\text{emp}}$ can significantly underestimate the true risk as the error on parts of the data distribution is not considered at all.
+This problem is called overfitting to the available training data, an example of which can arguably be seen in~\cref{fig:bayesian_ml:polynoms:lagrange}.
+
+In practice, if collection sufficient data is not possible, overfitting has to be avoided via problem-dependent choices for $\ell$ and $\Hc$.
+Additionally, the empirical risk minimization algorithm is often extended to regularizing loss functions of the form $\ell^\prime : \Fc \times \Yc \times \Yc \to \Rb$ which depend on the structure of the candidate as well as its predictions.
+The Ridge error function shown in~\cref{fig:bayesian_ml:polynoms:linear} is an example of extending the least squares error function with a preference for parameters with small absolute value.
+Regularization~\parencite{oates_modern_2019} adds back a global component to empirical risk minimization and has a close relation to the choice of hypothesis space $\Hc$.
+The constraint that $f_A \in \Hc \subseteq \Fc$ can be thought of as a binary regularization term which adds infinite loss to the set $\Fc \setminus \Hc$.
+Conversely, continuous regularization terms formulate softer and less rigorous preferences within $\Hc$, for example for structurally simpler solutions~\parencite{bishop_christoph_pattern_2007,thorburn_occams_1915}.
+
+For complex loss functions and hypothesis spaces, finding the true minimum $\hat{f}_A$ is often unfeasible.
+Another common extension is to modify the optimization scheme to increase the likelihood of selecting a favorable solution.
+Examples include the usage of test sets or validations sets~\parencite{bishop_christoph_pattern_2007}, cross validation~\parencite{stone_cross-validatory_1974}, early stopping~\parencite{morgan_generalization_1990} or specific parameter choices~\parencite{daniely_toward_2016}.
+
+It is often possible to reformulate choices in loss functions as changes in the optimization scheme or compensate a more general hypothesis space with stricter regularization.
+It is not clear how a machine learning algorithm should be formulated form a formal perspective.
+However, problem-dependent adjustments to learning algorithms are generally informed by knowledge provided by domain-experts about the process that generated the data.
+An additional dimension is therefore given by the need to communicate assumptions and effects of choices with stakeholders which do not have a deep understanding of the field.
+If a learning algorithm should be interpretable and understandable, assumptions should be explicit and optimization schemes should be simple.
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 
 \section{Bayesian machine learning}
 

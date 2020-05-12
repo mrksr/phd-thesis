@@ -63,7 +63,6 @@ We hope to introduce open problems to a broader community and discuss benchmarks
 
 \section{Machine learning problems}
 \label{toc:bayesian_ml:ml_problems}
-
 One of the roots of machine learning (ML) lies in the study of algorithms in theoretical computer science.
 An algorithm is a well-defined sequence of computational steps transforming a set of inputs to a set of outputs.
 It is a tool for solving a computational problem, which is defined by an abstract problem of admissable inputs and expected outputs.
@@ -264,8 +263,8 @@ We give a few examples here.
           In the dimensionality reduction or manifold learning problem, the assumption is that the support of the data distribution $\Prob*{\mat{z}}$ is a low dimensional manifold in $\Zc$.
           The task is to find a distribution $\Prob*{\mat{m}} \in \Probs{\Mc}$ and a mapping $f : \Mc \to \Zc$ with
           \begin{align}
-              F_{\text{dim}}[\Prob*{\mat{z}}] &= (\Prob*{\mat{m}}, f)\text{, such that} \\
-              f(\Prob*{\mat{m}}) &= \Prob*{\mat{z}}
+              F_{\text{dim}}[\Prob*{\mat{z}}] & = (\Prob*{\mat{m}}, f)\text{, such that} \\
+              f(\Prob*{\mat{m}})              & = \Prob*{\mat{z}}
           \end{align}
           and $\Fc = \Probs{\Mc} \times (\Mc \to \Zc)$ and a space $\Mc$ of lower dimensionality than $\Zc$.
           If $\Mc = \Zc$ this problem is called density estimation.
@@ -352,6 +351,84 @@ If a learning algorithm should be interpretable and understandable, assumptions 
 The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 
 \section{Bayesian machine learning}
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+Blargh, \tikz[x=2.5em,baseline=(a.base)]{
+    \node[inline random variable] (a) {$\mat{a}$};
+    \node[inline random variable] (b) at (1, 0) {$\mat{c}$};
+    \node[inline random variable] (c) at (2, 0) {$\mat{e}$};
+    \draw[edge, directed] (a) -- (b);
+    \draw[edge, directed] (b) -- (c);
+}
+blubb.
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+\begin{align}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -0.5);
+        \node[random variable] at (0, 0) (X) {$\mat{x}$};
+        \node[random variable] at (0, -1) (Y) {$\mat{y}$};
+        \draw[edge, directed] (X) -- (Y);
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{x}, \mat{y}}
+     & =
+    \Prob*{\mat{y} \given \mat{x}} \Prob*{\mat{x}}
+\end{align}
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+\begin{align}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -0.5);
+        \node[random variable] at (0, 0) (X1) {$\mat{x}_1$};
+        \node[random variable] at (0, -1) (Y1) {$\mat{y}_1$};
+        \node[random variable] at (1, 0) (X2) {$\mat{x}_2$};
+        \node[random variable] at (1, -1) (Y2) {$\mat{y}_2$};
+        \node at (1.5, -0.5) (dots) {$\cdots$};
+        \draw[edge, directed] (X1) -- (Y1);
+        \draw[edge, directed] (X1) -- (Y2);
+        \draw[edge, directed] (X2) -- (Y2);
+        \draw[edge, directed] (X2) -- (Y1);
+        \draw[edge, directed, bend left=20] (Y1) to (Y2);
+        \draw[edge, directed, bend left=20] (Y2) to (Y1);
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{x}, \mat{y}}
+     & =
+    \Prob*{\mat{y}_1, \mat{y}_2 \given \mat{x}_1, \mat{x}_2} \Prob*{\mat{x}_1, \mat{x}_2}
+\end{align}
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+\begin{align}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -1);
+        \node[random variable] at (0, 0) (X1) {$\mat{x}_1$};
+        \node[random variable] at (0, -1) (F1) {$\mat{f}_1$};
+        \node[random variable] at (0, -2) (Y1) {$\mat{y}_1$};
+        \node[random variable] at (1, 0) (X2) {$\mat{x}_2$};
+        \node[random variable] at (1, -1) (F2) {$\mat{f}_2$};
+        \node[random variable] at (1, -2) (Y2) {$\mat{y}_2$};
+        \node at (1.5, -1) (dots) {$\cdots$};
+        \draw[edge, directed] (X1) -- (F1);
+        \draw[edge, directed] (F1) -- (Y1);
+        \draw[edge, directed, bend left=20] (F1) to (F2);
+        \draw[edge, directed] (X2) -- (F2);
+        \draw[edge, directed] (F2) -- (Y2);
+        \draw[edge, directed, bend left=20] (F2) to (F1);
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{x}, \mat{y}}
+     & =
+    \left\{
+    \begin{aligned}
+         & \Prob*{\mat{y}_1 \given \mat{f}_1} \Prob*{\mat{y}_2 \given \mat{f}_2}                 \\
+         & \cdot \Prob*{\mat{f}_1, \mat{f}_2 \given \mat{x}_1, \mat{x}_2} \Prob*{\mat{x}_1, \mat{x}_2}
+    \end{aligned}
+    \right.
+\end{align}
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 
 \section{Thesis outline}
 \todo[inline]{Is it finished yet?}

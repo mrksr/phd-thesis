@@ -2,8 +2,6 @@
 \input{figures/preamble/tikz_colors.tex}
 \input{preamble/layout.tex}
 
-% NOTE(mrksr): We use precompiled images and do not add tikz for speed of
-% compilation.
 \newcommand{\includestandalonewithpath}[2][]{%
     \includegraphics[#1]{#2}
 }
@@ -11,6 +9,7 @@
     \includegraphics[#1]{#2}
 }
 \endofdump
+\input{preamble/tikz_inline.tex}
 \input{preamble/packages_no_dump.tex}
 \input{preamble/abbreviations.tex}
 \input{preamble/title.tex}
@@ -19,7 +18,7 @@
 \overfullrule=5pt
 
 \addbibresource{zotero_export.bib}
-\includeonly{00_frontmatter,10_bayesian_ml}
+\includeonly{10_bayesian_ml}
 \begin{document}
 \frontmatter
 \include{00_frontmatter}

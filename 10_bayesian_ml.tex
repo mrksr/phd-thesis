@@ -366,8 +366,8 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
 \begin{align}
     \begin{tikzpicture}[align graphical model]
         \coordinate (baseline) at (0, -0.5);
-        \node[random variable] at (0, 0) (X) {$\mat{x}$};
-        \node[random variable] at (0, -1) (Y) {$\mat{y}$};
+        \node[random variable, observed] at (0, 0) (X) {$\mat{x}$};
+        \node[random variable, observed] at (0, -1) (Y) {$\mat{y}$};
         \draw[edge, directed] (X) -- (Y);
     \end{tikzpicture}
      &   &
@@ -381,10 +381,10 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
 \begin{align}
     \begin{tikzpicture}[align graphical model]
         \coordinate (baseline) at (0, -0.5);
-        \node[random variable] at (0, 0) (X1) {$\mat{x}_1$};
-        \node[random variable] at (0, -1) (Y1) {$\mat{y}_1$};
-        \node[random variable] at (1, 0) (X2) {$\mat{x}_2$};
-        \node[random variable] at (1, -1) (Y2) {$\mat{y}_2$};
+        \node[random variable, observed] at (0, 0) (X1) {$\mat{x}_1$};
+        \node[random variable, observed] at (0, -1) (Y1) {$\mat{y}_1$};
+        \node[random variable, observed] at (1, 0) (X2) {$\mat{x}_2$};
+        \node[random variable, observed] at (1, -1) (Y2) {$\mat{y}_2$};
         \node at (1.5, -0.5) (dots) {$\cdots$};
         \draw[edge, directed] (X1) -- (Y1);
         \draw[edge, directed] (X1) -- (Y2);
@@ -404,12 +404,12 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
 \begin{align}
     \begin{tikzpicture}[align graphical model]
         \coordinate (baseline) at (0, -1);
-        \node[random variable] at (0, 0) (X1) {$\mat{x}_1$};
-        \node[random variable] at (0, -1) (F1) {$\mat{f}_1$};
-        \node[random variable] at (0, -2) (Y1) {$\mat{y}_1$};
-        \node[random variable] at (1, 0) (X2) {$\mat{x}_2$};
-        \node[random variable] at (1, -1) (F2) {$\mat{f}_2$};
-        \node[random variable] at (1, -2) (Y2) {$\mat{y}_2$};
+        \node[random variable, observed] at (0, 0) (X1) {$\mat{x}_1$};
+        \node[random variable, latent] at (0, -1) (F1) {$\mat{f}_1$};
+        \node[random variable, observed] at (0, -2) (Y1) {$\mat{y}_1$};
+        \node[random variable, observed] at (1, 0) (X2) {$\mat{x}_2$};
+        \node[random variable, latent] at (1, -1) (F2) {$\mat{f}_2$};
+        \node[random variable, observed] at (1, -2) (Y2) {$\mat{y}_2$};
         \node at (1.5, -1) (dots) {$\cdots$};
         \draw[edge, directed] (X1) -- (F1);
         \draw[edge, directed] (F1) -- (Y1);
@@ -423,8 +423,79 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
      & =
     \left\{
     \begin{aligned}
-         & \Prob*{\mat{y}_1 \given \mat{f}_1} \Prob*{\mat{y}_2 \given \mat{f}_2}                 \\
-         & \cdot \Prob*{\mat{f}_1, \mat{f}_2 \given \mat{x}_1, \mat{x}_2} \Prob*{\mat{x}_1, \mat{x}_2}
+         & \int \Prob*{\mat{y}_1 \given \mat{f}_1} \Prob*{\mat{y}_2 \given \mat{f}_2}                           \\
+         & \quad \cdot \Prob*{\mat{f}_1, \mat{f}_2 \given \mat{x}_1, \mat{x}_2} \diff \mat{f}_1 \diff \mat{f}_2 \\
+         & \cdot \Prob*{\mat{x}_1, \mat{x}_2}
+    \end{aligned}
+    \right.
+\end{align}
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+\begin{align}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -1);
+        \node[random variable, observed] at (0, 0) (X) {$\mat{x}_n$};
+        \node[random variable, latent] at (0, -1) (F) {$\mat{f}_n$};
+        \node[random variable, observed] at (0, -2) (Y) {$\mat{y}_n$};
+        \draw[edge, directed] (X) -- (F);
+        \draw[edge, directed] (F) -- (Y);
+        \draw[edge, directed] (F) to[loop left] (F);
+        %
+        \begin{scope}[on background layer]
+            \node[
+                align plate,
+                inner xsep=8pt,
+                fit=(X)(F)(Y),
+                label={[anchor=south east]south east:$N$}
+            ] {};
+        \end{scope}
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{x}, \mat{y}}
+     & =
+    \left\{
+    \begin{aligned}
+         & \int \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{f}_n}                                                                      \\
+         & \quad \cdot \Prob*{\mat{f}_1, \dots, \mat{f}_N \given \mat{x}_1, \dots, \mat{x}_N} \\
+         & \quad \cdot \diff \mat{f}_1, \dots, \diff \mat{f}_N \\
+         & \cdot \Prob*{\mat{x}_1, \dots, \mat{x}_N}
+    \end{aligned}
+    \right.
+\end{align}
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+\begin{align}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -1);
+        \node[random variable, observed] at (0, 0) (X) {$\mat{x}_n$};
+        \node[random variable, latent] at (0, -1) (F) {$\mat{f}_n$};
+        \node[random variable, latent] at (-1, -1) (theta) {$\mat{\theta}$};
+        \node[random variable, observed] at (0, -2) (Y) {$\mat{y}_n$};
+        \draw[edge, directed] (X) -- (F);
+        \draw[edge, directed] (F) -- (Y);
+        \draw[edge, directed] (theta) -- (F);
+        %
+        \begin{scope}[on background layer]
+            \node[
+                align plate,
+                inner xsep=8pt,
+                fit=(X)(F)(Y),
+                label={[anchor=south east]south east:$N$}
+            ] {};
+        \end{scope}
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{x}, \mat{y}}
+     & =
+    \left\{
+    \begin{aligned}
+         & \int \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{f}_n}                                     \\
+         & \quad \cdot \prod_{n=1}^N \Prob*{\mat{f}_n \given \mat{x}_n, \mat{\theta}}                \\
+         & \quad \cdot \Prob*{\mat{\theta}} \\
+         & \quad \cdot \diff \mat{f}_1 \dots \diff \mat{f}_N \diff \mat{\theta} \\
+         & \cdot \Prob*{\mat{x}}
     \end{aligned}
     \right.
 \end{align}

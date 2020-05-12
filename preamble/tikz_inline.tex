@@ -1,5 +1,8 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{fit}
+\usetikzlibrary{scopes}
 
 \tikzstyle{with struts} = [execute at begin node={\strut}, execute at end node={\strut}]
 
@@ -10,4 +13,10 @@
 \tikzstyle{random variable} = [draw, very thick, circle, inner sep=.75pt, minimum size=23pt, font=\small, with struts]
 \tikzstyle{inline random variable} = [draw, thick, circle, inner sep=.75pt, minimum size=1.2ex]
 
+\tikzstyle{observed} = [fill=sRedDark!40]
+\tikzstyle{variational} = [fill=sBlueDark!40]
+\tikzstyle{hyperparameter} = [fill=sYellowDark!40]
+\tikzstyle{latent} = [fill=sGreenDark!40]
+
+\tikzstyle{align plate} = [draw=sStoneDark, fill=sStone, fill opacity=.2, thick, inner xsep=4pt, inner ysep=4pt]
 \tikzstyle{align graphical model} = [baseline=(baseline), x=4em, y=5em]

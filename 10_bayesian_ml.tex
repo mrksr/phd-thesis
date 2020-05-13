@@ -1,48 +1,6 @@
 \chapter{Bayesian Machine Learning}
 \label{toc:bayesian_ml}
 
-\begin{itemize}
-    \item Machine Learning is an extension of algorithmics (and numerics) with different goals
-    \item In algorithmics the goal is usually clear and well-defined
-    \item Use polynomial interpolation as an example.
-          We can use that for curve-fitting, but we generally do not associate it with machine learning because the goal is not to minimize some loss function but rather to find a uniquely defined solution.
-          The "ML-variant" of polynomial interpolation would be generalized linear models with polynomial basis functions and there, the correct answer is much less clear. (PCA, "least squares" quadratic fit, etc)
-    \item In ML, an essential element is a lack of information and our freedom to handle that lack of information. A subjective \emph{goal} is integral to machine learning. ML is about making the best of the situation and is inherently subjective. And inherently uncertain.
-    \item The lack of information is generally introduced via finite information for an infinite object
-    \item We can formulate this situation nicely in terms of probability distributions
-          \begin{itemize}
-              \item A ML problem is an inference problem
-              \item We always care about some kind of joint distribution
-              \item Depending on which structure we assume, different branches of ML arise
-              \item The two main strategies to formulate finiteness (parameters and data) give rise to the (non-)parametric split
-          \end{itemize}
-    \item Things like learning theory try for objectivity but that does not scale
-    \item In practice, ML is about the step from risk minimization to empirical risk minimization and ways to handle the annoying results
-    \item We get back to global arguments via encoding knowledge in
-          \begin{itemize}
-              \item information operator
-              \item hypothesis space
-              \item loss function
-              \item optimization algorithm
-          \end{itemize}
-    \item Turns out the problem statement and hypothesis space (same thing?) are generally preferred
-    \item Bayesian ML then offers a nice language to formulate such hypotheses
-    \item Maybe insert the core probabilistic numerics argument about algorithms here?
-    \item Most importantly, Bayes' rule offers a consistent and simple way to combine local and global assumptions that does not break probability theory.
-          And has a nice semantic interpretation.
-          It is not a unique solution though.
-    \item With Bayes' rule, a structurally simple \emph{learning algorithm} can be formulated where the complexity is in the hypothesis space (prior) and loss function (likelihood). No optimization needed at first glance.
-    \item Turns out this is a nice fit for problems in the physical word which has a few notable properties:
-          \begin{itemize}
-              \item Inevitability of uncertainty
-              \item Availability of knowledge
-              \item Need for interpretability
-          \end{itemize}
-    \item Discuss the differences between Web ML and Industrial ML
-    \item Industrial ML motivates our thesis, where we want to formulate models that are inherently interpretable and trustworthy
-    \item It will turn out that in this space, judging whether a model is good is actually very tricky.
-\end{itemize}
-
 \todo[inline]{Industrial Applications of ML as a start?}
 
 Machine learning methods have seen great success recently in a wide range of digital domains such as speech recognition, computer vision or translation.
@@ -351,6 +309,22 @@ If a learning algorithm should be interpretable and understandable, assumptions 
 The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 
 \section{Bayesian machine learning}
+\begin{itemize}
+    \item Bayesian ML then offers a nice language to formulate such hypotheses
+    \item Embrace the uncertainty!
+    \item Most importantly, Bayes' rule offers a consistent and simple way to combine local and global assumptions that does not break probability theory.
+          And has a nice semantic interpretation.
+          It is not a unique solution though.
+    \item With Bayes' rule, a structurally simple \emph{learning algorithm} can be formulated where the complexity is in the hypothesis space (prior) and loss function (likelihood). No optimization needed at first glance.
+\end{itemize}
+
+\paragraph{Graphical Models}
+Blablab albal balbal bablabl
+\begin{itemize}
+    \item What is a graphical model?
+    \item DAG denotes independence assumptions
+    \item D-Separation
+\end{itemize}
 The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 Blargh, \tikz[x=2.5em,baseline=(a.base)]{
     \node[inline random variable] (a) {$\mat{a}$};
@@ -362,6 +336,16 @@ Blargh, \tikz[x=2.5em,baseline=(a.base)]{
 blubb.
 The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 
+\paragraph{Formulating Hypothesis Spaces}
+\begin{itemize}
+    \item Introduce Independence Assumptions
+    \item Vector-Notation
+    \item Latent structure and marginalization
+    \item Need for finite description of infinite object
+    \item Parametric and Non-Parametric models
+    \item Expert knowledge through structure and hierarchy
+    \item Structure can be very rigid (Bayesian statistics) or very loose (Bayesian ML), but things in-between are rare.
+\end{itemize}
 The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 \begin{align}
     \begin{tikzpicture}[align graphical model]
@@ -373,7 +357,12 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
      &   &
     \Prob*{\mat{x}, \mat{y}}
      & =
-    \Prob*{\mat{y} \given \mat{x}} \Prob*{\mat{x}}
+    \left\{
+    \begin{aligned}
+         & \Prob*{\mat{x}}                      \\
+         & \cdot \Prob*{\mat{y} \given \mat{x}}
+    \end{aligned}
+    \right.
 \end{align}
 The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 
@@ -396,7 +385,12 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
      &   &
     \Prob*{\mat{x}, \mat{y}}
      & =
-    \Prob*{\mat{y}_1, \mat{y}_2 \given \mat{x}_1, \mat{x}_2} \Prob*{\mat{x}_1, \mat{x}_2}
+    \left\{
+    \begin{aligned}
+         & \Prob*{\mat{x}_1, \mat{x}_2}                                   \\
+         & \cdot \Prob*{\mat{y}_1, \mat{y}_2 \given \mat{x}_1, \mat{x}_2}
+    \end{aligned}
+    \right.
 \end{align}
 The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 
@@ -423,9 +417,10 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
      & =
     \left\{
     \begin{aligned}
-         & \int \Prob*{\mat{y}_1 \given \mat{f}_1} \Prob*{\mat{y}_2 \given \mat{f}_2}                           \\
-         & \quad \cdot \Prob*{\mat{f}_1, \mat{f}_2 \given \mat{x}_1, \mat{x}_2} \diff \mat{f}_1 \diff \mat{f}_2 \\
-         & \cdot \Prob*{\mat{x}_1, \mat{x}_2}
+         & \Prob*{\mat{x}_1, \mat{x}_2}                                                      \\
+         & \cdot \int \Prob*{\mat{f}_1, \mat{f}_2 \given \mat{x}_1, \mat{x}_2}               \\
+         & \quad \cdot \Prob*{\mat{y}_1 \given \mat{f}_1} \Prob*{\mat{y}_2 \given \mat{f}_2} \\
+         & \quad \cdot \diff \mat{f}_1 \diff \mat{f}_2
     \end{aligned}
     \right.
 \end{align}
@@ -445,7 +440,7 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
         \begin{scope}[on background layer]
             \node[
                 align plate,
-                inner xsep=8pt,
+                inner xsep=10pt,
                 fit=(X)(F)(Y),
                 label={[anchor=south east]south east:$N$}
             ] {};
@@ -456,10 +451,10 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
      & =
     \left\{
     \begin{aligned}
-         & \int \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{f}_n}                                                                      \\
-         & \quad \cdot \Prob*{\mat{f}_1, \dots, \mat{f}_N \given \mat{x}_1, \dots, \mat{x}_N} \\
-         & \quad \cdot \diff \mat{f}_1, \dots, \diff \mat{f}_N \\
-         & \cdot \Prob*{\mat{x}_1, \dots, \mat{x}_N}
+         & \Prob*{\mat{x}_1, \dots, \mat{x}_N}                                               \\
+         & \cdot \int \Prob*{\mat{f}_1, \dots, \mat{f}_N \given \mat{x}_1, \dots, \mat{x}_N} \\
+         & \quad \cdot \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{f}_n}                      \\
+         & \quad \cdot \diff \mat{f}_1 \dots \diff \mat{f}_N
     \end{aligned}
     \right.
 \end{align}
@@ -480,7 +475,7 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
         \begin{scope}[on background layer]
             \node[
                 align plate,
-                inner xsep=8pt,
+                inner xsep=10pt,
                 fit=(X)(F)(Y),
                 label={[anchor=south east]south east:$N$}
             ] {};
@@ -491,15 +486,79 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
      & =
     \left\{
     \begin{aligned}
-         & \int \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{f}_n}                                     \\
-         & \quad \cdot \prod_{n=1}^N \Prob*{\mat{f}_n \given \mat{x}_n, \mat{\theta}}                \\
-         & \quad \cdot \Prob*{\mat{\theta}} \\
-         & \quad \cdot \diff \mat{f}_1 \dots \diff \mat{f}_N \diff \mat{\theta} \\
-         & \cdot \Prob*{\mat{x}}
+         & \Prob*{\mat{x}}                                                           \\
+         & \cdot \int \prod_{n=1}^N \Prob*{\mat{f}_n \given \mat{x}_n, \mat{\theta}} \\
+         & \quad \cdot \Prob*{\mat{\theta}} \diff \mat{\theta}                       \\
+         & \quad \cdot \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{f}_n}              \\
+         & \quad \cdot \diff \mat{f}_1 \dots \diff \mat{f}_N                         \\
     \end{aligned}
     \right.
 \end{align}
 The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+\begin{align}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -1);
+        \node[random variable, observed] at (0.5, 0) (X) {$\mat{x}_n$};
+        \node[random variable, latent] at (0, -1) (F) {$\mat{f}_n$};
+        \node[random variable, latent] at (1, -1) (sigma) {$\mat{\sigma}_n$};
+        \node[random variable, latent] at (-1, -1) (theta) {$\mat{\theta}$};
+        \node[random variable, observed] at (0.5, -2) (Y) {$\mat{y}_n$};
+        \draw[edge, directed] (X) -- (F);
+        \draw[edge, directed] (F) -- (Y);
+        \draw[edge, directed] (X) -- (sigma);
+        \draw[edge, directed] (sigma) -- (Y);
+        \draw[edge, directed] (theta) -- (F);
+        \draw[edge, directed, bend left=45] (theta) to (sigma);
+        %
+        \begin{scope}[on background layer]
+            \node[
+                align plate,
+                inner xsep=10pt,
+                fit=(X)(F)(sigma)(Y),
+                label={[anchor=south east]south east:$N$}
+            ] {};
+        \end{scope}
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{x}, \mat{y}}
+     & =
+    \left\{
+    \begin{aligned}
+         & \Prob*{\mat{x}}                                               \\
+         & \cdot \int \Prob*{\mat{f} \given \mat{x}, \mat{\theta}}       \\
+         & \quad \cdot \Prob*{\mat{\sigma} \given \mat{x}, \mat{\theta}} \\
+         & \quad \cdot \Prob*{\mat{\theta}} \diff \mat{\theta}           \\
+         & \quad \cdot \Prob*{\mat{y} \given \mat{f}}                    \\
+         & \quad \cdot \diff \mat{\sigma} \diff \mat{f}                  \\
+    \end{aligned}
+    \right.
+\end{align}
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+
+\paragraph{Bayesian Inference}
+\begin{itemize}
+    \item Return to linear regression example and formulate Bayesian linear regression with a Gaussian likelihood.
+    \item What does it mean to learn now? We need to combine our assumptions with data. The principled and obvious way is Bayes' rule.
+    \item With Bayes' rule, a structurally simple \emph{learning algorithm} can be formulated where the complexity is in the hypothesis space (prior) and loss function (likelihood). No optimization needed at first glance.
+    \item Introduce prior, likelihood and posterior. They are structurally very similar!
+    \item A likelihood encodes everything we do not want to model, prior -> posterior is the rest.
+    \item What is the $\Prob*{\mat{\theta}}$ all about though? Choices of prior are important, conjugacy is convenient for structural reasons.
+    \item Priors are comparable to regularizations. Posteriors heavily depend on prior choices (and rightfully so!), uncertainties are highly subjective.
+    \item We could formulate a "Bayes tower" and calculate posteriors all the way through
+    \item For computational feasibility we need to stop somewhere though, the more abstract the better
+    \item We can now formulate Bayesian linear and polynomial regression!
+    \item Then we usually do maximum likelihood or maybe maximum a posteriori on the marginal likelihood, since we want a model that explains the data well, right?
+    \item Well actually, what about all the steps in-between?
+    \item What about uncertainty and the structure of uncertainty?
+\end{itemize}
+
 \section{Thesis outline}
 \todo[inline]{Is it finished yet?}
+
+\begin{itemize}
+    \item Discuss the differences between Web ML and Industrial ML
+    \item Industrial ML motivates our thesis, where we want to formulate models that are inherently interpretable and trustworthy
+    \item It will turn out that in this space, judging whether a model is good is actually very tricky.
+\end{itemize}

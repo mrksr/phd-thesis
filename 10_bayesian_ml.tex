@@ -302,21 +302,22 @@ Another common extension is to modify the optimization scheme to increase the li
 Examples include the usage of test sets or validations sets~\parencite{bishop_christoph_pattern_2007}, cross validation~\parencite{stone_cross-validatory_1974}, early stopping~\parencite{morgan_generalization_1990} or specific parameter choices~\parencite{daniely_toward_2016}.
 
 It is often possible to reformulate choices in loss functions as changes in the optimization scheme or compensate a more general hypothesis space with stricter regularization.
-It is not clear how a machine learning algorithm should be formulated form a formal perspective.
+It is not clear how a machine learning algorithm should be formulated from a formal perspective.
 However, problem-dependent adjustments to learning algorithms are generally informed by knowledge provided by domain-experts about the process that generated the data.
 An additional dimension is therefore given by the need to communicate assumptions and effects of choices with stakeholders which do not have a deep understanding of the field.
 If a learning algorithm should be interpretable and understandable, assumptions should be explicit and optimization schemes should be simple.
 The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 
 \section{Bayesian machine learning}
-\begin{itemize}
-    \item Bayesian ML then offers a nice language to formulate such hypotheses
-    \item Embrace the uncertainty!
-    \item Most importantly, Bayes' rule offers a consistent and simple way to combine local and global assumptions that does not break probability theory.
-          And has a nice semantic interpretation.
-          It is not a unique solution though.
-    \item With Bayes' rule, a structurally simple \emph{learning algorithm} can be formulated where the complexity is in the hypothesis space (prior) and loss function (likelihood). No optimization needed at first glance.
-\end{itemize}
+The central modelling assumption of statistical learning theory is the unknown data distribution $\Prob*{\mat{z}}$.
+Based on a limited number of observations, the task is to learn a model of either the complete distribution or some functional $F[\Prob*{\mat{z}}]$.
+Because the available data is not sufficient to identify the unique correct solution, the goal Bayesian machine learning is to instead infer a distribution of plausible solutions weighed by their likelihood given the data.
+Instead of selecting one solution (for example based on some regularization scheme), Bayesian approaches accept the inevitability of uncertainty due to the underspecified ML problem and represent it explicitly.
+
+The posterior distribution of plausible models is a combination of the prior assumptions about underlying structure and their capability of explaining observations.
+This section introduces probabilistic generative models as a natural consequence of the assumptions in statistical learning theory.
+Probabilistic generative models form a principled way to formulate interpretable hypothesis spaces with carefully chosen assumptions.
+With Bayes' rule, a structurally simple and formally consistent learning algorithm can be formulated to infer knowledge from data.
 
 \paragraph{Graphical Models}
 Blablab albal balbal bablabl

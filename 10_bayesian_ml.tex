@@ -172,6 +172,7 @@ This subjectiveness is represented in multiple choices:
 In the following, statistical learning and Bayesian machine learning are introduced as tools to formalize these choices and establish a mathematical framework.
 
 \section{Statistical learning}
+\label{toc:bayesian_ml:statistical_learning}
 \begin{figure}[t]
     \centering
     \includestandalonewithpath{figures/quantities_of_interest_statistical_learning}
@@ -312,7 +313,7 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
 The central modelling assumption of statistical learning theory is the unknown data distribution $\Prob*{\mat{z}}$.
 Based on a limited number of observations, the task is to learn a model of either the complete distribution or some functional $F[\Prob*{\mat{z}}]$.
 Instead of selecting one solution (for example based on some regularization scheme), Bayesian approaches accept the inevitability of uncertainty due to the underspecified ML problem and represent it explicitly.
-Following the definition of functionals $F$, a Bayesian model is often formulated through (conditional) independence assumptions in the data distribution.
+Following the definition of functionals $F$, a Bayesian model is often formulated through independence assumptions in the data distribution.
 Independence assumptions induce a factorization of the data distribution.
 Structural constraints can then be put on the different factors to encode expert knowledge.
 
@@ -400,6 +401,11 @@ We refer to~\parencite{murphy_machine_2012,bishop_christoph_pattern_2007,david_b
     \item Expert knowledge through structure and hierarchy
     \item Structure can be very rigid (Bayesian statistics) or very loose (Bayesian ML), but things in-between are rare.
 \end{itemize}
+In the algorithmic view of machine learning problems formulated in~\cref{toc:bayesian_ml:ml_problems}, the observational data is used to formulate an error function to select a model from a set of candidates without the notion of explaining said data.
+To formulate what it means to generalize, statistical learning theory in~\cref{toc:bayesian_ml:statistical_learning} bases the learning problem on an unknown or latent data distribution, with the observational data being just one of many possible samples from that distribution.
+A generative model captures this sampling process and formulates an algorithm to generate arbitrary data sets from the data distribution $\Prob*{\mat{z}}$.
+A generative model is successful if the observational data set is a likely draw from the model.
+
 The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 \begin{align}
     \begin{tikzpicture}[align graphical model]
@@ -593,6 +599,7 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
 
 \subsubsection{Bayesian Inference}
 \begin{itemize}
+    \item A generative model is too powerful, since we only care about the functional. We need to restrict our selves.
     \item Return to linear regression example and formulate Bayesian linear regression with a Gaussian likelihood.
     \item What does it mean to learn now? We need to combine our assumptions with data. The principled and obvious way is Bayes' rule.
     \item With Bayes' rule, a structurally simple \emph{learning algorithm} can be formulated where the complexity is in the hypothesis space (prior) and loss function (likelihood). No optimization needed at first glance.

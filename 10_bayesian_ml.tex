@@ -311,33 +311,86 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
 \section{Bayesian machine learning}
 The central modelling assumption of statistical learning theory is the unknown data distribution $\Prob*{\mat{z}}$.
 Based on a limited number of observations, the task is to learn a model of either the complete distribution or some functional $F[\Prob*{\mat{z}}]$.
-Because the available data is not sufficient to identify the unique correct solution, the goal Bayesian machine learning is to instead infer a distribution of plausible solutions weighed by their likelihood given the data.
 Instead of selecting one solution (for example based on some regularization scheme), Bayesian approaches accept the inevitability of uncertainty due to the underspecified ML problem and represent it explicitly.
+Following the definition of functionals $F$, a Bayesian model is often formulated through (conditional) independence assumptions in the data distribution.
+Independence assumptions induce a factorization of the data distribution.
+Structural constraints can then be put on the different factors to encode expert knowledge.
 
+Because the available data is not sufficient to identify the unique correct solution, the goal Bayesian machine learning is to instead infer a distribution of plausible solutions weighed by their likelihood given the data.
 The posterior distribution of plausible models is a combination of the prior assumptions about underlying structure and their capability of explaining observations.
 This section introduces probabilistic generative models as a natural consequence of the assumptions in statistical learning theory.
 Probabilistic generative models form a principled way to formulate interpretable hypothesis spaces with carefully chosen assumptions.
 With Bayes' rule, a structurally simple and formally consistent learning algorithm can be formulated to infer knowledge from data.
 
-\paragraph{Graphical Models}
-Blablab albal balbal bablabl
-\begin{itemize}
-    \item What is a graphical model?
-    \item DAG denotes independence assumptions
-    \item D-Separation
-\end{itemize}
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
-Blargh, \tikz[x=2.5em,baseline=(a.base)]{
+\subsubsection{Directed graphical models}
+Any joint probability distribution $\Prob*{\mat{a}, \mat{c}, \mat{e}}$ can be formulated as a product of partial distributions via the chain rule of probability~\parencite{murphy_machine_2012} as
+\begin{align}
+    \begin{split}
+        \Prob*{\mat{a}, \mat{c}, \mat{e}}
+        &= \Prob*{\mat{a} \given \mat{c}, \mat{e}}\Prob*{\mat{c} \given \mat{e}}\Prob*{\mat{e}} \\
+        &= \Prob*{\mat{e} \given \mat{a}, \mat{c}}\Prob*{\mat{a} \given \mat{c}}\Prob*{\mat{c}} \\
+        &= \dots
+    \end{split}
+\end{align}
+The chain rule is symmetric in the sense that the order of chaining random variables does not matter.
+All possible interdependencies between random variables are represented in the expansion of conditional probabilities.
+
+A factorization along the chain rule does not impose any structure on the underlying distribution.
+The first step in Bayesian modelling is to impose such structure by assuming conditional independence between variables.
+Directed graphical models are an readable visualization of such independence assumptions.
+A directed graphical model is a directed graph where every random variable is a node
+\tikz[x=2.5em,baseline=(a.base)]{
+    \node[inline random variable] (a) {$\mat{a}$};
+}
+and an edge
+\tikz[x=2.5em,baseline=(a.base)]{
     \node[inline random variable] (a) {$\mat{a}$};
     \node[inline random variable] (b) at (1, 0) {$\mat{c}$};
-    \node[inline random variable] (c) at (2, 0) {$\mat{e}$};
     \draw[edge, directed] (a) -- (b);
-    \draw[edge, directed] (b) -- (c);
 }
-blubb.
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+denotes a dependency of $\mat{c}$ on $\mat{a}$.
+In contrast to the factorization according to the chain rule, the graphical model below encodes the assumption that $\mat{e}$ is independent of $\mat{a}$ given $\mat{c}$.
+\begin{align}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -1);
+        \node[random variable] at (0, 0) (X) {$\mat{a}$};
+        \node[random variable] at (0, -1) (Y) {$\mat{c}$};
+        \node[random variable] at (0, -2) (Z) {$\mat{e}$};
+        \draw[edge, directed] (X) -- (Y);
+        \draw[edge, directed] (Y) -- (Z);
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{a}, \mat{c}, \mat{e}}
+     & =
+    \left\{
+    \begin{aligned}
+         & \Prob*{\mat{a}}                      \\
+         & \cdot \Prob*{\mat{c} \given \mat{a}} \\
+         & \cdot \Prob*{\mat{e} \given \mat{c}}
+    \end{aligned}
+    \right.
+\end{align}
 
-\paragraph{Formulating Hypothesis Spaces}
+More formally, the factorization belonging to a graphical model with nodes $\mat{a}_1, \dots, \mat{a}_N$ is given by
+\begin{align}
+    \begin{split}
+        \Prob*{\mat{a}_1, \dots, \mat{a}_N}
+        &= \prod_{n=1}^N \Prob*{\mat{a}_n \given \mathrm{parents}(\mat{a}_n)}
+    \end{split}
+\end{align}
+with $\mathrm{parents}(\mat{a}_n)$ denoting the set of nodes with an edge towards $\mat{a}_n$.
+A circle
+\tikz[x=2.5em,baseline=(a.base)]{
+    \node[inline random variable] (a) {$\mat{a}$};
+    \node[inline random variable] (b) at (1, 0) {$\mat{c}$};
+    \draw[edge, directed, bend left=15] (a) to (b);
+    \draw[edge, directed, bend left=15] (b) to (a);
+}
+denotes that the variables $\mat{a}$ and $\mat{c}$ need to be considered jointly as $\Prob*{\mat{a}, \mat{c}}$.
+Graphical models have been studied in great detail.
+We refer to~\parencite{murphy_machine_2012,bishop_christoph_pattern_2007,david_barber_bayesian_2012,trevor_hastie_elements_2013} for additional information.
+
+\subsubsection{Generative models}
 \begin{itemize}
     \item Introduce Independence Assumptions
     \item Vector-Notation
@@ -538,7 +591,7 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
 \end{align}
 The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 
-\paragraph{Bayesian Inference}
+\subsubsection{Bayesian Inference}
 \begin{itemize}
     \item Return to linear regression example and formulate Bayesian linear regression with a Gaussian likelihood.
     \item What does it mean to learn now? We need to combine our assumptions with data. The principled and obvious way is Bayes' rule.

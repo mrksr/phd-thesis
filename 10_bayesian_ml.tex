@@ -134,6 +134,7 @@ A common approach to formulating a problem that lets the data speak for itself i
 Instead of describing exactly one possible function (such as the Lagrange Polynomial), one can choose a broader set of candidate functions or hypotheses $\Hc$ and then select one of the candidates $f \in \Hc$ that is optimal with respect to some measure of performance.
 For example, a common assumption about the process used to generate the data is that it separates into two additive components
 \begin{align}
+    \label{eq:bayesian_ml:additive_noise}
     y_n = f(x_n) + \epsilon(x_n).
 \end{align}
 The first summand $f$ captures the truly informative functional dependency between $x$ and $y$ that applies for all observations while the second term $\epsilon$ captures local error or noise that can be ignored.
@@ -212,6 +213,7 @@ We give a few examples here.
     \item[Regression]
           Alternatively, assuming that $\Zc = \Xc \times \Yc$ separates into tuples of inputs $\Xc$ and continuous outputs $\Yc$ and choosing
           \begin{align}
+              \label{eq:bayesian_ml:f_reg}
               F_{\text{reg}}[\Prob*{\mat{x}, \mat{y}}](\mat{x_\ast}) = \Prob*{\mat{y_\ast} \given \mat{x_\ast}}
           \end{align}
           with $\Fc = \Xc \to \Probs{\Yc}$ gives rise to the regression problem discussed in~\cref{toc:bayesian_ml:ml_problems}.
@@ -222,8 +224,10 @@ We give a few examples here.
           In the dimensionality reduction or manifold learning problem, the assumption is that the support of the data distribution $\Prob*{\mat{z}}$ is a low dimensional manifold in $\Zc$.
           The task is to find a distribution $\Prob*{\mat{m}} \in \Probs{\Mc}$ and a mapping $f : \Mc \to \Zc$ with
           \begin{align}
-              F_{\text{dim}}[\Prob*{\mat{z}}] & = (\Prob*{\mat{m}}, f)\text{, such that} \\
-              f(\Prob*{\mat{m}})              & = \Prob*{\mat{z}}
+              \begin{split}
+                  F_{\text{dim}}[\Prob*{\mat{z}}] & = (\Prob*{\mat{m}}, f)\text{, such that} \\
+                  f(\Prob*{\mat{m}})              & = \Prob*{\mat{z}}
+              \end{split}
           \end{align}
           and $\Fc = \Probs{\Mc} \times (\Mc \to \Zc)$ and a space $\Mc$ of lower dimensionality than $\Zc$.
           If $\Mc = \Zc$ this problem is called density estimation.
@@ -392,21 +396,14 @@ Graphical models have been studied in great detail.
 We refer to~\parencite{murphy_machine_2012,bishop_christoph_pattern_2007,david_barber_bayesian_2012,trevor_hastie_elements_2013} for additional information.
 
 \subsubsection{Generative models}
-\begin{itemize}
-    \item Introduce Independence Assumptions
-    \item Vector-Notation
-    \item Latent structure and marginalization
-    \item Need for finite description of infinite object
-    \item Parametric and Non-Parametric models
-    \item Expert knowledge through structure and hierarchy
-    \item Structure can be very rigid (Bayesian statistics) or very loose (Bayesian ML), but things in-between are rare.
-\end{itemize}
 In the algorithmic view of machine learning problems formulated in~\cref{toc:bayesian_ml:ml_problems}, the observational data is used to formulate an error function to select a model from a set of candidates without the notion of explaining said data.
 To formulate what it means to generalize, statistical learning theory in~\cref{toc:bayesian_ml:statistical_learning} bases the learning problem on an unknown or latent data distribution, with the observational data being just one of many possible samples from that distribution.
 A generative model captures this sampling process and formulates an algorithm to generate arbitrary data sets from the data distribution $\Prob*{\mat{z}}$.
 A generative model is successful if the observational data set is a likely draw from the model.
+Using the regression problem as an example, we will now introduce the building blocks of a Bayesian generative model.
 
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+The functional of interest $F_{\text{reg}} = \Prob*{\mat{y} \given \mat{x}}$ for the regression problem formulated in~\cref{eq:bayesian_ml:f_reg} is the conditional probability of the output $\mat{y}$ given the input $\mat{x}$ for the data distribution $\Prob*{\mat{z}} = \Prob*{\mat{x}, \mat{y}}$.
+Formulating a generative model starts with the factorization of the data distribution such that this conditional is made explicit:
 \begin{align}
     \begin{tikzpicture}[align graphical model]
         \coordinate (baseline) at (0, -0.5);
@@ -424,9 +421,23 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
     \end{aligned}
     \right.
 \end{align}
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+Here, the color of the nodes
+\tikz[x=2.5em,baseline=(x.base)]{
+    \node[inline random variable, observed] (x) {$\mat{x}$};
+}
+indicates that both nodes are part of the data distribution and are directly observed in a data set.
+We will introduce other nodes below.
+Closed forms for both $\Prob*{\mat{x}}$ and $\Prob*{\mat{y} \given \mat{x}}$ would fully characterize the data distribution.
+To solve the regression problem however, only the second term is required.
 
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+In the notation typically employed in machine learning, the variables $\mat{x}$ and $\mat{y}$  in the graphical model denote both the factorization of the generative process as well as the functional dependencies between concrete realizations of $\mat{x}$ and $\mat{y}$.
+Assuming a regression problem over the reals $\Xc = \Yc = \Rb$, the functional $\Prob*{\mat{y} \given \mat{x}}$ is an infinite-dimensional object.
+To simplify reasoning about this object, we will reason about finitely many realizations of this process, the pairs $(\mat{x}_1, \mat{y}_1), \ldots, (\mat{x}_N, \mat{y}_N)$.
+This formulation describes both the model search and prediction steps:
+If the $N$ pairs are all part of some data set $\Dc$, model search can be formulated as finding a closed form for $\Prob*{\mat{y}_n \given \mat{x}_n}$ that explains the observations well.
+For prediction, the graphical model is typically augmented with a new pair $(\mat{x}_\ast, \mat{y}_\ast) \not\in \Dc$, an arbitrary but previously unseen point.
+Making a prediction is equivalent to evaluating the closed form $\Prob*{\mat{y}_\ast \given \mat{x}_\ast}$.
+Using this formulation, the graphical model is reformulated as
 \begin{align}
     \begin{tikzpicture}[align graphical model]
         \coordinate (baseline) at (0, -0.5);
@@ -447,14 +458,26 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
      & =
     \left\{
     \begin{aligned}
-         & \Prob*{\mat{x}_1, \mat{x}_2}                                   \\
-         & \cdot \Prob*{\mat{y}_1, \mat{y}_2 \given \mat{x}_1, \mat{x}_2}
+         & \Prob*{\mat{x}_1, \mat{x}_2}                                    \\
+         & \cdot \Prob*{\mat{y}_1, \mat{y}_2 \given \mat{x}_1, \mat{x}_2}.
     \end{aligned}
     \right.
 \end{align}
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+Similar to the assumption of independent draws for a data set $\Dc$ in statistical learning theory, the inputs $\mat{x}_1, \mat{x}_2, \dots$ to a generative regression model are typically assumed to be independent.
+The outputs $\mat{y}_1, \mat{y}_2, \dots$ are not independent however because they have been generated using the same functional dependency $f$ we wish to model.
 
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+In the next step, we expand the model to reflect the fact that the $\mat{y}_N$ are conditionally independent given this functional dependency $f$.
+The rule of total probability~\parencite{bishop_christoph_pattern_2007} states that for any random variable $\mat{f}$, it holds that
+\begin{align}
+    \begin{split}
+        \Prob*{\mat{y} \given \mat{x}} = \int \Prob*{\mat{y} \given \mat{f}, \mat{x}} \Prob*{\mat{f}} \diff \mat{f}.
+    \end{split}
+\end{align}
+This rule allows us to add arbitrary nodes to the graphical model and recover the original distribution via marginalization, the calculation of the expectation with respect to the variable that should be removed.
+Introducing a new variable is helpful because it allows us to explicitly formulate independence assumptions we could not formulate before.
+To achieve conditional independence of the $\mat{y}_n$, we add variables $\mat{f}_n$ which represent the function values $\mat{f}_n = f(\mat{x}_n)$.
+Since the input $\mat{x}_n$ is no longer relevant once this function value is known, we assume that $\Prob*{\mat{y}_n \given \mat{f}_n, \mat{x}_n} = \Prob*{\mat{y}_n \given \mat{f}_n}$.
+This leads to the new graphical model
 \begin{align}
     \begin{tikzpicture}[align graphical model]
         \coordinate (baseline) at (0, -1);
@@ -484,10 +507,24 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
     \end{aligned}
     \right.
 \end{align}
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+with the additional latent nodes
+\tikz[x=2.5em,baseline=(f.base)]{
+    \node[inline random variable, latent] (f) {$\mat{f}$};
+}
+which are never directly observed.
+The function values are (usually) assumed to not be directly observed due to the additive noise assumption in~\cref{eq:bayesian_ml:additive_noise}, which states that only a noisy version $\mat{y}_n = f(\mat{x}_n) + \epsilon_n$ of the true functional dependency is observed to motivate regularization terms.
+In the graphical model above, both terms are represented via
+\begin{labeling}{$\Prob*{\mat{f}_n \given \mat{x}_n}$}
+    \item [$\Prob*{\mat{f}_n \given \mat{x}_n}$:] The true functional dependency $f$, the functional of interest.
+    \item [$\Prob*{\mat{y}_n \given \mat{f}_n}$:] The independent noise term $\epsilon$.
+\end{labeling}
+In this model, the noise term contains all part of the generative process for $\mat{y}_n$ which cannot be explained by $\mat{x}_n$ and is assumed to be fully independent given $\mat{f}_n$.
 
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+The graphical model now contains a chain of nodes $\mat{x}_n$, $\mat{f}_n$, $\mat{y}_n$ which is repeated for every data point.
+This is a common pattern for generative models since while the functional of interest $f$ changes depending on the position in the input space $\mat{x}$, the structure of the generative process is assumed to be the same for all possible observations.
+To explicitly represent this repetition, we introduce plate notation:
 \begin{align}
+    \label{eq:bayesian_ml:non_parametric}
     \begin{tikzpicture}[align graphical model]
         \coordinate (baseline) at (0, -1);
         \node[random variable, observed] at (0, 0) (X) {$\mat{x}_n$};
@@ -518,10 +555,34 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
     \end{aligned}
     \right.
 \end{align}
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+Within the plate, all nodes indexed with $n$ are repeated $N$ times.
+The loop on $\mat{f}_n$ denotes that all $\mat{f}_n$ are dependent on each other.
+Having separated the functional of interest from the noise term, the next step is to formulate a representation of $\Prob*{\mat{f}_1, \dots, \mat{f}_N \given \mat{x}_1, \dots, \mat{x}_N}$.
+The choice of this distribution over functions is informed by two challenges.
+First, the support of the distribution can be restricted to a specific class of functions to shrink the hypothesis space.
+And second, for a model to be the result of an algorithm, it needs to be represented via finitely many parameters.
 
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+There exist two paths to achieving a finite representation:
+\begin{labeling}{Non-parametric:}
+    \item[Non-parametric:] The functional dependency is represented implicitly using the existing observations $\Dc$. Examples include nearest neighbor models, Gaussian processes or polynomial splines.
+    \item[Parametric:] The functional dependency is represented explicitly using a specific class of functions with parameters $\mat{\theta}$. Examples include neural networks, linear regression or polynomial regression.
+\end{labeling}
+The model in~\cref{eq:bayesian_ml:non_parametric} is non-parametric because it does not contain any parameters besides the $N$ pairs $(\mat{x}_n, \mat{y}_n)$.
+Because the functional $f$ is implicit, all $\mat{f}_n$ inform each other.
+
+If $f$ is represented completely and explicitly via a set of parameters $\mat{\theta}$ in a parametric model, the $\mat{f}_n$ are independent given $\mat{\theta}$.
+If this conditional independence
 \begin{align}
+    \begin{split}
+        \Prob*{\mat{f}_n \given \mat{\theta}, \Set{\mat{f}_m \with m \in \Set{1, \dots, N}, m \neq n}}
+        =
+        \Prob*{\mat{f}_n \given \mat{\theta}}
+    \end{split}
+\end{align}
+holds, $\mat{\theta}$ is called a sufficient statistic for the functional $f$.
+In the parametric graphical model
+\begin{align}
+    \label{eq:bayesian_ml:non_parametric}
     \begin{tikzpicture}[align graphical model]
         \coordinate (baseline) at (0, -1);
         \node[random variable, observed] at (0, 0) (X) {$\mat{x}_n$};
@@ -554,29 +615,43 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
     \end{aligned}
     \right.
 \end{align}
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+the joint distribution of the $\mat{f}_n$ factorizes given the parameters $\mat{\theta}$ and the loop no longer exists.
+Taking linear regression as an example, we assume the functional to be of the shape $f(x) = \mat{W}x + \mat{b}$ and choose the parameters $\mat{\theta} = (\mat{W}, \mat{b})$.
+The functional dependency in the graphical model is then given by
+\begin{align}
+    \begin{split}
+        \Prob*{\mat{f}_n \given \mat{x}_n, \mat{\theta}} = \delta(\mat{W}\mat{x}_n + \mat{b}),
+    \end{split}
+\end{align}
+where $\delta(\cdot)$ denotes the Dirac delta distribution~\parencite{murphy_machine_2012}.
+Since $\mat{\theta}$ is a sufficient statistic, other observations are not required to evaluate the linear function.
 
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+To formulate more complex generative models, additional latent structure can be introduced.
+Assume for example that the functional of interest is known to have the shape $f(x) = h(k(x), g(x))$.
+The corresponding graphical model
 \begin{align}
     \begin{tikzpicture}[align graphical model]
-        \coordinate (baseline) at (0, -1);
+        \coordinate (baseline) at (0, -1.5);
         \node[random variable, observed] at (0.5, 0) (X) {$\mat{x}_n$};
-        \node[random variable, latent] at (0, -1) (F) {$\mat{f}_n$};
-        \node[random variable, latent] at (1, -1) (sigma) {$\mat{\sigma}_n$};
+        \node[random variable, latent] at (0, -1) (F) {$\mat{k}_n$};
+        \node[random variable, latent] at (1, -1) (G) {$\mat{g}_n$};
         \node[random variable, latent] at (-1, -1) (theta) {$\mat{\theta}$};
-        \node[random variable, observed] at (0.5, -2) (Y) {$\mat{y}_n$};
+        \node[random variable, latent] at (0.5, -2) (H) {$\mat{h}_n$};
+        \node[random variable, observed] at (0.5, -3) (Y) {$\mat{y}_n$};
         \draw[edge, directed] (X) -- (F);
-        \draw[edge, directed] (F) -- (Y);
-        \draw[edge, directed] (X) -- (sigma);
-        \draw[edge, directed] (sigma) -- (Y);
+        \draw[edge, directed] (F) -- (H);
+        \draw[edge, directed] (X) -- (G);
+        \draw[edge, directed] (G) -- (H);
+        \draw[edge, directed] (H) -- (Y);
         \draw[edge, directed] (theta) -- (F);
-        \draw[edge, directed, bend left=45] (theta) to (sigma);
+        \draw[edge, directed, bend left=45] (theta) to (G);
+        \draw[edge, directed] (theta) to (H);
         %
         \begin{scope}[on background layer]
             \node[
                 align plate,
                 inner xsep=10pt,
-                fit=(X)(F)(sigma)(Y),
+                fit=(X)(F)(G)(H)(Y),
                 label={[anchor=south east]south east:$N$}
             ] {};
         \end{scope}
@@ -586,19 +661,24 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
      & =
     \left\{
     \begin{aligned}
-         & \Prob*{\mat{x}}                                               \\
-         & \cdot \int \Prob*{\mat{f} \given \mat{x}, \mat{\theta}}       \\
-         & \quad \cdot \Prob*{\mat{\sigma} \given \mat{x}, \mat{\theta}} \\
-         & \quad \cdot \Prob*{\mat{\theta}} \diff \mat{\theta}           \\
-         & \quad \cdot \Prob*{\mat{y} \given \mat{f}}                    \\
-         & \quad \cdot \diff \mat{\sigma} \diff \mat{f}                  \\
+         & \Prob*{\mat{x}}                                                                       \\
+         & \cdot \int \prod_{n=1}^N \Prob*{\mat{k}_n \given \mat{x}_n, \mat{\theta}}             \\
+         & \quad \cdot \prod_{n=1}^N \Prob*{\mat{g}_n \given \mat{x}_n, \mat{\theta}}            \\
+         & \quad \cdot \prod_{n=1}^N \Prob*{\mat{h}_n \given \mat{k}_n, \mat{g}_n, \mat{\theta}} \\
+         & \quad \cdot \Prob*{\mat{\theta}} \diff \mat{\theta}                                   \\
+         & \quad \cdot \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{k}_n, \mat{g}_n, \mat{h}_n}    \\
+         & \quad \cdot \diff \Set*{\mat{k}_n, \mat{g}_n, \mat{h}_n}_{n=1}^N                      \\
     \end{aligned}
     \right.
 \end{align}
-The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+contains separate nodes for the different functions.
+By constructing a hypothesis space as a combination of multiple sub-hypothesis spaces, generative models can represent detailed assumptions while remaining formally principled through marginalization.
+Having formulated structural assumptions about how a data set has been generated, the next step is interpret these assumptions in a statistical learning context and connect them with data.
+
 
 \subsubsection{Bayesian Inference}
 \begin{itemize}
+    \item WE have formulated everything in probability land because it was convenient. At the same time, there is a great philosophical interpretation!
     \item A generative model is too powerful, since we only care about the functional. We need to restrict our selves.
     \item Return to linear regression example and formulate Bayesian linear regression with a Gaussian likelihood.
     \item What does it mean to learn now? We need to combine our assumptions with data. The principled and obvious way is Bayes' rule.
@@ -606,7 +686,7 @@ The next section introduces Bayesian machine learning as a rigorous formal frame
     \item Introduce prior, likelihood and posterior. They are structurally very similar!
     \item A likelihood encodes everything we do not want to model, prior -> posterior is the rest.
     \item What is the $\Prob*{\mat{\theta}}$ all about though? Choices of prior are important, conjugacy is convenient for structural reasons.
-    \item Priors are comparable to regularizations. Posteriors heavily depend on prior choices (and rightfully so!), uncertainties are highly subjective.
+    \item Priors are comparable to regularization. Posteriors heavily depend on prior choices (and rightfully so!), uncertainties are highly subjective.
     \item We could formulate a "Bayes tower" and calculate posteriors all the way through
     \item For computational feasibility we need to stop somewhere though, the more abstract the better
     \item We can now formulate Bayesian linear and polynomial regression!

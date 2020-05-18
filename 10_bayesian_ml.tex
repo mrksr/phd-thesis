@@ -675,24 +675,26 @@ contains separate nodes for the different functions.
 By constructing a hypothesis space as a combination of multiple sub-hypothesis spaces, generative models can represent detailed assumptions while remaining formally principled through marginalization.
 Having formulated structural assumptions about how a data set has been generated, the next step is interpret these assumptions in a statistical learning context and connect them with data.
 
-
-\subsubsection{Bayesian Inference}
+\subsubsection{Bayesian inference}
 \begin{itemize}
-    \item WE have formulated everything in probability land because it was convenient. At the same time, there is a great philosophical interpretation!
-    \item A generative model is too powerful, since we only care about the functional. We need to restrict our selves.
+    \item A generative model is too powerful, since we only care about the functional. We want to learn about a specific part of the graphical model. That's inference.
     \item Return to linear regression example and formulate Bayesian linear regression with a Gaussian likelihood.
-    \item What does it mean to learn now? We need to combine our assumptions with data. The principled and obvious way is Bayes' rule.
     \item With Bayes' rule, a structurally simple \emph{learning algorithm} can be formulated where the complexity is in the hypothesis space (prior) and loss function (likelihood). No optimization needed at first glance.
     \item Introduce prior, likelihood and posterior. They are structurally very similar!
-    \item A likelihood encodes everything we do not want to model, prior -> posterior is the rest.
     \item What is the $\Prob*{\mat{\theta}}$ all about though? Choices of prior are important, conjugacy is convenient for structural reasons.
+    \item What does it mean to learn now? We need to combine our assumptions with data. The standard way is to consider the marginal likelihood.
+\end{itemize}
+
+\subsubsection{Bayesian uncertainties}
+\begin{itemize}
+    \item Where do Priors come from?
+    \item We have formulated everything in probability land because it was convenient. At the same time, there is a great philosophical interpretation!
+    \item We do not want to get into it too much, but we interpret uncertainties as missing knowledge
+    \item The cool thing about generative models is that it allows us to formulate hierarchical knowledge
+    \item In statistics, hierarchical knowledge is often quite rigid and in ML, it is quite uninformed
+    \item This thesis is about something in the middle: We want to choose hierarchies which are flexible but are constrained enough to be sensible.
     \item Priors are comparable to regularization. Posteriors heavily depend on prior choices (and rightfully so!), uncertainties are highly subjective.
-    \item We could formulate a "Bayes tower" and calculate posteriors all the way through
-    \item For computational feasibility we need to stop somewhere though, the more abstract the better
-    \item We can now formulate Bayesian linear and polynomial regression!
-    \item Then we usually do maximum likelihood or maybe maximum a posteriori on the marginal likelihood, since we want a model that explains the data well, right?
-    \item Well actually, what about all the steps in-between?
-    \item What about uncertainty and the structure of uncertainty?
+    \item How do we reason about what good uncertainties are? Especially with hierarchies?
 \end{itemize}
 
 \section{Thesis outline}

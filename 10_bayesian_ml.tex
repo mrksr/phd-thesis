@@ -676,6 +676,29 @@ By constructing a hypothesis space as a combination of multiple sub-hypothesis s
 Having formulated structural assumptions about how a data set has been generated, the next step is interpret these assumptions in a statistical learning context and connect them with data.
 
 \subsubsection{Bayesian inference}
+\begin{figure}[t]
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/polynoms_bayes_narrow}
+        \caption{
+            Linear ML
+            \label{fig:bayesian_ml:polynoms:bayes_narrow}
+        }
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/polynoms_bayes_broad}
+        \caption{
+            Polynomial ML
+            \label{fig:bayesian_ml:polynoms:bayes_broad}
+        }
+    \end{subfigure}
+    \caption[ML Interpolation]{
+        ???
+        \label{fig:bayesian_ml:polynoms:bayes}
+    }
+\end{figure}
 \begin{itemize}
     \item A generative model is too powerful, since we only care about the functional. We want to learn about a specific part of the graphical model. That's inference.
     \item Return to linear regression example and formulate Bayesian linear regression with a Gaussian likelihood.

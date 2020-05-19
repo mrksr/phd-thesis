@@ -1,0 +1,33 @@
+\documentclass{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \def\datapath{\figurepath/data/notebooks/10_polynomial_interpolation}
+    \begin{axis}[
+            polynomial plot,
+        ]
+
+        \addplot[data, forget plot] table[numpy, x=X, y=Y] {\datapath/training_data.dat};
+
+        \addplot[smooth, densely dotted, first, semithick] table[numpy, x=X, y=mean] {\datapath/bayes_broad.dat};
+
+        \addplot[std, first, name path=minus]
+        table[numpy, x=X, y expr=\thisrow{mean} - \thisrow{std}] {\datapath/bayes_broad.dat};
+        \addplot[std, first, name path=plus]
+        table[numpy, x=X, y expr=\thisrow{mean} + \thisrow{std}] {\datapath/bayes_broad.dat};
+        \addplot[first fill]
+        fill between[of=plus and minus];
+        \addplot[mean, first]
+        table[numpy, x=X, y=mean] {\datapath/bayes_broad.dat};
+
+        \addplot[sample, second] table[numpy, x=X, y=sample_0] {\datapath/bayes_broad.dat};
+        \addplot[sample, third] table[numpy, x=X, y=sample_21] {\datapath/bayes_broad.dat};
+        \addplot[sample, fourth] table[numpy, x=X, y=sample_5] {\datapath/bayes_broad.dat};
+    \end{axis}
+\end{tikzpicture}
+\end{document}

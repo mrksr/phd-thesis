@@ -437,6 +437,7 @@ This formulation describes both the model search and prediction steps:
 If the $N$ pairs are all part of some data set $\Dc$, model search can be formulated as finding a closed form for $\Prob*{\mat{y}_n \given \mat{x}_n}$ that explains the observations well.
 For prediction, the graphical model is typically augmented with a new pair $(\mat{x}_\ast, \mat{y}_\ast) \not\in \Dc$, an arbitrary but previously unseen point.
 Making a prediction is equivalent to evaluating the closed form $\Prob*{\mat{y}_\ast \given \mat{x}_\ast}$.
+To simplify notation, we identify $\mat{x} = (\mat{x}_1, \dots, \mat{x}_N)$ and $\mat{y} = (\mat{y}_1, \dots, \mat{y}_N)$.
 Using this formulation, the graphical model is reformulated as
 \begin{align}
     \begin{tikzpicture}[align graphical model]
@@ -582,7 +583,7 @@ If this conditional independence
 holds, $\mat{\theta}$ is called a sufficient statistic for the functional $f$.
 In the parametric graphical model
 \begin{align}
-    \label{eq:bayesian_ml:non_parametric}
+    \label{eq:bayesian_ml:parametric}
     \begin{tikzpicture}[align graphical model]
         \coordinate (baseline) at (0, -1);
         \node[random variable, observed] at (0, 0) (X) {$\mat{x}_n$};
@@ -625,6 +626,7 @@ The functional dependency in the graphical model is then given by
 \end{align}
 where $\delta(\cdot)$ denotes the Dirac delta distribution~\parencite{murphy_machine_2012}.
 Since $\mat{\theta}$ is a sufficient statistic, other observations are not required to evaluate the linear function.
+Even though we made the strong structural assumption about the linearity of the function resulting in a delta distribution, the marginalization of $\Prob*{\mat{\theta}}$ can still lead to more complicated $\Prob*{\mat{y} \given \mat{x}}$ distributions.
 
 To formulate more complex generative models, additional latent structure can be introduced.
 Assume for example that the functional of interest is known to have the shape $f(x) = h(k(x), g(x))$.
@@ -676,6 +678,59 @@ By constructing a hypothesis space as a combination of multiple sub-hypothesis s
 Having formulated structural assumptions about how a data set has been generated, the next step is interpret these assumptions in a statistical learning context and connect them with data.
 
 \subsubsection{Bayesian inference}
+The generative model for linear regression formulated in~\cref{eq:bayesian_ml:parametric} formulates a factorization of the unknown data distribution $\Prob*{\mat{x}, \mat{y}}$.
+By introducing the parameters $\mat{\theta} = (\mat{W}, \mat{b})$ which are sufficient statistics for the functional dependency between $\mat{x}$ and $\mat{y}$ under our assumptions, learning about the regression functional $f$ has been reduced to learning about finitely many parameters.
+In other words, the formulation of a generative model yields a formal description of what we mean by linear regression in a statistical learning context.
+The next step is to derive a learning algorithm that connects this model to observations.
+
+In~\cref{toc:bayesian_ml:statistical_learning}, a good solution to a learning problem was characterized with the risk minimization algorithm, which demands that any data that could be observed by form the data distribution would be well-explained by the solution.
+In the context of generative models, we can formulate the same idea by demanding that sampling from the true data distribution or from the generative model leads to the same data sets.
+Or equivalently, that samples drawn from the data distribution have high probability under the generative model and vice versa.
+Since we do not have access to the full data distribution, we use the available observations as an empirical estimate again.
+
+To make statements about the interaction of the parameters $\mat{\theta}$ and the observations $\Dc = \Set*{(\mat{x}_n, \mat{y}_n)}_{n=1}^N$, we consider their joint probability distribution $\Prob*{\mat{\theta}, \Dc}$.
+Using the chain rule, this distribution can be written as a product
+\begin{align}
+    \begin{split}
+        \Prob*{\mat{\theta}, \Dc}
+        &= \Prob*{\Dc \given \mat{\theta}}\Prob*{\mat{\theta}},
+    \end{split}
+\end{align}
+whose terms are called the likelihood $\Prob*{\Dc \given \mat{\theta}}$ and prior $\Prob*{\mat{\theta}}$.
+The structural assumptions formulated via the generative model allow us to directly evaluate the likelihood $\Prob*{\Dc \given \mat{\theta}} = \Prob*{\mat{x}, \mat{y} \given \mat{\theta}}$.
+The prior $\Prob*{\mat{\theta}}$ is a distribution over all possible parameters $\mat{\theta}$ and is part of the joint formulated in the generative model.
+Applying the chain rule on the joint again yields the posterior
+\begin{align}
+\begin{split}
+    \Prob*{\mat{\theta} \given \Dc}
+    &= \frac{\Prob*{\Dc \given \mat{\theta}}\Prob*{\mat{\theta}}}{\Prob*{\Dc}},
+\end{split}
+\end{align}
+where $\Prob*{\Dc} = \int \Prob*{\Dc \given \mat{\theta}} \Prob*{\mat{\theta}} \diff \mat{\theta}$ is a combination of the likelihood and and prior terms.
+Because all terms on the right hand side are known, this posterior can be evaluated, yielding a combination of modeling assumptions and observations.
+If a closed form solution cannot be found, Bayesian inference is often implemented using approximation techniques such as sampling or variational approaches~\parencite{bishop_christoph_pattern_2007}.
+
+Having found a posterior $\Prob{\mat{\hat{\theta}}} = \Prob*{\mat{\theta} \given \Dc}$, Bayesian predictions for previously unseen points can be made by replacing $\Prob*{\mat{\theta}}$ with $\Prob{\mat{\hat{\theta}}}$ in the graphical model.
+In the regression case, this predictive posterior is given by
+\begin{align}
+\begin{split}
+    \Prob*{\mat{y}_\ast \given \mat{x}_\ast} = \int \Prob*{\mat{y}_\ast \given \mat{f}_\ast} \Prob{\mat{f}_\ast \given \mat{x}_\ast, \mat{\hat{\theta}}} \Prob{\mat{\hat{\theta}}} \diff \mat{f}_\ast \diff \mat{\hat{\theta}}.
+\end{split}
+\end{align}
+Because Bayesian linear regression is a parametric model and we assumed that $\mat{\theta}$ is a sufficient statistic for $\mat{f}$, predictions can be made independently of the training data in this case.
+
+In~\cref{toc:bayesian_ml:statistical_learning} we argued that considering finitely many observations instead of the full data distribution can lead to overfitting.
+An overfitted model explains the observed data well but might have high risk for unseen parts of the data distribution.
+The empirical risk minimization learning algorithm can be subject to overfitting because the algorithm selects a single model from the hypothesis space that explains the data well.
+Bayesian inference is fundamentally different:
+A Bayesian posterior $\Prob*{f \given \Dc}$ for a functional of interest $f$ is a distribution over hypotheses rather than one single candidate.
+This distribution can be thought of as a subset of hypotheses weighed by how well the different hypotheses explain the data.
+Instead of a selecting a good candidate, a Bayesian inference step can be thought of removing all bad candidates from a hypothesis space.
+As a consequence, a Bayesian posterior contains both the models in the original hypothesis space that overfit to the observations as well as more desireable models with similar data likelihoods.
+Their relative weights in the posterior are dependent on the prior assumptions formulated via the structure of the generative model and the prior $\Prob{\mat{\theta}}$.
+
+
+\subsubsection{Bayesian model selection}
 \begin{figure}[t]
     \begin{subfigure}[b]{\halffigurewidth}
         \centering
@@ -700,16 +755,6 @@ Having formulated structural assumptions about how a data set has been generated
     }
 \end{figure}
 \begin{itemize}
-    \item A generative model is too powerful, since we only care about the functional. We want to learn about a specific part of the graphical model. That's inference.
-    \item Return to linear regression example and formulate Bayesian linear regression with a Gaussian likelihood.
-    \item With Bayes' rule, a structurally simple \emph{learning algorithm} can be formulated where the complexity is in the hypothesis space (prior) and loss function (likelihood). No optimization needed at first glance.
-    \item Introduce prior, likelihood and posterior. They are structurally very similar!
-    \item What is the $\Prob*{\mat{\theta}}$ all about though? Choices of prior are important, conjugacy is convenient for structural reasons.
-    \item What does it mean to learn now? We need to combine our assumptions with data. The standard way is to consider the marginal likelihood.
-\end{itemize}
-
-\subsubsection{Bayesian uncertainties}
-\begin{itemize}
     \item Where do Priors come from?
     \item We have formulated everything in probability land because it was convenient. At the same time, there is a great philosophical interpretation!
     \item We do not want to get into it too much, but we interpret uncertainties as missing knowledge
@@ -724,7 +769,9 @@ Having formulated structural assumptions about how a data set has been generated
 \todo[inline]{Is it finished yet?}
 
 \begin{itemize}
-    \item Discuss the differences between Web ML and Industrial ML
+    \item We consider hierarchical problems
+    \item Technically, we're interested in formulating relaxed but informative priors
+    \item We want to understand what makes a hierarchical model good and argue that the marginal likelihood is not quite enough.
     \item Industrial ML motivates our thesis, where we want to formulate models that are inherently interpretable and trustworthy
     \item It will turn out that in this space, judging whether a model is good is actually very tricky.
 \end{itemize}

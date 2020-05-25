@@ -734,19 +734,19 @@ Their relative weights in the posterior are dependent on the prior assumptions f
 \begin{figure}[t]
     \begin{subfigure}[b]{\halffigurewidth}
         \centering
-        \includestandalonewithpath{figures/polynoms_bayes_narrow}
+        \includestandalonewithpath{figures/polynoms_bayes_broad}
         \caption{
-            Narrow uncertainties
-            \label{fig:bayesian_ml:polynoms:bayes_narrow}
+            Broad uncertainties
+            \label{fig:bayesian_ml:polynoms:bayes_broad}
         }
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{\halffigurewidth}
         \centering
-        \includestandalonewithpath{figures/polynoms_bayes_broad}
+        \includestandalonewithpath{figures/polynoms_bayes_narrow}
         \caption{
-            Broad uncertainties
-            \label{fig:bayesian_ml:polynoms:bayes_broad}
+            Narrow uncertainties
+            \label{fig:bayesian_ml:polynoms:bayes_narrow}
         }
     \end{subfigure}
     \caption[ML Interpolation]{
@@ -754,16 +754,44 @@ Their relative weights in the posterior are dependent on the prior assumptions f
         \label{fig:bayesian_ml:polynoms:bayes}
     }
 \end{figure}
-\begin{itemize}
-    \item Where do Priors come from?
-    \item We have formulated everything in probability land because it was convenient. At the same time, there is a great philosophical interpretation!
-    \item We do not want to get into it too much, but we interpret uncertainties as missing knowledge
-    \item The cool thing about generative models is that it allows us to formulate hierarchical knowledge
-    \item In statistics, hierarchical knowledge is often quite rigid and in ML, it is quite uninformed
-    \item This thesis is about something in the middle: We want to choose hierarchies which are flexible but are constrained enough to be sensible.
-    \item Priors are comparable to regularization. Posteriors heavily depend on prior choices (and rightfully so!), uncertainties are highly subjective.
-    \item How do we reason about what good uncertainties are? Especially with hierarchies?
-\end{itemize}
+Statements about Bayesian models are made in terms of probabilities, including predictive posteriors for new inputs $\Prob*{\mat{y}_\ast \given \mat{x}_\ast, \Dc}$ in a regression problem or a posterior distributions $\Prob*{\mat{\theta} \given \Dc}$ for a parameter.
+This distribution of predictions or parameters can be interpreted as uncertainty due do insufficient knowledge about the generative process.
+A Bayesian posterior is derived as the combination of prior knowledge and the data
+Since a Bayesian posterior is the combination of the data likelihood and prior assumptions, posterior uncertainties are not objective but depend on prior assumptions.
+
+\Cref{fig:bayesian_ml:polynoms:bayes} shows two predictive posteriors for a Bayesian linear regression on the data introduced in~\cref{fig:bayesian_ml:polynoms:data} using the graphical model in~\cref{eq:bayesian_ml:parametric}.
+Both linear regression are based on the same observations but differ in the prior assumptions about $\mat{\theta} = (\mat{W}, \mat{b})$.
+Choosing a broad prior $\mat{W}, \mat{b} \sim \Gaussian{0, 5^2}$ results in higher posterior uncertainties about both $\mat{W}$ and $\mat{b}$ than choosing a more narrow prior $\mat{W}, \mat{b} \sim \Gaussian{1, 1^2}$.
+Samples drawn from the posterior show why this is the case:
+A broader prior contains linear functions with steep slopes that could explain the data but are never considered by the narrow prior.
+Not considering these functions might be desired behavior if implied by expert knowledge.
+This situation of of having to choose a model from a set of plausible models is a model selection problem.
+
+In principle, model selection is not necessary in Bayesian machine learning.
+Because the result of inference is a distribution over models weighed by their plausibility, model selection is already included in a Bayesian posterior.
+However, this is only true for model components which receive a Bayesian treatment by calculating a posterior.
+No prior is typically placed on the structure of the graphical model itself or the parametric forms of its components, such as the linearity assumption in Bayesian linear regression.
+For a fully Bayesian treatments, priors would also have to be placed on priors, forming hyper-priors.
+Because such a fully Bayesian treatment is generally computationally intractable, certain parameters or structural assumptions are typically  fixed to one specific instantiation, a point estimate.
+Introducing point estimates also introduces a model selection problem.
+
+Many strategies exist for Bayesian model selection~\parencite{andrew_gelman_bayesian_2013,murphy_machine_2012,david_barber_bayesian_2012} which are not discussed in detail here.
+Most strategies are related to the ideas of empirical risk minimization and consider a performance measure on the observed data.
+Given two hypotheses $H_1$ and $H_2$, it is common to compare the marginal likelihoods $\Prob*{\Dc \given H_1}$ and $\Prob*{\Dc \given H_2}$ where $\Prob*{\Dc \given H} = \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{x}_n, H}$.
+Choosing the $H_i$ with higher marginal likelihood is called a maximum likelihood estimation.
+Observing that
+\begin{align}
+\begin{split}
+    \frac{\Prob*{H_1 \given \Dc}}{\Prob*{H_2 \given \Dc}} = \frac{\Prob*{\Dc \given H_1}}{\Prob*{\Dc \given H_2}} \frac{\Prob*{H_1}}{\Prob*{H_2}},
+\end{split}
+\end{align}
+a common extension to maximum likelihood estimation is to also consider how well the hypotheses conform to prior assumption through the prior odds $\sfrac{\Prob*{H_1}}{\Prob*{H_2}}$.
+
+While strategies based on marginal likelihoods often work well in practice, they are limited in scope.
+Since marginal distributions are considered, models are not evaluated with respect to the latent components in the generative model such as the shape of $\Prob*{\mat{f}}$ in Bayesian linear regression.
+Selecting models using maximum likelihood approaches enforces good predictive uncertainties around the observations in $\Dc$.
+No requirements are enforced concerning uncertainties away from the data, the shape of single samples drawn from the model or uncertainties in the latent part of the generative model.\todo{We care about that in this thesis though...}
+
 
 \section{Thesis outline}
 \todo[inline]{Is it finished yet?}

@@ -10,8 +10,8 @@ keras-dgp = {git = "ssh://git@code.siemens.com/markus.kaiser/keras-dgp.git"}
 python = "~3.7"
 scikit-learn = "^0.22.2"
 seaborn = "^0.10.0"
-tensorflow = {version = "~2.2.0-rc", allow-prereleases = true}
-tfp_nightly = {version = "~0.10.0-dev", allow-prereleases = true}
+tensorflow = "^2.2.0"
+tensorflow-probability = "^0.10.0"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"

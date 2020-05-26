@@ -1,0 +1,31 @@
+\documentclass{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \def\datapath{\figurepath/data/notebooks/20_arccos_kernel}
+    \pgfplotsset{restrict/.style = {
+                % each nth point=10,
+                restrict x to domain=-2.01:2.01,
+            }}
+    \begin{axis} [
+            prior plot,
+        ]
+        %\addplot[restrict, first, std, name path=plus] table[numpy, x=X, y expr=\thisrow{mean} + \thisrow{std}] {\datapath/arc_cos_order_1.dat};
+        %\addplot[restrict, first, std, name path=minus] table[numpy, x=X, y expr=\thisrow{mean} - \thisrow{std}] {\datapath/arc_cos_order_1.dat};
+        \addplot[restrict, first, std, name path=plus] table[numpy, x=X, y expr=\thisrow{std}] {\datapath/arc_cos_order_1.dat};
+        \addplot[restrict, first, std, name path=minus] table[numpy, x=X, y expr=- \thisrow{std}] {\datapath/arc_cos_order_1.dat};
+        \addplot[restrict, first fill] fill between[of=minus and plus];
+        % \addplot[restrict, first, mean] table[numpy, x=X, y=mean] {\datapath/arc_cos_order_1.dat} node[right] {$\mu_f$};
+        \addplot[first, mean, domain=-2:2] {0} node[right] {$\mu_f$};
+
+        \addplot[restrict, sample, second] table[numpy, x=X, y=sample_0] {\datapath/arc_cos_order_1.dat};
+        \addplot[restrict, sample, third] table[numpy, x=X, y=sample_1] {\datapath/arc_cos_order_1.dat};
+        \addplot[restrict, sample, fourth] table[numpy, x=X, y=sample_6] {\datapath/arc_cos_order_1.dat};
+    \end{axis}
+\end{tikzpicture}
+\end{document}

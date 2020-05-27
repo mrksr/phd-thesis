@@ -33,7 +33,69 @@ This section introduces Gaussian processes and describes how to encode a prior d
 Based on observed data, GPs can be used make predictions about the predictive distribution $\Prob{y_\ast \given \mat{x_\ast}, f^\ast}$ taking all functions in the distribution $\Prob{f^\ast}$ into account.
 Since these predictions are not computationally cheap, an extension of Gaussian processes for large data sets, sparse Gaussian processes using pseudo-inputs \cite{snelson_sparse_2005}, is reviewed last.
 
-\section{Definition}
+\section{Gaussian identities}
+\todo[inline]{No woodbury?}
+Let $\mat{A} \in \Rb^{N \times N}$, $\mat{U} \in \Rb^{N \times K}$, $\mat{B} \in \Rb^{K \times K}$ and $\mat{V} \in \Rb^{K \times N}$ with invertible $\mat{A}$ and $\mat{B}$. Then the identity
+\begin{align}
+    \label{eq:matrix_inversion_lemma}
+    \big(\mat{A} - \mat{U}\mat{B}\mat{V}\big)\inv
+    &= \mat{A}\inv - \mat{A}\inv\mat{U}\big(\mat{B}\inv + \mat{V}\mat{A}\inv\mat{U}\big)\inv \mat{V}\mat{A}\inv
+\end{align}
+is called the matrix inversion lemma or Woodbury identity~\parencite{petersen_matrix_2008,higham_accuracy_2002}.
+
+The density of $\mat{x} \sim \Gaussian{\mat{\mu}, \mat{\Sigma}}$ is
+\begin{align}
+\begin{split}
+    \label{eq:gaussian_pdf}
+    \Prob*{\mat{x}}
+    &= \Gaussian{\mat{x} \given \mat{\mu}, \mat{\Sigma}} \\
+    &= \frac{1}{\sqrt{\det(2\pi\mat{\Sigma})}}\Fun*{\exp}{-\frac{1}{2}(\mat{x} - \mat{\mu})\tran \mat{\Sigma}\inv (\mat{x} - \mat{\mu})}
+\end{split}
+\end{align}
+
+Assume
+\begin{align}
+\begin{split}
+\begin{pmatrix}
+    \mat{x}_1 \\
+    \mat{x}_2
+\end{pmatrix}
+\sim \Gaussian*{
+    \begin{pmatrix}
+        \mat{\mu}_1 \\
+        \mat{\mu}_2
+    \end{pmatrix},
+    \begin{pmatrix}
+        \mat{\Sigma}_{11} & \mat{\Sigma}_{12} \\
+        \mat{\Sigma}_{21} & \mat{\Sigma}_{22}
+    \end{pmatrix}
+}
+\end{split}
+\end{align}
+then the marginal distribution is a Gaussian with
+\begin{align}
+    \label{eq:gaussian_marginal}
+    \Prob*{\mat{x}_1}
+    &= \int \Prob*{\mat{x}_1, \mat{x}_2} \diff \mat{x}_2 \\
+    &= \Gaussian{\mat{\mu}_1, \mat{\Sigma}_1}
+\end{align}
+and the conditional is a Gaussian as well with
+\begin{align}
+\begin{split}
+    \label{eq:gaussian_conditional}
+    \Prob*{\mat{x}_1 \given \mat{x}_2}
+    &= \frac{\Prob*{\mat{x}_1, \mat{x}_2}}{\Prob*{\mat{x}_2}} \\
+    &= \Gaussian{\hat{\mat{\mu}}, \hat{\mat{\Sigma}}}\text{, with} \\[\smallskipamount]
+    \hat{\mat{\mu}}
+    &= \mat{\mu}_1 + \mat{\Sigma}_{12}\mat{\Sigma}\inv_{22} (\mat{x}_2 - \mat{\mu}_2) \\[\smallskipamount]
+    \hat{\mat{\Sigma}}
+    &= \mat{\Sigma}_{11} - \mat{\Sigma}_{21} \mat{\Sigma}\inv_{22} \mat{\Sigma}_{12} \\
+    &= \mat{\Sigma}_{11} - \mat{\Sigma}\tran_{12} \mat{\Sigma}\inv_{22} \mat{\Sigma}_{12}
+\end{split}
+\end{align}
+
+
+\section{Gaussian processes}
 \begin{figure}[t]
     \centering
     \begin{tikzpicture}[x=4em, y=5em]

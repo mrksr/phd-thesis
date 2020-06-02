@@ -12,8 +12,8 @@ Comparing our model to NFQ and BNN+LV, we show how our approach yields human-int
 Machine learning methods \parencite{shalev-shwartz_understanding_2014} are designed to solve tasks where the underlying system we want to model is only partly known or understood.
 The hope when using machine learning methods is that we can reduce this uncertainty by exploiting statistical patterns in data generated from the underlying system.
 
-Reinforcement learning (RL)~\parencite{sutton_reinforcement_2018} is a machine learning paradigm designed to learn in a dynamic environment where we can specify a goal or have a notion of what a desirable behaviour is.
-The goal of RL is to learn a policy which dynamically chooses actions in the environment in order to achieve a goal or a behaviour.
+Reinforcement learning (RL)~\parencite{sutton_reinforcement_2018} is a machine learning paradigm designed to learn in a dynamic environment where we can specify a goal or have a notion of what a desirable behavior is.
+The goal of RL is to learn a policy which dynamically chooses actions in the environment in order to achieve a goal or a behavior.
 Specifically, an RL agent's task is to learn a policy $\pi$ which, given the current state $\mat{s}$ of an environment, chooses an action $\mat{a}$ to achieve the goal specified by a reward function $r$ mapping system states to numerical rewards.
 To learn a policy, any RL system needs to understand the underlying dynamics governing the system, how the transition between states is effected by the actions taken.
 The next state $\mat{s}^\prime$ is determined by the latent and possibly stochastic transition function $\mat{s}^\prime = \Fun*{f}{\mat{s}, \mat{a}}$.
@@ -147,7 +147,7 @@ We discuss both steps in the following.
     \caption{
         \label{fig:interpretable_rl:graphical_model:mdgp}
         The graphical model for the DAGP-based transition model, where violet nodes are observed and variational parameters are blue.
-        This model separates the flow-behaviour of the river $\mat{f}_t$, the heteroscedastic noise process $\mat{\sigma}_t$ and the possibility of falling down $\mat{\lambda}_t$.
+        This model separates the flow-behavior of the river $\mat{f}_t$, the heteroscedastic noise process $\mat{\sigma}_t$ and the possibility of falling down $\mat{\lambda}_t$.
         Latent variables $\mat{l}_t$ represent the belief that the $\nth{t}$ data point is a drop event.
     }
 \end{figure}
@@ -156,7 +156,7 @@ Importantly, we do not formulate a specific parametric dynamics model as would b
 Instead, we make assumptions on a level typically available from domain experts.
 
 We encode that given a pair of current state and action $\mat{\hat{s}}_t = \left( \mat{s}_t, \mat{a}_t \right)$, the next state $\mat{s}_{t+1}$ is generated via the combination of three things:
-the deterministic flow-behaviour of the river $\mat{f}_t$, some heteroscedastic noise process $\mat{\sigma}_t$ and the possibility of falling down $\mat{\lambda}_t$.
+the deterministic flow-behavior of the river $\mat{f}_t$, some heteroscedastic noise process $\mat{\sigma}_t$ and the possibility of falling down $\mat{\lambda}_t$.
 This prior imposes structure which allows us to explicitly state what we want to learn from the data and where we do not assume prior knowledge:
 How does the river flow?
 What kind of turbulences exist?
@@ -315,7 +315,7 @@ Importantly, we only need a small number of Monte Carlo samples at every iterati
     \caption{
         \label{fig:interpretable_rl:wetchicken:dynamics}
         The separation of different aspects of the Wet-Chicken in DAGP-based transition models benchmark yields new and interpretable information about the underlying dynamics.
-        The different parts of the model explicitly show flow speeds (\cref{fig:interpretable_rl:wetchicken:speed}), turbulence (\cref{fig:interpretable_rl:wetchicken:hetero}), drop behaviour (\cref{fig:interpretable_reinforcement_learning:wetchicken:drop}) and drop probabilities (\cref{fig:interpretable_reinforcement_learning:wetchicken:falldown}) with respect to the current position in the river and action $a = 0$.
+        The different parts of the model explicitly show flow speeds (\cref{fig:interpretable_rl:wetchicken:speed}), turbulence (\cref{fig:interpretable_rl:wetchicken:hetero}), drop behavior (\cref{fig:interpretable_reinforcement_learning:wetchicken:drop}) and drop probabilities (\cref{fig:interpretable_reinforcement_learning:wetchicken:falldown}) with respect to the current position in the river and action $a = 0$.
         The model has learned that the river is turbulent on the left and fast on the right, leading to consistent medium drop probabilities on the left due to stochasticity and a sharp boundary on the right, where the flow speed dominates.
         Note that a drop resets the position to the initial state irrespective of the current state.
         It is therefore correctly learned to be represented by the constant zero function (\cref{fig:interpretable_rl:wetchicken:drop}).
@@ -332,7 +332,7 @@ Importantly, we only need a small number of Monte Carlo samples at every iterati
         \label{fig:interpretable_rl:wetchicken:cut}
         Linear cuts through the DAGP-based transition model with the waterfall on the right at $x_t = 5$.
         The plots show the dependency between $x_t$ and $x_{t+1}$ with respect to the action $a_t = 0$ and, from top to bottom, $y_t \in \Set{0, 1, 2.5, 4, 5}$.
-        The DAGP-based transition model successfully separates the two modes introduced through flow (blue) and drop (green) behaviours and predicts the probability of being assigned to the drop mode (violet).
+        The DAGP-based transition model successfully separates the two modes introduced through flow (blue) and drop (green) behaviors and predicts the probability of being assigned to the drop mode (violet).
         While drops can be modelled using a constant noiseless function, the flow speed (gradient and bias) and heteroscedastic noise (variance) varies in the different cuts.
         For low $y_t$, the river flows slowly but is very turbulent, while for high $y_t$, the river flows fast but deterministically.
     }
@@ -349,8 +349,8 @@ The benchmark has two-dimensional state and action spaces from which we sample u
 For $N \geq 250$, our model is able to identify the underlying dynamics.
 In \cref{fig:interpretable_rl:wetchicken:cut} we show the joint predictive posterior of a DAGP-based transition model.
 The different plots show linear cuts through the Wet-Chicken system with respect to the action $a_t = 0$ and $y_t \in \Set{0, 1, 2.5, 4, 5}$.
-The transition model has successfully identified the two modes introduced through flow and drop behaviours and their relative importance.
-These cuts require additional examination to recover new knowledge about the system's behaviour.
+The transition model has successfully identified the two modes introduced through flow and drop behaviors and their relative importance.
+These cuts require additional examination to recover new knowledge about the system's behavior.
 In contrast, the separation of the learning problem in the DAGP-based dynamics model gives us explicit and separate posteriors about the different system components via the independent GP posteriors shown in \cref{fig:interpretable_rl:wetchicken:dynamics}.
 This belief can directly be reasoned about with experts to evaluate the environment in which policies will be trained, raising confidence in their correctness.
 
@@ -498,7 +498,7 @@ In this example, we want to find a more conservative policy which, when compared
 
 Any successful agent has the implicit incentive to avoid drops as they move the canoeist away from the waterfall.
 However, a successful policy still accepts that it will fall down sometimes due to turbulence.
-To encourage more conservative behaviour, we use a conservative reward
+To encourage more conservative behavior, we use a conservative reward
 \begin{align}
     \Fun*{r_\text{cons}}{\mat{s}} =
     \Fun*{r_\text{orig}}{\mat{s}} \cdot \left(1 - \Prob{\text{drop} \given \mat{s}}\right)
@@ -513,7 +513,7 @@ Such a policy avoids both the turbulent states on the left and the fast flowing 
 It tries to reach a sweet spot, which, compared to \cref{fig:interpretable_rl:wetchicken:policy}, is further away from the waterfall and therefore safer.
 We compare 10 runs with $N=1000$ observations using the original reward and the conservative reward.
 The resulting conservative policies yield lower return than the more aggressive default policies but reliably reduce drop probabilities as well.
-The interpretable nature of the dynamics models have allowed us to easily influence policy behaviours.
+The interpretable nature of the dynamics models have allowed us to easily influence policy behaviors.
 
 
 \subsubsection{Effects of Model Misspecification}
@@ -572,7 +572,7 @@ The interpretable nature of the dynamics models have allowed us to easily influe
         \label{fig:interpretable_rl:wetchicken:cut_comparison}
         Comparison of linear cuts through two DAGP-based transition models with $K=4$ at $y_t = 5$ and $a_t=0$.
         The respective upper plots show the predictive posterior of the different modes while the lower plots show assignment probabilities to the different modes.
-        For both models, one mode (green, dotted) model drops and two modes (blue and yellow, dashed) represent flow behaviour.
+        For both models, one mode (green, dotted) model drops and two modes (blue and yellow, dashed) represent flow behavior.
         A third more uninformed mode (violet) is almost irrelevant in the first model but explains some data through a high noise variance in the second model.
         A significant amount of predictions from the second model are uninformed, leading to the failure of the policy search.
     }
@@ -590,11 +590,11 @@ Most notably, performance fluctuates significantly with misspecified models for 
 
 Using the additional modes available, the model can now find representations of the systems where multiple modes jointly represent the river's flow.
 This showcases how data association problems are inherently ill-posed in general~\parencite{barshalom_tracking_1990,cox_review_1993}.
-The additional representative power for $K>2$ introduces symmetries in the optimization landscape which both significantly complicate training~\parencite{lazaro-gredilla_overlapping_2012,minka_expectation_2001} and lead to undesired generalization behaviour which is not driven by knowledge about the underlying system.
+The additional representative power for $K>2$ introduces symmetries in the optimization landscape which both significantly complicate training~\parencite{lazaro-gredilla_overlapping_2012,minka_expectation_2001} and lead to undesired generalization behavior which is not driven by knowledge about the underlying system.
 
 An example for undesired generalization is shown in \cref{fig:interpretable_rl:wetchicken:cut_comparison} which compares two models trained with $K=4$ and $N=2500$.
 While both models explain the overall training data well, the cuts through the system at $y_t = 5$ give an intuition why the first model leads to a successful policy, while the second model does not.
-Both models represent drops via one of the modes and share the remaining three modes to jointly explain the flow behaviour.
+Both models represent drops via one of the modes and share the remaining three modes to jointly explain the flow behavior.
 In the first model, two alternating modes have learned essentially equivalent models and a third more uninformed mode is almost irrelevant.
 The second model is similar, but the uninformed mode's model is closer to the RBF prior and more relevant.
 Note that due to the high noise variance, this choice of model still explains the data only slightly worse.
@@ -602,7 +602,7 @@ Still, the second model does not generalize according to the underlying system.
 A significant amount of predictions from the second model are uninformed, leading to the failure of the policy search.
 
 Significantly longer training or specialized optimization schemes may lead to robust inference for $K>2$.
-However, this experiment shows the significance of encoding available abstract prior knowledge to avoid pathologic model behaviours.
+However, this experiment shows the significance of encoding available abstract prior knowledge to avoid pathologic model behaviors.
 Models for $K=2$ both reliably identify the system using standard optimization methods and yield immediately interpretable results.
 
 
@@ -612,7 +612,7 @@ In this paper we have presented a Bayesian reinforcement learning model-based on
 The model is motivated by the observation that in real world scenarios high-level prior knowledge of the system dynamics is often available.
 We believe that many tasks are characterised by dynamics that can be decomposed into several attributes.
 For example, when a physical structure is excited by a force oscillating at its natural frequency its response will change drastically.
-The approach we have presented is based on learning a modular dynamic model which decomposes this type of transitional behaviour into separate components.
+The approach we have presented is based on learning a modular dynamic model which decomposes this type of transitional behavior into separate components.
 The model learns both the individual components and the underlying structure of how the components interact within the system.
 The use of Gaussian process priors to quantify the uncertainty within components allows us to perform probabilistic policy search.
 

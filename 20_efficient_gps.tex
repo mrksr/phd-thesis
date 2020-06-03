@@ -414,78 +414,68 @@ Note that the posterior mean function is not necessarily the constant zero funct
 
 Computing the inverse $\left(\mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye \right)\inv$ takes $\Oh(N^3)$ time but can be done as a preprocessing step since it is independent of the test points.
 Predicting the mean function value of a single test point is a weighted sum of $N$ basis functions $\mu_\ast = \mat{K_{\ast \mat{f}}} \mat{\beta}$ where $\mat{\beta} = \left(\mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye \right)\inv \mat{y}$ which can be precomputed.
-After this precomputation, predicting the mean of a single test point takes $\Oh(N)$ time.
+After this pre-computation, predicting the mean of a single test point takes $\Oh(N)$ time.
 To predict the variance, it is still necessary to perform a vector-matrix multiplication which takes $\Oh(N^2)$ time for a single prediction.
 Since all of these operations are dependent on the number of training points, evaluating Gaussian processes on large data sets can be computationally expensive.
 Before introducing sparse approximations with better asymptotic complexity, we first consider how to choose good values for the hyper-parameters $\mat{\theta}$.
 
 \subsubsection{Choosing hyper-parameters}
-In the previous section, the hyper-parameters $\mat{\theta}$ were assumed to be known and constant, that is, the prior assumptions about the function to be estimated were fixed.
-In this case, Gaussian processes do not have a training stage, since any test point can be predicted according to the predictive posterior.
+In the previous section we derived the posterior GP given constant hyper-parameters $\mat{\theta}$.
+In this case, Gaussian processes models do not have to be trained or optimized at all as the posterior GP can be computed analytically.
 Usually however, the correct choice of hyper-parameters is not clear a priori.
-A major advantage of Gaussian processes is the ability to select hyper-parameters from training data directly instead of requiring a scheme such as cross validation.
-
-In a fully Bayesian setup, the correct way to model uncertainty about hyper-parameters is to assign them a prior $\Prob{\mat{\theta}}$ and marginalize it to derive the dependent distributions
-\begin{align}
-    \Prob{f}                      & = \int \Prob{f \given \mat{\theta}} \Prob{\mat{\theta}} \diff \mat{\theta}                                                           \\
-    \Prob{\mat{y} \given \mat{X}} & = \int \Prob{\mat{y} \given \mat{X}, \mat{\theta}} \Prob{\mat{\theta}} \diff \mat{\theta}. \label{eq:gp:theta_posterior_integration}
-\end{align}
-Updating the belief about the distribution of the hyper-parameters then becomes part of the process of obtaining a posterior model.
-A new distribution is obtained by combining the prior with the likelihood of the training data observed using Bayes' theorem:
+In a fully Bayesian setup we place a prior on the hyper-parameters $\Prob{\mat{\theta}}$ and marginalize it to derive the dependent distributions
 \begin{align}
     \begin{split}
-        \Prob{\mat{\theta} \given \mat{X}, \mat{y}} &= \frac{\Prob{\mat{y} \given \mat{X}, \mat{\theta}} \Prob{\mat{\theta}}}{\Prob{\mat{y} \given \mat{X}}} \\
-        &= \frac{\Prob{\mat{y} \given \mat{X}, \mat{\theta}} \Prob{\mat{\theta}}}{\int \Prob{\mat{y} \given \mat{X}, \mat{\theta}} \Prob{\mat{\theta}} \diff \theta}
+        \label{eq:gp:theta_posterior_integration}
+        \Prob{f}
+        & = \int \Prob{f \given \mat{\theta}} \Prob{\mat{\theta}} \diff \mat{\theta}                                                           \\
+        \Prob{\mat{y} \given \mat{X}}
+        & = \int \Prob{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{X}, \mat{\theta}} \Prob{\mat{\theta}} \diff \mat{f} \diff \mat{\theta}.
     \end{split}
 \end{align}
-The integration required in \cref{eq:gp:theta_posterior_integration} is very hard in practice \cite{rasmussen_gaussian_2006}, since $\mat{y}$ is a complicated function of $\mat{\theta}$.
-Instead, a common approximation is to use a maximum-a-postiori (MAP) estimate of the correct hyper-parameters.
-This estimate is obtained by maximizing $\Prob{\mat{\theta} \given \mat{X}, \mat{y}}$ and does not require evaluation of the denominator since it is constant.
+Updating the belief about the distribution of the hyper-parameters then becomes part of calculating the posterior using Bayes' theorem.
+However, the integration required in \cref{eq:gp:theta_posterior_integration} is expensive as no closed form solution exists.
+While true posteriors can be obtained for GPs with few observations such as in Bayesian optimization or probabilistic numerics contexts~\parencite{shahriari_taking_2016,oates_modern_2019}, the required calculations are often not tractable for larger problems.
 
-For many choices of priors $\Prob{\mat{\theta}}$ this is still a hard problem.
-But assuming a flat prior which assigns almost equal probability to all choices of hyper-parameters, it holds that
+A common approximation is to use maximum-a-posteriori point-estimates instead.
+These estimates are obtained by maximizing $\Prob{\mat{\theta} \given \mat{X}, \mat{y}}$.
+This posterior is proportional to the numerator of Bayes' theorem and given by
 \begin{align}
     \begin{split}
-        \Prob{\mat{\theta} \mid \mat{X}, \mat{y}} &\propto \Prob{\mat{y} \given \mat{X}, \mat{\theta}} \\
-        &= \int \Prob{\mat{y} \given \mat{f}, \mat{\theta}} \Prob{\mat{f} \given \mat{X}, \mat{\theta}} \diff \mat{f},
+        \Prob{\mat{\theta} \given \mat{X}, \mat{y}}
+        &\propto \Prob*{\mat{\theta}} \Prob{\mat{y} \given \mat{X}, \mat{\theta}} \\
+        &= \int \Prob*{\mat{\theta}}\Prob{\mat{y} \given \mat{f}, \mat{\theta}} \Prob{\mat{f} \given \mat{X}, \mat{\theta}} \diff \mat{f}.
     \end{split}
 \end{align}
-that is, the posterior distribution is proportional to the likelihood term and can be obtained using a maximum likelihood estimate on the marginal likelihood after integrating out the function values $\mat{f}$.
-Optimizing this term is called a type II maximum likelihood estimate (ML-II).
+If $\Prob*{\mat{\theta}}$ is set to a flat distribution, the prior term vanishes and only the likelihood term remains.
+Choosing hyper-parameters by maximizing the likelihood term is called a type II maximum likelihood estimate.
 
-The marginal likelihood is an integral over a product of Gaussians obtained from the noise model and the distribution of function values according to the Gaussian process definition.
-It is given by
+The marginal likelihood is the integral of the product of Gaussians in~\cref{eq:gp:gp_marginal_likelihood} given by
 \begin{align}
     \begin{split}
-        \label{eq:gp:gp_f_marginalization}
-        \Prob{\mat{y} \mid \mat{X}, \mat{\theta}} &= \int \Prob{\mat{y} \given \mat{f}, \mat{\theta}} \Prob{\mat{f} \given \mat{\theta}} \diff \mat{f} \\
-        &= \int \Gaussian{\mat{y} \given \mat{f}, \sigma_n^2 \Eye} \cdot \Gaussian{\mat{f} \given \mat{0}, \mat{K_N}} \diff \mat{f} \\
-        &= \Gaussian{\mat{y} \given \mat{0}, \mat{K_N} + \sigma_n^2 \Eye}
+        \Prob{\mat{y} \given \mat{X}, \mat{\theta}}
+        &= \Gaussian{\mat{y} \given \mat{0}, \mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye}.
     \end{split}
 \end{align}
-The solution of this integral is a Gaussian density function \cite{petersen_matrix_2008}.
-For practical reasons, it is convenient to minimize the negative logarithm of the likelihood which is given by
+Instead of maximizing the marginal likelihood directly, it is numerically convenient to minimize the negative logarithm of the likelihood
 \begin{align}
     \begin{split}
         \Lc(\mat{\theta}) &= -\log\Prob{\mat{y} \given \mat{X}, \mat{\theta}} \\
-        &= \frac{1}{2} \mat{y}\tran \left( \mat{K_N} + \sigma_n^2 \Eye \right)^{-1} \mat{y} +
-        \frac{1}{2} \log \abs{\mat{K_N} + \sigma_n^2 \Eye} +
+        &=
+        \frac{1}{2} \mat{y}\tran \left( \mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye \right)\inv \mat{y} +
+        \frac{1}{2} \log \abs*{\mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye} +
         \frac{N}{2} \log(2\pi).
     \end{split}
 \end{align}
-The estimation of hyper-parameters is the solution of the optimization problem
+Since the logarithm is a monotonous function it does not change the position of optima.
+The maximum likelihood estimate is the solution of the optimization problem
 \begin{align}
     \mat{\theta}^\ast & \in \argmin_{\mat{\theta}} \Lc(\mat{\theta})
 \end{align}
-and is calculated using standard approaches to non-convex optimization such as scaled conjugate gradient (SCD) techniques, since finding the derivatives of $\Lc$ is comparatively easy \cite{rasmussen_gaussian_2006}.
-The computational complexity of evaluating the likelihood term and its derivatives is dominated by the inversion of $\mat{K_N} + \sigma_n^2 \Eye$.
+and is calculated using standard approaches to non-convex optimization.
+The computational complexity of evaluating the likelihood term and its derivatives is dominated by the inversion of $\mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye$ with a time complexity of $\Oh(N^3)$.
 
-Since this optimization scheme does not choose parameters of the function approximation directly but rather changes a small number of broad and high-level assumptions about it, overfitting does not tend to be a problem for Gaussian processes in general \cite{snelson_flexible_2007}.
-The sparse approximation of Gaussian processes presented in the next section chooses a small number of points in the input space to represent a large training set.
-The positions of these input points can be interpreted as hyper-parameters to the original Gaussian process and induce a kernel function with many hyper-parameters, where overfitting can become relevant.
-
-
-\section{Sparse Approximations using Inducing Inputs}
+\section{Sparse approximations using inducing observations}
 A major drawback of Gaussian processes in real-world applications is their high computational cost for large data sets.
 Assume a data set $(\mat{X}, \mat{y})$ with $N$ training samples, then the operations on a posterior Gaussian process are usually dominated by the inversion of the kernel matrix $\mat{K_N}$ which takes $\Oh(N^3)$ time.
 While this is only a preprocessing step, the cost of predicting the mean and variance of one test point remains $\Oh(N)$ and $\Oh(N^2)$ respectively.

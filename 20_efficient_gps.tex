@@ -12,7 +12,7 @@ Since GPs defined on many observations are computationally expensive, sparse app
 We will discuss one class of sparse approximations based on inducing observations and introduce approaches based on variational inference.
 
 \section{Gaussian processes}
-Gaussian processes are a generalization of the Gaussian distribution to function spaces.
+% Gaussian processes are a generalization of the Gaussian distribution to function spaces.
 A multivariate Gaussian $\mat{x} \sim \Gaussian{\mat{\mu}, \mat{\Sigma}}$ describes a distribution over the finitely many elements in the vector $\mat{x}$.
 Every such element $\rv{x}_i$ is normally distributed according to $\rv{x}_i \sim \Gaussian{\mu_i, \Sigma_{ii}}$ and every linear combination of the $\mat{x}_i$ is also normally distributed~\parencite{astrom_introduction_1971}.
 For every pair $(\rv{x}_i, \rv{x}_j)$, their covariance is given by $\Moment{\cov}{\rv{x}_i, \rv{x}_j} = \mat{\Sigma}_{ij}$.
@@ -531,12 +531,12 @@ Since the inducing variables $\mat{u}$ are latent function values, the original 
 \end{align}
 Using this prior, the inducing variables can be marginalized through an integral of a product of Gaussians in
 \begin{align}
-\begin{split}
-    \Prob*{\mat{y} \given \mat{X}, \mat{Z}}
-    &= \int \Prob*{\mat{y} \given \mat{X}, \mat{Z}, \mat{u}} \Prob*{\mat{u} \given \mat{Z}} \diff \mat{u} \\
-    &= \int \Prob*{\mat{y} \given \mat{X}, \mat{Z}, \mat{u}} \Gaussian{\mat{u} \given \mat{0}, \mat{K}_{\mat{u}\mat{u}}} \diff \mat{u} \\
-    &= \Gaussian{\mat{y} \given \mat{0}, \mat{Q}_{\mat{f}\mat{f}} + \Fun{\diag}{\mat{K}_{\mat{f}\mat{f}} - \mat{Q}_{\mat{f}\mat{f}}}},
-\end{split}
+    \begin{split}
+        \Prob*{\mat{y} \given \mat{X}, \mat{Z}}
+        &= \int \Prob*{\mat{y} \given \mat{X}, \mat{Z}, \mat{u}} \Prob*{\mat{u} \given \mat{Z}} \diff \mat{u} \\
+        &= \int \Prob*{\mat{y} \given \mat{X}, \mat{Z}, \mat{u}} \Gaussian{\mat{u} \given \mat{0}, \mat{K}_{\mat{u}\mat{u}}} \diff \mat{u} \\
+        &= \Gaussian{\mat{y} \given \mat{0}, \mat{Q}_{\mat{f}\mat{f}} + \Fun{\diag}{\mat{K}_{\mat{f}\mat{f}} - \mat{Q}_{\mat{f}\mat{f}}}},
+    \end{split}
 \end{align}
 dropping the conditioning on $\mat{\theta}$ for notational simplicity.
 Due to the conditional independence assumption of the data given the inducing variables, this formulation is called the fully independent training conditional (FITC) and was originally introduced by \citeauthor{snelson_sparse_2005}~\parencite{snelson_sparse_2005,snelson_flexible_2007}.
@@ -680,3 +680,180 @@ To address these issues, a variational formulation of sparse GPs using inducing 
         \label{fig:gp:sparse_graphical_model}
     }
 \end{figure}
+
+Due to the consistency of GPs, the data and pseudo data are jointly Gaussian.
+\begin{align}
+    \Prob{\mat{f}, \mat{u}} & = \Gaussian*{\begin{pmatrix} \mat{f} \\ \mat{u}\end{pmatrix} \given \mat{0}, \begin{pmatrix} \mat{K_{ff}} & \mat{K_{fu}} \\ \mat{K_{uf}} & \mat{K_{uu}} \end{pmatrix}}
+\end{align}
+
+\begin{align}
+    \begin{split}
+        \Prob{\mat{y} \given \mat{u}}
+        & = \int \Prob{\mat{y} \given \mat{f}} \Prob{\mat{f} \given \mat{u}} \diff \mat{f} \\
+        & = \int \Gaussian*{\mat{y} \given \mat{f}, \sigma_n^2\Eye}
+        \Gaussian*{
+            \mat{f} \given
+            \mat{K_{fu}} \mat{K_{uu}}\inv \mat{u},
+            \mat{K_{ff}} - \mat{K_{fu}}\mat{K_{uu}}\inv \mat{K_{uf}}
+        } \diff \mat{f}                                                                     \\
+        & = \Gaussian*{
+            \mat{y} \given
+            \mat{K_{fu}}\mat{K_{uu}}\inv \mat{u},
+            \mat{K_{ff}} - \mat{K_{fu}}\mat{K_{uu}}\inv \mat{K_{uf}} + \sigma_n^2 \Eye
+        }                                                                                   \\
+        & = \Gaussian*{
+            \mat{y} \given
+            \mat{K_{fu}}\mat{K_{uu}}\inv \mat{u},
+            \mat{K_{ff}} - \mat{Q_{ff}} + \sigma_n^2 \Eye
+        }
+    \end{split}
+\end{align}
+
+\subsubsection{SGPR}
+We want a variational approximation to the original Gaussian Process.
+\begin{itemize}
+    \item Derive a variational lower bound on the original marginal likelihood $\Lc^{\text{GP}}$
+    \item Consider a custom variational scheme $\Variat*{\mat{f}, \mat{u}} = \Prob*{\mat{f} \given \mat{u}} \Variat*{\mat{u}}$
+\end{itemize}
+
+\begin{itemize}
+    \item Inspect the augmented predictive posterior
+          \begin{align}
+              \Prob*{\mat{f^\ast} \given \mat{y}} & = \int \Prob*{\mat{f^\ast} \given \mat{f}, \mat{u}} \Prob*{\mat{f}, \mat{u} \given \mat{y}} \diff \mat{f} \diff \mat{u}
+          \end{align}
+    \item $\mat{u}$ is optimal if $\mat{f^\ast}$ and $\mat{f}$ are independent given $\mat{u}$
+          \begin{align}
+              \Prob*{\mat{f^\ast} \given \mat{f}, \mat{u}} & = \Prob*{\mat{f^\ast} \given \mat{u}}                           \\
+              \Prob*{\mat{f}, \mat{u} \given \mat{y}}      & = \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u} \given \mat{y}}
+          \end{align}
+    \item We will approximate this situation with
+          \begin{align}
+              \Variat*{\mat{f^\ast}} & = \int \Prob*{\mat{f^\ast} \given \mat{u}} \Prob*{\mat{f} \given \mat{u}} \Variat*{\mat{u}} \diff \mat{f} \diff \mat{u} = \int \Prob*{\mat{f^\ast} \given \mat{u}} \Variat*{\mat{u}} \diff \mat{u}
+          \end{align}
+\end{itemize}
+
+\begin{align}
+    \begin{split}
+        \Lc^{\text{SGPR}}(\mat{\theta}, \mat{Z}, \Variat*{\mat{u}})
+        & = -\log \Prob*{\mat{y} \given \mat{\theta}, \mat{Z}, \Variat*{\mat{u}}}                                                                                                                                                       \\
+        & = -\log \int \Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}} \diff \mat{f} \diff \mat{u}                                                                                                        \\
+        & = -\log \int \Variat*{\mat{f}, \mat{u}} \frac{\Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}}}{\Variat*{\mat{f}, \mat{u}}} \diff \mat{f} \diff \mat{u}                                          \\
+        & \geq -\int \Variat*{\mat{f}, \mat{u}} \log\frac{\Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}}}{\Variat*{\mat{f}, \mat{u}}} \diff \mat{f} \diff \mat{u}                                        \\
+        & = -\int \Prob*{\mat{f} \given \mat{u}}\Variat*{\mat{u}} \log\frac{\Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}}}{\Prob*{\mat{f} \given \mat{u}}\Variat*{\mat{u}}} \diff \mat{f} \diff \mat{u} \\
+        & = -\int \Prob*{\mat{f} \given \mat{u}}\Variat*{\mat{u}} \log\frac{\Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{f} \diff \mat{u}                                                              \\
+        & = -\int \Variat*{\mat{u}} \left( \int\Prob*{\mat{f} \given \mat{u}} \log\Prob*{\mat{y} \given \mat{f}} \diff \mat{f} + \log\frac{\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \right) \diff \mat{u} \\
+        & = -\int \Variat*{\mat{u}} \left( \Moment*{\E_{\Prob*{\mat{f} \given \mat{u}}}}{\log \Prob*{\mat{y} \given \mat{f}}} + \log\frac{\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \right) \diff \mat{u}
+    \end{split}
+\end{align}
+
+\begin{align}
+    \begin{split}
+        \Moment*{\E_{\Prob*{\mat{f} \given \mat{u}}}}{\log \Prob*{\mat{y} \given \mat{f}}}
+        &= \int \Prob*{\mat{f} \given \mat{u}} \log\Prob*{\mat{y} \given \mat{f}} \diff \mat{f} \\
+        &= \int \log \Gaussian*{\mat{y} \given \mat{f}, \sigma_n^2 \Eye} \Gaussian*{\mat{f} \given \mat{K_{fu}} \mat{K_{uu}}\inv \mat{u}, \mat{K_{ff}} - \mat{Q_{ff}}} \diff \mat{f} \\
+        &= \log \Gaussian*{\mat{y} \given \mat{K_{fu}} \mat{K_{uu}}\inv \mat{u}, \sigma_n^2\Eye} - \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
+        &= \log G(\mat{u}) - \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}}
+    \end{split}
+\end{align}
+
+\begin{align}
+    \begin{split}
+        \Lc^{\text{SGPR}}(\mat{\theta}, \mat{Z}, \Variat*{\mat{u}})
+        &\geq -\int \Variat*{\mat{u}} \left( \Moment*{\E_{\Prob*{\mat{f} \given \mat{u}}}}{\log \Prob*{\mat{y} \given \mat{f}}} + \log\frac{\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \right) \diff \mat{u} \\
+        &= -\int \Variat*{\mat{u}} \left( \log G(\mat{u}) - \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} + \log\frac{\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \right) \diff \mat{u} \\
+        &= -\int \Variat*{\mat{u}} \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}}
+    \end{split}
+\end{align}
+We have not specified $\Variat*{\mat{u}}$. How should we choose it?
+
+\begin{align}
+    \begin{split}
+        \MoveEqLeft\argmin_{\Variat*{\mat{u}}}\Lc^{\text{SGPR}}(\mat{\theta}, \mat{Z}, \Variat*{\mat{u}})                                                                                             \\
+        & = \argmin_{\Variat*{\mat{u}}} -\int \Variat*{\mat{u}} \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
+        & = \argmin_{\Variat*{\mat{u}}} -\int \Variat*{\mat{u}} \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{u}                                                                \\
+        & = \argmin_{\Variat*{\mat{u}}} \KL*{\Variat*{\mat{u}}}{G(\mat{u})\Prob*{\mat{u}}}
+    \end{split}
+\end{align}
+This divergence is minimized by using the proportional distribution
+\begin{align}
+    \q^\ast(\mat{u}) \propto G(\mat{u}) \Prob*{\mat{u}} = \Gaussian*{\mat{y} \given \mat{K_{fu}} \mat{K_{uu}}\inv \mat{u}, \sigma_n^2\Eye}\Gaussian*{\mat{u} \given \mat{0}, \mat{K_{uu}}}
+\end{align}
+which is a product of two Gaussians and thus Gaussian.
+\begin{align}
+    \begin{split}
+        \q^\ast(\mat{u})
+        & = \frac{G(\mat{u}) \Prob*{\mat{u}}}{\int G(\mat{u}) \Prob*{\mat{u}} \diff \mat{u}}
+        = \Gaussian*{\mat{u} \given \mat{\mu_u}, \mat{\Sigma_u}}\text{, with}                 \\[\smallskipamount]
+        \mat{\mu_u}
+        & = \sigma_n^{-2} \mat{K_{uu}}\mat{B}\inv \mat{K_{uf}}\mat{y}                        \\
+        \mat{\Sigma_u}
+        & = \mat{K_{uu}}\mat{B}\inv\mat{K_{uu}}                                              \\[\smallskipamount]
+        \mat{B}
+        & = \mat{K_{uu}} + \sigma_n^{-2} \mat{K_{uf}}\mat{K_{fu}}
+    \end{split}
+\end{align}
+
+Resubstituting $\q^\ast$ into $\Lc^{\text{SGPR}}$ yields the final bound
+\begin{align}
+    \begin{split}
+        \Lc^{\text{SGPR}}(\mat{\theta}, \mat{Z})
+        &\geq \Lc^{\text{SGPR}}(\mat{\theta}, \mat{Z}, \q^\ast(\mat{u})) \\
+        &= -\int \q^\ast(\mat{u}) \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\q^\ast(\mat{u})} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
+        &= -\int \frac{G(\mat{u}) \Prob*{\mat{u}}}{\int G(\mat{u}) \Prob*{\mat{u}} \diff \mat{u}} \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\frac{G(\mat{u}) \Prob*{\mat{u}}}{\int G(\mat{u}) \Prob*{\mat{u}} \diff \mat{u}}} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
+        &= -\log \int G(\mat{u}) \Prob*{\mat{u}} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
+        &= -\log \Gaussian*{\mat{y} \given \mat{0}, \mat{Q_{ff}} + \sigma_n^2\Eye} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}}
+    \end{split}
+\end{align}
+
+\subsubsection{SVGP}
+Instead of choosing $\q^\ast(\mat{u})$, optimize $\Variat*{\mat{u}} = \Gaussian*{\mat{u} \given \mat{m}, \mat{S}}$.
+\begin{itemize}
+    \item $\q^\ast$ is optimal but expensive to evaluate
+    \item Instead we find a cheaper but worse approximation via optimization
+    \item It also gives us a completely parameterized model
+    \item This hurts the bound, but does not alter the model
+    \item $\mat{S}$ has quadratically many parameters
+\end{itemize}
+\begin{align}
+    \begin{split}
+        \MoveEqLeft\Lc^{\text{SVGP}}(\mat{\theta}, \mat{Z}, \mat{m}, \mat{S}) \\
+        &\geq -\int \Variat*{\mat{u}} \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
+        &= -\int \Variat*{\mat{u}} \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
+        &= -\int \log G(\mat{u}) \Variat*{\mat{u}} \diff \mat{u} + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
+        &= -\Moment*{\E_{\Variat*{\mat{u}}}}{\log G(\mat{u})} + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}}
+    \end{split}
+\end{align}
+
+\begin{align}
+    \begin{split}
+        \Moment*{\E_{\Variat*{\mat{u}}}}{\log G(\mat{u})}
+        &= \int \log G(\mat{u}) \Variat*{\mat{u}} \diff \mat{u} \\
+        &= \int \log \Gaussian*{\mat{y} \given \mat{K_{fu}} \mat{K_{uu}}\inv \mat{u}, \sigma_n^2\Eye} \Gaussian*{\mat{u} \given \mat{m}, \mat{S}} \diff \mat{u} \\
+        &= \log \Gaussian*{\mat{y} \given \mat{K_{fu}}\mat{K_{uu}}\inv \mat{m}, \sigma_n^2 \Eye} - \frac{1}{2\sigma_n^2} \Fun*{\tr}{\mat{K_{fu}}\mat{K_{uu}}\inv \mat{S}\mat{K_{uu}}\inv \mat{K_{uf}}}
+    \end{split}
+\end{align}
+\begin{align}
+    \begin{split}
+        \MoveEqLeft\Lc^{\text{SVGP}}(\mat{\theta}, \mat{Z}, \mat{m}, \mat{S}) \\
+        &\geq -\Moment*{\E_{\Variat*{\mat{u}}}}{\log G(\mat{u})} + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
+        &=
+        -\log \Gaussian*{\mat{y} \given \mat{K_{fu}}\mat{K_{uu}}\inv \mat{m}, \sigma_n^2 \Eye}
+        + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} \\
+        &\quad + \frac{1}{2\sigma_n^2} \Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}}
+        + \frac{1}{2\sigma_n^2} \Fun*{\tr}{\mat{K_{fu}}\mat{K_{uu}}\inv \mat{S}\mat{K_{uu}}\inv \mat{K_{uf}}}
+    \end{split}
+\end{align}
+\begin{itemize}
+    \item The complete likelihood is still $\Oh(NM^2)$
+    \item But it factorizes along the data - we can do stochastic optimization!
+    \item A single prediction is only $\Oh(M^2)$ and we do not need the data
+\end{itemize}
+
+\subsubsection{Extensions}
+\begin{itemize}
+    \item Add Bayesian inference to inducing points~\parencite{hensman_mcmc_2015,rossi_rethinking_2020}
+    \item Orthogonal inference for mean and variance~\parencite{shi_sparse_2020,salimbeni_orthogonally_2018,cheng_variational_2017}
+    \item Grid-structured inducing point locations~\parencite{wilson_kernel_2015}
+    \item Looking at convergence rates~\parencite{burt_rates_2019}
+\end{itemize}
+Let's move to deep GPs.

@@ -1,0 +1,62 @@
+\documentclass{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \def\datapath{\figurepath/data/sparse_gps}
+    \begin{axis}[
+            variational gp plot,
+        ]
+
+        \addplot[
+            tiny data,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                x=X, y=Y
+            ] {\datapath/data.dat};
+
+        \addplot[
+            true function,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                x=X, y=Ylatent
+            ] {\datapath/data.dat};
+
+
+        \addplot[std, first, name path=gp_plus]
+        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
+            {\datapath/gp_posterior.dat};
+        \addplot[std, first, name path=gp_minus]
+        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
+            {\datapath/gp_posterior.dat};
+        % \addplot[first fill] fill between[of=gp_plus and gp_minus, on layer={axis background}];
+        \addplot[mean, first]
+        table[ignore chars={\#}, col sep=space, x=X, y=mu]
+            {\datapath/gp_posterior.dat};
+
+
+        \addplot[std, second, name path=spgp_plus]
+        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
+            {\datapath/spgp_huge_posterior.dat};
+        \addplot[std, second, name path=spgp_minus]
+        table[ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
+            {\datapath/spgp_huge_posterior.dat};
+        \addplot[second fill] fill between[of=spgp_plus and spgp_minus, on layer={axis background}];
+        \addplot[mean, second]
+        table[ignore chars={\#}, col sep=space, x=X, y=mu]
+            {\datapath/spgp_huge_posterior.dat};
+
+
+        \addplot[
+            pseudo inputs
+        ] table[
+                ignore chars={\#}, col sep=space,
+                x=Z, y expr=-1.3,
+            ] {\datapath/spgp_huge_pseudo_inputs.dat};
+    \end{axis}
+\end{tikzpicture}
+\end{document}

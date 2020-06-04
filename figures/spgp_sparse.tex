@@ -17,15 +17,12 @@
         \coordinate (sparse2) at (-2.4840, 0);
         \coordinate (sparse3) at (1.1261, 0);
 
-        \tikzstyle{pseudo input} = [
-        fourth full,
-        draw=black,
-        dart, shape border rotate=90,
-        inner sep=1.5pt,
+        \tikzstyle{spgp pseudo input} = [
+        mark=dart,
         yshift=4pt];
-        \node[pseudo input] at (axisline -| sparse1) {};
-        \node[pseudo input] at (axisline -| sparse2) {};
-        \node[pseudo input] at (axisline -| sparse3) {};
+        \node[spgp pseudo input] at (axisline -| sparse1) {};
+        \node[spgp pseudo input] at (axisline -| sparse2) {};
+        \node[spgp pseudo input] at (axisline -| sparse3) {};
 
         \addplot[first, std, name path=c, restrict x to domain=-5:5] table[x=X, y expr=\thisrow{y} + 2 * \thisrow{y_std}] {\datapath/gp_theory/spgp_sparse.dat};
         \addplot[first, std, name path=d, restrict x to domain=-5:5] table[x=X, y expr=\thisrow{y} - 2 * \thisrow{y_std}] {\datapath/gp_theory/spgp_sparse.dat};

@@ -680,6 +680,63 @@ To address these issues, a variational formulation of sparse GPs using inducing 
         \label{fig:gp:sparse_graphical_model}
     }
 \end{figure}
+\begin{figure}[p]
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/variational_gp_spgp}
+        \caption{
+            spgp
+            \label{fig:gp:variational:spgp}
+        }
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/variational_gp_spgp_huge}
+        \caption{
+            spgp huge
+            \label{fig:gp:variational:spgp_huge}
+        }
+    \end{subfigure}\\[\figureskip]
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/variational_gp_sgpr}
+        \caption{
+            SGPR
+            \label{fig:gp:variational:sgpr}
+        }
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/variational_gp_sgpr_huge}
+        \caption{
+            SGPR huge
+            \label{fig:gp:variational:sgpr_huge}
+        }
+    \end{subfigure}\\[\figureskip]
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/variational_gp_svgp}
+        \caption{
+            SVGP
+            \label{fig:gp:variational:svgp}
+        }
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/variational_gp_svgp_huge}
+        \caption{
+            SVGP huge
+            \label{fig:gp:variational:svgp_huge}
+        }
+    \end{subfigure}
+    \caption[Variational GP posteriors]{
+        Variational GP posteriors
+        \label{fig:gp:variational}
+    }
+\end{figure}
 
 Due to the consistency of GPs, the data and pseudo data are jointly Gaussian.
 \begin{align}

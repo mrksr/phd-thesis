@@ -145,7 +145,42 @@
             xmin=-4.5,
             xmax=4.5,
         }}
+\pgfplotsset{variational gp plot/.style = {
+            half plot,
+            % NOTE(mrksr): Due to the y ticks width we need to squeeze a little
+            width=.54\plotfullwidth,
+            ymin=-1.5,
+            ymax=1.5,
+            xmin=0,
+            xmax=1,
+        }}
 
+\tikzstyle{dart mark} = [
+dart,
+fourth full,
+draw=black,
+semithick,
+shape border rotate=90,
+inner sep=1.25pt
+]
+\pgfdeclareplotmark{dart}{\node[dart mark] at (0pt, 0pt) {};}
+\pgfplotsset{pseudo inputs/.style = {
+            only marks,
+            mark=dart,
+        }}
+\pgfplotsset{svgp pseudo inputs/.style = {
+            only marks,
+            mark=square*,
+            fourth,
+            fill opacity=.6,
+            thick,
+            error bars/.cd,
+            y dir=both,
+            y explicit,
+            error bar style={
+                    thick,
+                },
+        }}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                          Data Association                           %

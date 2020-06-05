@@ -842,57 +842,6 @@ For large $N$, linear growth with the amount of observations can be prohibitive.
 We will now consider the SVGP model introduced by~\textcite{hensman_gaussian_2013} which avoids this growth.
 
 \subsubsection{Approximate inducing outputs}
-Instead of choosing $\q^\ast(\mat{u})$, optimize $\Variat*{\mat{u}} = \Gaussian*{\mat{u} \given \mat{m}, \mat{S}}$.
-\begin{itemize}
-    \item $\q^\ast$ is optimal but expensive to evaluate
-    \item Instead we find a cheaper but worse approximation via optimization
-    \item It also gives us a completely parameterized model
-    \item This hurts the bound, but does not alter the model
-    \item $\mat{S}$ has quadratically many parameters
-\end{itemize}
-\begin{align}
-    \begin{split}
-        \MoveEqLeft\Lc^{\text{SVGP}}(\mat{\theta}, \mat{Z}, \mat{m}, \mat{S}) \\
-        &\geq -\int \Variat*{\mat{u}} \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
-        &= -\int \Variat*{\mat{u}} \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
-        &= -\int \log G(\mat{u}) \Variat*{\mat{u}} \diff \mat{u} + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
-        &= -\Moment*{\E_{\Variat*{\mat{u}}}}{\log G(\mat{u})} + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}}
-    \end{split}
-\end{align}
-
-\begin{align}
-    \begin{split}
-        \Moment*{\E_{\Variat*{\mat{u}}}}{\log G(\mat{u})}
-        &= \int \log G(\mat{u}) \Variat*{\mat{u}} \diff \mat{u} \\
-        &= \int \log \Gaussian*{\mat{y} \given \mat{K_{fu}} \mat{K_{uu}}\inv \mat{u}, \sigma_n^2\Eye} \Gaussian*{\mat{u} \given \mat{m}, \mat{S}} \diff \mat{u} \\
-        &= \log \Gaussian*{\mat{y} \given \mat{K_{fu}}\mat{K_{uu}}\inv \mat{m}, \sigma_n^2 \Eye} - \frac{1}{2\sigma_n^2} \Fun*{\tr}{\mat{K_{fu}}\mat{K_{uu}}\inv \mat{S}\mat{K_{uu}}\inv \mat{K_{uf}}}
-    \end{split}
-\end{align}
-\begin{align}
-    \begin{split}
-        \MoveEqLeft\Lc^{\text{SVGP}}(\mat{\theta}, \mat{Z}, \mat{m}, \mat{S}) \\
-        &\geq -\Moment*{\E_{\Variat*{\mat{u}}}}{\log G(\mat{u})} + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
-        &=
-        -\log \Gaussian*{\mat{y} \given \mat{K_{fu}}\mat{K_{uu}}\inv \mat{m}, \sigma_n^2 \Eye}
-        + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} \\
-        &\quad + \frac{1}{2\sigma_n^2} \Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}}
-        + \frac{1}{2\sigma_n^2} \Fun*{\tr}{\mat{K_{fu}}\mat{K_{uu}}\inv \mat{S}\mat{K_{uu}}\inv \mat{K_{uf}}}
-    \end{split}
-\end{align}
-\begin{itemize}
-    \item The complete likelihood is still $\Oh(NM^2)$
-    \item But it factorizes along the data - we can do stochastic optimization!
-    \item A single prediction is only $\Oh(M^2)$ and we do not need the data
-\end{itemize}
-
-\subsubsection{Extensions}
-\begin{itemize}
-    \item Add Bayesian inference to inducing points~\parencite{hensman_mcmc_2015,rossi_rethinking_2020}
-    \item Orthogonal inference for mean and variance~\parencite{shi_sparse_2020,salimbeni_orthogonally_2018,cheng_variational_2017}
-    \item Grid-structured inducing point locations~\parencite{wilson_kernel_2015}
-    \item Looking at convergence rates~\parencite{burt_rates_2019}
-\end{itemize}
-Let's move to deep GPs.
 \begin{figure}[p]
     \begin{subfigure}[b]{\halffigurewidth}
         \centering
@@ -950,3 +899,62 @@ Let's move to deep GPs.
         \label{fig:gp:variational}
     }
 \end{figure}
+In the SGPR approximation, a linear dependency on the number of points in the true data set is introduced through $\q^\ast(\mat{u})$.
+We have shown in~\cref{eq:gp:sgpr_optimal_q} that this optimal choice is a Gaussian.
+Instead of using $\q^\ast(\mat{u})$, the SVGP model shown in~\cref{fig:gp:sparse_graphical_model:svgp} uses a free-form Gaussian $\Variat*{\mat{u}} = \Gaussian*{\mat{u} \given \mat{m}, \mat{S}}$.
+The $\Oh(M^2)$ variational parameters in $\mat{m}$ and $\mat{S}$ are optimized jointly with $\mat{Z}$ in a variational bound.
+Poor choices of $\mat{m}$ and $\mat{S}$ can only worsen the variational approximation compared to the optimal choice in $\Lc^{\text{SGPR}}$ but does not alter the model.
+
+To derive the variational bound $\Lc^{\text{SVGP}}$, we start with the bound in~\cref{eq:gp:sgpr_bound_2}.
+Instead of inserting the optimal $\q^\ast(\mat{u})$, we reformulate the bound to recover an expectation and KL-divergence in
+\begin{align}
+    \begin{split}
+        \label{eq:gp:svgp_bound_1}
+        \MoveEqLeft\Lc^{\text{SVGP}}(\mat{\theta}, \mat{Z}, \mat{m}, \mat{S}) \\
+        &\geq -\int \Variat*{\mat{u}} \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
+        &= -\int \Variat*{\mat{u}} \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
+        &= -\int \log G(\mat{u}) \Variat*{\mat{u}} \diff \mat{u} + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
+        &= -\Moment*{\E_{\Variat*{\mat{u}}}}{\log G(\mat{u})} + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}}.
+    \end{split}
+\end{align}
+Similar to~\cref{eq:gp:expected_log_likelihood}, this expectation can be evaluated analytically and is given by
+\begin{align}
+    \begin{split}
+        \label{eq:gp:expected_log_likelihood_svgp}
+        \Moment*{\E_{\Variat*{\mat{u}}}}{\log G(\mat{u})}
+        &= \int \log G(\mat{u}) \Variat*{\mat{u}} \diff \mat{u} \\
+        &= \int \log \Gaussian*{\mat{y} \given \mat{K_{fu}} \mat{K_{uu}}\inv \mat{u}, \sigma_n^2\Eye} \Gaussian*{\mat{u} \given \mat{m}, \mat{S}} \diff \mat{u} \\
+        &= \log \Gaussian*{\mat{y} \given \mat{K_{fu}}\mat{K_{uu}}\inv \mat{m}, \sigma_n^2 \Eye} - \frac{1}{2\sigma_n^2} \Fun*{\tr}{\mat{K_{fu}}\mat{K_{uu}}\inv \mat{S}\mat{K_{uu}}\inv \mat{K_{uf}}}.
+    \end{split}
+\end{align}
+Inserting~\cref{eq:gp:expected_log_likelihood_svgp} into~\cref{eq:gp:svgp_bound_1} yields the final bound for the SVGP model given by
+\begin{align}
+    \begin{split}
+        \label{eq:gp:svgp_bound_2}
+        \MoveEqLeft\Lc^{\text{SVGP}}(\mat{\theta}, \mat{Z}, \mat{m}, \mat{S}) \\
+        &\geq -\Moment*{\E_{\Variat*{\mat{u}}}}{\log G(\mat{u})} + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
+        &=
+        -\log \Gaussian*{\mat{y} \given \mat{K_{fu}}\mat{K_{uu}}\inv \mat{m}, \sigma_n^2 \Eye}
+        + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} \\
+        &\quad + \frac{1}{2\sigma_n^2} \Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}}
+        + \frac{1}{2\sigma_n^2} \Fun*{\tr}{\mat{K_{fu}}\mat{K_{uu}}\inv \mat{S}\mat{K_{uu}}\inv \mat{K_{uf}}}.
+    \end{split}
+\end{align}
+The KL-divergence is a divergence of two Gaussians which can be evaluated analytically.
+While evaluating the complete bound still takes $\Oh(NM^2)$, the data-likelihood term is given by a diagonal Gaussian which factorizes along the data.
+This enables stochastic optimization techniques like mini-batching, greatly increasing the scalability of the variational GP approximation to large data sets~\parencite{hensman_gaussian_2013}.
+Similarly, evaluating the predictive posterior~\cref{eq:gp:sgpr_predictive_posterior} now takes $\Oh(M^3)$ time, removing the dependency on the training data completely.
+\cref{fig:gp:variational} compares predictive posteriors for the FITC, SGPR and SVGP approximations.
+While the approximations show similar results with small amounts of inducing inputs, both SGPR and SVGP converge to the original GP for large $M$ while the FITC approximation does not.
+Because the SGPR approximation does not explicitly represent inducing outputs, only the input locations are meaningful, similar to the FITC approximation.
+SVGP directly infers a posterior about latent function values, which are shown in the figure.
+
+The $\Oh(M^3)$ computational cost due to the inversion of $\mat{K_{uu}}$ can still be prohibitive for models with a large number of inducing points.
+To reduce the number of required points, recent work explored how Bayesian infrence can be added to the search for good inducing point locations~\parencite{hensman_mcmc_2015,rossi_rethinking_2020}.
+There have also been multiple extensions to the variational inducing point approach to further reduce computational cost.
+One approach is to impose grid structure on the inducing inputs $\mat{Z}$~\parencite{wilson_kernel_2015}.
+Instead of optimizing their location, the position of a large number of inputs is fixed to perform fast computations exploiting the structure.
+While this approach suffers from the curse of dimensionality, it can increase performance for low input dimensionalities.
+Another approach is to orthogonally decouple the computations for predictive means and variances~\parencite{shi_sparse_2020,salimbeni_orthogonally_2018,cheng_variational_2017}.
+This decoupling allows the calculation of the predictive mean in linear time, allowing for a larger number of inducing points for the mean.
+\todo{Let's move to deep GPs.}

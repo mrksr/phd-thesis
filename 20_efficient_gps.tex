@@ -668,6 +668,15 @@ Because calculating this optimal choice is computationally expensive, we will th
 
 \subsubsection{Optimal inducing outputs}
 We assume a free-form variational distribution $\Variat*{\mat{u}}$ to derive the variational lower bound to the likelihood $\Lc^{\text{SGPR}}$ of the augmented model.
+\begin{align}
+    \begin{split}
+        \label{eq:gp:sgpr_bound_1}
+        \Lc^{\text{SGPR}}(\mat{\theta}, \mat{Z}, \Variat*{\mat{u}})
+        & = -\log \Prob*{\mat{y} \given \mat{\theta}, \mat{Z}, \Variat*{\mat{u}}}                                                                                                                                                       \\
+        & = -\log \int \Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}} \diff \mat{f} \diff \mat{u}                                                                                                        \\
+        & = -\log \int \Variat*{\mat{f}, \mat{u}} \frac{\Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}}}{\Variat*{\mat{f}, \mat{u}}} \diff \mat{f} \diff \mat{u}.
+    \end{split}
+\end{align}
 We bound the likelihood using Jensen's inequality~\parencite{bishop_christoph_pattern_2007} which states that for convex functions $f$ and integrable functions $g$ it holds that
 \begin{align}
     \begin{split}
@@ -680,9 +689,6 @@ Since the natural logarithm is concave we have
     \begin{split}
         \label{eq:gp:sgpr_bound_1}
         \Lc^{\text{SGPR}}(\mat{\theta}, \mat{Z}, \Variat*{\mat{u}})
-        & = -\log \Prob*{\mat{y} \given \mat{\theta}, \mat{Z}, \Variat*{\mat{u}}}                                                                                                                                                       \\
-        & = -\log \int \Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}} \diff \mat{f} \diff \mat{u}                                                                                                        \\
-        & = -\log \int \Variat*{\mat{f}, \mat{u}} \frac{\Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}}}{\Variat*{\mat{f}, \mat{u}}} \diff \mat{f} \diff \mat{u}                                          \\
         & \geq -\int \Variat*{\mat{f}, \mat{u}} \log\frac{\Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}}}{\Variat*{\mat{f}, \mat{u}}} \diff \mat{f} \diff \mat{u}                                        \\
         & = -\int \Prob*{\mat{f} \given \mat{u}}\Variat*{\mat{u}} \log\frac{\Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}}}{\Prob*{\mat{f} \given \mat{u}}\Variat*{\mat{u}}} \diff \mat{f} \diff \mat{u} \\
         & = -\int \Prob*{\mat{f} \given \mat{u}}\Variat*{\mat{u}} \log\frac{\Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{f} \diff \mat{u}                                                              \\

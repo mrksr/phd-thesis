@@ -950,7 +950,7 @@ Because the SGPR approximation does not explicitly represent inducing outputs, o
 SVGP directly infers a posterior about latent function values, which are shown in the figure.
 
 The $\Oh(M^3)$ computational cost due to the inversion of $\mat{K_{uu}}$ can still be prohibitive for models with a large number of inducing points.
-To reduce the number of required points, recent work explored how Bayesian infrence can be added to the search for good inducing point locations~\parencite{hensman_mcmc_2015,rossi_rethinking_2020}.
+To reduce the number of required points, recent work explored how Bayesian inference can be added to the search for good inducing point locations~\parencite{hensman_mcmc_2015,rossi_rethinking_2020}.
 There have also been multiple extensions to the variational inducing point approach to further reduce computational cost.
 One approach is to impose grid structure on the inducing inputs $\mat{Z}$~\parencite{wilson_kernel_2015}.
 Instead of optimizing their location, the position of a large number of inputs is fixed to perform fast computations exploiting the structure.

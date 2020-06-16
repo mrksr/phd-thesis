@@ -16,7 +16,7 @@ To optimize the efficiency of a wind turbine the speed and pitch have to be cont
 In a wind farm turbines are typically equipped with sensors for wind speed and direction.
 The goal is to use these sensor data to produce accurate estimates and forecasts of the wind conditions at every turbine in the farm.
 For the ideal case of a homogeneous and very slowly changing wind field, the wind conditions at each geometrical position in a wind farm can be estimated using the propagation times (time warps) computed from geometry, wind speed, and direction \parencite{soleimanzadeh_controller_2011,bitar_coordinated_2013,schepers_improved_2007}.
-In the real world, however, wind fields are not homogeneous, exhibit global and local turbulences, and interfere with the turbines and the terrain inside and outside the farm and further, sensor faults may lead to data loss.
+In the real world, however, wind fields are not homogeneous, exhibit global and local turbulence, and interfere with the turbines and the terrain inside and outside the farm and further, sensor faults may lead to data loss.
 This makes it extremely difficult to construct accurate analytical models of wind propagation in a farm.
 Also, standard approaches for extracting such information from data, e.g.\ generalized time warping  \parencite{zhou_generalized_2012}, fail at this task because they rely on a high signal to noise ratio.
 Instead, we want to construct Bayesian nonlinear dynamic data based models for wind conditions and warpings which handle the stochastic nature of the system in a principled manner.
@@ -57,13 +57,13 @@ We show these properties for an artificial data set and for real-world data of t
 \end{figure}
 We are interested in formulating shared priors over a set of functions $\Set{f_d}_{d=1}^D$ using GPs, thereby directly parameterizing their interdependencies.
 In a traditional GP setting, multiple outputs are considered conditionally independent given the inputs, which significantly reduces the computational cost but also prevents the utilization of shared information.
-Such interdependencies can be formulated via \emph{convolution processes (CPs)} as proposed by \textcite{boyle_dependent_2004}, a generalization of the \emph{linear model of coregionalization (LMC)} \parencite{journel_mining_1978,coburn_geostatistics_2000}.
+Such interdependencies can be formulated via convolution processes (CPs) as proposed by \textcite{boyle_dependent_2004}, a generalization of the linear model of coregionalization (LMC) \parencite{journel_mining_1978,coburn_geostatistics_2000}.
 In the CP framework, the output functions are the result of a convolution of the latent processes $w_r$ with smoothing kernel functions $T_{d,r}$ for each output $f_d$, defined as
 \begin{align}
     f_d(\mat{x}) = \sum_{r=1}^R \int T_{d,r}(\mat{x} - \mat{z}) \cdot w_r(\mat{z}) \diff \mat{z}.
 \end{align}
 In this model, the convolutions of the latent processes generating the different outputs are all performed around the same point $\mat{x}$.
-We generalize this by allowing different \emph{alignments} of the observations which depend on the position in the input space.
+We generalize this by allowing different alignments of the observations which depend on the position in the input space.
 This allows us to model the changing relative interaction times for the different latent wind fronts as described in the introduction.
 We also assume that the dependent functions $f_d$ are latent themselves and the data we observe is generated via independent noisy nonlinear transformations of their values.
 Every function $f_d$ is augmented with an alignment function $a_d$ and a warping $g_d$ on which we place independent GP priors.
@@ -270,7 +270,7 @@ In this setting, we observe multiple time series $\Tc_d = (\mat{X_d}, \mat{y_d})
 
 We will first apply the AMO-GP to an artificial data set in which we define a decomposed system of dependent time series by specifying a shared latent function generating the observations together with relative alignments and warpings for the different time series.
 We will show that our model is able to recover this decomposition from the training data and compare the results to other approaches of modeling the data.
-Then we focus on a real world data set of a neighbouring pair of wind turbines in a wind farm, where the model is able to recover a representation of the latent prevailing wind condition and the relative timings of wind fronts at the two turbines.
+Then we focus on a real world data set of a neighboring pair of wind turbines in a wind farm, where the model is able to recover a representation of the latent prevailing wind condition and the relative timings of wind fronts at the two turbines.
 
 \section{Artificial data set}
 \label{toc:alignment:artificial_example}
@@ -384,7 +384,7 @@ Because of this, the model cannot recover the latent sine function and can only 
         \bottomrule
     \end{tabularx}
 \end{table}
-This experiment is based on real data recorded from a pair of neighbouring wind turbines in a wind farm.
+This experiment is based on real data recorded from a pair of neighboring wind turbines in a wind farm.
 The two time series $\Tc_1$ and $\Tc_2$ shown in gray in \cref{fig:alignment:wind_joint_model} record the respective power generation of the two turbines over the course of one and a half hours, which was smoothed slightly using a rolling average over 60 seconds.
 There are 5400 data points for the first turbine (blue) and 4622 data points for the second turbine (green).
 We removed two intervals (drawn as dashed lines) from the second turbine's data set to inspect the behavior of the model with missing data.
@@ -393,7 +393,7 @@ This allows us to evaluate and compare the generative properties of our model in
 The power generated by a wind turbine is mainly dependent on the speed of the wind fronts interacting with the turbine.
 For system identification tasks concerned with the behavior of multiple wind turbines, associating the observations on different turbines due to the same wind fronts is an important task.
 However it is usually not possible to directly measure these correspondences or wind propagation speeds between turbines, which means that there is no ground truth available.
-An additional problem is that the shared latent wind conditions are superimposed by turbine-specific local turbulences.
+An additional problem is that the shared latent wind conditions are superimposed by turbine-specific local turbulence.
 Since these local effects are of comparable amplitude to short-term changes of wind speed, it is challenging to decide which parts of the signal to explain away as noise and which part to identify as the underlying shared process.
 
 Our goal is the simultaneous learning of the uncertain alignment in time $\rv{a}$ and of the shared latent wind condition $\rv{f}$.
@@ -440,5 +440,3 @@ We compared the model with GPs, deep GPs and multi-output GPs on an artificial d
 We then applied the AMO-GP to real world data of two wind turbines and used the proposed hierarchy to model wind propagation in a wind farm and recover information about the latent non homogeneous wind field.
 With uncertainties decomposed along the hierarchy, our approach handles ambiguities introduced by the stochasticity of the wind in a principled manner.
 This indicates the AMO-GP is a good approach for these kinds of dynamical system, where multiple misaligned sensors measure the same latent effect.
-
-

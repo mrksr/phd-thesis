@@ -1,14 +1,6 @@
 \chapter{Non-Linear Timeseries Alignment}
 \label{toc:alignment}
-We propose a novel Bayesian approach to modelling nonlinear alignments of time series based on latent shared information.
-We apply the method to the real-world problem of finding common structure in the sensor data of wind turbines introduced by the underlying latent and turbulent wind field.
-The proposed model allows for both arbitrary alignments of the inputs and non-parametric output warpings to transform the observations.
-This gives rise to multiple deep Gaussian process models connected via latent generating processes.
-We present an efficient variational approximation based on nested variational compression and show how the model can be used to extract shared information between dependent time series, recovering an interpretable functional decomposition of the learning problem.
-We show results for an artificial data set and real-world data of two wind turbines.
 
-
-\section{Introduction}
 Many real-world systems are inherently hierarchical and connected.
 Ideally, a machine learning method should model and recognize such dependencies.
 Take wind power production, which is one of the major providers for renewable energy today, as an example:
@@ -34,7 +26,7 @@ In \cref{toc:alignment:model}, we propose a hierarchical, warped and aligned  mu
 In \cref{toc:alignment:variational_approximation}, we present an efficient learning scheme via an approximation to the marginal likelihood which allows us to fully exploit the regularization provided by our structure, yielding highly interpretable results.
 We show these properties for an artificial data set and for real-world data of two wind turbines in \cref{toc:alignment:experiments}.
 
-\section{Model Definition}
+\section{Aligned multi-output Gaussian processes}
 \label{toc:alignment:model}
 \begin{figure}[t]
     \centering
@@ -94,16 +86,74 @@ With $\Set{\sigma_{d,r}, \mat{\ell}_{d, r}}$ denoting the kernel hyper parameter
 \begin{align}
     \label{eq:alignment:dependent_kernel}
     \begin{split}
-        \MoveEqLeft[1] \Moment{\cov}{f_d(\mat{x}), f_{d^\prime}(\mat{x^\prime})} = \sum_{r=1}^R \frac{(2\pi)^{\frac{K}{2}}\sigma_{d, r}\sigma_{d^\prime, r}}{\prod_{k=1}^K \hat{\ell}_{d, d^\prime, r, k}\inv} \Fun*{\exp}{-\frac{1}{2} \sum_{k=1}^K \frac{(x_k - x^\prime_k)^2}{\hat{\ell}_{d, d^\prime, r, k}^2}},
+        \MoveEqLeft[1] \Moment{\cov}{f_d(\mat{x}), f_{d^\prime}(\mat{x^\prime})} = \sum_{r=1}^R \frac{(2\pi)^{\frac{K}{2}}\sigma_{d, r}\,\sigma_{d^\prime, r}}{\prod_{k=1}^K \hat{\ell}_{d, d^\prime, r, k}\inv} \Fun*{\exp}{-\frac{1}{2} \sum_{k=1}^K \frac{(x_k - x^\prime_k)^2}{\hat{\ell}_{d, d^\prime, r, k}^2}},
     \end{split}
 \end{align}
 where $\mat{x}$ is $K$-dimensional and $\hat{\ell}_{d, d^\prime, r, k} = \sqrt{\ell_{d, r, k}^2 + \ell_{d^\prime, r, k}^2}$.
 
-\section{Convolution Kernel Expectations}
-\label{toc:alignment:kernel_expectations}
-In \cref{toc:alignment:model} we assumed the latent processes $w_r$ to be white noise processes and the smoothing kernel functions $T_{d, r}$ to be squared exponential kernels, leading to an explicit closed form formulation for the covariance between outputs shown in \cref{eq:alignment:dependent_kernel}.
-In this section, we derive the $\Psi$-statistics for this generalized squared exponential kernel needed to evaluate \cref{eq:alignment:full_bound}.
+\section{Variational approximation}
+\label{toc:alignment:approximation}
+Since exact inference in this model is intractable, we present a variational approximation to the model's marginal likelihood in this section.
+Analogously to $\mat{y}$, we denote the random vectors which contain the function values of the respective functions and outputs as $\rv{a}$ and $\rv{f}$.
+The joint probability distribution of the data can then be written as
+\begin{align}
+    \begin{split}
+        \label{eq:alignment:full_model}
+        \begin{aligned}
+             & \Prob{\rv{y}, \rv{f}, \rv{a} \given \mat{X}} =                                                                \\
+             & \qquad\Prob{\rv{f} \given \rv{a}} \prod_{d=1}^D \Prob{\rv{y_d} \given \rv{f_d}}\Prob{\rv{a_d} \given \rv{X}},
+        \end{aligned}
+        \qquad\qquad
+        \begin{aligned}
+            \rv{a_d} \mid \mat{X}   & \sim \Gaussian{\mat{X}, \mat{K_{a, d}} + \sigma^2_{a, d}\Eye},   \\
+            \rv{f} \mid \mat{a}     & \sim \Gaussian{\mat{0}, \mat{K_f} + \sigma^2_f\Eye},             \\
+            \rv{y_d} \mid \mat{f_d} & \sim \Gaussian{\mat{f_d}, \mat{K_{g, d}} + \sigma^2_{y, d}\Eye}.
+        \end{aligned}
+    \end{split}
+\end{align}
+Here, we use $\mat{K}$ to refer to the Gram matrices corresponding to the respective GPs.
+All but the convolution processes factorize over the different levels of the model as well as the different outputs.
 
+\subsubsection{Variational Lower Bound}
+To approximate a single deep GP, that is a single string of GPs stacked on top of each other, \textcite{hensman_nested_2014} proposed nested variational compression in which every GP in the hierarchy is handled independently.
+In order to arrive at their lower bound they make two variational approximations.
+First, they consider a variational approximation $\Variat*{\hat{\rv{a}}, \rv{u}} = \Prob*{\rv{\hat{a}} \given \rv{u}} \Variat*{\rv{u}}$ to the true posterior of a single GP first introduced by \textcite{titsias_variational_2009}.
+In this approximation, the original model is augmented with \emph{inducing variables} $\mat{u}$ together with their \emph{inducing points} $\mat{Z}$  which are assumed to be latent observations of the same function and are thus jointly Gaussian with the observed data.
+In contrast to \cite{titsias_variational_2009}, the distribution $\Variat*{\rv{u}}$ is not chosen optimally but optimized using the closed form $\Variat*{\rv{u}} \sim \Gaussian*{\rv{u} \given \mat{m}, \mat{S}}$.
+This gives rise to the Scalable Variational GP presented in \cite{hensman_gaussian_2013}.
+Second, in order to apply this variational bound for the individual GPs recursively, uncertainties have to be propagated through subsequent layers and inter-layer cross-dependencies are avoided using another variational approximation.
+The variational lower bound for the AMO-GP is given by
+\begin{align}
+    \label{eq:alignment:full_bound}
+    \begin{split}
+        \MoveEqLeft\log \Prob{\rv{y}\given \mat{X}, \mat{Z}, \rv{u}} \geq
+        \sum_{d=1}^D \log\Gaussian*{\rv{y_d} \given \mat{\Psi_{g, d}} \mat{K_{u_{g, d}u_{g, d}}}\inv \mat{m_{g, d}}, \sigma_{y, d}^2 \Eye}
+        - \sum_{d=1}^D \frac{1}{2\sigma_{a, d}^2} \Fun{\tr}{\mat{\Sigma_{a, d}}} \\
+        &- \frac{1}{2\sigma_f^2} \left( \psi_{f} - \Fun*{\tr}{\mat{\Phi_f} \mat{K_{u_fu_f}}\inv} \right)
+        - \sum_{d=1}^D\frac{1}{2\sigma_{y, d}^2} \left( \psi_{g, d} - \Fun*\tr{\mat{\Phi_{g, d}} \mat{K_{u_{g, d}u_{g, d}}}\inv} \right) \\
+        &- \sum_{d=1}^D \KL{\Variat{\rv{u_{a, d}}}}{\Prob{\rv{u_{a, d}}}}
+        - \KL{\Variat{\rv{u_f}}}{\Prob{\rv{u_f}}}
+        - \sum_{d=1}^D \KL{\Variat{\rv{u_{y, d}}}}{\Prob{\rv{u_{y, d}}}} \\
+        &- \frac{1}{2\sigma_f^2} \tr\left(\left(\mat{\Phi_f} - \mat{\Psi_f}\tran\mat{\Psi_f}\right) \mat{K_{u_fu_f}}\inv \left(\mat{m_f}\mat{m_f}\tran + \mat{S_f}\right)\mat{K_{u_fu_f}}\inv\right) \\
+        &- \sum_{d=1}^D\frac{1}{2\sigma_{y, d}^2} \tr\left(\left(\mat{\Phi_{g, d}} - \mat{\Psi_{g, d}}\tran\mat{\Psi_{g, d}}\right)
+        \mat{K_{u_{g, d}u_{g, d}}}\inv \left(\mat{m_{g, d}}\mat{m_{g, d}}\tran + \mat{S_{g, d}}\right) \mat{K_{u_{g, d}u_{g, d}}}\inv\right),
+    \end{split}
+\end{align}
+where $\KLdiv$ denotes the KL-divergence.
+The bound contains one Gaussian fit term per output dimension and a series of regularization terms for every GP in the hierarchy.
+The KL-divergences connect the variational approximations to the prior and the different trace terms regularize the variances of the different GPs (for a detailed discussion see \parencite{hensman_nested_2014}).
+This bound depends on the hyper parameters of the kernel and likelihood $\left\{ \mat{\ell}, \mat{\sigma} \right\}$ and the variational parameters $\Set*{\mat{Z_{l,d}}, \mat{m_{l,d}}, \mat{S_{l,d}} \with l \in \Set{\rv{a}, \rv{f}, \rv{d}}, d \in [D]}$.
+
+The bound can be calculated in $\Oh(NM^2)$ time and factorizes along the data points which enables stochastic optimization.
+Since every of the $N$ data points is associated with one of the $D$ outputs, the computational cost of the model is independent of $D$.
+Information is only shared between the different outputs using the inducing points in $\mat{f}$.
+As the different outputs share a common function, increasing $D$ allows us to reduce the number of variational parameters per output, because the shared function can still be represented completely.
+
+A central component of this bound are expectations over kernel matrices, the three $\Psi$-statistics $\psi_f = \Moment*{\E_{\Variat{\rv{a}}}}{\Fun*{\tr}{\mat{K_{ff}}}}$, $\mat{\Psi_f} = \Moment*{\E_{\Variat{\rv{a}}}}{\mat{K_{fu}}}$ and $\mat{\Phi_f} = \Moment*{\E_{\Variat{\rv{a}}}}{\mat{K_{uf}}\mat{K_{fu}}}$.
+Closed form solutions for these statistics depend on the choice of kernel and are known for specific kernels, such as linear or RBF kernels, for example shown in \cite{damianou_deep_2012}.
+In the following subsection we will give closed form solutions for these statistics required in the shared CP-layer of our model.
+
+\subsubsection{Convolution Kernel Expectations}
 The uncertainty about the first layer is captured by the variational distribution of the latent alignments $\rv{a}$ given by $\Variat{\rv{a}} \sim \Gaussian{\mat{\mu}_a, \mat{\Sigma}_a}\text{, with } \rv{a} = \left( \rv{a}_1, \dots, \rv{a}_d \right)$.
 Every aligned point in $\rv{a}$ corresponds to one output of $\rv{f}$ and ultimately to one of the $\rv{y}_d$.
 Since the closed form of the multi output kernel depends on the choice of outputs, we will use the notation $\Fun{\hat{f}}{\rv{a}_n}$ to denote $\Fun{f_d}{\rv{a}_n}$ such that $\rv{a}_n$ is associated with output $d$.
@@ -148,9 +198,7 @@ Note that the $\Psi$-statistics factorize along the data and we only need to con
 If all the data belong to the same output, the $\Psi$-statistics of the standard squared exponential kernel can be recovered as a special case.
 It is used to propagate the uncertainties through the output-specific warpings $\rv{g}$.
 
-
-\section{Approximative Predictions}
-\label{toc:alignment:predictions}
+\subsubsection{Approximate Predictions}
 Using the variational lower bound in \cref{eq:alignment:full_bound}, our model can be fitted to data, resulting in appropriate choices of the kernel hyper parameters and variational parameters.
 Now assume we want to predict approximate function values $\mat{g}_{d, \ast}$ for previously unseen points $\mat{X}_{d, \ast}$ associated with output $d$, which are given by $ \mat{g}_{d, \ast} = g_d(f_d(a_d(\mat{X}_{d, \ast})))$.
 
@@ -169,7 +217,7 @@ Using $\rv{f}_{d, \ast}$ as an example, in \cref{eq:alignment:variational_assump
 \end{align}
 with
 \begin{align*}
-    \mat{\mu}_{\ast}    & = \mat{K_{\ast m}}\mat{K_{mm}}\inv \mat{m}                                                                                         \\
+    \mat{\mu}_{\ast}    & = \mat{K_{\ast m}}\mat{K_{mm}}\inv \mat{m}                                                                                      \\
     \mat{\Sigma}_{\ast} & = \mat{K_{\ast\ast}} - \mat{K_{\ast m}}\mat{K_{mm}}\inv \left(  \mat{K_{mm}} - \mat{S} \right) \mat{K_{mm}}\inv\mat{K_{m\ast}}.
 \end{align*}
 Here, $\mat{K_{\ast m}}$ denotes the kernel matrix of the previous layer's output $\rv{a}_{d, \ast}$ and the current layer's inducing inputs $\mat{Z}_f$.
@@ -186,7 +234,7 @@ Since every message besides the initial $\rv{X}_{d, \ast}$ is itself a Gaussian,
 \end{align}
 with \todo{I am super uncertain about $\mat{\bar{\Sigma}}$.}
 \begin{align*}
-    \mat{\bar{\mu}_{\ast}}    & = \mat{\Psi_{f\ast}} \mat{K_{mm}}\inv \mat{m}                                        \\
+    \mat{\bar{\mu}_{\ast}}    & = \mat{\Psi_{f\ast}} \mat{K_{mm}}\inv \mat{m}                                       \\
     \mat{\bar{\Sigma}_{\ast}} & = \mat{\Psi_{f\ast}}\mat{K_{mm}}\inv\mat{S}\mat{K_{mm}}\inv\mat{\Psi_{f\ast}}\tran.
 \end{align*}
 For the first layer, the expectation collapses to usual SVGP predictions as derived in \cite{hensman_scalable_2015}.
@@ -212,7 +260,6 @@ In order to derive an inference scheme, we need the ability to propagate uncerta
 We adapted the approach of nested variational compression by \textcite{hensman_nested_2014}, which is originally concerned with a single deep GP.
 The approximation is expanded to handle multiple GPs at once, yielding the bound in \cref{eq:alignment:full_bound}.
 The bound reflects the dependencies of the different outputs as the sharing of information between the different deep GPs is approximated through the shared inducing variables $\rv{u}_{f,d}$.
-Our main contribution for the inference scheme is the derivation of a closed-form solution for the $\Psi$-statistics of the convolution kernel in \cref{eq:alignment:psi_statistics}.
 
 
 \section{Experiments}
@@ -260,7 +307,7 @@ Our main contribution for the inference scheme is the derivation of a closed-for
         The plots show mean predictions and a shaded area of two standard deviations.
         If available, the ground truth is displayed as a dashed line.
         Additional lines are noiseless samples drawn from the model.
-        The shallow and deep GPs in \cref{fig:alignment:dampened_sine_model_decomposition:a,fig:timeseries_alignment:dampened_sine_model_decomposition:c} model the data independently and revert back to the prior in $\rv{y}_2$.
+        The shallow and deep GPs in \cref{fig:alignment:dampened_sine_model_decomposition:a,fig:alignment:dampened_sine_model_decomposition:c} model the data independently and revert back to the prior in $\rv{y}_2$.
         Because of the nonlinear alignment, a multi-output GP cannot model the data in \cref{fig:alignment:dampened_sine_model_decomposition:b}.
         The AMO-GP in \cref{fig:alignment:dampened_sine_model_decomposition:d} recovers the alignment and warping and shares information between the two outputs.
     }
@@ -272,8 +319,7 @@ We will first apply the AMO-GP to an artificial data set in which we define a de
 We will show that our model is able to recover this decomposition from the training data and compare the results to other approaches of modeling the data.
 Then we focus on a real world data set of a neighboring pair of wind turbines in a wind farm, where the model is able to recover a representation of the latent prevailing wind condition and the relative timings of wind fronts at the two turbines.
 
-\section{Artificial data set}
-\label{toc:alignment:artificial_example}
+\subsubsection{Artificial data set}
 Our data set consists of two time series $\Tc_1$ and $\Tc_2$ generated by a dampened sine function.
 \begin{align}
     f : \left\{ \begin{aligned}
@@ -296,7 +342,7 @@ Additionally, our assumption of identity mean functions prevents pathological ca
 
 \Cref{fig:alignment:dampened_sine_model_decomposition:d} shows the AMO-GP's recovered function decomposition and joint predictions.
 The model successfully recovered a shared latent dampened sine function, a sigmoid warping for the first time series and an approximate quadratic alignment function for the second time series.
-In \cref{fig:alignment:dampened_sine_model_decomposition:a,fig:timeseries_alignment:dampened_sine_model_decomposition:b,fig:timeseries_alignment:dampened_sine_model_decomposition:c}, we show the training results of a standard GP, a multi-output GP and a three-layer deep GP on the same data.
+In \cref{fig:alignment:dampened_sine_model_decomposition:a,fig:alignment:dampened_sine_model_decomposition:b,fig:alignment:dampened_sine_model_decomposition:c}, we show the training results of a standard GP, a multi-output GP and a three-layer deep GP on the same data.
 For all of these models, we used RBF kernels and, in the case of the deep GP, applied priors similar to our model in order to avoid pathological cases.
 In \cref{tab:alignment:dampened_sine_model_log_likelihoods} we report test log-likelihoods for the presented models, which illustrate the qualitative differences between the models.
 Because all models are non-parametric and converge well, repeating the experiments with different initializations leads to very similar likelihoods.
@@ -309,8 +355,7 @@ As discussed in \cref{toc:alignment:model} however, it is constrained to constan
 Because of this, the model cannot recover the latent sine function and can only model one of the two outputs.
 
 
-\section{Pairs of wind turbines}
-\label{toc:alignment:wind_example}
+\subsubsection{Pairs of wind turbines}
 \begin{figure}[tp]
     \centering
     \includestandalonewithpath{figures/wind_joint_model}
@@ -423,14 +468,13 @@ The GP reverts to their respective priors when data is missing, while the MO-GP 
 Samples drawn from a DGP model showcase the complexity of a DGP prior.
 Unconstrained composite GPs are hard to reason about and make the model very flexible in terms of representable functions.
 Since the model's evidence is very broad, the posterior is uninformed and inference is hard.
-Additionally, as discussed in~\cref{toc:alignment:variational_approximation} and~\parencite{hensman_nested_2014}, the nested variational compression bound tends to loosen with high uncertainties.
+Additionally, as discussed in~\cref{toc:alignment:approximation} and~\parencite{hensman_nested_2014}, the nested variational compression bound tends to loosen with high uncertainties.
 AMO-GP shows richer structure:
 Due to the constraints imposed by the model, more robust inference leads to a more informed model.
 Samples show that it has learned that a maximum which is missing in the training data has to exist somewhere, but the uncertainty about the correct alignment due to the local turbulence means that different samples place the maximum at different locations in $\mat{X}$-direction.
 
 
-\section{Conclusion}
-\label{toc:alignment:conclusion}
+\section{Discussion}
 We have proposed the warped and aligned multi-output Gaussian process (AMO-GP), in which MO-GPs are embedded in a hierarchy to find shared structure in latent spaces.
 We extended convolution processes \parencite{boyle_dependent_2004} with conditionally independent Gaussian processes on both the input and output sides, giving rise to a highly structured deep GP model.
 This structure can be used to both regularize the model and encode expert knowledge about specific parts of the system.

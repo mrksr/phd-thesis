@@ -1,5 +1,5 @@
 # NOTE(mrksr): No arbitrary linebreaks in logs
-$ENV{max_print_line} = $log_wrap = 1000;
+$ENV{max_print_line} = $log_wrap = 10000;
 # NOTE(mrksr): Fixed timestamp for reproducible builds
 $ENV{SOURCE_DATE_EPOCH} = 0;
 

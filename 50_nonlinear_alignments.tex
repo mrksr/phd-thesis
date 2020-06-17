@@ -475,6 +475,50 @@ Samples show that it has learned that a maximum which is missing in the training
 
 
 \section{Discussion}
+\begin{figure}[tp]
+    \begin{subfigure}[b]{\linewidth}
+        \centering
+        \includestandalonewithpath{figures/wind_approximate_joint_gp}
+        \caption{
+            \label{fig:alignment:approximate_joint:gp}
+            GP
+        }
+    \end{subfigure}\\[\figureskip]
+    \begin{subfigure}[b]{\linewidth}
+        \centering
+        \includestandalonewithpath{figures/wind_approximate_joint_mo_gp}
+        \caption{
+            \label{fig:alignment:approximate_joint:mo_gp}
+            MO-GP
+        }
+    \end{subfigure}
+    \caption{
+        \label{fig:alignment:approximate_joint:first}
+        Approximate joints
+    }
+\end{figure}
+\begin{figure}[tp]
+    \begin{subfigure}[b]{\linewidth}
+        \centering
+        \includestandalonewithpath{figures/wind_approximate_joint_dgp}
+        \caption{
+            \label{fig:alignment:approximate_joint:dgp}
+            DGP
+        }
+    \end{subfigure}\\[\figureskip]
+    \begin{subfigure}[b]{\linewidth}
+        \centering
+        \includestandalonewithpath{figures/wind_approximate_joint_ours}
+        \caption{
+            \label{fig:alignment:approximate_joint:ours}
+            AMO-GP (Ours)
+        }
+    \end{subfigure}
+    \caption{
+        \label{fig:alignment:approximate_joint:second}
+        Approximate joints
+    }
+\end{figure}
 We have proposed the warped and aligned multi-output Gaussian process (AMO-GP), in which MO-GPs are embedded in a hierarchy to find shared structure in latent spaces.
 We extended convolution processes \parencite{boyle_dependent_2004} with conditionally independent Gaussian processes on both the input and output sides, giving rise to a highly structured deep GP model.
 This structure can be used to both regularize the model and encode expert knowledge about specific parts of the system.

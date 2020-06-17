@@ -1,0 +1,136 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \def\datapath{\figurepath/data/wind}
+    \begin{axis}[
+            wind bound plot,
+            name=first,
+            xlabel=, ylabel=$\rv{y_1}$,
+            xtick={-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8},
+            xticklabels={,,},
+            ytick={-2, 0, 2},
+            yticklabels={$0.4$, $0.8$, $1.2$},
+            ytick pos=left,
+            y unit=W,
+            y unit prefix=M,
+            ylabel style={at={(ticklabel* cs:0.5)},rotate=90,yshift=25pt},
+            xmin=-1.6, xmax=0.8,
+        ]
+        \addplot[
+            wind data,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                x=X, y=Y
+            ] {\datapath/wind_zero_data.dat};
+
+        \addplot[std, third, name path=first_plus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
+            {\datapath/wind_exp_09_hole_in_data/wind_zero_joint.dat};
+        \addplot[std, third, name path=first_minus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
+            {\datapath/wind_exp_09_hole_in_data/wind_zero_joint.dat};
+        \addplot[third fill] fill between[of=first_plus and first_minus];
+        \addplot[mean, third]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y=mu]
+            {\datapath/wind_exp_09_hole_in_data/wind_zero_joint.dat};
+
+        \addplot[std, first, name path=first_plus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
+            {\datapath/wind_exp_09_hole_in_data/wind_zero_joint_sampled.dat};
+        \addplot[std, first, name path=first_minus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
+            {\datapath/wind_exp_09_hole_in_data/wind_zero_joint_sampled.dat};
+        \addplot[first fill] fill between[of=first_plus and first_minus];
+        \addplot[mean, first]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y=mu]
+            {\datapath/wind_exp_09_hole_in_data/wind_zero_joint_sampled.dat};
+    \end{axis}
+
+    \begin{axis}[
+            at={(0, -110pt)},
+            wind bound plot,
+            at={(first.below south west)},
+            anchor=north west,
+            xlabel=$\rv{X}$, ylabel=$\rv{y_2}$,
+            xtick={-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8},
+            % xticklabels={$-1.2$,,$-0.8$,,$-0.4$,,$0$,,$0.4$,,$0.8$,,$1.2$},
+            xticklabels={0,,15,,30,,45,,60,,75,,90},
+            x unit={min},
+            xmin=-1.6, xmax=0.8,
+            ytick={-2, 0, 2},
+            yticklabels={$0.4$, $0.8$, $1.2$},
+            ytick pos=left,
+            y unit=W,
+            y unit prefix=M,
+            ylabel style={at={(ticklabel* cs:0.5)},rotate=90,yshift=25pt},
+        ]
+        \addplot[
+            wind data,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=-1.6:-.5,
+                x=X, y=Y
+            ] {\datapath/wind_one_data.dat};
+        \addplot[
+            wind data,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=-.4:.1,
+                x=X, y=Y
+            ] {\datapath/wind_one_data.dat};
+        \addplot[
+            wind data,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=.1:0.8,
+                x=X, y=Y
+            ] {\datapath/wind_one_data.dat};
+        \addplot[
+            wind data, dashed,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=-.5:-.4,
+                x=X, y=Y
+            ] {\datapath/wind_hole_data.dat};
+        \addplot[
+            wind data, dashed,
+        ] table[
+                ignore chars={\#}, col sep=space,
+                restrict x to domain=.1:.4,
+                x=X, y=Y
+            ] {\datapath/wind_hole_data.dat};
+
+        \addplot[std, third, name path=second_plus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
+            {\datapath/wind_exp_09_hole_in_data/wind_one_joint.dat};
+        \addplot[std, third, name path=second_minus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
+            {\datapath/wind_exp_09_hole_in_data/wind_one_joint.dat};
+        \addplot[third fill] fill between[of=second_plus and second_minus];
+        \addplot[mean, third]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y=mu]
+            {\datapath/wind_exp_09_hole_in_data/wind_one_joint.dat};
+
+        \addplot[std, second, name path=second_plus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} + \thisrow{2std}]
+            {\datapath/wind_exp_09_hole_in_data/wind_one_joint_sampled.dat};
+        \addplot[std, second, name path=second_minus]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y expr=\thisrow{mu} - \thisrow{2std}]
+            {\datapath/wind_exp_09_hole_in_data/wind_one_joint_sampled.dat};
+        \addplot[second fill] fill between[of=second_plus and second_minus];
+        \addplot[mean, second]
+        table[restrict x to domain=-1.6:0.8, ignore chars={\#}, col sep=space, x=X, y=mu]
+            {\datapath/wind_exp_09_hole_in_data/wind_one_joint_sampled.dat};
+
+        % \addplot[tiny sample, hannah0] table[ignore chars={\#}, col sep=space, x=X, y=0] {\datapath/wind_exp_09_hole_in_data/wind_one_joint_sampled_samples.dat};
+        % \addplot[tiny sample, hannah2] table[ignore chars={\#}, col sep=space, x=X, y=1] {\datapath/wind_exp_09_hole_in_data/wind_one_joint_sampled_samples.dat};
+        % \addplot[tiny sample, hannah3] table[ignore chars={\#}, col sep=space, x=X, y=2] {\datapath/wind_exp_09_hole_in_data/wind_one_joint_sampled_samples.dat};
+    \end{axis}
+\end{tikzpicture}
+\end{document}

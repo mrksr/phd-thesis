@@ -196,7 +196,7 @@ Here, $\mat{Z}$ and $z$ are identified with each other as $\mat{z}$.
 
 Assume an unknown data-generating distribution $\Prob{\mat{z}} \in \Probs{\Zc}$ over a known space of observations $\Zc$.
 The task in a machine learning problem is to infer properties of this distribution given only a set of observations $\Dc \in \Sc$ obtained via some sampling operator $S : \Probs{\Zc} \to \Sc$.
-A common choice of $S$ is a draw of $N$ independent points $\Dc = \Set*{\mat{z_1}, \dots, \mat{z_N} \with \mat{z_i} \sim \Prob{\mat{z}}} \subseteq \Zc$ with $\Sc = \Zc^N$.
+A common choice of $S$ is a draw of $N$ independent points $\Dc = \Set*{\mat{z}_1, \dots, \mat{z}_N \with \mat{z}_i \sim \Prob{\mat{z}}} \subseteq \Zc$ with $\Sc = \Zc^N$.
 Other choices include $S$ into the learning problem such as in active learning~\parencite{murphy_machine_2012} or reinforcement learning~\parencite{sutton_reinforcement_2018} settings.
 Depending on the machine learning problem, the task might not be to identify $\Prob*{\mat{z}}$ as a whole but instead identify some functional $f \in \Fc$ obtained via the functional operator $F : \Probs{\Zc} \to \Fc$.
 This formulation encompasses a large number of different machine learning problems via different choices for the spaces and operators.
@@ -214,7 +214,7 @@ We give a few examples here.
           Alternatively, assuming that $\Zc = \Xc \times \Yc$ separates into tuples of inputs $\Xc$ and continuous outputs $\Yc$ and choosing
           \begin{align}
               \label{eq:bayesian_ml:f_reg}
-              F_{\text{reg}}[\Prob*{\mat{x}, \mat{y}}](\mat{x_\ast}) = \Prob*{\mat{y_\ast} \given \mat{x_\ast}}
+              F_{\text{reg}}[\Prob*{\mat{x}, \mat{y}}](\mat{x}_\ast) = \Prob*{\mat{y}_\ast \given \mat{x}_\ast}
           \end{align}
           with $\Fc = \Xc \to \Probs{\Yc}$ gives rise to the regression problem discussed in~\cref{toc:bayesian_ml:ml_problems}.
     \item[Classification]

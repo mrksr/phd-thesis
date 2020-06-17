@@ -56,8 +56,8 @@
     ]
     \draw[connector, first] ($(first_third.north) + (0, 15pt)$) node[above=-3pt, black, font={\small}] {$\rv{X}$} -- (first_third.north);
     \draw[connector, second] ($(second_third.north) + (0, 15pt)$) node[above=-3pt, black, font={\small}] {$\rv{X}$} -- (second_third.north);
-    \draw[connector, first] (first_third.south) -- ($(first_third.south) + (0, -15pt)$) node[below=-3pt, black, font={\small}] {$\rv{y_1}$};
-    \draw[connector, second] (second_third.south) -- ($(second_third.south) + (0, -15pt)$) node[below=-3pt, black, font={\small}] {$\rv{y_2}$};
+    \draw[connector, first] (first_third.south) -- ($(first_third.south) + (0, -15pt)$) node[below=-3pt, black, font={\small}] {$\rv{y}_1$};
+    \draw[connector, second] (second_third.south) -- ($(second_third.south) + (0, -15pt)$) node[below=-3pt, black, font={\small}] {$\rv{y}_2$};
 
     % \draw[third, line width=2pt] (first_third.east) -- (second_third.west);
 
@@ -69,7 +69,7 @@
             at={(0pt, -55pt)},
             wind decomposition joint plot,
             width=185pt,
-            xlabel=, ylabel=$\rv{y_1}$,
+            xlabel=, ylabel=$\rv{y}_1$,
             xticklabels={,,},
         ]
 
@@ -97,7 +97,7 @@
             at={(0pt, -90pt)},
             wind decomposition joint plot,
             width=185pt,
-            xlabel=$\rv{X}$, ylabel=$\rv{y_2}$,
+            xlabel=$\rv{X}$, ylabel=$\rv{y}_2$,
         ]
 
         \addplot[

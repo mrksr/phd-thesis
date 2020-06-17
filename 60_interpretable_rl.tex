@@ -205,7 +205,7 @@ However, this independence is lost if the assignments are unknown and a discrete
 We approximate the exact posterior via a factorized variational distribution
 \begin{align}
     \Variat*{\mat{f}, \mat{\lambda}, \mat{\sigma}, \mat{U}} & =
-    \prod_{k=1}^K\prod_{t=1}^T \Variat{\mat{f}_t^{\pix{k}}, \mat{u}^{\pix{k}}} \Variat{\mat{\lambda}_t^{\pix{k}}, \mat{u_\lambda}^{\pix{k}}} \Variat{\mat{\sigma}_t^{\pix{k}}, \mat{u_\sigma}^{\pix{k}}}
+    \prod_{k=1}^K\prod_{t=1}^T \Variat{\mat{f}_t^{\pix{k}}, \mat{u}^{\pix{k}}} \Variat{\mat{\lambda}_t^{\pix{k}}, \mat{u}_\lambda}^{\pix{k}} \Variat{\mat{\sigma}_t^{\pix{k}}, \mat{u}_\sigma}^{\pix{k}}
 \end{align}
 which introduces variational inducing inputs and outputs $\mat{U}$ as described in~\parencite{damianou_deep_2013,hensman_scalable_2015,kaiser_data_2018}.
 These inducing inputs independently characterize the respective model parts and enable us to do inference via stochastic optimization.
@@ -219,7 +219,7 @@ The variational parameters are optimized by minimizing a lower bound to the marg
         \sum_{t=1}^T \Moment*{\E_{\Variat*{\mat{f}_t}}}{\log \Prob*{\mat{s}^\prime_t \given \mat{f}_t, \mat{\lambda}_t, \mat{\sigma}_t}}
         + \sum_{t=1}^T \Moment*{\E_{\Variat*{\mat{\lambda}_t}}}{\log \Prob*{\mat{l}_t \given \mat{\lambda}_t}} \\
         &\quad
-        - \sum_{k=1}^K \KL{\Variat*{\mat{u}^{\pix{k}}, \mat{u_\lambda}^{\pix{k}}, \mat{u_\sigma}^{\pix{k}}}}{\Prob*{\mat{u}^{\pix{k}}, \mat{u_\lambda}^{\pix{k}}, \mat{u_\sigma}^{\pix{k}}}}
+        - \sum_{k=1}^K \KL{\Variat*{\mat{u}^{\pix{k}}, \mat{u}_\lambda^{\pix{k}}, \mat{u}_\sigma}^{\pix{k}}}{\Prob*{\mat{u}^{\pix{k}}, \mat{u}_\lambda^{\pix{k}}, \mat{u}_\sigma}^{\pix{k}}}
     \end{split}
 \end{align}
 To gain informative gradients with respect to the assignments $\mat{l}$ and assignment process $\mat{\lambda}$, we use a continuous relaxation based on Concrete random variables~\parencite{maddison_concrete_2016}.
@@ -253,7 +253,7 @@ The expected return is approximated using the variational posterior given by
         \Moment*{\E}{\Fun*{J^\pi}{\mat{\theta}_\pi}}
         &= \sum_{t=0}^T \gamma^t \Moment*{\E_{\Prob{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t}
         \approx \sum_{t=0}^T \gamma^t \Moment*{\E_{\Variat{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t} \\
-        &= \int \sum_{t=0}^T \Bigg[ \gamma^t \Moment*{\E_{\Variat{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t} \Bigg] \Prob{\mat{s_0}} \prod_{t=0}^{T-1} \Variat{\mat{s}_{t+1} \given \mat{s}_t, \mat{\theta}_\pi} \diff \mat{s}_0 \dots \diff\mat{s}_T \\
+        &= \int \sum_{t=0}^T \Bigg[ \gamma^t \Moment*{\E_{\Variat{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t} \Bigg] \Prob{\mat{s}_0} \prod_{t=0}^{T-1} \Variat{\mat{s}_{t+1} \given \mat{s}_t, \mat{\theta}_\pi} \diff \mat{s}_0 \dots \diff\mat{s}_T \\
         &\approx \frac{1}{P} \sum_{p=1}^P \sum_{t=0}^T \gamma^t r_t^p.
     \end{split}
 \end{align}

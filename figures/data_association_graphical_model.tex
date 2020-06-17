@@ -28,14 +28,14 @@
                     },
             }}
 
-    \node[random variable, observed, yshift=-1ex] (Xn) at (1, 0) {$\rv{x_n}$};
-    \node[random variable, observed, yshift=3ex] (yn) at (1, -3) {$\rv{y_n}$};
+    \node[random variable, observed, yshift=-1ex] (Xn) at (1, 0) {$\rv{x}_n$};
+    \node[random variable, observed, yshift=3ex] (yn) at (1, -3) {$\rv{y}_n$};
 
-    \node[random variable, latent, cascaded=latent] (fnm) at (0, -1) {$\rv{f_n^{\pix{k}}}$};
-    \node[random variable, latent] (ynm) at (0, -2) {$\rv{y_n^{\pix{k}}}$};
+    \node[random variable, latent, cascaded=latent] (fnm) at (0, -1) {$\rv{f}_n^{\pix{k}}$};
+    \node[random variable, latent] (ynm) at (0, -2) {$\rv{y}_n^{\pix{k}}$};
 
-    \node[random variable, latent] (alphanm) at (2, -1) {$\rv{\alpha_n^{\pix{k}}}$};
-    \node[random variable, latent, yshift=3ex] (an) at (2, -3) {$\rv{a_n}$};
+    \node[random variable, latent] (alphanm) at (2, -1) {$\rv{\alpha}_n^{\pix{k}}$};
+    \node[random variable, latent, yshift=3ex] (an) at (2, -3) {$\rv{a}_n$};
 
     \draw[edge, directed] (Xn) -| (fnm);
     \draw[edge, directed] (Xn) -| (alphanm);
@@ -46,13 +46,13 @@
 
     % ---
 
-    \node[random variable, hyperparameter, cascaded=hyperparameter, shift={(-1.2ex,.6ex)}] (thetam) at (-1, -0.75) {$\rv{\theta^{\pix{k}}}$};
-    \node[random variable, variational, cascaded=variational, shift={(-1.2ex,-.6ex)}] (um) at (-1, -1.25) {$\rv{u^{\pix{k}}}$};
+    \node[random variable, hyperparameter, cascaded=hyperparameter, shift={(-1.2ex,.6ex)}] (thetam) at (-1, -0.75) {$\rv{\theta}^{\pix{k}}$};
+    \node[random variable, variational, cascaded=variational, shift={(-1.2ex,-.6ex)}] (um) at (-1, -1.25) {$\rv{u}^{\pix{k}}$};
 
-    \node[random variable, hyperparameter] (sigmam) at (-1, -2) {$\rv{\sigma^{\pix{k}}}$};
+    \node[random variable, hyperparameter] (sigmam) at (-1, -2) {$\rv{\sigma}^{\pix{k}}$};
 
-    \node[random variable, hyperparameter] (thetaalpham) at (3, -0.75) {$\rv{\theta_\alpha^{\pix{k}}}$};
-    \node[random variable, variational] (ualpham) at (3, -1.25) {$\rv{u_\alpha^{\pix{k}}}$};
+    \node[random variable, hyperparameter] (thetaalpham) at (3, -0.75) {$\rv{\theta}_\alpha^{\pix{k}}$};
+    \node[random variable, variational] (ualpham) at (3, -1.25) {$\rv{u}_\alpha^{\pix{k}}$};
 
     \draw[edge, directed] ([xshift=1.5ex]thetam.east) -- +(1ex, 0) |- (fnm.west);
     \draw[edge, directed] ([xshift=1.5ex]um.east) -- +(1ex, 0) |- (fnm.west);

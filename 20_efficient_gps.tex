@@ -356,7 +356,7 @@ The closed form solution of the integral is obtained using well-known results ab
     }
 \end{figure}
 Now consider a set of new points $\mat{X}_\ast$ for which the predictive posterior should be obtained.
-By definition of GPs, the latent function values $\mat{f}$ of the data set and the latent function values at the new points $\mat{f_\ast} = f(\mat{X}_\ast)$ have the joint Gaussian distribution
+By definition of GPs, the latent function values $\mat{f}$ of the data set and the latent function values at the new points $\mat{f}_\ast = f(\mat{X}_\ast)$ have the joint Gaussian distribution
 \begin{align}
     \Prob*{\begin{pmatrix}
             \mat{f} \\
@@ -369,7 +369,7 @@ By definition of GPs, the latent function values $\mat{f}$ of the data set and t
             \mat{K}_{\ast\mat{f}}    & \mat{K}_{\ast\ast}
         \end{bmatrix}}.
 \end{align}
-Adding the noise model to this distribution leads to the joint Gaussian of training outputs $\mat{y}$ and test outputs $\mat{f_\ast}$ which is given by
+Adding the noise model to this distribution leads to the joint Gaussian of training outputs $\mat{y}$ and test outputs $\mat{f}_\ast$ which is given by
 \begin{align}
     \label{eq:gp:predictive_joint}
     \Prob*{\begin{pmatrix}
@@ -388,11 +388,11 @@ The predictive posterior for the test outputs $\mat{f}_\ast$ can therefore be di
 \begin{lemma}[GP predictive posterior]
     \label{lem:gp:gp_posterior}
     Given a latent function with a Gaussian process distribution $f \sim \GP(\mat{0}, \K)$ and $N$ training points $\mat{X}$ with noisy observations of the form $\mat{y} = f(\mat{X}) + \Gaussian{\mat{0}, \sigma^2 \Eye}$.
-    The predictive posterior $\mat{f_\ast}$ of the test points $\mat{X_\ast}$ is then given by
+    The predictive posterior $\mat{f}_\ast$ of the test points $\mat{X}_\ast$ is then given by
     \begin{align}
         \begin{split}
-            \Prob{\mat{f_\ast} \given \mat{X}, \mat{y}, \mat{X_\ast}}
-            &= \Gaussian*{\mat{f_\ast} \given \mat{\mu_\ast}, \mat{\Sigma_\ast}} \text{, where} \\
+            \Prob{\mat{f}_\ast \given \mat{X}, \mat{y}, \mat{X}_\ast}
+            &= \Gaussian*{\mat{f}_\ast \given \mat{\mu}_\ast, \mat{\Sigma}_\ast} \text{, where} \\
             \mat{\mu}_\ast
             &= \mat{K}_{\ast \mat{f}} \left( \mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye \right)\inv \mat{y} \\
             \mat{\Sigma}_\ast
@@ -509,7 +509,7 @@ The likelihood of the original data under the Gaussian process trained on the in
 \begin{align}
     \begin{split}
         \Prob{\mat{y} \given \mat{X}, \mat{Z}, \mat{u}, \mat{\theta}}
-        &= \prod_{n=1}^N \Prob{\mat{y}_n \given \mat{x_n}, \mat{Z}, \mat{u}, \mat{\theta}} \\
+        &= \prod_{n=1}^N \Prob{\mat{y}_n \given \mat{x}_n, \mat{Z}, \mat{u}, \mat{\theta}} \\
         &= \prod_{n=1}^N \Gaussian*{
         \mat{y}_n \given \mat{K_{\mat{f}_n\mat{u}}}\mat{K}_{\mat{u}\mat{u}}\inv \mat{u},
         \mat{K}_{\mat{f}_n \mat{f}_n} - \mat{K}_{\mat{f}_n \mat{u}} \mat{K}_{\mat{u}\mat{u}}\inv\mat{K}_{\mat{u} \mat{f}_n} + \sigma^2
@@ -580,14 +580,14 @@ With $\Ind$ denoting the indicator function, it is defined as
 This kernel is equal to $\K$ when both arguments are identical and equal to $\Qc$ everywhere else.
 For well-chosen inducing inputs, $\mat{Q}_{\mat{f}\mat{f}}$ is a low-rank approximation of $\mat{K}_{\mat{f}\mat{f}}$~\parencite{snelson_flexible_2007}.
 The inducing inputs $\mat{Z}$ are hidden in the kernel matrix $\mat{K}_{\mat{u}\mat{u}}$ and are additional hyper-parameters to this kernel.
-The predictive posterior $\mat{f_\ast}$ of the test points $\mat{X_\ast}$ is then given by
+The predictive posterior $\mat{f}_\ast$ of the test points $\mat{X}_\ast$ is then given by
 \begin{align}
     \begin{split}
-        \Prob{\mat{f_\ast} \given \mat{X_\ast}, \mat{X}, \mat{y}, \mat{Z}}
-        &= \Gaussian*{\mat{f_\ast} \given \mat{\mu_\ast}, \mat{\Sigma_\ast}} \text{, where} \\
-        \mat{\mu_\ast}
+        \Prob{\mat{f}_\ast \given \mat{X}_\ast, \mat{X}, \mat{y}, \mat{Z}}
+        &= \Gaussian*{\mat{f}_\ast \given \mat{\mu}_\ast, \mat{\Sigma}_\ast} \text{, where} \\
+        \mat{\mu}_\ast
         &= \mat{Q}_{\ast \mat{f}} \left( \mat{Q}_{\mat{f}\mat{f}} + \diag(\mat{K}_{\mat{f}\mat{f}} - \mat{Q}_{\mat{f}\mat{f}}) + \sigma^2 \Eye \right)\inv \mat{y} \\
-        \mat{\Sigma_\ast}
+        \mat{\Sigma}_\ast
         &= \mat{K}_{\ast\ast} - \mat{Q}_{\ast \mat{f}} \left( \mat{Q}_{\mat{f}\mat{f}} + \diag(\mat{K}_{\mat{f}\mat{f}} - \mat{Q}_{\mat{f}\mat{f}}) + \sigma^2 \Eye \right)\inv \mat{Q}_{\mat{f} \ast}.
     \end{split}
 \end{align}
@@ -596,9 +596,9 @@ This formulation of the predictive posterior for the FITC approximation still re
 Using the matrix inversion lemma \cite{petersen_matrix_2008}, they can be rewritten in the form
 \begin{align}
     \begin{split}
-        \mat{\mu_\ast}
+        \mat{\mu}_\ast
         &= \mat{K}_{\ast \mat{u}}\mat{B}\inv \mat{K}_{\mat{u}\mat{f}}\left(\Fun{\diag}{\mat{K}_{\mat{f}\mat{f}} - \mat{Q}_{\mat{f}\mat{f}}} + \sigma^2\Eye\right)\inv \mat{y} \\
-        \mat{\Sigma_\ast}
+        \mat{\Sigma}_\ast
         &= \mat{K}_{\ast\ast} - \mat{K}_{\ast \mat{u}} \left(\mat{K}_{\mat{u}\mat{u}}\inv - \mat{B}\inv \right) \mat{K}_{\mat{u}\ast} \\
         \mat{B}
         &= \mat{K}_{\mat{u}\mat{u}} + \mat{K}_{\mat{u}\mat{f}} \left(\Fun{\diag}{\mat{K}_{\mat{f}\mat{f}} - \mat{Q}_{\mat{f}\mat{f}}} + \sigma^2\Eye\right)\inv \mat{K}_{\mat{f}\mat{u}},
@@ -671,7 +671,6 @@ Because calculating this optimal choice is computationally expensive, we will th
 We assume a free-form variational distribution $\Variat*{\mat{u}}$ to derive the variational lower bound to the likelihood $\Lc^{\text{SGPR}}$ of the augmented model.
 \begin{align}
     \begin{split}
-        \label{eq:gp:sgpr_bound_1}
         \Lc^{\text{SGPR}}(\mat{\theta}, \mat{Z}, \Variat*{\mat{u}})
         & = -\log \Prob*{\mat{y} \given \mat{\theta}, \mat{Z}, \Variat*{\mat{u}}}                                                                                                                                                       \\
         & = -\log \int \Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}} \diff \mat{f} \diff \mat{u}                                                                                                        \\
@@ -744,10 +743,10 @@ Since the product of two Gaussian densities is an un-normalized Gaussian density
         \label{eq:gp:sgpr_optimal_q}
         \q^\ast(\mat{u})
         & = \frac{G(\mat{u}) \Prob*{\mat{u}}}{\int G(\mat{u}) \Prob*{\mat{u}} \diff \mat{u}}
-        = \Gaussian*{\mat{u} \given \mat{\mu_u}, \mat{\Sigma_u}}\text{, with}                 \\[\smallskipamount]
-        \mat{\mu_u}
+        = \Gaussian*{\mat{u} \given \mat{\mu}_u, \mat{\Sigma}_u}\text{, with}                 \\[\smallskipamount]
+        \mat{\mu}_u
         & = \sigma_n^{-2} \mat{K_{uu}}\mat{B}\inv \mat{K_{uf}}\mat{y}                        \\
-        \mat{\Sigma_u}
+        \mat{\Sigma}_u
         & = \mat{K_{uu}}\mat{B}\inv\mat{K_{uu}}                                              \\[\smallskipamount]
         \mat{B}
         & = \mat{K_{uu}} + \sigma_n^{-2} \mat{K_{uf}}\mat{K_{fu}}.

@@ -1,5 +1,11 @@
 \chapter{Non-Linear Timeseries Alignment}
 \label{toc:alignment}
+In \cref{toc:data_association}, we used hierarchically structured Gaussian processes to solve a data association problem.
+We exploited the conditional independence between modes given associations to formulate an efficient variational approximation.
+The dependence bettween modes introduces through uncertain associations was handled through components that learn expected associations and an explicit posteriors for the training data.
+However, while the different modes in the DAGP model are independent in the true generative process, they might not be independent in a Bayesian posterior due to insufficient information.
+assuming independence nonetheless is the core simplifying assumption in the variational approximation.
+In this chapter, we explore how dependencies in multimodal models can be represented explicitly in hierarchical structure.
 
 Many real-world systems are inherently hierarchical and connected.
 Ideally, a machine learning method should model and recognize such dependencies.
@@ -7,24 +13,20 @@ Take wind power production, which is one of the major providers for renewable en
 To optimize the efficiency of a wind turbine the speed and pitch have to be controlled according to the local wind conditions (speed and direction).
 In a wind farm turbines are typically equipped with sensors for wind speed and direction.
 The goal is to use these sensor data to produce accurate estimates and forecasts of the wind conditions at every turbine in the farm.
-For the ideal case of a homogeneous and very slowly changing wind field, the wind conditions at each geometrical position in a wind farm can be estimated using the propagation times (time warps) computed from geometry, wind speed, and direction \parencite{soleimanzadeh_controller_2011,bitar_coordinated_2013,schepers_improved_2007}.
+For the ideal case of a homogeneous and very slowly changing wind field, the wind conditions at each geometrical position in a wind farm can be estimated using the propagation times (time warps) computed from geometry, wind speed, and direction~\parencite{soleimanzadeh_controller_2011,bitar_coordinated_2013,schepers_improved_2007}.
 In the real world, however, wind fields are not homogeneous, exhibit global and local turbulence, and interfere with the turbines and the terrain inside and outside the farm and further, sensor faults may lead to data loss.
 This makes it extremely difficult to construct accurate analytical models of wind propagation in a farm.
-Also, standard approaches for extracting such information from data, e.g.\ generalized time warping  \parencite{zhou_generalized_2012}, fail at this task because they rely on a high signal to noise ratio.
+Also, standard approaches for extracting such information from data, e.g.\ generalized time warping~\parencite{zhou_generalized_2012}, fail at this task because they rely on a high signal to noise ratio.
 Instead, we want to construct Bayesian nonlinear dynamic data based models for wind conditions and warpings which handle the stochastic nature of the system in a principled manner.
 
-In this paper, we look at a generalization of this type of problem and propose a novel Bayesian approach to finding nonlinear alignments of time series based on latent shared information.
-We view the power production of different wind turbines as the outputs of a multi-output Gaussian process (MO-GP) \parencite{alvarez_kernels_2011} which models the latent wind fronts.
-We embed this model in a hierarchy, adding a layer of non-linear alignments on top and a layer of non-linear warpings \parencites{snelson_warped_2004,lazaro-gredilla_bayesian_2012} below which increases flexibility and encodes the original generative process.
+In this chapter, we look at a generalization of this type of problem and propose a novel Bayesian approach to finding nonlinear alignments of time series based on latent shared information.
+We view the power production of different wind turbines as the outputs of a multi-output Gaussian process (MO-GP)~\parencite{alvarez_kernels_2011} which models the latent wind fronts.
+We embed this model in a hierarchy, adding a layer of non-linear alignments on top and a layer of non-linear warpings~\parencite{snelson_warped_2004,lazaro-gredilla_bayesian_2012} below which increases flexibility and encodes the original generative process.
 We show how the resulting model can be interpreted as a group of deep Gaussian processes with the added benefit of covariances between different outputs.
 The imposed structure is used to formulate prior knowledge in a principled manner, restrict the representational power to physically plausible models and  recover the desired latent wind fronts and relative alignments.
 The presented model can be interpreted as a group of $D$ deep GPs all of which share one layer which is a MO-GP.
 This MO-GP acts as an interface to share information between the different GPs which are otherwise conditionally independent.
 
-The paper has the following contributions:
-In \cref{toc:alignment:model}, we propose a hierarchical, warped and aligned  multi-output Gaussian process (AMO-GP).
-In \cref{toc:alignment:variational_approximation}, we present an efficient learning scheme via an approximation to the marginal likelihood which allows us to fully exploit the regularization provided by our structure, yielding highly interpretable results.
-We show these properties for an artificial data set and for real-world data of two wind turbines in \cref{toc:alignment:experiments}.
 
 \section{Aligned multi-output Gaussian processes}
 \label{toc:alignment:model}
@@ -49,7 +51,7 @@ We show these properties for an artificial data set and for real-world data of t
 \end{figure}
 We are interested in formulating shared priors over a set of functions $\Set{f_d}_{d=1}^D$ using GPs, thereby directly parameterizing their interdependencies.
 In a traditional GP setting, multiple outputs are considered conditionally independent given the inputs, which significantly reduces the computational cost but also prevents the utilization of shared information.
-Such interdependencies can be formulated via convolution processes (CPs) as proposed by \textcite{boyle_dependent_2004}, a generalization of the linear model of coregionalization (LMC) \parencite{journel_mining_1978,coburn_geostatistics_2000}.
+Such interdependencies can be formulated via convolution processes (CPs) as proposed by~\textcite{boyle_dependent_2004}, a generalization of the linear model of coregionalization (LMC)~\parencite{journel_mining_1978,coburn_geostatistics_2000}.
 In the CP framework, the output functions are the result of a convolution of the latent processes $w_r$ with smoothing kernel functions $T_{d,r}$ for each output $f_d$, defined as
 \begin{align}
     f_d(\mat{x}) = \sum_{r=1}^R \int T_{d,r}(\mat{x} - \mat{z}) \cdot w_r(\mat{z}) \diff \mat{z}.
@@ -79,15 +81,17 @@ We assume independence between $a_d$ and $g_d$ across outputs and apply GP prior
 By setting the prior mean to the identity function $\id(x) = x$, the standard CP model is our default assumption.
 During learning, the model can choose the different $a_d$ and $g_d$ in a way to reveal the independent shared latent processes $\Set{w_r}_{r=1}^R$ on which we also place GP priors $w_r \sim \GP(0, k_{u, r})$.
 Similar to \textcite{boyle_dependent_2004}, we assume the latent processes to be independent white noise processes by setting $\Moment{\cov}{w_r(\mat{z}), w_{r^\prime}(\mat{z^\prime})} = \delta_{rr^\prime}\delta_{\mat{z}\mat{z^\prime}}$.
-Under this prior, the $f_d$ are also GPs with zero mean and $\Moment{\cov}{f_d(\mat{x}), f_{d^\prime}(\mat{x^\prime})} = \sum_{r=1}^R \int T_{d,r}(\mat{x} - \mat{z}) T_{d^\prime,r}(\mat{x^\prime} - \mat{z}) \diff \mat{z}$.
+Under this prior, the $f_d$ are also GPs with zero mean and
+\begin{align}
+    \Moment{\cov}{f_d(\mat{x}), f_{d^\prime}(\mat{x^\prime})}
+    = \sum_{r=1}^R \int T_{d,r}(\mat{x} - \mat{z}) T_{d^\prime,r}(\mat{x^\prime} - \mat{z}) \diff \mat{z}.
+\end{align}
 
-Using the squared exponential kernel for all $T_{d, r}$, the integral can be shown to have a closed form solution.
+Using the squared exponential kernel for all $T_{d, r}$, the integral has a closed form solution.
 With $\Set{\sigma_{d,r}, \mat{\ell}_{d, r}}$ denoting the kernel hyper parameters associated with $T_{d,r}$, it is given by
 \begin{align}
     \label{eq:alignment:dependent_kernel}
-    \begin{split}
-        \MoveEqLeft[1] \Moment{\cov}{f_d(\mat{x}), f_{d^\prime}(\mat{x^\prime})} = \sum_{r=1}^R \frac{(2\pi)^{\frac{K}{2}}\sigma_{d, r}\,\sigma_{d^\prime, r}}{\prod_{k=1}^K \hat{\ell}_{d, d^\prime, r, k}\inv} \Fun*{\exp}{-\frac{1}{2} \sum_{k=1}^K \frac{(x_k - x^\prime_k)^2}{\hat{\ell}_{d, d^\prime, r, k}^2}},
-    \end{split}
+    \Moment{\cov}{f_d(\mat{x}), f_{d^\prime}(\mat{x^\prime})} = \sum_{r=1}^R \frac{(2\pi)^{\frac{K}{2}}\sigma_{d, r}\,\sigma_{d^\prime, r}}{\prod_{k=1}^K \hat{\ell}_{d, d^\prime, r, k}\inv} \Fun*{\exp}{-\frac{1}{2} \sum_{k=1}^K \frac{(x_k - x^\prime_k)^2}{\hat{\ell}_{d, d^\prime, r, k}^2}},
 \end{align}
 where $\mat{x}$ is $K$-dimensional and $\hat{\ell}_{d, d^\prime, r, k} = \sqrt{\ell_{d, r, k}^2 + \ell_{d^\prime, r, k}^2}$.
 
@@ -99,29 +103,25 @@ The joint probability distribution of the data can then be written as
 \begin{align}
     \begin{split}
         \label{eq:alignment:full_model}
-        \begin{aligned}
-             & \Prob{\rv{y}, \rv{f}, \rv{a} \given \mat{X}} =                                                                \\
-             & \qquad\Prob{\rv{f} \given \rv{a}} \prod_{d=1}^D \Prob{\rv{y_d} \given \rv{f_d}}\Prob{\rv{a_d} \given \rv{X}},
-        \end{aligned}
-        \qquad\qquad
-        \begin{aligned}
-            \rv{a_d} \mid \mat{X}   & \sim \Gaussian{\mat{X}, \mat{K_{a, d}} + \sigma^2_{a, d}\Eye},   \\
-            \rv{f} \mid \mat{a}     & \sim \Gaussian{\mat{0}, \mat{K_f} + \sigma^2_f\Eye},             \\
-            \rv{y_d} \mid \mat{f_d} & \sim \Gaussian{\mat{f_d}, \mat{K_{g, d}} + \sigma^2_{y, d}\Eye}.
-        \end{aligned}
+        \Prob{\rv{y}, \rv{f}, \rv{a} \given \mat{X}}
+        &= \Prob{\rv{f} \given \rv{a}} \prod_{d=1}^D \Prob{\rv{y_d} \given \rv{f_d}}\Prob{\rv{a_d} \given \rv{X}}\text{, with} \\[\medskipamount]
+        \rv{a_d} \ |\ \mat{X}
+        &\sim \Gaussian{\mat{X}, \mat{K_{a, d}} + \sigma^2_{a, d}\Eye},   \\
+        \rv{f} \ |\ \mat{a}
+        &\sim \Gaussian{\mat{0}, \mat{K_f} + \sigma^2_f\Eye},             \\
+        \rv{y_d} \ |\ \mat{f_d}
+        &\sim \Gaussian{\mat{f_d}, \mat{K_{g, d}} + \sigma^2_{y, d}\Eye}.
     \end{split}
 \end{align}
 Here, we use $\mat{K}$ to refer to the Gram matrices corresponding to the respective GPs.
 All but the convolution processes factorize over the different levels of the model as well as the different outputs.
 
 \subsubsection{Variational Lower Bound}
-To approximate a single deep GP, that is a single string of GPs stacked on top of each other, \textcite{hensman_nested_2014} proposed nested variational compression in which every GP in the hierarchy is handled independently.
-In order to arrive at their lower bound they make two variational approximations.
-First, they consider a variational approximation $\Variat*{\hat{\rv{a}}, \rv{u}} = \Prob*{\rv{\hat{a}} \given \rv{u}} \Variat*{\rv{u}}$ to the true posterior of a single GP first introduced by \textcite{titsias_variational_2009}.
-In this approximation, the original model is augmented with \emph{inducing variables} $\mat{u}$ together with their \emph{inducing points} $\mat{Z}$  which are assumed to be latent observations of the same function and are thus jointly Gaussian with the observed data.
-In contrast to \cite{titsias_variational_2009}, the distribution $\Variat*{\rv{u}}$ is not chosen optimally but optimized using the closed form $\Variat*{\rv{u}} \sim \Gaussian*{\rv{u} \given \mat{m}, \mat{S}}$.
-This gives rise to the Scalable Variational GP presented in \cite{hensman_gaussian_2013}.
-Second, in order to apply this variational bound for the individual GPs recursively, uncertainties have to be propagated through subsequent layers and inter-layer cross-dependencies are avoided using another variational approximation.
+To approximate a single deep GP, that is a single string of GPs stacked on top of each other,
+we can use the approximations discussed in~\cref{toc:dgp}\todo{DGP reference}.
+Since the AMO-GP model
+The structure of the AMO-GP model is closely related to a group of stacked GPs with additional dependencies in one of the layers.
+Since these dependencies are represented with a multi-output GP which, given the latent functions, yields conditionally independent outputs, nested variation compression generalizes to the AMO-GP.
 The variational lower bound for the AMO-GP is given by
 \begin{align}
     \label{eq:alignment:full_bound}
@@ -136,13 +136,12 @@ The variational lower bound for the AMO-GP is given by
         - \sum_{d=1}^D \KL{\Variat{\rv{u_{y, d}}}}{\Prob{\rv{u_{y, d}}}} \\
         &- \frac{1}{2\sigma_f^2} \tr\left(\left(\mat{\Phi_f} - \mat{\Psi_f}\tran\mat{\Psi_f}\right) \mat{K_{u_fu_f}}\inv \left(\mat{m_f}\mat{m_f}\tran + \mat{S_f}\right)\mat{K_{u_fu_f}}\inv\right) \\
         &- \sum_{d=1}^D\frac{1}{2\sigma_{y, d}^2} \tr\left(\left(\mat{\Phi_{g, d}} - \mat{\Psi_{g, d}}\tran\mat{\Psi_{g, d}}\right)
-        \mat{K_{u_{g, d}u_{g, d}}}\inv \left(\mat{m_{g, d}}\mat{m_{g, d}}\tran + \mat{S_{g, d}}\right) \mat{K_{u_{g, d}u_{g, d}}}\inv\right),
+        \mat{K_{u_{g, d}u_{g, d}}}\inv \left(\mat{m_{g, d}}\mat{m_{g, d}}\tran + \mat{S_{g, d}}\right) \mat{K_{u_{g, d}u_{g, d}}}\inv\right).
     \end{split}
 \end{align}
-where $\KLdiv$ denotes the KL-divergence.
 The bound contains one Gaussian fit term per output dimension and a series of regularization terms for every GP in the hierarchy.
 The KL-divergences connect the variational approximations to the prior and the different trace terms regularize the variances of the different GPs (for a detailed discussion see \parencite{hensman_nested_2014}).
-This bound depends on the hyper parameters of the kernel and likelihood $\left\{ \mat{\ell}, \mat{\sigma} \right\}$ and the variational parameters $\Set*{\mat{Z_{l,d}}, \mat{m_{l,d}}, \mat{S_{l,d}} \with l \in \Set{\rv{a}, \rv{f}, \rv{d}}, d \in [D]}$.
+This bound depends on the hyper parameters of the kernel and likelihood $\left\{ \mat{\ell}, \mat{\sigma} \right\}$ and the variational parameters $\Set*{\mat{Z}_{l,d}, \mat{m}_{l,d}, \mat{S}_{l,d} \with l \in \Set{\rv{a}, \rv{f}, \rv{d}}, d \in [D]}$.
 
 The bound can be calculated in $\Oh(NM^2)$ time and factorizes along the data points which enables stochastic optimization.
 Since every of the $N$ data points is associated with one of the $D$ outputs, the computational cost of the model is independent of $D$.
@@ -150,7 +149,7 @@ Information is only shared between the different outputs using the inducing poin
 As the different outputs share a common function, increasing $D$ allows us to reduce the number of variational parameters per output, because the shared function can still be represented completely.
 
 A central component of this bound are expectations over kernel matrices, the three $\Psi$-statistics $\psi_f = \Moment*{\E_{\Variat{\rv{a}}}}{\Fun*{\tr}{\mat{K_{ff}}}}$, $\mat{\Psi_f} = \Moment*{\E_{\Variat{\rv{a}}}}{\mat{K_{fu}}}$ and $\mat{\Phi_f} = \Moment*{\E_{\Variat{\rv{a}}}}{\mat{K_{uf}}\mat{K_{fu}}}$.
-Closed form solutions for these statistics depend on the choice of kernel and are known for specific kernels, such as linear or RBF kernels, for example shown in \cite{damianou_deep_2012}.
+Closed form solutions for these statistics depend on the choice of kernel and are known for specific kernels, such as linear or RBF kernels, for example shown in~\parencite{damianou_deep_2013}.
 In the following subsection we will give closed form solutions for these statistics required in the shared CP-layer of our model.
 
 \subsubsection{Convolution Kernel Expectations}
@@ -169,7 +168,7 @@ Then, $\psi_f$ is given by
         &= \sum_{n=1}^N \hat{\sigma}_{nn}^2.
     \end{split}
 \end{align}
-Similar to the notation $\Fun{\hat{f}}{\cdot}$, we use the notation $\hat{\sigma}_{nn^\prime}$ to mean the variance term associated with the covariance function $\Moment{\cov}{\Fun{\hat{f}}{\mat{a}_n}, \Fun{\hat{f}}{\mat{a}_{n^\prime}}}$.
+Similar to the notation $\Fun{\hat{f}}{\cdot}$, we use $\hat{\sigma}_{nn^\prime}$ to denote the variance term associated with the covariance function $\Moment{\cov}{\Fun{\hat{f}}{\mat{a}_n}, \Fun{\hat{f}}{\mat{a}_{n^\prime}}}$.
 The expectation $\mat{\Psi_f} = \Moment*{\E_{\Variat{\rv{a}}}}{\mat{K_{fu}}}$ connecting the alignments and the pseudo inputs is given by
 \begin{align}
     \begin{split}
@@ -204,42 +203,7 @@ Now assume we want to predict approximate function values $\mat{g}_{d, \ast}$ fo
 
 Because of the conditional independence assumptions in the model, other outputs $d^\prime \neq d$ only have to be considered in the shared layer $\rv{f}$.
 In this shared layer, the belief about the different outputs and the shared information and is captured by the variational distribution $\Variat{\rv{u}_f}$.
-Given $\Variat{\rv{u}_f}$, the different outputs are conditionally independent of one another and thus, predictions for a single dimension in our model are equivalent to predictions in a single deep GP with nested variational compression as presented by \textcite{hensman_nested_2014}.
-
-\todo{Below, I write what I currently know about how to calculate this. Should we just stop here?}Given inputs $\mat{X}_{d, \ast}$, we propagate Gaussian messages through the different layers. The Gaussians are the variational approximations of $\rv{a}_{d, \ast}$, $\rv{f}_{d, \ast}$ and $\rv{g}_{d, \ast}$.
-Using $\rv{f}_{d, \ast}$ as an example, in \cref{eq:alignment:variational_assumption} we assumed that they are given by a standard integral
-\begin{align}
-    \begin{split}
-        \MoveEqLeft\Variat{\rv{f}_{d, \ast} \given \rv{a}_{d, \ast}} = \\
-        &= \int \aProb{\rv{f}_{d, \ast} \given \rv{u}_f, \rv{a}_{d, \ast}}\Variat{\rv{u}_f} \diff \rv{u}_f \\
-        &= \Gaussian*{\rv{f}_{d, \ast} \given \mat{\mu}_{\ast}, \mat{\Sigma}_{\ast} + \sigma_f^2 \Eye}
-    \end{split}
-\end{align}
-with
-\begin{align*}
-    \mat{\mu}_{\ast}    & = \mat{K_{\ast m}}\mat{K_{mm}}\inv \mat{m}                                                                                      \\
-    \mat{\Sigma}_{\ast} & = \mat{K_{\ast\ast}} - \mat{K_{\ast m}}\mat{K_{mm}}\inv \left(  \mat{K_{mm}} - \mat{S} \right) \mat{K_{mm}}\inv\mat{K_{m\ast}}.
-\end{align*}
-Here, $\mat{K_{\ast m}}$ denotes the kernel matrix of the previous layer's output $\rv{a}_{d, \ast}$ and the current layer's inducing inputs $\mat{Z}_f$.
-Since every message besides the initial $\rv{X}_{d, \ast}$ is itself a Gaussian, it needs to be marginalized:
-\begin{align}
-    \begin{split}
-        \MoveEqLeft\Variat{\rv{f}_{d, \ast} \given \rv{X}_{d, \ast}} = \\
-        &= \int \Variat{\rv{f}_{d, \ast}, \rv{a}_{d, \ast} \given \rv{X}_{d, \ast}} \diff \rv{a}_{d, \ast} \\
-        &= \int \Variat{\rv{f}_{d, \ast} \given \rv{a}_{d, \ast}} \Variat{\rv{a}_{d, \ast} \given \rv{X}_{d, \ast}} \diff \rv{a}_{d, \ast} \\
-        &= \int \Variat{\rv{f}_{d, \ast} \given \rv{a}_{d, \ast}} \Variat{\rv{a}_{d, \ast} \given \rv{X}_{d, \ast}} \diff \rv{a}_{d, \ast} \\
-        &= \Moment*{\E_{\Variat{\rv{a}_{d, \ast} \given \rv{X}_{d, \ast}}}}{\Variat{\rv{f}_{d, \ast} \given \rv{a}_{d, \ast}}} \\
-        &= \Gaussian*{\rv{f}_{d, \ast} \given \mat{\bar{\mu}_{\ast}}, \mat{\bar{\Sigma}_{\ast}}}
-    \end{split}
-\end{align}
-with \todo{I am super uncertain about $\mat{\bar{\Sigma}}$.}
-\begin{align*}
-    \mat{\bar{\mu}_{\ast}}    & = \mat{\Psi_{f\ast}} \mat{K_{mm}}\inv \mat{m}                                       \\
-    \mat{\bar{\Sigma}_{\ast}} & = \mat{\Psi_{f\ast}}\mat{K_{mm}}\inv\mat{S}\mat{K_{mm}}\inv\mat{\Psi_{f\ast}}\tran.
-\end{align*}
-For the first layer, the expectation collapses to usual SVGP predictions as derived in \cite{hensman_scalable_2015}.
-Given the approximation of $\rv{f}_{d, \ast}$, the approximation of $\rv{g}_{d, \ast}$ can be derived via the same procedure for the next layer.
-This yields an approximate prediction for the final function values.
+Given $\Variat{\rv{u}_f}$, the different outputs are conditionally independent of one another and thus, predictions for a single dimension in our model are equivalent to predictions in a single deep GP with nested variational compression.
 
 
 \section{Model Interpretation}
@@ -283,7 +247,7 @@ The bound reflects the dependencies of the different outputs as the sharing of i
             \label{fig:alignment:dampened_sine_model_decomposition:b}
         }
     \end{subfigure}
-    \\[\baselineskip]
+    \\[.25\figureskip]
     \begin{subfigure}{\halffigurewidth}
         \centering
         \includestandalonewithpath{figures/dampened_sine_decomposition_dgp}
@@ -356,18 +320,32 @@ Because of this, the model cannot recover the latent sine function and can only 
 
 
 \subsubsection{Pairs of wind turbines}
-\begin{figure}[tp]
+This experiment is based on real data recorded from a pair of neighboring wind turbines in a wind farm.
+The two time series $\Tc_1$ and $\Tc_2$ shown in gray in \cref{fig:alignment:wind_joint_model} record the respective power generation of the two turbines over the course of one and a half hours, which was smoothed slightly using a rolling average over 60 seconds.
+There are 5400 data points for the first turbine (blue) and 4622 data points for the second turbine (green).
+We removed two intervals (drawn as dashed lines) from the second turbine's data set to inspect the behavior of the model with missing data.
+This allows us to evaluate and compare the generative properties of our model in \cref{fig:alignment:wind_samples}.
+
+\begin{table}[t]
     \centering
-    \includestandalonewithpath{figures/wind_joint_model}
     \caption{
-        \label{fig:alignment:wind_joint_model}
-        The joint posterior for two time series $\rv{y}_1$ and $\rv{y}_2$ of power production for a pair of wind turbines.
-        The top and bottom plots show the two observed time series with training data and dashed missing data.
-        The AMO-GP recovers an uncertain relative alignment of the two time series shown in the middle plot.
-        High uncertainty about the alignment is placed in areas where multiple explanations are plausible due to the high noise or missing data.
+        \label{tab:alignment:dampened_sine_model_log_likelihoods}
+        Test-log-likelihoods for the models presented in \cref{toc:alignment:experiments}.
     }
-\end{figure}
-\begin{figure}[tp]
+    \newcolumntype{Y}{>{\centering\arraybackslash}X}
+    \begin{tabularx}{\linewidth}{rrYYYY}
+        \toprule
+        Experiment & Test set                       & GP    & MO-GP  & DGP   & AMO-GP (Ours)  \\
+        \midrule
+        Artificial & $[0.7, 0.8] \subseteq \Tc_1$   & -0.12 & -0.053 & 0.025 & \textbf{1.54}  \\
+                   & $[0.35, 0.65] \subseteq \Tc_2$ & -0.19 & -5.66  & -0.30 & \textbf{0.72}  \\
+        \midrule
+        Wind       & $[40, 45] \subseteq \Tc_2 $    & -4.42 & -2.31  & -1.80 & \textbf{-1.43} \\
+                   & $[65, 75] \subseteq \Tc_2 $    & -7.26 & -0.73  & -1.93 & \textbf{-0.69} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+\begin{figure}[t]
     \centering
     \begin{subfigure}[b]{\halffigurewidth}
         \centering
@@ -410,31 +388,17 @@ Because of this, the model cannot recover the latent sine function and can only 
         Since the uncertainty in the generative process is mainly placed in the relative alignment shown in \cref{fig:alignment:wind_joint_model}, all samples in \cref{fig:alignment:wind_samples:d} resemble the underlying data in structure.
     }
 \end{figure}
-\begin{table}[tp]
+\begin{figure}[tp]
     \centering
+    \includestandalonewithpath{figures/wind_joint_model}
     \caption{
-        \label{tab:alignment:dampened_sine_model_log_likelihoods}
-        Test-log-likelihoods for the models presented in \cref{toc:alignment:experiments}.
+        \label{fig:alignment:wind_joint_model}
+        The joint posterior for two time series $\rv{y}_1$ and $\rv{y}_2$ of power production for a pair of wind turbines.
+        The top and bottom plots show the two observed time series with training data and dashed missing data.
+        The AMO-GP recovers an uncertain relative alignment of the two time series shown in the middle plot.
+        High uncertainty about the alignment is placed in areas where multiple explanations are plausible due to the high noise or missing data.
     }
-    \newcolumntype{Y}{>{\centering\arraybackslash}X}
-    \begin{tabularx}{\linewidth}{rrYYYY}
-        \toprule
-        Experiment & Test set                       & GP    & MO-GP  & DGP   & AMO-GP (Ours)  \\
-        \midrule
-        Artificial & $[0.7, 0.8] \subseteq \Tc_1$   & -0.12 & -0.053 & 0.025 & \textbf{1.54}  \\
-                   & $[0.35, 0.65] \subseteq \Tc_2$ & -0.19 & -5.66  & -0.30 & \textbf{0.72}  \\
-        \midrule
-        Wind       & $[40, 45] \subseteq \Tc_2 $    & -4.42 & -2.31  & -1.80 & \textbf{-1.43} \\
-                   & $[65, 75] \subseteq \Tc_2 $    & -7.26 & -0.73  & -1.93 & \textbf{-0.69} \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
-This experiment is based on real data recorded from a pair of neighboring wind turbines in a wind farm.
-The two time series $\Tc_1$ and $\Tc_2$ shown in gray in \cref{fig:alignment:wind_joint_model} record the respective power generation of the two turbines over the course of one and a half hours, which was smoothed slightly using a rolling average over 60 seconds.
-There are 5400 data points for the first turbine (blue) and 4622 data points for the second turbine (green).
-We removed two intervals (drawn as dashed lines) from the second turbine's data set to inspect the behavior of the model with missing data.
-This allows us to evaluate and compare the generative properties of our model in \cref{fig:alignment:wind_samples}.
-
+\end{figure}
 The power generated by a wind turbine is mainly dependent on the speed of the wind fronts interacting with the turbine.
 For system identification tasks concerned with the behavior of multiple wind turbines, associating the observations on different turbines due to the same wind fronts is an important task.
 However it is usually not possible to directly measure these correspondences or wind propagation speeds between turbines, which means that there is no ground truth available.
@@ -451,7 +415,7 @@ To constrain the AMO-GP, we want it to prefer alignments close to the identity f
 
 In non-hierarchical models, this can be achieved by placing a prior on the kernel's variance preferring smaller $\sigma_a^2$.
 In our case, the posterior space of the alignment process $\rv{a}$ is a latent space we have not placed any prior on.
-The model can therefore choose the posterior distribution of $\rv{u}_a$ in a way to counteract the constrained scale of $\mat{K_{au}}$ and $\mat{K_{uu}}\inv$ in \cref{eq:alignment:augmented_joint}\todo{This equation does not exist anymore} and thereby circumvent the prior.
+The model can therefore choose the posterior distribution of $\rv{u}_a$ in a way to counteract the constrained scale of $\mat{K_{au}}$ and $\mat{K_{uu}}\inv$ and thereby circumvent the prior.
 To prevent this, we also place a prior on the mean of $\rv{u}_a$ to remove this degree of freedom.
 
 \Cref{fig:alignment:wind_joint_model} shows the joint model learned from the data in which $a_1$ is chosen to be the identity function.
@@ -473,9 +437,7 @@ AMO-GP shows richer structure:
 Due to the constraints imposed by the model, more robust inference leads to a more informed model.
 Samples show that it has learned that a maximum which is missing in the training data has to exist somewhere, but the uncertainty about the correct alignment due to the local turbulence means that different samples place the maximum at different locations in $\mat{X}$-direction.
 
-
-\section{Discussion}
-\begin{figure}[tp]
+\begin{figure}[p]
     \begin{subfigure}[b]{\linewidth}
         \centering
         \includestandalonewithpath{figures/wind_approximate_joint_gp}
@@ -495,9 +457,10 @@ Samples show that it has learned that a maximum which is missing in the training
     \caption{
         \label{fig:alignment:approximate_joint:first}
         Approximate joints
+        \todoi{Caption}
     }
 \end{figure}
-\begin{figure}[tp]
+\begin{figure}[p]
     \begin{subfigure}[b]{\linewidth}
         \centering
         \includestandalonewithpath{figures/wind_approximate_joint_dgp}
@@ -519,6 +482,29 @@ Samples show that it has learned that a maximum which is missing in the training
         Approximate joints
     }
 \end{figure}
+In~\cref{fig:alignment:approximate_joint:first,fig:alignment:approximate_joint:second}, we compare joint predictions and the variational approximations for different model types in the wind example.
+Similar to the artificial data set, we show a standard GP in \cref{fig:alignment:approximate_joint:gp}, a multi-output GP in \cref{fig:alignment:approximate_joint:mo_gp}, a deep GP in \cref{fig:alignment:approximate_joint:dgp} and AMO-GP in \cref{fig:alignment:approximate_joint:ours}.
+All models were trained until convergence and multiple runs result in very similar models.
+For all models we used RBF kernels or dependent RBF kernels where applicable.
+Each plot shows the data in gray and two mean predictions and uncertainty bands.
+The first violet uncertainty band is the result of the variational approximation of the respective model.
+The second green or blue posterior is obtained via sampling.
+For both the GP and MO-GP, we used the SVGP approximation and since the models are shallow, the approximation is almost exact.
+
+\Cref{fig:alignment:approximate_joint:dgp} showcases the difficulty of training a deep GP model and the shortcomings of the nested variational compression.
+The violet variational approximation is used for training and approximates the data comparatively well.
+As discussed above, the deep GP cannot share information, so the test sets cannot be predicted.
+The approximation tends to underestimate uncertainties when propagating them through the different layers and because of this, uncertainties obtained via sampling vary considerably more.
+Only the variational approximation is considered for model selection.
+Because the deep GP is highly underspecified, the variational bound is very loose.
+The posterior obtained via ancestral sampling through the deep GP is considerably different and uninformative as a result.
+Our approach has the same problem as the deep GP in principle in that the variational bound could become very loose.
+However, the structure of the hierarchy imposed through an interpretable generative process ensures that the different layers in the AMO-GP model distinct parts of the learning problem.
+As a result, the model avoids degenerate solutions and the variational approximation is closer to the true posterior.
+The posteriors tend to disagree more in places when there is high uncertainty about the alignment.
+
+
+\section{Discussion}
 We have proposed the warped and aligned multi-output Gaussian process (AMO-GP), in which MO-GPs are embedded in a hierarchy to find shared structure in latent spaces.
 We extended convolution processes \parencite{boyle_dependent_2004} with conditionally independent Gaussian processes on both the input and output sides, giving rise to a highly structured deep GP model.
 This structure can be used to both regularize the model and encode expert knowledge about specific parts of the system.
@@ -528,3 +514,16 @@ We compared the model with GPs, deep GPs and multi-output GPs on an artificial d
 We then applied the AMO-GP to real world data of two wind turbines and used the proposed hierarchy to model wind propagation in a wind farm and recover information about the latent non homogeneous wind field.
 With uncertainties decomposed along the hierarchy, our approach handles ambiguities introduced by the stochasticity of the wind in a principled manner.
 This indicates the AMO-GP is a good approach for these kinds of dynamical system, where multiple misaligned sensors measure the same latent effect.
+
+We have shown how limitations in the independence assumptions of hierarchical GP approximations in~\cref{toc:data_association}\todo{Add DGP reference} can be overcome by introducing dependence in the generative proess.
+By modelling this dependence through a multi-output GP, we can derive an explicit posterior belief about how multimodal data interact.
+We have shown in~\cref{fig:alignment:wind_samples} that this belief leads to rich structure in the samples drawn from a hierarchical model.
+It allows us to formulate priors that specify which aspects of a dynamical system should be inferred.
+However, we also observe that the structure of samples drawn from the model is only considered indirectly during training through the marginal likelihood.
+Similarly, the concrete shape of different model components is only influenced through the prior and a semantically correct model cannot be recognized.
+Similar to how a \emph{correct} data association is subjective, the correct alignment of timeseries is subjective and subject to the problem domain.
+
+In the next chapter, we explore how this subjectivity can be incorporated into the model itself.
+First, we will formulate hierarchical structure for a problem in which model components can be immediately linked to system behavior and thus be interpreted by domain experts.
+Secondly, we not only seek to capture the generative process underlying a dataset but also incorporate the task the model will solve into the inference scheme.
+Taking a reinforcement learning problem as an example, we show that semantic hierarchical structure increases data efficiency and allows domain experts to influence agent behavior through detailled insights into the dynamics of a system.

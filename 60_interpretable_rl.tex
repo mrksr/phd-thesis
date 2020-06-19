@@ -63,6 +63,14 @@ We show that this approach yields interpretable models and policies and is signi
 
 \section{The Wet-Chicken Benchmark}
 \label{toc:interpretable_rl:wetchicken}
+\begin{figure}[t]
+    \centering
+    \includestandalone{wetchicken_dynamics}
+    \caption{
+        \label{fig:interpretable_rl:wetchicken}
+        Wetchicken dynamics
+    }
+\end{figure}
 In the Wet-Chicken problem~\parencite{tresp_wet_1994,hans_efficient_2009}, a canoeist is paddling in a two-dimensional river.
 The canoeist's position at time $t$ is given by $\mat{s}_t = (x_t, y_t) \in \Rb^2$, where $x_t$ denotes the position along the river and $y_t$ the position across it.
 The river is bounded by its length $l = 5$ and width $w = 5$.

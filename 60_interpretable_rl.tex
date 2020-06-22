@@ -1,14 +1,5 @@
 \chapter{Interpretable Reinforcement Learning}
 \label{toc:interpretable_rl}
-In this paper, we present a model-based reinforcement learning system where the transition model is treated in a Bayesian manner.
-The approach naturally lends itself to exploit expert knowledge by introducing priors to impose structure on the underlying learning task.
-The additional information introduced to the system means that we can learn from small amounts of data, recover an interpretable model and, importantly, provide predictions with an associated uncertainty.
-To show the benefits of the approach, we use a challenging data set where the dynamics of the underlying system exhibit both operational phase shifts and heteroscedastic noise.
-Comparing our model to NFQ and BNN+LV, we show how our approach yields human-interpretable insight about the underlying dynamics while also increasing data-efficiency.
-
-
-\section{Introduction}
-\label{toc:interpretable_rl:introduction}
 Machine learning methods \parencite{shalev-shwartz_understanding_2014} are designed to solve tasks where the underlying system we want to model is only partly known or understood.
 The hope when using machine learning methods is that we can reduce this uncertainty by exploiting statistical patterns in data generated from the underlying system.
 
@@ -256,14 +247,14 @@ The $K$ predictive posteriors $\Variat{\mat{s}_\ast^{\prime\pix{k}} \given \mat{
 After training a transition model, we use the variational posterior $\Variat{\mat{s}_{t+1} \given \mat{\hat{s}}_t}$ to train a policy by sampling roll-outs and optimizing policy parameters via stochastic gradient descent on the expected return $\Moment*{\E}{\Fun*{J^\pi}{\mat{\theta}_\pi}}$.
 The expected return is approximated using the variational posterior given by
 \begin{align}
-    \begin{split}
+    % \begin{split}
         \label{eq:interpretable_rl:policy_training}
         \Moment*{\E}{\Fun*{J^\pi}{\mat{\theta}_\pi}}
         &= \sum_{t=0}^T \gamma^t \Moment*{\E_{\Prob{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t}
         \approx \sum_{t=0}^T \gamma^t \Moment*{\E_{\Variat{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t} \\
         &= \int \sum_{t=0}^T \Bigg[ \gamma^t \Moment*{\E_{\Variat{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t} \Bigg] \Prob{\mat{s}_0} \prod_{t=0}^{T-1} \Variat{\mat{s}_{t+1} \given \mat{s}_t, \mat{\theta}_\pi} \diff \mat{s}_0 \dots \diff\mat{s}_T \\
         &\approx \frac{1}{P} \sum_{p=1}^P \sum_{t=0}^T \gamma^t r_t^p.
-    \end{split}
+    % \end{split}
 \end{align}
 We expand the expectation to explicitly show the marginalization of the states in the trajectory.
 Due to the Markovian property of the transition dynamics, the integral factorizes along $t$.
@@ -281,7 +272,7 @@ The $P$ roll-outs can be trivially parallelized.
 Importantly, we only need a small number of Monte Carlo samples at every iteration, since we use the gradients of the samples directly.
 
 
-\section{Results}
+\section{Experiments}
 \label{toc:interpretable_rl:results}
 \begin{figure}[tp]
     \centering
@@ -323,7 +314,7 @@ Importantly, we only need a small number of Monte Carlo samples at every iterati
     \caption{
         \label{fig:interpretable_rl:wetchicken:dynamics}
         The separation of different aspects of the Wet-Chicken in DAGP-based transition models benchmark yields new and interpretable information about the underlying dynamics.
-        The different parts of the model explicitly show flow speeds (\cref{fig:interpretable_rl:wetchicken:speed}), turbulence (\cref{fig:interpretable_rl:wetchicken:hetero}), drop behavior (\cref{fig:interpretable_reinforcement_learning:wetchicken:drop}) and drop probabilities (\cref{fig:interpretable_reinforcement_learning:wetchicken:falldown}) with respect to the current position in the river and action $a = 0$.
+        The different parts of the model explicitly show flow speeds (\cref{fig:interpretable_rl:wetchicken:speed}), turbulence (\cref{fig:interpretable_rl:wetchicken:hetero}), drop behavior (\cref{fig:interpretable_rl:wetchicken:drop}) and drop probabilities (\cref{fig:interpretable_rl:wetchicken:falldown}) with respect to the current position in the river and action $a = 0$.
         The model has learned that the river is turbulent on the left and fast on the right, leading to consistent medium drop probabilities on the left due to stochasticity and a sharp boundary on the right, where the flow speed dominates.
         Note that a drop resets the position to the initial state irrespective of the current state.
         It is therefore correctly learned to be represented by the constant zero function (\cref{fig:interpretable_rl:wetchicken:drop}).
@@ -336,6 +327,7 @@ Importantly, we only need a small number of Monte Carlo samples at every iterati
     \includestandalone{wetchicken_cut_2_5}
     \includestandalone{wetchicken_cut_4_0}
     \includestandalone{wetchicken_cut_5_0}
+    \vspace*{-5pt} % NOTE(mrksr): Avoid overfull page
     \caption{
         \label{fig:interpretable_rl:wetchicken:cut}
         Linear cuts through the DAGP-based transition model with the waterfall on the right at $x_t = 5$.
@@ -567,6 +559,7 @@ The interpretable nature of the dynamics models have allowed us to easily influe
             Transition model with $K=4$ and successful policy training
         }
     \end{subfigure}\\[\figureskip]
+    \vspace*{-5pt} % NOTE(mrksr): Avoid overfull page
     \begin{subfigure}[t]{\linewidth}
         \centering
         \includestandalone{wetchicken_misspecification_bad_cut_5_0}
@@ -614,7 +607,7 @@ However, this experiment shows the significance of encoding available abstract p
 Models for $K=2$ both reliably identify the system using standard optimization methods and yield immediately interpretable results.
 
 
-\section{Conclusion and Discussion}
+\section{Discussion}
 \label{toc:interpretable_rl:conclusion}
 In this paper we have presented a Bayesian reinforcement learning model-based on non-parametric Gaussian process priors.
 The model is motivated by the observation that in real world scenarios high-level prior knowledge of the system dynamics is often available.

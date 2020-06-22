@@ -1,8 +1,15 @@
 \chapter{Interpretable Reinforcement Learning}
 \label{toc:interpretable_rl}
-Machine learning methods \parencite{shalev-shwartz_understanding_2014} are designed to solve tasks where the underlying system we want to model is only partly known or understood.
-The hope when using machine learning methods is that we can reduce this uncertainty by exploiting statistical patterns in data generated from the underlying system.
+In \cref{toc:alignment}, we formulated a hierarchically structured Gaussian process model to uncover latent information shared between multimodal time-series.
+We showed how this dependence both removes ambiguities in a learning problem and leads to more informative posteriors.
+While comparisons to less semantic generative models showed similar behavior on training data, we showed that a more informed model shows more desirable generalization behaviors.
+In a regression problem, evaluation of desirable behavior is usually limited to the inspection of marginal distributions at test points and manual inspection of samples.
+In this chaper, we explore how we can formalize desirable model behavior through the task a model will be used to solve.
+We formulate a hierarchical model based on the DAGP model in~\cref{toc:data_association} which is informed by abstract knowledge about a dynamic system and evaluate model behavior through a reinforcement learning task.
+We show that while misspecified models yield similar marginal distributions as discussed in the previous chapter, a well specified model can solve the posed task significantly better.
 
+Machine learning methods~\parencite{shalev-shwartz_understanding_2014} are designed to solve tasks where the underlying system we want to model is only partly known or understood.
+The hope when using machine learning methods is that we can reduce this uncertainty by exploiting statistical patterns in data generated from the underlying system.
 Reinforcement learning (RL)~\parencite{sutton_reinforcement_2018} is a machine learning paradigm designed to learn in a dynamic environment where we can specify a goal or have a notion of what a desirable behavior is.
 The goal of RL is to learn a policy which dynamically chooses actions in the environment in order to achieve a goal or a behavior.
 Specifically, an RL agent's task is to learn a policy $\pi$ which, given the current state $\mat{s}$ of an environment, chooses an action $\mat{a}$ to achieve the goal specified by a reward function $r$ mapping system states to numerical rewards.
@@ -28,10 +35,11 @@ While a GP specifies a distribution with support for all functions, it efficient
 These characteristics make GPs well suited for RL as they do not impose hard constraints while still placing a significant structure on the space of functions.
 In \parencite{deisenroth_pilco_2011} the authors propose a model-based RL method where Gaussian processes are used as priors for the dynamics.
 They provide a principled approach of taking model uncertainty into account when evaluating the performance of a policy, thereby reducing the impact of model-bias.
-However, the approach has several restrictions, transition dynamics are modelled as standard Gaussian processes (GPs) and policies and rewards must be of specific forms.
+However, the approach has several restrictions:
+Transition dynamics are modelled as standard Gaussian processes (GPs) and policies and rewards must be of specific forms.
 
-In this work, we will show how we can alleviate some of the limitations of \parencite{deisenroth_pilco_2011} to provide a richer and more efficient RL model.
-We will show how we can introduce additional constraints on the dynamic model allowing for multiple transitional signatures to be active simultaneously.
+In this chaper, we show how we can alleviate some of the limitations of \parencite{deisenroth_pilco_2011} to provide a richer and more efficient RL model.
+We show how we can introduce additional constraints on the dynamic model allowing for multiple transitional signatures to be active simultaneously.
 Incorporating this knowledge facilitates learning by allowing us to more precisely state what we want to learn thereby significantly reducing the data requirements.
 Furthermore, decomposing the transition model into several parts allows us to use reward shaping \parencite{sutton_reinforcement_2018} in order to discourage policies based on dynamic characteristics.
 
@@ -44,9 +52,8 @@ Reformulated in a Bayesian framework using latent variables, this approach has b
 However, such models are hard to interpret as they do not yield explicit models for the different modalities or their relative importance.
 In this work, we are interested in formulating a dynamics model which yields new interpretable insights about the underlying system.
 We formulate a probabilistic model which contains such explicit models by interpreting the Wet-Chicken benchmark as a data association problem~\parencite{barshalom_tracking_1990,cox_review_1993}.
-While many probabilistic interpretations of this problem assume that the relative importance of different modes is constant~\parencite{lazaro-gredilla_overlapping_2012,bodin_latent_2017}, we base our formulation on the DAGP model~\parencite{kaiser_data_2018} which learns a non-parametric model of each mode and where the associations between the modes themselves is further controlled by a non-stationary stochastic process.
+While many probabilistic interpretations of this problem assume that the relative importance of different modes is constant~\parencite{lazaro-gredilla_overlapping_2012,bodin_latent_2017}, we base our formulation on the DAGP model from~\cref{toc:data_association} which learns a non-parametric model of each mode and where the associations between the modes themselves is further controlled by a non-stationary stochastic process.
 
-The paper is outlined as follows.
 After introducing the Wet-Chicken benchmark, we show how high-level knowledge about this system can be used to impose Bayesian structure.
 We derive an efficient inference scheme for both the dynamics model and for probabilistic policy search based on variational inference.
 We show that this approach yields interpretable models and policies and is significantly more data-efficient than less interpretable alternatives.
@@ -62,15 +69,15 @@ We show that this approach yields interpretable models and policies and is signi
         Wetchicken dynamics
     }
 \end{figure}
-In the Wet-Chicken problem~\parencite{tresp_wet_1994,hans_efficient_2009}, a canoeist is paddling in a two-dimensional river.
+In the (two-dimensional) Wet-Chicken problem~\parencite{tresp_wet_1994,hans_efficient_2009}, a canoeist is paddling in a two-dimensional river.
 The canoeist's position at time $t$ is given by $\mat{s}_t = (x_t, y_t) \in \Rb^2$, where $x_t$ denotes the position along the river and $y_t$ the position across it.
 The river is bounded by its length $l = 5$ and width $w = 5$.
 There is a waterfall at the end of the river at $x = l$.
 The canoeist wants to get close to the waterfall to maximize the reward $\Fun*{r}{\mat{s}_t} = r_t = x_t$.
-However, if the canoeist falls down the waterfall, he has to start over at the initial position $(0, 0)$.
+However, if the canoeist falls down the waterfall, they have to start over at the initial position $(0, 0)$.
 
-The river's flow consists of a deterministic velocity $v_t = y_t \cdot \sfrac{3}{w}$ and stochastic turbulence $b_t = 3.5 - v_t$, both of which depend on the position on the $y$-axis.
-The higher $y_t$ is, the faster the river flows but also the less turbulent it becomes.
+The river's flow consists of a deterministic velocity $v_t = 3 \cdot y_t w\inv$ and stochastic turbulence $b_t = 3.5 - v_t$, both of which depend on the position on the $y$-axis.
+The higher $y_t$ is, the faster the river flows but the less turbulent it becomes.
 The canoeist chooses his paddle direction and intensity via an action $\mat{a}_t = (a_{t,x}, a_{t,y}) \in [-1, 1]^2$.
 The transition function $f : (\mat{s}_t, \mat{a}_t) \mapsto \mat{s}_{t+1} = (x_{t+1}, y_{t+1})$ is given by
 \begin{align}
@@ -93,6 +100,7 @@ where
     \end{split}
 \end{align}
 and $\tau_t \sim \Fun*{\Uni}{-1, 1}$ is a uniform random variable that represents the turbulence.
+\Cref{fig:interpretable_rl:wetchicken} visualizes the core components of the transition function.
 
 There is almost no turbulence at $y = w$, but the velocity is too high to paddle back.
 Similarly, the velocity is zero at $y = 0$, but the canoeist can fall down the waterfall unpredictably due to the high turbulence.
@@ -167,7 +175,7 @@ In \cref{toc:interpretable_rl:results} we will visualize these components and di
 Additionally, interpretable transition models help to build trust in derived policies:
 Since experts can assess the plausibility of the transition model, successful policies are unlikely to behave unexpectedly on the true system.
 
-We formulate a graphical model in \cref{fig:interpretable_rl:graphical_model:mdgp} using the data association with GPs (DAGP) model~\parencite{kaiser_data_2018}, which allows us to handle the multi-modality introduced by falling down the waterfall.
+We formulate a graphical model in \cref{fig:interpretable_rl:graphical_model:mdgp} using the DAGP model from~\cref{toc:data_association}, which allows us to handle the multi-modality introduced by falling down the waterfall and extend it to handle the heteroscedastic properties of the problem.
 We specify this separation via the marginal likelihood
 \begin{align}
     \begin{split}
@@ -206,7 +214,7 @@ We approximate the exact posterior via a factorized variational distribution
     \Variat*{\mat{f}, \mat{\lambda}, \mat{\sigma}, \mat{U}} & =
     \prod_{k=1}^K\prod_{t=1}^T \Variat{\mat{f}_t^{\pix{k}}, \mat{u}^{\pix{k}}} \Variat{\mat{\lambda}_t^{\pix{k}}, \mat{u}_\lambda}^{\pix{k}} \Variat{\mat{\sigma}_t^{\pix{k}}, \mat{u}_\sigma}^{\pix{k}}
 \end{align}
-which introduces variational inducing inputs and outputs $\mat{U}$ as described in~\parencite{damianou_deep_2013,hensman_scalable_2015,kaiser_data_2018}.
+which introduces variational inducing inputs and outputs $\mat{U}$ as described in~\cref{toc:gp}.
 These inducing inputs independently characterize the respective model parts and enable us to do inference via stochastic optimization.
 
 The variational parameters are optimized by minimizing a lower bound to the marginal likelihood which can be efficiently computed via sampling and enables stochastic optimization.
@@ -221,11 +229,6 @@ The variational parameters are optimized by minimizing a lower bound to the marg
         - \sum_{k=1}^K \KL{\Variat*{\mat{u}^{\pix{k}}, \mat{u}_\lambda^{\pix{k}}, \mat{u}_\sigma}^{\pix{k}}}{\Prob*{\mat{u}^{\pix{k}}, \mat{u}_\lambda^{\pix{k}}, \mat{u}_\sigma}^{\pix{k}}}
     \end{split}
 \end{align}
-To gain informative gradients with respect to the assignments $\mat{l}$ and assignment process $\mat{\lambda}$, we use a continuous relaxation based on Concrete random variables~\parencite{maddison_concrete_2016}.
-We represent the belief about $\mat{l}_t$ as a $K$-dimensional discrete distribution $\Variat{\mat{l}_t}$.
-Instead of drawing discrete samples from $\Variat{\mat{l}_t}$ when calculating $\Lc_{\text{DAGP}}$, we draw samples $\mat{\hat{l}}_t$ from a concrete random variable.
-Based on a temperature parameter, concrete random variables yield samples which are almost discrete but which still yield informative gradients.
-For details we refer to~\parencite{kaiser_data_2018}.
 
 We obtain an explicit representation of the GP posteriors during variational inference which allows us to efficiently propagate samples through the model to simulate trajectories used for policy search.
 Predictions for an unknown state $\mat{\hat{s}}_\ast$ are mixtures of $K$ independent Gaussians given by,
@@ -248,12 +251,12 @@ After training a transition model, we use the variational posterior $\Variat{\ma
 The expected return is approximated using the variational posterior given by
 \begin{align}
     % \begin{split}
-        \label{eq:interpretable_rl:policy_training}
-        \Moment*{\E}{\Fun*{J^\pi}{\mat{\theta}_\pi}}
-        &= \sum_{t=0}^T \gamma^t \Moment*{\E_{\Prob{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t}
-        \approx \sum_{t=0}^T \gamma^t \Moment*{\E_{\Variat{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t} \\
-        &= \int \sum_{t=0}^T \Bigg[ \gamma^t \Moment*{\E_{\Variat{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t} \Bigg] \Prob{\mat{s}_0} \prod_{t=0}^{T-1} \Variat{\mat{s}_{t+1} \given \mat{s}_t, \mat{\theta}_\pi} \diff \mat{s}_0 \dots \diff\mat{s}_T \\
-        &\approx \frac{1}{P} \sum_{p=1}^P \sum_{t=0}^T \gamma^t r_t^p.
+    \label{eq:interpretable_rl:policy_training}
+    \Moment*{\E}{\Fun*{J^\pi}{\mat{\theta}_\pi}}
+     & = \sum_{t=0}^T \gamma^t \Moment*{\E_{\Prob{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t}
+    \approx \sum_{t=0}^T \gamma^t \Moment*{\E_{\Variat{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t}                                                                                                                                                   \\
+     & = \int \sum_{t=0}^T \Bigg[ \gamma^t \Moment*{\E_{\Variat{\mat{s}_t \given \mat{\theta}_\pi}}}{\mat{r}_t} \Bigg] \Prob{\mat{s}_0} \prod_{t=0}^{T-1} \Variat{\mat{s}_{t+1} \given \mat{s}_t, \mat{\theta}_\pi} \diff \mat{s}_0 \dots \diff\mat{s}_T \\
+     & \approx \frac{1}{P} \sum_{p=1}^P \sum_{t=0}^T \gamma^t r_t^p.
     % \end{split}
 \end{align}
 We expand the expectation to explicitly show the marginalization of the states in the trajectory.
@@ -609,7 +612,7 @@ Models for $K=2$ both reliably identify the system using standard optimization m
 
 \section{Discussion}
 \label{toc:interpretable_rl:conclusion}
-In this paper we have presented a Bayesian reinforcement learning model-based on non-parametric Gaussian process priors.
+We have presented a Bayesian reinforcement learning model-based on non-parametric Gaussian process priors.
 The model is motivated by the observation that in real world scenarios high-level prior knowledge of the system dynamics is often available.
 We believe that many tasks are characterized by dynamics that can be decomposed into several attributes.
 For example, when a physical structure is excited by a force oscillating at its natural frequency its response will change drastically.
@@ -620,3 +623,11 @@ The use of Gaussian process priors to quantify the uncertainty within components
 The interpretable structure of our model facilitates data efficient learning by easily incorporating prior knowledge.
 We showed experimentally how this significantly reduces the data requirements compared to a model free approach.
 Furthermore, the same knowledge can be used as a means for directing the policy search by discouraging solutions which exhibit a specific dynamic, such as avoiding falling down the waterfall in the Wet-Chicken benchmark.
+
+The model presented in this chapter is derived from the DAGP model in~\cref{toc:data_association} and therefore shares its limitations.
+Most importantly, the variational approximation which factorizes between layers cannot capture the full Bayesian posterior for ambiguities in the association problem.
+In~\cref{toc:data_association,toc:alignment}, we showed that it is hard to distinguish qualitatively different solutions automatically.
+This is a consequence of the difficulty to formally describe desirable model behavior besides high marginal likelihoods on training or test data.
+In this chapter, we presented an approach to achieve this formal description by evaluating models on a reinforcement learning task they are designed to solve.
+In the next chapter, we will discuss how this approach can be generalized to a characterization of hierarchical machine learning problems in general.
+\todoi{Add transition to discussion}

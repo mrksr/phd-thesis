@@ -9,6 +9,10 @@
     \includegraphics[#1]{#2}
 }
 \endofdump
+
+% NOTE(mrksr): Remove some warnings we want to ignore.
+\WarningFilter{todonotes}{The length marginparwidth}
+
 \input{preamble/tikz_inline.tex}
 \input{preamble/packages_no_dump.tex}
 \input{preamble/abbreviations.tex}

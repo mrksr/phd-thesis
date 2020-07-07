@@ -5,12 +5,14 @@ An important assumption in the regression problem is a latent function $f$ which
 In the Bayesian linear regression example, a posterior over linear functions could be calculated by calculating a posterior over parameters instead, since every parameter explicitly represents a linear function.
 A Gaussian process (GP) is a non-parametric model which directly represents a distribution over functions.
 Instead of formulating an explicit parameterized formula, a GP prior encodes more general assumptions about $f$ such as differentiability or variability.
-A GP posterior can be calculated analytically, making Bayesian inference over GPs and hierarchical models with embedded GPs computationally feasible.
+A GP posterior can be calculated analytically, making Bayesian inference over GPs computationally feasible.
+While GPs offer a principled non-parametric approach to representing distributions over functions, they can be restrictive in the functions they are able to represent.
+To formulate more informative hypothesis spaces, it is of interest to embed GPs in hierarchical generative processes, where the output of one GP is used as the input of another GP.
 
 This chapter introduces Gaussian processes formally, describes how to formulate and select a GP prior and how to derive a GP posterior.
 Since GPs defined on many observations are computationally expensive, sparse approximations are used in practice.
 We will discuss one class of sparse approximations based on inducing observations and introduce approaches based on variational inference.
-\todo{Add hierarchical GPs here?}
+Next, two extensions to variational inference in hierarchical GP models will be introduced, which will be used to formulate more complex hierarchical models containing multiple Gaussian processes in the next chapters.
 
 \section{Gaussian processes}
 Gaussian processes are a generalization of the Gaussian distribution to function spaces.
@@ -963,7 +965,6 @@ Instead of optimizing their location, the position of a large number of inputs i
 While this approach suffers from the curse of dimensionality, it can increase performance for low input dimensionalities.
 Another approach is to orthogonally decouple the computations for predictive means and variances~\parencite{shi_sparse_2020,salimbeni_orthogonally_2018,cheng_variational_2017}.
 This decoupling allows the calculation of the predictive mean in linear time, allowing for a larger number of inducing points for the mean.
-\todo{Let's move to deep GPs.}
 
 
 \section{Hierarchical Gaussian Processes}
@@ -976,8 +977,8 @@ This decoupling allows the calculation of the predictive mean in linear time, al
         \node[random variable, latent] at (0, -1) (F1) {$\mat{f}_{n,1}$};
         \node[random variable, variational] at (1, -1) (u1) {$\mat{u}_1$};
         %
-        \node[random variable, latent] at (0, -2) (Fl) {$\mat{f}_{n,l}$};
-        \node[random variable, variational] at (1, -2) (ul) {$\mat{u}_l$};
+        \node[random variable, latent] at (0, -2) (Fl) {$\mat{f}_{n,L}$};
+        \node[random variable, variational] at (1, -2) (ul) {$\mat{u}_L$};
         %
         \node[random variable, hyperparameter] at (-1, -1.5) (theta) {$\mat{\theta}$};
         \node[random variable, observed] at (0, -3) (Y) {$\mat{y}_n$};
@@ -1007,23 +1008,37 @@ This decoupling allows the calculation of the predictive mean in linear time, al
         \label{fig:dgp:graphical_model}
     }
 \end{figure}
+While GPs offer a principled non-parametric approach to representing distributions over functions, they can be restrictive in the functions they are able to represent.
+Many extensions to standard GPs have been studied which introduce additional hierarchical structure such as GP latent variable models~\parencite{titsias_bayesian_2010,damianou_variational_2014}, warped GP models~\parencite{snelson_warped_2004,lazaro-gredilla_bayesian_2012} or mixtures of experts models~\parencite{tresp_mixtures_2001,rasmussen_infinite_2002,lazaro-gredilla_overlapping_2012}.
+Hierarchical structure typically introduces the requirement to propagate uncertainties through Gaussian processes which is analytically intractable in most cases.
+Many extensions can be interpreted as special cases of the hierarchical or deep Gaussian process model~\parencite{lawrence_hierarchical_2007,damianou_deep_2013} in which a nested generative process is formulated by using the output of one GP as the input of another.
+
+In a deep GP, rather than assuming that observational data is generated through a draw from a single GP which is then corrupted by noise in $\mat{y} = f(\mat{x}) + \epsilon$, we assume that data is generated via a composition of $L$ functions
 \begin{align}
     \begin{split}
-        \mat{y} = f_L(f_{L-1}(\dots(f_1(\mat{X})))) + \epsilon
+        \mat{y} = f_L(f_{L-1}(\cdots(f_1(\mat{X})))) + \epsilon,
     \end{split}
 \end{align}
-The joint probability distribution of the data can then be written as
+where each $f_l$ is drawn from a GP.
+This new compositional prior $f_L \circ \cdots \circ f_1$ is no longer a Gaussian process~\parencite{duvenaud_avoiding_2014} and can represent a broader set of functions.
+
+\Cref{fig:dgp:graphical_model} shows the graphical model of a deep GP.
+We represent the result of applying the the first $l$ functions $f_l \circ \cdots \circ f_1$ on the inputs $\mat{X}$ as $\mat{f}_l$ and identify $\mat{f}_0 = \mat{X}$.
+The joint probability of the function values and outputs can then be written as
 \begin{align}
     \begin{split}
         \label{eq:dgp:full_model}
         \Prob{\mat{y}, \mat{f}_1, \dots, \mat{f}_L \given \mat{X}}
         &= \Prob*{\mat{y} \given \mat{f}_L} \prod_{l=1}^L \Prob*{\mat{f}_l \given \mat{f}_{l-1}}\text{, with} \\
         \mat{y} \mid \mat{f}_L &\sim \Gaussian{\mat{f}_L, \sigma^2_n \Eye} \\
-        \mat{f}_l \mid \mat{f}_{l-1} &\sim \Gaussian{\mat{0}, \mat{K}_{\mat{f}_l\mat{f}_l} + \sigma^2_l \Eye} \\
-        \mat{f}_0 &= \mat{X}.
+        \mat{f}_l \mid \mat{f}_{l-1} &\sim \Gaussian{\mat{0}, \mat{K}_{\mat{f}_l\mat{f}_l} + \sigma^2_l \Eye}.
     \end{split}
 \end{align}
-We will denote $\mat{K}_{ll} = \mat{K}_{\mat{f}_l\mat{f}_l}$.
+The structure of the conditionals $\Prob*{\mat{f}_l \given \mat{f}_{l-1}}$ is implied by the assumption that the $f_l$ are drawn from GPs.
+We will denote the kernel matrix at the $\nth{l}$ level as $\mat{K}_{ll} = \mat{K}_{\mat{f}_l\mat{f}_l}$.
+The $\mat{f}_l$ are all latent variables and inference over them is very challenging.
+Because they capture the result of applying multiple GPs, they are highly dependent on each other, thereby implying dependence between the different functions as well.
+We will now derive two extensions of the sparse variational approximations in~\cref{toc:gp:sparse_gps} to the hierarchical case, nested variational compression~\parencite{hensman_nested_2014} and doubly stochastic variational inference~\parencite{salimbeni_doubly_2017}.
 
 \subsubsection{Nested Variational Compression}
 To derive the desired variational lower bound for the log marginal likelihood of the complete model, multiple steps are necessary.
@@ -1098,7 +1113,6 @@ The expectations with respect to $\Variat{\mat{f}_1}$ involve expectations of ke
     \end{split}
 \end{align}
 These $\Psi$-statistics can be computed analytically for multiple kernels, including the squared exponential kernel.
-In \cref{toc:var_compression:kernel_expectations} we show closed-form solutions for these $\Psi$-statistics for the implicit kernel defined in the CP layer.
 To obtain the final formulation of the desired bound for $\log \Prob{\mat{f}_2 \given \mat{u}_2}$ we substitute \cref{eq:var_compression:psi_statistics} into \cref{eq:var_compression:f_marginal_likelihood} and get the analytically tractable bound
 \begin{align}
     \begin{split}
@@ -1200,7 +1214,7 @@ That's convenient because we can sample it directly, giving a bound:
 \begin{align}
     \begin{split}
         \label{eq:dsvi:full_bound}
-        \MoveEqLeft \Lc_{\text{DSVI}} = \log \Prob{\mat{y} \given \mat{X}} \geq \\
+        \Lc_{\text{DSVI}} = \log \Prob{\mat{y} \given \mat{X}} \geq
         \sum_{n=1}^N \Moment*{\E_{\Variat*{\mat{f}_{n, L}}}}{\log \Prob*{\mat{y}_n} \given \mat{f}_{n, L}}
         - \sum_{l=1}^L \KL*{\Variat*{\mat{u}_l}}{\Prob*{\mat{u}_l}}
     \end{split}

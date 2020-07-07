@@ -197,6 +197,21 @@
   primaryClass = {cs, stat}
 }
 
+@article{bodin_modulating_2020,
+  title = {Modulating {{Surrogates}} for {{Bayesian Optimization}}},
+  author = {Bodin, Erik and Kaiser, Markus and Kazlauskaite, Ieva and Dai, Zhenwen and Campbell, Neill D. F. and Ek, Carl Henrik},
+  date = {2020-02-24},
+  url = {http://arxiv.org/abs/1906.11152},
+  urldate = {2020-07-07},
+  abstract = {Bayesian optimization (BO) methods often rely on the assumption that the objective function is well-behaved, but in practice, this is seldom true for real-world objectives even if noise-free observations can be collected. Common approaches, which try to model the objective as precisely as possible, often fail to make progress by spending too many evaluations modeling irrelevant details. We address this issue by proposing surrogate models that focus on the well-behaved structure in the objective function, which is informative for search, while ignoring detrimental structure that is challenging to model from few observations. First, we demonstrate that surrogate models with appropriate noise distributions can absorb challenging structures in the objective function by treating them as irreducible uncertainty. Secondly, we show that a latent Gaussian process is an excellent surrogate for this purpose, comparing with Gaussian processes with standard noise distributions. We perform numerous experiments on a range of BO benchmarks and find that our approach improves reliability and performance when faced with challenging objective functions.},
+  archivePrefix = {arXiv},
+  eprint = {1906.11152},
+  eprinttype = {arxiv},
+  file = {/home/markus/Zotero/storage/B693TCSH/Bodin et al. - 2020 - Modulating Surrogates for Bayesian Optimization.pdf;/home/markus/Zotero/storage/44DQZUDW/1906.html},
+  keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
+  primaryClass = {cs, stat}
+}
+
 @inproceedings{boyle_dependent_2004,
   title = {Dependent {{Gaussian Processes}}.},
   booktitle = {{{NIPS}}},
@@ -1616,6 +1631,21 @@
   isbn = {978-0-387-21606-5},
   keywords = {Biology,Computers,Databases,Discrete Mathematics,General,Intelligence (AI) & Semantics,Life Sciences,Mathematical & Statistical Software,Mathematics,Probability & Statistics,Science,Stochastic Processes,Textbook},
   langid = {english}
+}
+
+@inproceedings{ustyuzhaninov_compositional_2020,
+  title = {Compositional Uncertainty in Deep {{Gaussian}} Processes},
+  booktitle = {Proceedings of the 36th {{Conference}} on {{Uncertainty}} in {{Artificial Intelligence}} ({{UAI}})},
+  author = {Ustyuzhaninov, Ivan and Kazlauskaite, Ieva and Kaiser, Markus and Bodin, Erik and Campbell, Neill D. F. and Ek, Carl Henrik},
+  date = {2020-02-25},
+  url = {http://arxiv.org/abs/1909.07698},
+  urldate = {2020-05-19},
+  abstract = {Gaussian processes (GPs) are nonparametric priors over functions. Fitting a GP implies computing a posterior distribution of functions consistent with the observed data. Similarly, deep Gaussian processes (DGPs) should allow us to compute a posterior distribution of compositions of multiple functions giving rise to the observations. However, exact Bayesian inference is intractable for DGPs, motivating the use of various approximations. We show that the application of simplifying mean-field assumptions across the hierarchy leads to the layers of a DGP collapsing to near-deterministic transformations. We argue that such an inference scheme is suboptimal, not taking advantage of the potential of the model to discover the compositional structure in the data. To address this issue, we examine alternative variational inference schemes allowing for dependencies across different layers and discuss their advantages and limitations.},
+  archivePrefix = {arXiv},
+  eprint = {1909.07698},
+  eprinttype = {arxiv},
+  file = {/home/markus/Zotero/storage/VA356SXW/Ustyuzhaninov et al. - 2020 - Compositional uncertainty in deep Gaussian process.pdf;/home/markus/Zotero/storage/YLUZ86WU/1909.html},
+  keywords = {Computer Science - Machine Learning,Statistics - Machine Learning}
 }
 
 @incollection{vapnik_principles_1992,

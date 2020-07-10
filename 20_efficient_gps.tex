@@ -695,7 +695,8 @@ Since the natural logarithm is concave we have
         & = -\int \Prob*{\mat{f} \given \mat{u}}\Variat*{\mat{u}} \log\frac{\Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}}}{\Prob*{\mat{f} \given \mat{u}}\Variat*{\mat{u}}} \diff \mat{f} \diff \mat{u} \\
         & = -\int \Prob*{\mat{f} \given \mat{u}}\Variat*{\mat{u}} \log\frac{\Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{f} \diff \mat{u}                                                              \\
         & = -\int \Variat*{\mat{u}} \left( \int\Prob*{\mat{f} \given \mat{u}} \log\Prob*{\mat{y} \given \mat{f}} \diff \mat{f} + \log\frac{\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \right) \diff \mat{u} \\
-        & = -\int \Variat*{\mat{u}} \left( \Moment*{\E_{\Prob*{\mat{f} \given \mat{u}}}}{\log \Prob*{\mat{y} \given \mat{f}}} + \log\frac{\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \right) \diff \mat{u},
+        & = -\int \Variat*{\mat{u}} \left( \Moment*{\E_{\Prob*{\mat{f} \given \mat{u}}}}{\log \Prob*{\mat{y} \given \mat{f}}} + \log\frac{\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \right) \diff \mat{u} \\
+        & = \Moment*{\E_{\Variat{\mat{f}}}}{\log \Prob*{\mat{y} \given \mat{f}}} - \KL*{\Variat*{\mat{u}}}{\Prob*{\mat{u}}},
     \end{split}
 \end{align}
 dropping the conditioning on $\mat{\theta}$ and $\mat{Z}$.
@@ -1039,13 +1040,20 @@ Note that following the original formulation in~\parencite{damianou_deep_2013}, 
 We will denote the kernel matrix at the $\nth{l}$ level as $\mat{K}_{ll} = \mat{K}_{\mat{f}_l\mat{f}_l}$.
 The $\mat{f}_l$ are all latent variables and inference over them is very challenging.
 Because they capture the result of applying multiple GPs, they are highly dependent on each other, thereby implying dependence between the different functions as well.
-We will now derive two extensions of the sparse variational approximations in~\cref{toc:gp:sparse_gps} to the hierarchical case, nested variational compression~\parencite{hensman_nested_2014} and doubly stochastic variational inference~\parencite{salimbeni_doubly_2017}.
+We will now derive two extensions of the sparse variational approximations in~\cref{toc:gp:sparse_gps} to the hierarchical case, nested variational compression~\parencite{hensman_nested_2014} and doubly stochastic variational inference~\parencite{salimbeni_doubly_2017} to approximate the marginal likelihood of the deep Gaussian process model
+\begin{align}
+\begin{split}
+    \label{eq:dgp:marginal_likelihood}
+    \Prob*{\mat{y} \given \mat{X}} = \int \Prob*{\mat{y}, \mat{f}_1, \dots, \mat{f}_L \given \mat{X}} \diff \mat{f}_1 \dots \diff \mat{f}_L.
+\end{split}
+\end{align}
+
 
 \subsubsection{Nested Variational Compression}
 The challenge in deriving the marginal likelihood for deep GPs stems from the propagation of uncertainties through multiple GPs.
 In~\cref{toc:gp:sparse_gps} and~\cref{fig:gp:sparse_graphical_model:svgp} we showed how to achieve conditional independence between data points in a single GP by augmenting the model with a set of inducing observations.
 The SVGP model is a compressed representation in which a small number of inducing points represents the full GP defined on all observations.
-In nested variational compression presented by~\textcite{hensman_nested_2014}, this compression is applied recursively for all GPs in the deep GP hierarchy.
+In nested variational compression (NVC) presented by~\textcite{hensman_nested_2014}, this compression is applied recursively for all GPs in the deep GP hierarchy.
 To derive a tractable variational lower bound, an additional step is necessary to avoid the inter-layer cross-dependencies.
 
 The bound in \Cref{eq:gp:expected_log_likelihood_svgp} can be used directly to approximate $\Prob*{\mat{f}_1 \given \mat{X}}$ as the innermost function in a deep GP is a standard GP model.
@@ -1124,11 +1132,11 @@ To obtain the final formulation of the desired bound for $\log \Prob{\mat{f}_2 \
     \end{split}
 \end{align}
 This bound is structurally similar to the SVGP bound in~\cref{eq:gp:expected_log_likelihood_svgp} but contains additional terms introduced by the propagation of uncertainties from $\Prob*{\mat{f}_1}$.
-To derive a full bound for $\log \Prob{\mat{y} \given \mat{X}}$ where all $\mat{f}_l$ have been marginalized, we can apply the same steps as described above recursively, resulting in the nested variational compression lower bound given by
+To derive a variational bound for~\cref{eq:dgp:marginal_likelihood} where all $\mat{f}_l$ have been marginalized, we can apply the same steps as described above recursively, resulting in the nested variational compression lower bound given by
 \begin{align}
     \begin{split}
         \label{eq:var_compression:full_bound}
-        \MoveEqLeft \Lc_{\text{NVC}} = \log \Prob{\mat{y} \given \mat{X}} \geq \\
+        \MoveEqLeft \Lc_{\text{NVC}} \geq \\
         &\log\Gaussian*{\mat{y} \given \mat{\Psi}_L\mat{K}_{\mat{u}_L\mat{u}_L}\inv \mat{m}_L, \sigma_n^2\Eye}
         - \sum_{l=1}^L \KL{\Variat{\mat{u}_l}}{\Prob{\mat{u}_l}} \\
         &- \frac{1}{2\sigma_1^2} \Fun*{\tr}{\mat{K}_{11} - \mat{Q}_{11}}
@@ -1157,32 +1165,31 @@ with
 \end{align*}
 For the first layer, the expectation collapses to usual SVGP predictions.
 The final function values are given by $\Variat*{\mat{f}_L}$.
+While passing Gaussian variational messages through a deep GP to achieve conditional independence between layers is computationally convenient, it is a strong simplification as propagating a Gaussian distribution through a Gaussian process generally does not result in a Gaussian distribution.
+As discussed in more detail in~\parencite{hensman_nested_2014}, nested variational compression tends to underestimate uncertainties especially when the functions $f_l$ become more non-linear.
 
 \subsubsection{Doubly Stochastic Variational Inference}
 \label{toc:dsvi}
-A central assumption of this approximation is that given enough well-placed inducing variables $\mat{u}_l$, they are a sufficient statistic for the latent function values $\mat{f}_l$.
-This implies conditional independence of the $\mat{f}_{n,l}$ given $\mat{u}_l$ and $\mat{X}$.
-The variational posterior of a single GP can then be written as,
+To overcome some of the limitations of nested variational compression,~\textcite{salimbeni_doubly_2017} proposed the doubly stochastic variational inference (DSVI) approximation.
+Instead of relying on an explicit variational approximation for the $\mat{f}_l$, DSVI is based on the observation that due to the conditional independence assumption of the data introduced by the $\mat{u}_l$, function values $\mat{f}_{n,l}$ can be sampled independently and efficiently.
+Under the SVGP variational sufficient statistics assumptions, the posterior of a single GP can be written as
 \begin{align}
     \begin{split}
-        \Variat*{\mat{f}_l \given \mat{X}}
+        \label{eq:dsvi:variational_marginals}
+        \Variat*{\mat{f}_l \given \mat{f}_{l-1}}
         &=
         \int \Variat*{\mat{u}_l}
-        \Prob*{\mat{f}_l \given \mat{u}_l, \mat{X}}
+        \Prob*{\mat{f}_l \given \mat{u}_l, \mat{f}_{l-1}}
         \diff \mat{u}_l
         \\
         &=
         \int \Variat*{\mat{u}_l}
-        \prod_{n=1}^N \Prob*{\mat{f}_{n,l} \given \mat{u}_l, \mat{x}_n}
+        \prod_{n=1}^N \Prob*{\mat{f}_{l,n} \given \mat{u}_l, \mat{f}_{l-1, n}}
         \diff \mat{u}_l,
     \end{split}
 \end{align}
 which can be evaluated analytically, since it is a convolution of Gaussians.
-This formulation simplifies inference within single GPs.
-Next, we discuss how to handle the correlations between the different functions and the assignment processes.
-
-Following the ideas of doubly stochastic variational inference (DSVI) presented by~\textcite{salimbeni_doubly_2017} in the context of deep GPs, we maintain these correlations between different parts of the model while assuming factorization of the variational distribution.
-That is, our variational posterior takes the factorized form,
+For the hierarchical case, we choose the same variational independence assumptions as in the NVC approximation above
 \begin{align}
     \begin{split}
         \label{eq:dsvi:variational_distribution}
@@ -1190,41 +1197,41 @@ That is, our variational posterior takes the factorized form,
         &= \prod_{l=1}^L \Prob*{\mat{f}_l \given \mat{u}_l, \mat{f}_{l-1}} \Variat*{\mat{u}_l}.
     \end{split}
 \end{align}
-
-After marginalizing the inducing variables:
+The factorization along the data still holds in the variational hierarchical case.
+We can formulate the marginal function value of the $\nth{n}$ data point by inserting~\cref{eq:dsvi:variational_marginals} into~\cref{eq:dgp:marginal_likelihood} and obtain
 \begin{align}
     \begin{split}
         \label{eq:dsvi:variational_layers}
-        \Variat*{\mat{f}_1, \mat{u}_1}
-        &= \prod_{l=1}^L \Variat*{\mat{f}_l \given \mat{u}_l, \mat{f}_{l-1}} \\
-        &= \prod_{l=1}^L \Gaussian{\mat{f}_l \given \mat{\mu}_l, \mat{\Sigma}_l},
+        \Variat*{\mat{f}_{L,n}}
+        &= \int \prod_{l=1}^{L-1} \Variat*{\mat{f}_{l,n} \given \mat{f}_{l-1,n}} \diff \mat{f}_{l, n} \\
+        &= \int \prod_{l=1}^{L-1} \int \Variat*{\mat{u}_l} \Prob*{\mat{f}_{l,n} \given \mat{u}_l, \mat{f}_{l-1, n}} \diff \mat{u}_l \diff \mat{f}_{l, n}.
     \end{split}
 \end{align}
-with $\mat{\mu}_l$ and $\mat{\Sigma}_l$ from~\cref{eq:gp:sgpr_predictive_posterior}.
-
-It turns out the this holds for the marginals in a forwards-pass:
-\begin{align}
-    \begin{split}
-        \label{eq:dsvi:variational_layers}
-        \Variat*{\mat{f}_{n,L}}
-        &= \int \prod_{l=1}^{L-1} \Variat*{\mat{f}_{n, l} \given \mat{u}_l, \mat{f}_{n, l-1}} \diff \mat{f}_{n, l}.
-    \end{split}
-\end{align}
-That's convenient because we can sample it directly, giving a bound:
+A consequence of this formulation is that drawing a sample from $\Variat*{\mat{f}_{L,n}}$ can be achieved via ancestral sampling through the hierarchical GP model by drawing samples from the different $\Variat*{\mat{f}_{l, n}}$ in turn.
+Instead of passing Gaussian messages as in the NVC approximation, we can draw Monte-Carlo samples from $\Variat*{\mat{f}_{L, n}}$ directly.
+Because the data are independent under the variational assumptions, we can draw independent univariate samples per observation.
+Being able to sample $\Variat*{\mat{f}_{L, n}}$ directly also allows us to sample the bound in~\cref{eq:gp:sgpr_bound_1} which directly generalizes to the hierarchical case and is given by
 \begin{align}
     \begin{split}
         \label{eq:dsvi:full_bound}
-        \Lc_{\text{DSVI}} = \log \Prob{\mat{y} \given \mat{X}} \geq
-        \sum_{n=1}^N \Moment*{\E_{\Variat*{\mat{f}_{n, L}}}}{\log \Prob*{\mat{y}_n} \given \mat{f}_{n, L}}
-        - \sum_{l=1}^L \KL*{\Variat*{\mat{u}_l}}{\Prob*{\mat{u}_l}}
+        \Lc_{\text{DSVI}} \geq
+        \sum_{n=1}^N \Moment*{\E_{\Variat*{\mat{f}_{L, n}}}}{\log \Prob*{\mat{y}_n \given \mat{f}_{L, n}}}
+        - \sum_{l=1}^L \KL*{\Variat*{\mat{u}_l}}{\Prob*{\mat{u}_l}}.
     \end{split}
 \end{align}
-Evaluating this has $\Oh(NM^2D)$ complexity.
-Approximate predictions work the same way:
+Evaluating this bound requires $\Oh(NM^2D)$ computations.
+Through local reparametrization~\parencite{kingma_variational_2015}, gradients of the variational bound can be samples directly.
+Evaluations of the DSVI-bound and its gradients have two unbiased sources of stochasticity~\parencite{salimbeni_doubly_2017}.
+First, the expected likelihood is approximated through Monte Carlo samples and second, since the likelihood factorizes along the data, mini-batching is possible.
+Drawing Monte Carlo samples of the likelihood directly elimates the need for Psi-statistics as in~\cref{eq:var_compression:full_bound}, making DSVI applicable to a broader set of hierarchical Gaussian process models.
+
+Monte Carlo samples of approximate predictions can be drawn using~\cref{eq:dsvi:variational_layers} as well.
+The free-form predictive density can be approximated using the mixture
 \begin{align}
     \begin{split}
         \label{eq:dsvi:approximate_predictions}
-        \Variat*{\mat{f}_{\ast,L}}
-        &\approx \frac{1}{S} \sum_{s=1}^S \Variat*{\mat{q}_{\ast, L} \given \mat{u}_L, \mat{f}_{\ast, L-1}}.
+        \Variat*{\mat{f}_{L, \ast} \given \mat{X}_{\ast}}
+        &\approx \frac{1}{S} \sum_{s=1}^S \Variat*{\mat{q}_{L, \ast} \given \mat{u}_L, \mat{f}_{L-1, \ast}},
     \end{split}
 \end{align}
+with $S$ samples propagated through the hierarchical GP starting from the $\mat{X}_{\ast}$.

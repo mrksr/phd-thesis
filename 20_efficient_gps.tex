@@ -1034,19 +1034,21 @@ The joint probability of the function values and outputs can then be written as
         \mat{f}_l \mid \mat{f}_{l-1} &\sim \Gaussian{\mat{0}, \mat{K}_{\mat{f}_l\mat{f}_l} + \sigma^2_l \Eye}.
     \end{split}
 \end{align}
-The structure of the conditionals $\Prob*{\mat{f}_l \given \mat{f}_{l-1}}$ is implied by the assumption that the $f_l$ are drawn from GPs.
+The structure of the conditionals $\Prob*{\mat{f}_l \given \mat{f}_{l-1}}$ is implied by the assumption that the $f_l$ are drawn from GPs and~\cref{eq:gp:gp_marginal_likelihood}.
+Note that following the original formulation in~\parencite{damianou_deep_2013}, we assume independent Gaussian noise $\sigma^2_l$ as part of every function $f_l$.
 We will denote the kernel matrix at the $\nth{l}$ level as $\mat{K}_{ll} = \mat{K}_{\mat{f}_l\mat{f}_l}$.
 The $\mat{f}_l$ are all latent variables and inference over them is very challenging.
 Because they capture the result of applying multiple GPs, they are highly dependent on each other, thereby implying dependence between the different functions as well.
 We will now derive two extensions of the sparse variational approximations in~\cref{toc:gp:sparse_gps} to the hierarchical case, nested variational compression~\parencite{hensman_nested_2014} and doubly stochastic variational inference~\parencite{salimbeni_doubly_2017}.
 
 \subsubsection{Nested Variational Compression}
-To derive the desired variational lower bound for the log marginal likelihood of the complete model, multiple steps are necessary.
-First, we will consider the innermost GPs $a_d$ describing the alignment functions.
-We derive the Scalable Variational GP (SVGP), a lower bound for this model part which can be calculated efficiently and can be used for stochastic optimization, first introduced by \textcite{hensman_gaussian_2013}.
-In order to apply this bound recursively, we will both show how to propagate the uncertainty through the subsequent layers $f_d$ and $g_d$ and how to avoid the inter-layer cross-dependencies using another variational approximation as presented by \textcite{hensman_nested_2014}.
-While \citeauthor{hensman_nested_2014} considered standard deep GP models, we will show how to apply their results to CPs.
+The challenge in deriving the marginal likelihood for deep GPs stems from the propagation of uncertainties through multiple GPs.
+In~\cref{toc:gp:sparse_gps} and~\cref{fig:gp:sparse_graphical_model:svgp} we showed how to achieve conditional independence between data points in a single GP by augmenting the model with a set of inducing observations.
+The SVGP model is a compressed representation in which a small number of inducing points represents the full GP defined on all observations.
+In nested variational compression presented by~\textcite{hensman_nested_2014}, this compression is applied recursively for all GPs in the deep GP hierarchy.
+To derive a tractable variational lower bound, an additional step is necessary to avoid the inter-layer cross-dependencies.
 
+The bound in \Cref{eq:gp:expected_log_likelihood_svgp} can be used directly to approximate $\Prob*{\mat{f}_1 \given \mat{X}}$ as the innermost function in a deep GP is a standard GP model.
 Our next goal is to derive a bound on the outputs of the second layer
 \begin{align}
     \begin{split}
@@ -1055,10 +1057,7 @@ Our next goal is to derive a bound on the outputs of the second layer
         &= \log \int \Prob{\mat{f}_2, \given \mat{u}_2, \mat{f}_1, \mat{u}_1} \Prob*{\mat{f}_1, \mat{u}_1} \diff \mat{f}_1 \diff \mat{u}_1,
     \end{split}
 \end{align}
-that is, an expression in which the uncertainty about the different $\mat{a_d}$  and the cross-layer dependencies on the $\mat{u_{a, d}}$ are both marginalized.
-While on the first layer, the different $\mat{a_d}$ are conditionally independent, the second layer explicitly models the cross-covariances between the different outputs via convolutions over the shared latent processes $w_r$.
-We will therefore need to handle all of the different $\mat{f_d}$, together denoted as $\mat{f}$, at the same time.
-
+that is, an expression in which the uncertainty about the $\mat{f}_1$ and the cross-layer dependencies on the $\mat{u}_1$ are both marginalized.
 We start by considering the relevant terms from \cref{eq:dgp:full_model} and apply \cref{eq:gp:expected_log_likelihood_svgp} to marginalize $\mat{f}_1$ in
 \begin{align}
     \begin{split}
@@ -1072,7 +1071,7 @@ We start by considering the relevant terms from \cref{eq:dgp:full_model} and app
     \end{split}
 \end{align}
 where we write $\aProb{\mat{f}_1 \given \mat{u}_1} = \Gaussian*{\mat{f}_1 \given \mat{\mu}_1, \sigma_1^2 \Eye}$\todo{Fix $\ptilde$} to incorporate the Gaussian noise in the latent space.
-Due to our assumption that $\mat{u}_1$ is a sufficient statistic for $\mat{f}_1$ we choose
+Due to our assumption that $\mat{u}_1$ is a sufficient statistic for $\mat{f}_1$ we choose the Gaussians
 \begin{align}
     \label{eq:var_compression:variational_assumption}
     \begin{split}
@@ -1102,7 +1101,7 @@ This yields
         - \frac{1}{2\sigma_2^2} \Moment*{\E_{\Variat{\mat{f}_1}}}{\Fun*{\tr}{\mat{K}_{22} - \mat{Q}_{22}}},
     \end{split}
 \end{align}
-where we apply Fubini's theorem to exchange the order of integration in the expected values.
+where we apply Fubini's theorem~\parencite{fubini_sugli_1907} to exchange the order of integration in the expected values.
 The expectations with respect to $\Variat{\mat{f}_1}$ involve expectations of kernel matrices, also called $\Psi$-statistics, in the same way as in \parencites{damianou_deep_2013} and are given by
 \begin{align}
     \begin{split}
@@ -1116,16 +1115,16 @@ These $\Psi$-statistics can be computed analytically for multiple kernels, inclu
 To obtain the final formulation of the desired bound for $\log \Prob{\mat{f}_2 \given \mat{u}_2}$ we substitute \cref{eq:var_compression:psi_statistics} into \cref{eq:var_compression:f_marginal_likelihood} and get the analytically tractable bound
 \begin{align}
     \begin{split}
-        \MoveEqLeft \log \Prob{\mat{f}_2 \given \mat{u}_2} \geq \\
-        &\log\Gaussian*{\mat{f}_2 \given \mat{\Psi}_2\mat{K}_{\mat{u}_2\mat{u}_2}\inv \mat{m}_2, \sigma_2^2\Eye}
+        \log \Prob{\mat{f}_2 \given \mat{u}_2}
+        &\geq \log\Gaussian*{\mat{f}_2 \given \mat{\Psi}_2\mat{K}_{\mat{u}_2\mat{u}_2}\inv \mat{m}_2, \sigma_2^2\Eye}
         - \KL{\Variat{\mat{u}_1}}{\Prob{\mat{u}_1}} \\
-        &- \frac{1}{2\sigma_1^2} \Fun*{\tr}{\mat{K}_{11} - \mat{Q}_{11}}
+        &\quad {} - \frac{1}{2\sigma_1^2} \Fun*{\tr}{\mat{K}_{11} - \mat{Q}_{11}}
         - \frac{1}{2\sigma_2^2} \left( \psi_2 - \Fun*{\tr}{\mat{\Psi_2}\mat{K}_{\mat{u}_2\mat{u}_2}\inv} \right) \\
-        &- \frac{1}{2\sigma_2^2} \tr\left(\left(\mat{\Phi}_2 - \mat{\Psi}_2\tran\mat{\Psi}_2\right) \mat{K}_{\mat{u}_2\mat{u}_2}\inv \left(\mat{m}_2\mat{m}_2\tran + \mat{S}_2\right)\mat{K}_{\mat{u}_2\mat{u}_2}\inv\right)
+        &\quad {} - \frac{1}{2\sigma_2^2} \tr\left(\left(\mat{\Phi}_2 - \mat{\Psi}_2\tran\mat{\Psi}_2\right) \mat{K}_{\mat{u}_2\mat{u}_2}\inv \left(\mat{m}_2\mat{m}_2\tran + \mat{S}_2\right)\mat{K}_{\mat{u}_2\mat{u}_2}\inv\right).
     \end{split}
 \end{align}
-To derive a bound for $\log \Prob{\mat{y} \given \mat{X}}$ we apply the same steps as described above, resulting in the final bound, which factorizes along the data, allowing for stochastic optimization methods:
-Recursive bound.
+This bound is structurally similar to the SVGP bound in~\cref{eq:gp:expected_log_likelihood_svgp} but contains additional terms introduced by the propagation of uncertainties from $\Prob*{\mat{f}_1}$.
+To derive a full bound for $\log \Prob{\mat{y} \given \mat{X}}$ where all $\mat{f}_l$ have been marginalized, we can apply the same steps as described above recursively, resulting in the nested variational compression lower bound given by
 \begin{align}
     \begin{split}
         \label{eq:var_compression:full_bound}
@@ -1134,29 +1133,30 @@ Recursive bound.
         - \sum_{l=1}^L \KL{\Variat{\mat{u}_l}}{\Prob{\mat{u}_l}} \\
         &- \frac{1}{2\sigma_1^2} \Fun*{\tr}{\mat{K}_{11} - \mat{Q}_{11}}
         - \sum_{l=2}^L \frac{1}{2\sigma_l^2} \left( \psi_l - \Fun*{\tr}{\mat{\Psi_l}\mat{K}_{\mat{u}_l\mat{u}_l}\inv} \right) \\
-        &- \sum_{l=2}^L \frac{1}{2\sigma_l^2} \tr\left(\left(\mat{\Phi}_l - \mat{\Psi}_l\tran\mat{\Psi}_l\right) \mat{K}_{\mat{u}_l\mat{u}_l}\inv \left(\mat{m}_l\mat{m}_l\tran + \mat{S}_l\right)\mat{K}_{\mat{u}_l\mat{u}_l}\inv\right)
+        &- \sum_{l=2}^L \frac{1}{2\sigma_l^2} \tr\left(\left(\mat{\Phi}_l - \mat{\Psi}_l\tran\mat{\Psi}_l\right) \mat{K}_{\mat{u}_l\mat{u}_l}\inv \left(\mat{m}_l\mat{m}_l\tran + \mat{S}_l\right)\mat{K}_{\mat{u}_l\mat{u}_l}\inv\right).
     \end{split}
 \end{align}
+Just as the SVGP bound it factorizes along the data and enables stochastic optimization.
+However, depending on the kernel, the calculation of psi-statistics can be computationally expensive or analytically intractable, limiting the applicability of this bound to a limited set of hierarchical GP models.
 
-For approximate predictions we need to pass our Gaussian messages through the model recursively.
-Since every message besides the initial $\mat{X_{\ast}}$ is itself a Gaussian, it needs to be marginalized:
+Since the nested variational compression bound introduces a conditional independence assumption between layers given the approximations of the latent variabiles $\Variat*{\mat{f}_l}$, approximate predictions can be derived by recursively calculating $\Variat*{\mat{f}_1}$ to $\Variat*{\mat{f}_L}$, all of which are Gaussian.
+Given inputs $\mat{X_{\ast}}$, we recursively marginalize the intermediate layers
 \begin{align}
     \begin{split}
-        \Variat{\mat{f}_{\ast} \given \mat{X}_{\ast}} =
-        &= \int \Variat{\mat{f_{d, \ast}}, \mat{a_{d, \ast}} \given \mat{X_{d, \ast}}} \diff \mat{a_{d, \ast}} \\
-        &= \int \Variat{\mat{f_{d, \ast}} \given \mat{a_{d, \ast}}} \Variat{\mat{a_{d, \ast}} \given \mat{X_{d, \ast}}} \diff \mat{a_{d, \ast}} \\
-        &= \Moment*{\E_{\Variat{\mat{a_{d, \ast}} \given \mat{X_{d, \ast}}}}}{\Variat{\mat{f_{d, \ast}} \given \mat{a_{d, \ast}}}} \\
-        &= \Gaussian*{\mat{f_{d, \ast}} \given \mat{\bar{\mu}_{\ast}}, \mat{\bar{\Sigma}_{\ast}}}
+        \Variat{\mat{f}_{l, \ast}}
+        &= \int \Variat{\mat{f}_{l, \ast}, \mat{f}_{l-1, \ast}} \diff \mat{f}_{l-1, \ast} \\
+        &= \int \Variat{\mat{f}_{l, \ast} \given \mat{f}_{l-1, \ast}} \Variat{\mat{f}_{l-1, \ast}} \diff \mat{f}_{l-1, \ast} \\
+        &= \Moment*{\E_{\Variat{\mat{f}_{l-1, \ast}}}}{\Variat{\mat{f}_{l, \ast} \given \mat{f}_{l-1, \ast}}} \\
+        &= \Gaussian*{\mat{f}_{l, \ast} \given \mat{\bar{\mu}}_{l, \ast}, \mat{\bar{\Sigma}}_{l, \ast}}
     \end{split}
 \end{align}
-with \todo{I am super uncertain about $\mat{\bar{\Sigma}}$.}
+with
 \begin{align*}
-    \mat{\bar{\mu}_{\ast}}    & = \mat{\Psi_{f\ast}} \mat{K_{mm}}\inv \mat{m}                                        \\
-    \mat{\bar{\Sigma}_{\ast}} & = \mat{\Psi_{f\ast}}\mat{K_{mm}}\inv\mat{S}\mat{K_{mm}}\inv\mat{\Psi_{f\ast}}\tran.
+    \mat{\bar{\mu}}_{l, \ast}    & = \mat{\Psi}_{l\ast} \mat{K}_{\mat{u}_l \mat{u}_l    }\inv \mat{m}_l                                       \\
+    \mat{\bar{\Sigma}_{l, \ast}} & = \mat{\Psi}_{l\ast}\mat{K}_{\mat{u}_l \mat{u}_l}\inv\mat{S}_l\mat{K}_{\mat{u}_l \mat{u}_l}\inv\mat{\Psi}_{l\ast}\tran.
 \end{align*}
-For the first layer, the expectation collapses to usual SVGP predictions as derived in \cite{hensman_scalable_2014}.
-Given the approximation of $\mat{f_{d, \ast}}$, the approximation of $\mat{g_{d, \ast}}$ can be derived via the same procedure for the next layer.
-This yields an approximate prediction for the final function values.
+For the first layer, the expectation collapses to usual SVGP predictions.
+The final function values are given by $\Variat*{\mat{f}_L}$.
 
 \subsubsection{Doubly Stochastic Variational Inference}
 \label{toc:dsvi}

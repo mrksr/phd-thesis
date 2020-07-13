@@ -1,4 +1,4 @@
-\chapter{Non-Linear Timeseries Alignment}
+\chapter{Non-linear timeseries alignment}
 \label{toc:alignment}
 In \cref{toc:data_association}, we used hierarchically structured Gaussian processes to solve a data association problem.
 We exploited the conditional independence between modes given associations to formulate an efficient variational approximation.
@@ -116,7 +116,7 @@ The joint probability distribution of the data can then be written as
 Here, we use $\mat{K}$ to refer to the Gram matrices corresponding to the respective GPs.
 All but the convolution processes factorize over the different levels of the model as well as the different outputs.
 
-\subsubsection{Variational Lower Bound}
+\subsubsection{Variational lower bound}
 To approximate a single deep GP, we can use the approximations discussed in~\cref{toc:dgp}.
 The structure of the AMO-GP model is closely related to a group of stacked GPs with additional dependencies in one of the layers.
 Since these dependencies are represented with a multi-output GP which, given the latent functions, yields conditionally independent outputs, nested variation compression generalizes to the AMO-GP.
@@ -150,7 +150,7 @@ A central component of this bound are expectations over kernel matrices, the thr
 Closed form solutions for these statistics depend on the choice of kernel and are known for specific kernels, such as linear or RBF kernels, for example shown in~\parencite{damianou_deep_2013}.
 In the following subsection we will give closed form solutions for these statistics required in the shared CP-layer of our model.
 
-\subsubsection{Convolution Kernel Expectations}
+\subsubsection{Convolution kernel expectations}
 The uncertainty about the first layer is captured by the variational distribution of the latent alignments $\rv{a}$ given by $\Variat{\rv{a}} \sim \Gaussian{\mat{\mu}_a, \mat{\Sigma}_a}\text{, with } \rv{a} = \left( \rv{a}_1, \dots, \rv{a}_d \right)$.
 Every aligned point in $\rv{a}$ corresponds to one output of $\rv{f}$ and ultimately to one of the $\rv{y}_d$.
 Since the closed form of the multi output kernel depends on the choice of outputs, we will use the notation $\Fun{\hat{f}}{\rv{a}_n}$ to denote $\Fun{f_d}{\rv{a}_n}$ such that $\rv{a}_n$ is associated with output $d$.
@@ -195,7 +195,7 @@ Note that the $\Psi$-statistics factorize along the data and we only need to con
 If all the data belong to the same output, the $\Psi$-statistics of the standard squared exponential kernel can be recovered as a special case.
 It is used to propagate the uncertainties through the output-specific warpings $\rv{g}$.
 
-\subsubsection{Approximate Predictions}
+\subsubsection{Approximate predictions}
 Using the variational lower bound in \cref{eq:alignment:full_bound}, our model can be fitted to data, resulting in appropriate choices of the kernel hyper parameters and variational parameters.
 Now assume we want to predict approximate function values $\mat{g}_{d, \ast}$ for previously unseen points $\mat{X}_{d, \ast}$ associated with output $d$, which are given by $ \mat{g}_{d, \ast} = g_d(f_d(a_d(\mat{X}_{d, \ast})))$.
 
@@ -204,7 +204,7 @@ In this shared layer, the belief about the different outputs and the shared info
 Given $\Variat{\rv{u}_f}$, the different outputs are conditionally independent of one another and thus, predictions for a single dimension in our model are equivalent to predictions in a single deep GP with nested variational compression.
 
 
-\section{Model Interpretation}
+\section{Model interpretation}
 \label{toc:alignment:interpretation}
 The graphical model shown in \cref{fig:alignment:graphical_model_supervised} illustrates that the presented model can be interpreted as a group of $D$ deep GPs all of which share one layer which is a CP.
 This CP acts as an interface to share information between the different GPs which are otherwise conditionally independent.

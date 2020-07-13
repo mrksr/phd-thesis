@@ -1,4 +1,4 @@
-\chapter{Interpretable Reinforcement Learning}
+\chapter{Interpretable reinforcement learning}
 \label{toc:interpretable_rl}
 In \cref{toc:alignment}, we formulated a hierarchically structured Gaussian process model to uncover latent information shared between multimodal time-series.
 We showed how this dependence both removes ambiguities in a learning problem and leads to more informative posteriors.
@@ -59,7 +59,7 @@ We derive an efficient inference scheme for both the dynamics model and for prob
 We show that this approach yields interpretable models and policies and is significantly more data-efficient than less interpretable alternatives.
 
 
-\section{The Wet-Chicken Benchmark}
+\section{The wet-chicken benchmark}
 \label{toc:interpretable_rl:wetchicken}
 \begin{figure}[t]
     \centering
@@ -109,7 +109,7 @@ However, as the canoeist moves closer to the waterfall, the distribution over th
 Together with the heteroscedasticity introduced by the turbulence dependent on the current position, these properties make the Wet-Chicken problem especially difficult for model-based reinforcement learning problems.
 
 
-\section{Probabilistic Policy Search}
+\section{Probabilistic policy search}
 \label{toc:interpretable_rl:probabilistic_policy_search}
 \begin{figure}[t]
     \centering
@@ -146,7 +146,7 @@ Second, this dynamics model is used to learn the parameters $\mat{\theta}_\pi$ o
 We discuss both steps in the following.
 
 
-\subsubsection{An Interpretable Transition Model}
+\subsubsection{An interpretable transition model}
 \label{toc:interpretable_rl:mdgp}
 \begin{figure}[t]
     \centering
@@ -245,7 +245,7 @@ We sample from the assignment process $\mat{l}_\ast$ and heteroscedastic noise p
 The $K$ predictive posteriors $\Variat{\mat{s}_\ast^{\prime\pix{k}} \given \mat{f}_\ast^{\pix{k}} \mat{\sigma}_\ast^{\pix{k}}}$ are then given by $K$ independent shallow GPs and can be computed analytically.
 
 
-\subsubsection{Policy Learning}
+\subsubsection{Policy learning}
 \label{toc:interpretable_rl:policy}
 After training a transition model, we use the variational posterior $\Variat{\mat{s}_{t+1} \given \mat{\hat{s}}_t}$ to train a policy by sampling roll-outs and optimizing policy parameters via stochastic gradient descent on the expected return $\Moment*{\E}{\Fun*{J^\pi}{\mat{\theta}_\pi}}$.
 The expected return is approximated using the variational posterior given by
@@ -346,7 +346,7 @@ We then show how successful policies can be found with less data compared to the
 Thirdly, we show how the human-interpretable components of the dynamics models can be used for reward shaping, allowing us to easily formulate a requirement for conservative policies.
 
 
-\subsubsection{Dynamics Model}
+\subsubsection{Dynamics model}
 \label{toc:interpretable_rl:dynamics_model}
 The benchmark has two-dimensional state and action spaces from which we sample uniform random transitions with varying $N$ in the range \numrange{100}{5000}.
 For $N \geq 250$, our model is able to identify the underlying dynamics.
@@ -366,7 +366,7 @@ This is due to the fact that the flow mode models the position after one step un
 As most turbulence into the direction of the waterfall leads to a drop, the posterior mean is further away from the waterfall as the turbulence dominates the low flow speed on the left side of the river.
 
 
-\subsubsection{Policy Learning}
+\subsubsection{Policy learning}
 \label{toc:interpretable_rl:policy_learning}
 \begin{figure}[tp]
     \centering
@@ -493,7 +493,7 @@ However, at the same time, not modelling the dynamics explicitly also prevents u
 Using DAGP-based dynamics models, a successful policy can be found with about an order of magnitude less data.
 
 
-\subsubsection{Reward Shaping}
+\subsubsection{Reward shaping}
 \label{toc:interpretable_rl:reward_shaping}
 We have shown how a dynamics model informed by high-level expert knowledge increases data efficiency.
 A further advantage of the decomposition of the dynamics model in interpretable components is that the predictions of these components can be used to influence the policy search.
@@ -519,7 +519,7 @@ The resulting conservative policies yield lower return than the more aggressive 
 The interpretable nature of the dynamics models have allowed us to easily influence policy behaviors.
 
 
-\subsubsection{Effects of Model Misspecification}
+\subsubsection{Effects of model misspecification}
 \label{toc:interpretable_rl:model_misspecification}
 \begin{table}[t]
     \centering

@@ -306,7 +306,7 @@ The first three orders assume step-functions, rectified linear units or rectifie
 Arc cosine kernels of low order behave similar to squared exponential kernels in practice but have different generalization-properties.
 While GPs with an RBF kernel return to the prior away from data yielding predictions roughly in the area $\mu_f \pm 2\sigma_f$, the arc cosine kernel of order 1 generalizes linearly using the derivative at the closest data points\todo{really?}.
 
-\subsubsection{Predictions and Posterior}
+\subsubsection{Predictions and posterior}
 To use Gaussian processes for regression, it is necessary to combine observations with a Gaussian process prior $f \sim \GP\Cond{\mat{0}, \K}$ and obtain a predictive posterior.
 We assume Gaussian noise $\epsilon \sim \Gaussian{0, \sigma^2}$ with $\mat{y}_n = f(\mat{x}_n) + \epsilon$ and denote the $N$ observations as $\mat{X} = (\mat{x}_1, \dots, \mat{x}_N)$ and $\mat{y} = (\mat{y}_1, \dots, \mat{y}_N)$.
 The likelihood of the observations given the latent function values $\mat{f}$ is given by
@@ -968,7 +968,7 @@ Another approach is to orthogonally decouple the computations for predictive mea
 This decoupling allows the calculation of the predictive mean in linear time, allowing for a larger number of inducing points for the mean.
 
 
-\section{Hierarchical Gaussian Processes}
+\section{Hierarchical Gaussian processes}
 \label{toc:dgp}
 \begin{figure}[t]
     \centering
@@ -1049,7 +1049,7 @@ We will now derive two extensions of the sparse variational approximations in~\c
 \end{align}
 
 
-\subsubsection{Nested Variational Compression}
+\subsubsection{Nested variational compression}
 The challenge in deriving the marginal likelihood for deep GPs stems from the propagation of uncertainties through multiple GPs.
 In~\cref{toc:gp:sparse_gps} and~\cref{fig:gp:sparse_graphical_model:svgp} we showed how to achieve conditional independence between data points in a single GP by augmenting the model with a set of inducing observations.
 The SVGP model is a compressed representation in which a small number of inducing points represents the full GP defined on all observations.
@@ -1168,7 +1168,7 @@ The final function values are given by $\Variat*{\mat{f}_L}$.
 While passing Gaussian variational messages through a deep GP to achieve conditional independence between layers is computationally convenient, it is a strong simplification as propagating a Gaussian distribution through a Gaussian process generally does not result in a Gaussian distribution.
 As discussed in more detail in~\parencite{hensman_nested_2014}, nested variational compression tends to underestimate uncertainties especially when the functions $f_l$ become more non-linear.
 
-\subsubsection{Doubly Stochastic Variational Inference}
+\subsubsection{Doubly stochastic variational inference}
 \label{toc:dsvi}
 To overcome some of the limitations of nested variational compression,~\textcite{salimbeni_doubly_2017} proposed the doubly stochastic variational inference (DSVI) approximation.
 Instead of relying on an explicit variational approximation for the $\mat{f}_l$, DSVI is based on the observation that due to the conditional independence assumption of the data introduced by the $\mat{u}_l$, function values $\mat{f}_{n,l}$ can be sampled independently and efficiently.

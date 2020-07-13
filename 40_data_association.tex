@@ -1,4 +1,4 @@
-\chapter{Data Association}
+\chapter{Data association}
 \label{toc:data_association}
 The deep\todo{Fix intro?} Gaussian processes introduced in~\cref{toc:dgp} are motivated with practical machine learning considerations:
 It is hard to represent some functions of interest with a standard GP with a smooth prior, most notably functions which have non-smooth components.
@@ -49,7 +49,7 @@ Our model can describe non-stationary processes in the sense that a different nu
 We describe this non-stationary structure using additional GP priors which allows us to make full use of problem specific knowledge.
 This leads to a flexible yet interpretable model with a principled treatment of uncertainty.
 
-\section{Data Association with Gaussian Processes}
+\section{Data association with Gaussian processes}
 \label{toc:data_association:model}
 \begin{figure}[t]
     \centering
@@ -128,7 +128,7 @@ In \cref{toc:data_association:choicenet}, we use different kernels to separate a
 Going further, we can also use deep GP as priors for the $f^{\pix{k}}$~\parencite{damianou_deep_2013, salimbeni_doubly_2017}.
 
 
-\section{Variational Approximation}
+\section{Variational approximation}
 \label{toc:data_association:approximation}
 Exact inference is intractable in this model.
 Instead, we formulate a variational approximation based on doubly stochastic variational inference derived in~\cref{toc:dgp}.
@@ -136,7 +136,7 @@ Because of the rich structure in our model, finding a variational lower bound wh
 To proceed, we formulate an approximation which factorizes along both the $K$ processes and $N$ data points.
 This bound can be sampled efficiently and allows us to optimize both the models for the different processes $\Set*{f^{\pix{k}}}_{k=1}^K$ and our belief about the data assignments $\Set*{\mat{a}_n}_{n=1}^N$ simultaneously using stochastic optimization.
 
-\subsubsection{Variational Lower Bound}
+\subsubsection{Variational lower bound}
 As discussed in~\cref{toc:gp:sparse_gps}, we augment all GPs in our model using sets of $M$ inducing points $\mat{Z}^{\pix{k}} = \left(\mat{z}_1^{\pix{k}}, \ldots, \mat{z}_M^{\pix{k}}\right)$ and their corresponding function values $\mat{u}^{\pix{k}} = \Fun*{f^{\pix{k}}}{\mat{Z}^{\pix{k}}}$, the inducing variables.
 We collect them as $\mat{Z} = \Set*{\mat{Z}^{\pix{k}}, \mat{Z}_\alpha^{\pix{k}}}_{k=1}^K$ and $\mat{U} = \Set*{\mat{u}^{\pix{k}}, \mat{u}_\alpha^{\pix{k}}}_{k=1}^K$.
 Taking the function $f^{\pix{k}}$ and its corresponding GP as an example, the inducing variables $\mat{u}^{\pix{k}}$ are jointly Gaussian with the latent function values $\mat{F}^{\pix{k}}$ of the observed data by the definition of GPs.
@@ -207,7 +207,7 @@ A lower bound $\Lc_{\text{DAGP}}$ for the log-joint $\log\Prob*{\mat{Y}, \mat{A}
 Due to the structure of~\cref{eq:variational_distribution}, the bound factorizes along the data enabling stochastic optimization.
 This bound has complexity $\Fun*{\Oh}{NM^2K}$ to evaluate.
 
-\subsubsection{Optimization of the Lower Bound}
+\subsubsection{Optimization of the lower bound}
 An important property of the variational bound for DSVI is that taking samples for single data points is straightforward and can be implemented efficiently.
 Specifically, for some $k$ and $n$, samples $\mat{\hat{f}_n^{\pix{k}}}$ from $\Variat*{\mat{f}_n^{\pix{k}}}$ are independent of all other parts of the model and can be drawn using samples from univariate unit Gaussians using reparametrization~\parencite{kingma_variational_2015,rezende_stochastic_2014}.
 
@@ -234,7 +234,7 @@ First, we approximate the expectations using Monte Carlo samples $\mat{\hat{f}}_
 And second, the factorization of the bound along the data allows us to use mini-batches for optimization~\parencite{salimbeni_doubly_2017, hensman_gaussian_2013}.
 
 
-\subsubsection{Approximate Predictions}
+\subsubsection{Approximate predictions}
 Predictions for a test location $\mat{x}_\ast$ are mixtures of $K$ independent Gaussians, given by,
 \begin{align}
     \begin{split}
@@ -249,7 +249,7 @@ Samples from the predictive density over $\Variat*{\mat{a}_\ast \given \mat{x}_\
 The distribution $\Variat*{\mat{a}_\ast \given \mat{x}_\ast}$ reflects the model's belief about how many and which of the $K$ generative processes are relevant at the test location $\mat{x}_\ast$ and their relative probability.
 
 
-\subsubsection{Deep Gaussian Processes}
+\subsubsection{Deep Gaussian processes}
 For clarity, we have described the variational bound in terms of a shallow GP.
 However, as long as their variational bound can be efficiently sampled, any model can be used in place of shallow GPs for the $f^{\pix{k}}$.
 Since our approximation is based on DSVI, an extension to deep GPs is straightforward.
@@ -361,7 +361,7 @@ DAGP successfully learns an informative joint posterior by solving the underlyin
 We show that the DAGP posterior contains two separate models for the two original operational regimes.
 
 
-\subsubsection{Noise Separation}
+\subsubsection{Noise separation}
 \label{toc:data_association:choicenet}
 %
 \begin{table}[t]
@@ -433,7 +433,7 @@ For high outlier rates, stronger prior knowledge about the signal is required to
 While the function has still been identified well, some of the noise is also explained using this process, thereby introducing slight errors in the predictions.
 
 
-\subsubsection{Multimodal Data}
+\subsubsection{Multimodal data}
 \label{toc:data_association:semi_bimodal}
 %
 \begin{figure}[tp]
@@ -473,7 +473,7 @@ The DAGP is implicitly incentivized to explain the data using as few modes as po
 At $x = -10$ the inferred modes and assignment processes start reverting to their respective priors away from the data.
 
 
-\subsubsection{Mixed Cart-pole Systems}
+\subsubsection{Mixed cart-pole systems}
 \label{toc:data_association:cartpole}
 \begin{table}[t]
     \centering

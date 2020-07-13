@@ -117,9 +117,7 @@ Here, we use $\mat{K}$ to refer to the Gram matrices corresponding to the respec
 All but the convolution processes factorize over the different levels of the model as well as the different outputs.
 
 \subsubsection{Variational Lower Bound}
-To approximate a single deep GP, that is a single string of GPs stacked on top of each other,
-we can use the approximations discussed in~\cref{toc:dgp}\todo{DGP reference}.
-Since the AMO-GP model
+To approximate a single deep GP, we can use the approximations discussed in~\cref{toc:dgp}.
 The structure of the AMO-GP model is closely related to a group of stacked GPs with additional dependencies in one of the layers.
 Since these dependencies are represented with a multi-output GP which, given the latent functions, yields conditionally independent outputs, nested variation compression generalizes to the AMO-GP.
 The variational lower bound for the AMO-GP is given by
@@ -514,7 +512,7 @@ We then applied the AMO-GP to real world data of two wind turbines and used the 
 With uncertainties decomposed along the hierarchy, our approach handles ambiguities introduced by the stochasticity of the wind in a principled manner.
 This indicates the AMO-GP is a good approach for these kinds of dynamical system, where multiple misaligned sensors measure the same latent effect.
 
-We have shown how limitations in the independence assumptions of hierarchical GP approximations in~\cref{toc:data_association}\todo{Add DGP reference} can be overcome by introducing dependence in the generative proess.
+We have shown how limitations in the independence assumptions of hierarchical GP approximations in~\cref{toc:data_association} can be overcome by introducing dependence in the generative proess.
 By modelling this dependence through a multi-output GP, we can derive an explicit posterior belief about how multimodal data interact.
 We have shown in~\cref{fig:alignment:wind_samples} that this belief leads to rich structure in the samples drawn from a hierarchical model.
 It allows us to formulate priors that specify which aspects of a dynamical system should be inferred.

@@ -131,7 +131,7 @@ Going further, we can also use deep GP as priors for the $f^{\pix{k}}$~\parencit
 \section{Variational Approximation}
 \label{toc:data_association:approximation}
 Exact inference is intractable in this model.
-Instead, we formulate a variational approximation following ideas from\todo{DGP reference}.
+Instead, we formulate a variational approximation based on doubly stochastic variational inference derived in~\cref{toc:dgp}.
 Because of the rich structure in our model, finding a variational lower bound which is both faithful and can be evaluated analytically is hard.
 To proceed, we formulate an approximation which factorizes along both the $K$ processes and $N$ data points.
 This bound can be sampled efficiently and allows us to optimize both the models for the different processes $\Set*{f^{\pix{k}}}_{k=1}^K$ and our belief about the data assignments $\Set*{\mat{a}_n}_{n=1}^N$ simultaneously using stochastic optimization.
@@ -168,7 +168,7 @@ Next, we discuss how to handle the correlations between the different functions 
 Given a set of assignments $\mat{A}$, this factorization along the data points is preserved in our model due to the assumed independence of the different functions in~\cref{eq:data_association:true_marginal_likelihood}.
 The independence is lost if the assignments are unknown.
 In this case, both the (a priori independent) assignment processes and the functions influence each other through data with unclear assignments.
-Following the ideas of DSVI in~todo{DGP reference}, we maintain these correlations between different parts of the model while assuming factorization of the variational distribution.
+Following the ideas of DSVI in~\cref{toc:dgp}, we maintain these correlations between different parts of the model while assuming factorization of the variational distribution.
 That is, our variational posterior takes the factorized form,
 \begin{align}
     \begin{split}
@@ -208,7 +208,7 @@ Due to the structure of~\cref{eq:variational_distribution}, the bound factorizes
 This bound has complexity $\Fun*{\Oh}{NM^2K}$ to evaluate.
 
 \subsubsection{Optimization of the Lower Bound}
-An important property of the variational bound for DSVI\todo{DGP reference} is that taking samples for single data points is straightforward and can be implemented efficiently.
+An important property of the variational bound for DSVI is that taking samples for single data points is straightforward and can be implemented efficiently.
 Specifically, for some $k$ and $n$, samples $\mat{\hat{f}_n^{\pix{k}}}$ from $\Variat*{\mat{f}_n^{\pix{k}}}$ are independent of all other parts of the model and can be drawn using samples from univariate unit Gaussians using reparametrization~\parencite{kingma_variational_2015,rezende_stochastic_2014}.
 
 Note that it would not be necessary to sample from the different processes, since $\Variat*{\mat{F}^{\pix{k}}}$ can be computed analytically~\parencite{hensman_gaussian_2013}.

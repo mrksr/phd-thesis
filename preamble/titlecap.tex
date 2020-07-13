@@ -1,0 +1,41 @@
+\usepackage{titlecaps}
+
+\Addlcwords{of with using}
+\newcommand{\safetitlecap}[1]{%
+    \texorpdfstring{\titlecap{#1}}{#1}%
+}
+
+\makeatletter
+
+% Chapter
+\let\orig@chapterlinesformat\chapterlinesformat
+\renewcommand*{\chapterlinesformat}[3]{%
+    \orig@chapterlinesformat{#1}{#2}{\safetitlecap{#3}}%
+}%
+
+\let\orig@chapterlineswithprefixformat\chapterlineswithprefixformat
+\renewcommand*{\chapterlineswithprefixformat}[3]{%
+    \orig@chapterlineswithprefixformat{#1}{#2}{\safetitlecap{#3}}%
+}%
+
+% Sections
+\let\orig@sectionlinesformat\sectionlinesformat
+\renewcommand*{\sectionlinesformat}[4]{%
+    \orig@sectionlinesformat{#1}{#2}{#3}{\safetitlecap{#4}}%
+}%
+
+\let\orig@sectioncatchphraseformat\sectioncatchphraseformat
+\renewcommand*{\sectioncatchphraseformat}[4]{%
+    \orig@sectioncatchphraseformat{#1}{#2}{#3}{\safetitlecap{#4}}%
+}%
+
+% Table of Contents
+\let\orig@addtocentrydefault\addtocentrydefault
+\renewcommand*{\addtocentrydefault}[3]{%
+    \orig@addtocentrydefault{#1}{#2}{\safetitlecap{#3}}%
+}%
+
+% Running Header
+\let\MakeMarkcase\titlecap
+
+\makeatother

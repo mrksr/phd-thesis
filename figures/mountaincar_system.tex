@@ -1,0 +1,43 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \begin{axis}[
+            default plot,
+            height=.3\plotfullheight,
+            axis x line=bottom,
+            axis y line=left,
+            xlabel=Position,
+            ylabel=Height,
+            xlabel style={overlay=false},
+            ylabel style={overlay=false,rotate=90},
+            ymin=-0.4,
+            ymax=1.5,
+        ]
+
+        \addplot[
+            sStoneDark, very thick,
+            mark=none,
+            domain=-2:0, samples=50,
+        ] {x * x + x};
+        \addplot[
+            sStoneDark, very thick,
+            mark=none,
+            domain=0:2, samples=50,
+        ] {x / sqrt(1 + 5 * x * x)}
+        node[pos=0, sloped, yshift=-3pt, anchor=south] {
+            \begin{tikzpicture}
+                \draw[sStoneDark, fill] (0.075, 0) circle (2.5pt);
+                \draw[sStoneDark, fill] (0.225, 0) circle (2.5pt);
+                \draw[sBlueDark, fill=sBlueDark, fill opacity=0.5, rounded corners, use as bounding box] (0, 0) rectangle (0.3, 0.275);
+                \draw[black, thick, arrows={-latex}] (0.3, 0.1375) -- (0.55, 0.1375) node {Velocity};
+            \end{tikzpicture}
+            };
+    \end{axis}
+\end{tikzpicture}
+\end{document}

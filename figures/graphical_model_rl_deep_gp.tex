@@ -1,0 +1,79 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \begin{scope}[x=7em, y=10ex]
+        \node[random variable, observed] (s0) at (0, 0) {$\mat{s}_0$};
+        \node[random variable, latent] (s1) at (1, 0) {$\mat{s}_1$};
+        \node[random variable, latent] (s2) at (2, 0) {$\mat{s}_2$};
+        \node[random variable, latent] (sT) at (3, 0) {$\mat{s}_T$};
+
+        \node[random variable, latent] (r0) at (0, -1) {$\mat{r}_0$};
+        \node[random variable, latent] (r1) at (1, -1) {$\mat{r}_1$};
+        \node[random variable, latent] (r2) at (2, -1) {$\mat{r}_2$};
+        \node[random variable, latent] (rT) at (3, -1) {$\mat{r}_T$};
+
+        \node[random variable, latent] (a0) at (0.5, 1) {$\mat{a}_0$};
+        \node[random variable, latent] (a1) at (1.5, 1) {$\mat{a}_1$};
+        \node[random variable, latent] (aT) at (2.5, 1) {$\mat{a}_{T-1}$};
+
+        \node[random variable, latent] (V) at (1.5, -2) {$\mat{J}_\ast$};
+
+        % ---
+
+        \node[random variable, variational] (f) at (-0.75, 0.5) {$\mat{f}$};
+
+        \draw[edge, directed] (f) -| (s1);
+        \draw[edge, directed] (f) -| (s2);
+        \draw[edge, directed, dashed] (f) -| (sT);
+
+        \node[random variable, variational] (Pi) at (1.5, 2) {$\pi$};
+
+        \draw[edge, directed] (Pi) -| (a0);
+        \draw[edge, directed] (Pi) -- (a1);
+        \draw[edge, directed, dashed] (Pi) -| (aT);
+
+        \draw[edge, directed] (s0) -- (a0);
+        \draw[edge, directed] (s1) -- (a1);
+        \draw[edge, directed, dashed] (s2) -- (aT);
+
+        \draw[edge, directed] (a0) -- (s1);
+        \draw[edge, directed] (a1) -- (s2);
+        \draw[edge, directed] (aT) -- (sT);
+
+        \draw[edge, directed] (s0) -- (s1);
+        \draw[edge, directed] (s1) -- (s2);
+        \draw[edge, directed, dashed] (s2) -- (sT);
+
+        \draw[edge, directed] (s0) -- (r0);
+        \draw[edge, directed] (s1) -- (r1);
+        \draw[edge, directed] (s2) -- (r2);
+        \draw[edge, directed] (sT) -- (rT);
+
+        \draw[edge, directed] (r0) |- (V);
+        \draw[edge, directed] (r1) |- (V);
+        \draw[edge, directed] (r2) |- (V);
+        \draw[edge, directed, dashed] (rT) |- (V);
+    \end{scope}
+
+    \begin{scope}[on background layer]
+        \node[
+        plate, inner sep=5pt,
+        sYellowDark,
+        "Deep GP"{sYellowDark, left},
+        fit=(f)(a0)(sT)(Pi),
+        ] {};
+        \node[
+        plate, inner sep=5pt,
+        sYellowDark,
+        "Likelihood"{sYellowDark, left},
+        fit=(r0)(r0 -| f.west)(rT)(V),
+        ] {};
+    \end{scope}
+\end{tikzpicture}
+\end{document}

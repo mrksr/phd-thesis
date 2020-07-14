@@ -326,3 +326,18 @@ inner sep=1.25pt
 \newcommand{\addwaterfall}{%
     \draw[waterfall] (0, 5) rectangle (5, 5.25) node[midway, above, yshift=2pt] {waterfall};
 }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                            Mountaincar                              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pgfplotsset{mountaincar policy plot/.style = {
+            default plot,
+            width=.42\plotfullwidth,
+            height=.35\plotfullheight,
+            xlabel=Position, ylabel=Velocity,
+            xtick={-2, 0, 2},
+            ytick={-3, 0, 3},
+            xlabel style={overlay=false},
+            ylabel style={overlay=false,rotate=90},
+        }}

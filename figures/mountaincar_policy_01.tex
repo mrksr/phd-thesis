@@ -1,0 +1,61 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \def\datapath{\figurepath/data/mountaincar/policy_iteration_01.dat}
+    \begin{axis}[
+            mountaincar policy plot,
+            name=first,
+            colormap/YlGnBu,
+            slim colorbar right,
+            point meta min=0.,
+            point meta max=1.,
+            title=Action Mean,
+            xlabel=,
+            xticklabels={,,},
+        ]
+
+        \addplot[
+            surf,
+            mesh/rows=25,
+            mesh/cols=17,
+            point meta={\thisrow{action_p_0_mean}},
+            % point meta={\thisrow{std}},
+        ] table[
+                ignore chars={\#}, col sep=space, x=position, y=velocity,
+            ] {\datapath};
+    \end{axis}
+    %
+    \begin{axis}[
+            at={($(first.east) + (5em, 0)$)},
+            anchor=west,
+            mountaincar policy plot,
+            colormap/YlOrRd,
+            slim colorbar right,
+            point meta min=0.,
+            point meta max=1.,
+            title=Action Std,
+            xlabel=,
+            xticklabels={,,},
+            ylabel=,
+            yticklabels={,,},
+        ]
+
+        \addplot[
+            surf,
+            mesh/rows=25,
+            mesh/cols=17,
+            point meta={\thisrow{action_std}},
+            % point meta={\thisrow{std}},
+            title=Action Mean,
+        ] table[
+                ignore chars={\#}, col sep=space, x=position, y=velocity,
+            ] {\datapath};
+    \end{axis}
+\end{tikzpicture}
+\end{document}

@@ -96,12 +96,26 @@ I think I am well suited to tackle these challenges as I have worked on relevant
 \section{Interpretability}
 
 
-\section{Tasks in hierarchies}
+\section{Bayesian Optimization}
+\begin{figure}[t]
+    \centering
+    \raisebox{-0.5\height}{\includegraphics[trim=15 15 0 0, clip, width=0.25\textwidth]{robust_bo_erik/illustrative_figure/gp.pdf}}
+    \raisebox{-0.5\height}{\includegraphics[trim=15 15 0 0, clip, width=0.25\textwidth]{robust_bo_erik/illustrative_figure/homo_gp.pdf}}
+    \raisebox{-0.5\height}{\includegraphics[trim=15 15 0 0, clip, width=0.25\textwidth]{robust_bo_erik/illustrative_figure/modulating_lgp.pdf}}
+    \raisebox{-0.45\height}{{\includegraphics[width=0.20\textwidth]{robust_bo_erik/illustrative_figure/legend_compact.pdf}}}
+    \caption{
+        \label{fig:bo:posterior}
+        As a result, the acquisition function can utilize a confidently discovered global trend to increase the efficiency of the search.
+    }
+\end{figure}
+
+
+\section{Reinforcement Learning}
 \begin{figure}[t]
     \centering
     \includestandalone{mountaincar_system}
     \caption{
-        \label{fig:discussion:mountaincar_system}
+        \label{fig:mountaincar:system}
         Mountaincar system
     }
 \end{figure}
@@ -109,7 +123,7 @@ I think I am well suited to tackle these challenges as I have worked on relevant
     \centering
     \includestandalone{graphical_model_rl_deep_gp}
     \caption{
-        \label{fig:discussion:rl_as_deep_gp}
+        \label{fig:mountaincar:graphical_model}
         Deep GP RL graphical model.
     }
 \end{figure}
@@ -119,7 +133,7 @@ I think I am well suited to tackle these challenges as I have worked on relevant
     \includestandalone{mountaincar_policy_10}
     \includestandalone{mountaincar_policy_25}
     \caption{
-        \label{fig:discussion:mountaincar_policy}
+        \label{fig:mountaincar:policy}
         Mountaincar policies after different iteration counts.
     }
 \end{figure}

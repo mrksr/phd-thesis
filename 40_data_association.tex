@@ -603,7 +603,6 @@ Instead, early on during training of a DAGP instance, the model (randomly) assig
 All models explain the data equally well and are plausible under the prior which prefers no more than 3 smooth modes to be active for any $\mat{X}$, which is the case for all models.
 The predictive posterior $\Prob*{\mat{f}_\ast \given \mat{x}_\ast}$ is comparable for all models and they perform equally well with respect to test metrics.
 However, the lower three models in~\cref{fig:data_association:semi_bimodal_multiple} could be considered less interpretable or less desireable because data which intuitively should belong to the same mode does not.
-\todo{some more discussion?}
 
 In the DAGP model, these qualitatively different solutions cannot be distinguished automatically but can only be identified through inspection by experts.
 While the predictive posterior close to the data is similar, the different solutions could generalize differently, introducing a subjective choice of what constitutes the \emph{correct} model.

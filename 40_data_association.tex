@@ -221,7 +221,7 @@ This distribution models the result of drawing a sample from $\Multinomial*{\mat
 Since we want to optimize $\Lc_{\text{DAGP}}$ using (stochastic) gradient descent, we need to employ a continuous relaxation to gain informative gradients of the bound with respect to the binary (and discrete) vectors $\mat{a}_n$.
 One straightforward way to relax the problem is to use the current belief about $\Variat*{\mat{a}_n}$ as parameters for a convex combination of the $\mat{f}_n^{\pix{k}}$, that is, to approximate $\mat{f}_n \approx \sum_{k=1}^K \Variat*{\mat{a}_n^{\pix{k}}}\mat{\hat{f}}_n^{\pix{k}}$.
 Using this relaxation is problematic in practice.
-Explaining data points as mixtures of the different generating processes violates the modelling assumption that every data point was generated using exactly one function but can substantially simplify the learning problem.
+Explaining data points as mixtures of the different generating processes violates the modeling assumption that every data point was generated using exactly one function but can substantially simplify the learning problem.
 Because of this, special care must be taken during optimization to enforce the sparsity of $\Variat*{\mat{a}_n}$.
 
 To avoid this problem, we propose using a different relaxation based on additional stochasticity.
@@ -427,7 +427,7 @@ Besides the root mean squared error (RMSE) reported in~\parencite{choi_choicenet
 
 Since we can encode the same prior knowledge about the signal and noise processes in both OMGP and DAGP, the results of the two models are comparable:
 For low outlier rates, they correctly identify the outliers and ignore them, resulting in a predictive posterior of the signal equivalent to standard GP regression without outliers.
-In the special case of 0\,\% outliers, the models correctly identify that the process modelling the noise is not necessary, thereby simplifying to standard GP regression.
+In the special case of 0\,\% outliers, the models correctly identify that the process modeling the noise is not necessary, thereby simplifying to standard GP regression.
 For high outlier rates, stronger prior knowledge about the signal is required to still identify it perfectly.
 \cref{fig:data_association:choicenet} shows the DAGP posterior for an outlier rate of 60\,\%.
 While the function has still been identified well, some of the noise is also explained using this process, thereby introducing slight errors in the predictions.
@@ -602,7 +602,7 @@ An important effect of this assumption is that a DAGP posterior cannot represent
 Instead, early on during training of a DAGP instance, the model (randomly) assigns modes of the model $\mat{f}^{\pix{k}}$ to modes in the underlying data. \Cref{fig:data_association:semi_bimodal} shows one such association, \cref{fig:data_association:semi_bimodal_multiple} shows other results obtained through retraining.
 All models explain the data equally well and are plausible under the prior which prefers no more than 3 smooth modes to be active for any $\mat{X}$, which is the case for all models.
 The predictive posterior $\Prob*{\mat{f}_\ast \given \mat{x}_\ast}$ is comparable for all models and they perform equally well with respect to test metrics.
-However, the lower three models in~\cref{fig:data_association:semi_bimodal_multiple} could be considered less interpretable or less desireable because data which intuitively should belong to the same mode does not.
+However, the lower three models in~\cref{fig:data_association:semi_bimodal_multiple} could be considered less interpretable or less desirable because data which intuitively should belong to the same mode does not.
 
 In the DAGP model, these qualitatively different solutions cannot be distinguished automatically but can only be identified through inspection by experts.
 While the predictive posterior close to the data is similar, the different solutions could generalize differently, introducing a subjective choice of what constitutes the \emph{correct} model.

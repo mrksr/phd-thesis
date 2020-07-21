@@ -143,7 +143,7 @@ The covariance function is also called a kernel and describes the interaction be
 A function which is distributed according to a Gaussian process is denoted as $f \sim \GP\Cond{\mu, \K}$.
 
 A GP can be used as a distribution over functions in the graphical model for regression problems in~\cref{eq:bayesian_ml:non_parametric}.
-Because the random variables $\mat{f}_n$ modelling the function value $f(\mat{x}_n)$ are jointly Gaussian, they are not independent and thus are connected in the graphical model in~\cref{fig:gp:graphical_model}.
+Because the random variables $\mat{f}_n$ modeling the function value $f(\mat{x}_n)$ are jointly Gaussian, they are not independent and thus are connected in the graphical model in~\cref{fig:gp:graphical_model}.
 The choice of mean function
 \tikz[x=2.5em,baseline=(f.base)]{
     \node[inline random variable, hyperparameter] (f) {$\mu$};

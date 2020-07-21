@@ -3,15 +3,15 @@
 In \cref{toc:alignment}, we formulated a hierarchically structured Gaussian process model to uncover latent information shared between multimodal time-series.
 We showed how this dependence both removes ambiguities in a learning problem and leads to more informative posteriors.
 While comparisons to less semantic generative models showed similar behavior on training data, we showed that a more informed model shows more desirable generalization behaviors.
-In a regression problem, evaluation of desirable behavior is usually limited to the inspection of marginal distributions at test points and manual inspection of samples.
-In this chaper, we explore how we can formalize desirable model behavior through the task a model will be used to solve.
+In a regression problem, the evaluation of desirable behavior is usually limited to the inspection of marginal distributions at test points and manual inspection of samples.
+In this chapter, we explore how we can formalize desirable model behavior through the task a model will be used to solve.
 We formulate a hierarchical model based on the DAGP model in~\cref{toc:data_association} which is informed by abstract knowledge about a dynamic system and evaluate model behavior through a reinforcement learning task.
-We show that while misspecified models yield similar marginal distributions as discussed in the previous chapter, a well specified model can solve the posed task significantly better.
+We show that while misspecified models yield similar marginal distributions as discussed in the previous chapter, a well-specified model can solve the posed task significantly better.
 
 Machine learning methods~\parencite{shalev-shwartz_understanding_2014} are designed to solve tasks where the underlying system we want to model is only partly known or understood.
 The hope when using machine learning methods is that we can reduce this uncertainty by exploiting statistical patterns in data generated from the underlying system.
 Reinforcement learning (RL)~\parencite{sutton_reinforcement_2018} is a machine learning paradigm designed to learn in a dynamic environment where we can specify a goal or have a notion of what a desirable behavior is.
-The goal of RL is to learn a policy which dynamically chooses actions in the environment in order to achieve a goal or a behavior.
+The goal of RL is to learn a policy which dynamically chooses actions in the environment to achieve a goal or behavior.
 Specifically, an RL agent's task is to learn a policy $\pi$ which, given the current state $\mat{s}$ of an environment, chooses an action $\mat{a}$ to achieve the goal specified by a reward function $r$ mapping system states to numerical rewards.
 To learn a policy, any RL system needs to understand the underlying dynamics governing the system, how the transition between states is effected by the actions taken.
 The next state $\mat{s}^\prime$ is determined by the latent and possibly stochastic transition function $\mat{s}^\prime = \Fun*{f}{\mat{s}, \mat{a}}$.
@@ -207,7 +207,7 @@ In our case, we use $K = 2$ modes, one for staying in the river and one for fall
 For every data point we infer a posterior belief $\Prob{\mat{l}_t}$ about which mode the data point belongs to, as we assume this separation can not be predetermined using expert knowledge.
 
 We place independent GP priors on the $\mat{f}^{\pix{k}}$, $\mat{\sigma}^{\pix{k}}$ and $\mat{\lambda}^{\pix{k}}$.
-Given the data a fixed set of assignments $\mat{L}$, our modelling assumptions imply independence between the $K$ modes.
+Given the data a fixed set of assignments $\mat{L}$, our modeling assumptions imply independence between the $K$ modes.
 However, this independence is lost if the assignments are unknown and a discrete optimization problem has to be solved when doing joint inference over the different modes and the association problem.
 We approximate the exact posterior via a factorized variational distribution
 \begin{align}
@@ -488,8 +488,8 @@ NFQ is a model-free approach.
 Instead of learning a dynamics model and using rollouts in that model to find a good policy, NFQ directly models the optimal Q-function and thus the optimal policy.
 A Q-function represents the expected return after taking a specified action in a specified state.
 Since the expected return already takes into account both the heteroscedasticity and multi-modality of the system, the Q-function itself can be modelled with a standard function approximator such as a neural network.
-Thus, no special modelling is needed when applying NFQ to the Wet-Chicken benchmark and given enough data, NFQ is able to find successful policies.
-However, at the same time, not modelling the dynamics explicitly also prevents us from utilizing the high-level expert knowledge we have about the system, thus increasing the required amount of data:
+Thus, no special modeling is needed when applying NFQ to the Wet-Chicken benchmark and given enough data, NFQ is able to find successful policies.
+However, at the same time, not modeling the dynamics explicitly also prevents us from utilizing the high-level expert knowledge we have about the system, thus increasing the required amount of data:
 Using DAGP-based dynamics models, a successful policy can be found with about an order of magnitude less data.
 
 
@@ -583,7 +583,7 @@ The interpretable nature of the dynamics models have allowed us to easily influe
 \end{figure}
 In \cref{toc:interpretable_rl:probabilistic_policy_search} we have formulated a dynamics model informed by high-level expert knowledge.
 One important insight we assumed is the bimodal nature of the Wet-Chicken problem introduced by the waterfall.
-In \cref{toc:interpretable_rl:policy_learning}, we compared our model to standard GPs and showed that modelling multi-modality is critical to solve Wet-Chicken.
+In \cref{toc:interpretable_rl:policy_learning}, we compared our model to standard GPs and showed that modeling multi-modality is critical to solve Wet-Chicken.
 We extend this comparison in this experiment and discuss the effects of model mis-specification on our model's performance.
 Specifically, we investigate the case where additional modes are available to dynamics model to solve the underlying data association problem.
 

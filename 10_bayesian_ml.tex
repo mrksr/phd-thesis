@@ -3,10 +3,10 @@
 
 \todo[inline]{Industrial Applications of ML as a start?}
 
-Machine learning methods have seen great success recently in a wide range of digital domains such as speech recognition, computer vision or translation.
+Machine learning methods have seen great success recently in a wide range of digital domains such as speech recognition, computer vision, or translation.
 However, bridging the gap to applications in the physical world has proved challenging.
-Problem domains like robotics, industrial control, decision support systems or the natural sciences introduce a new set of requirements.
-ML-systems which operate in safety-critical areas, interact with people or carry responsibility must be robust, trustworthy and assessable.
+Problem domains like robotics, industrial control, decision support systems, or the natural sciences introduce a new set of requirements.
+ML-systems that operate in safety-critical areas, interact with people, or carry responsibility must be robust, trustworthy, and assessable.
 Besides optimizing for good average-case performance, a responsible system needs to reason about plausible worst-cases and reliably avoid or inform about them.
 
 In this workshop, we will identify a list of properties required in real-world scenarios and discuss how they can be evaluated.
@@ -15,8 +15,8 @@ How do we design models which facilitate communication with experts and how do w
 How can we benchmark the trustworthiness and robustness of a model and ensure that it can cope with unobserved situations?
 What do uncertainties mean in practice and how do we make use of them to reason about worst-case performance?
 
-We want to bring together computer scientists, mathematicians and statisticians with domain experts to discuss approaches that facilitate interdisciplinary dialogue.
-We welcome contributions on explainable and interpretable models, human-in-the-loop learning, uncertainty quantification and learning guarantees.
+We want to bring together computer scientists, mathematicians, and statisticians with domain experts to discuss approaches that facilitate interdisciplinary dialogue.
+We welcome contributions on explainable and interpretable models, human-in-the-loop learning, uncertainty quantification, and learning guarantees.
 We hope to introduce open problems to a broader community and discuss benchmarks and success criteria for requirements driven by machine learning problems in the physical world.
 
 %%%
@@ -26,7 +26,7 @@ In such domains, data is abundant and the consequences of mistakes tend to be mi
 However, bridging the gap to applications in the physical world has proved challenging.
 Problem domains like robotics, industrial control, decision support systems or the natural sciences introduce a new set of requirements.
 ML-systems which operate in safety-critical areas, interact with people or carry responsibility must be robust, trustworthy and assessable.
-As applications become more safety-relevant, gathering data through exploration can be problematic due to adverse consequences of failure.
+As applications become more safety-relevant, gathering data through exploration can be problematic due to the adverse consequences of failure.
 Besides optimizing for good average-case performance, a responsible system needs to reason about plausible worst-cases and reliably avoid or inform about them.
 ML-systems need to be verified by domain experts before deployment and are used to test hypotheses or make impactful decisions, emphasizing a need for interpretability.
 Models are required to incorporate and reproduce expert knowledge and make consistent predictions.
@@ -50,7 +50,7 @@ Classical metrics such as low errors on test sets are often not enough for domai
 Formulating principled generative models based on expert understanding allows us to reproduce their abstract expectations.
 Combining such models with data allows us to gain new insights about the badly understood components of a system.
 In recent work\footnote{Bayesian decomposition of multi-modal dynamical systems for reinforcement learning, \url{https://papers.mrksr.de/neurocomputing2020}}, we showed how a semantic decomposition of the dynamics of a reinforcement learning system significantly reduces the data requirements and produces interpretable solutions.
-During my fellowship, I will generalize this work to explore how models can be evaluated by taking model components, generative samples and downstream tasks into account.
+During my fellowship, I will generalize this work to explore how models can be evaluated by taking model components, generative samples, and downstream tasks into account.
 
 Many of the challenges faced in industrial applications of machine learning translate to applications in the natural sciences.
 When applying machine learning in research contexts, care must be taken that models hold up to the requirements of scientific rigor.
@@ -59,15 +59,15 @@ Besides ensuring they do not hide complexity by making them interpretable, model
 Many black-box methods in use today depend on carefully tuned hyper-parameters to produce desired results, drawing their robustness into question.
 Sound probabilistic model formulations make assumptions explicit and principled treatment of uncertainties makes models more robust to adverse effects.
 In recent work\footnote{Data Association with Gaussian Processes, \url{https://arxiv.org/abs/1810.07158}}, we formulated a fully Bayesian interpretation of the data association problem.
-One application of this method are noise separation tasks, where faulty sensor data can be separated into true readings and complex heteroscedastic noise while still producing informative uncertainties for downstream tasks.
+One application of this method is a noise separation task, where faulty sensor data can be separated into true readings and complex heteroscedastic noise while still producing informative uncertainties for downstream tasks.
 I will continue this line of work to explore how model efficient formulations and approximations ensure applicability and robustness in practice.
 
 \section{Machine learning problems}
 \label{toc:bayesian_ml:ml_problems}
 One of the roots of machine learning (ML) lies in the study of algorithms in theoretical computer science.
 An algorithm is a well-defined sequence of computational steps transforming a set of inputs to a set of outputs.
-It is a tool for solving a computational problem, which is defined by an abstract problem of admissable inputs and expected outputs.
-An algorithm solves such a problem if for every possible input, the algorithm provably yields the correct output.
+It is a tool for solving a computational problem, which is defined by an abstract problem of admissible inputs and expected outputs.
+An algorithm solves such a problem if, for every possible input, the algorithm provably yields the correct output.
 
 Consider the computational problem of sorting a list of numbers in ascending order.
 One possible problem~\parencite{cormen_introduction_2009} of the sorting problem is:
@@ -81,7 +81,7 @@ One possible problem~\parencite{cormen_introduction_2009} of the sorting problem
 For example, for the input $\mat{\hat{I}}=(12, 8, 23, 4)$ the correct output is $\mat{\hat{O}}=(4, 8, 12, 23)$.
 A concrete input $\mat{\hat{I}}$ is called an instance of a problem.
 Importantly, such an instance contains all the required information to compute the unique output $\mat{\hat{O}}$.
-The correctness of the output can be checked via the formal problem problem.
+The correctness of the output can be checked via the formal problem.
 The various available (correct) sorting algorithms only differ in which and how many computational steps they take to arrive at the output, not in the output itself.
 
 Machine learning can be seen as an extension of algorithmics towards problems where a formal description of a uniquely defined solution does not exist.
@@ -94,7 +94,7 @@ This knowledge can then be used to describe common patterns in the data or gener
         \includestandalonewithpath{figures/polynoms_data}
         \caption{
             Data
-            \label{fig:bayesian_ml:polynoms:data}
+            \label{fig:bayesian_ml:polynomials:data}
         }
     \end{subfigure}
     \hfill
@@ -103,7 +103,7 @@ This knowledge can then be used to describe common patterns in the data or gener
         \includestandalonewithpath{figures/polynoms_lagrange}
         \caption{
             \enquote{Algorithms}
-            \label{fig:bayesian_ml:polynoms:lagrange}
+            \label{fig:bayesian_ml:polynomials:lagrange}
         }
     \end{subfigure}
     \caption[Algorithmic Interpolation]{
@@ -112,8 +112,8 @@ This knowledge can then be used to describe common patterns in the data or gener
     }
 \end{figure}
 
-As an example, consider the data shown in \cref{fig:bayesian_ml:polynoms:data}, a set of $N$ pairs of real numbers for which we assume that all $x_i$ are pairwise different.
-The knowledge about this data to be uncovered is the functional dependency between the two data dimensions that was used to generate the data.
+As an example, consider the data shown in \cref{fig:bayesian_ml:polynomials:data}, a set of $N$ pairs of real numbers for which we assume that all $x_i$ are pairwise different.
+The knowledge about this data to be uncovered is the functional dependency between the two data dimensions that were used to generate the data.
 This is called a regression problem and is strongly under-specified:
 There exist uncountably many functions on the real numbers that explain any finite set of observed points.
 The problem
@@ -143,7 +143,7 @@ It can be shown that this is indeed a well-posed computational problem whose uni
     \end{split}
     \label{eq:bayesian_ml:lagrange}
 \end{align}
-\Cref{fig:bayesian_ml:polynoms:lagrange} shows the Lagrange polynomial interpolating the example dataset.
+\Cref{fig:bayesian_ml:polynomials:lagrange} shows the Lagrange polynomial interpolating the example dataset.
 The figure also shows another derived computational problem of linear interpolation.
 Here, the function is defined as being piecewise linear between the different data points, thus also reproducing the data.
 
@@ -156,7 +156,7 @@ Because of the explicit nature of their algorithms as seen in \cref{eq:bayesian_
         \includestandalonewithpath{figures/polynoms_linear}
         \caption{
             Linear ML
-            \label{fig:bayesian_ml:polynoms:linear}
+            \label{fig:bayesian_ml:polynomials:linear}
         }
     \end{subfigure}
     \hfill
@@ -165,12 +165,12 @@ Because of the explicit nature of their algorithms as seen in \cref{eq:bayesian_
         \includestandalonewithpath{figures/polynoms_polynomial}
         \caption{
             Polynomial ML
-            \label{fig:bayesian_ml:polynoms:polynomial}
+            \label{fig:bayesian_ml:polynomials:polynomial}
         }
     \end{subfigure}
     \caption[ML Interpolation]{
         ???
-        \label{fig:bayesian_ml:polynoms:ml}
+        \label{fig:bayesian_ml:polynomials:ml}
     }
 \end{figure}
 A common approach to formulating a problem that lets the data speak for itself is to formulate more implicit requirements.
@@ -195,14 +195,14 @@ One can choose $f$ to be a linear function, giving rise to the linear regression
     with $\Hc$ being the set of linear functions.
 \end{labeling}
 \end{problem}
-\Cref{fig:bayesian_ml:polynoms:linear} shows the different results of three algorithms with different choices of error functions $e$.
+\Cref{fig:bayesian_ml:polynomials:linear} shows the different results of three algorithms with different choices of error functions $e$.
 With $f(x) = \mat{W}x + b$ those are
 \begin{labeling}{Absolute error:}
     \item[Squared error:] $e(f, \Dc) = \sum_{n=1}^N (y_n - f(x_n))^2$
     \item[Absolute error:] $e(f, \Dc) = \sum_{n=1}^N \abs{y_n - f(x_n)}$
     \item[Ridge:] $e(f, \Dc) = \sum_{n=1}^N (y_n - f(x_n))^2 - \norm{\mat{W}}_2 - b^2$.
 \end{labeling}
-Altering the set of hypotheses $\Hc$ between linear, quadratic and cubic polynomials together with the squared error function results in the functions shown in \cref{fig:bayesian_ml:polynoms:polynomial}.
+Altering the set of hypotheses $\Hc$ between linear, quadratic and cubic polynomials together with the squared error function results in the functions shown in \cref{fig:bayesian_ml:polynomials:polynomial}.
 
 It is important to note that none of these proposed algorithms and plotted functions is \emph{objectively} the correct solution to the regression problem.
 None of them is equal to the function that was used to generate the data and even if it was, there would be no way to tell.
@@ -226,7 +226,7 @@ In the following, statistical learning and Bayesian machine learning are introdu
     }
 \end{figure}
 The objective of machine learning is to derive knowledge about a process generating data from a limited set of observations.
-Knowledge is represented as a model that both explains existing observations and is able to generalize to new data points.
+Knowledge is represented as a model that both explains existing observations and can generalize to new data points.
 Statistical learning theory offers a set of tools to reason about generalization and to formulate what it means for a model to be good.
 This section presents an interpretation of statistical learning theory similar to the definition of probabilistic numerics in~\parencite{oates_modern_2019,cockayne_bayesian_2019}.
 
@@ -238,7 +238,7 @@ In less ambiguous notation one would assume a random variable $\mat{Z}$ with dis
 Here, $\mat{Z}$ and $z$ are identified with each other as $\mat{z}$.
 
 Assume an unknown data-generating distribution $\Prob{\mat{z}} \in \Probs{\Zc}$ over a known space of observations $\Zc$.
-The task in a machine learning problem is to infer properties of this distribution given only a set of observations $\Dc \in \Sc$ obtained via some sampling operator $S : \Probs{\Zc} \to \Sc$.
+The task in a machine learning problem is to infer properties of this distribution given a set of observations $\Dc \in \Sc$ obtained via some sampling operator $S : \Probs{\Zc} \to \Sc$.
 A common choice of $S$ is a draw of $N$ independent points $\Dc = \Set*{\mat{z}_1, \dots, \mat{z}_N \with \mat{z}_i \sim \Prob{\mat{z}}} \subseteq \Zc$ with $\Sc = \Zc^N$.
 Other choices include $S$ into the learning problem such as in active learning~\parencite{murphy_machine_2012} or reinforcement learning~\parencite{sutton_reinforcement_2018} settings.
 Depending on the machine learning problem, the task might not be to identify $\Prob*{\mat{z}}$ as a whole but instead identify some functional $f \in \Fc$ obtained via the functional operator $F : \Probs{\Zc} \to \Fc$.
@@ -336,11 +336,11 @@ The two questions
 \end{enumerate}
 underpin (statistical) learning theory~\parencite{vapnik_principles_1992}.
 It is safe to assume that for small $N$, $\risk^{\text{emp}}$ can significantly underestimate the true risk as the error on parts of the data distribution is not considered at all.
-This problem is called overfitting to the available training data, an example of which can arguably be seen in~\cref{fig:bayesian_ml:polynoms:lagrange}.
+This problem is called overfitting to the available training data, an example of which can arguably be seen in~\cref{fig:bayesian_ml:polynomials:lagrange}.
 
 In practice, if collection sufficient data is not possible, overfitting has to be avoided via problem-dependent choices for $\ell$ and $\Hc$.
 Additionally, the empirical risk minimization algorithm is often extended to regularizing loss functions of the form $\ell^\prime : \Fc \times \Yc \times \Yc \to \Rb$ which depend on the structure of the candidate as well as its predictions.
-The Ridge error function shown in~\cref{fig:bayesian_ml:polynoms:linear} is an example of extending the least squares error function with a preference for parameters with small absolute value.
+The Ridge error function shown in~\cref{fig:bayesian_ml:polynomials:linear} is an example of extending the least-squares error function with a preference for parameters with small absolute value.
 Regularization~\parencite{oates_modern_2019} adds back a global component to empirical risk minimization and has a close relation to the choice of hypothesis space $\Hc$.
 The constraint that $f_A \in \Hc \subseteq \Fc$ can be thought of as a binary regularization term which adds infinite loss to the set $\Fc \setminus \Hc$.
 Conversely, continuous regularization terms formulate softer and less rigorous preferences within $\Hc$, for example for structurally simpler solutions~\parencite{bishop_christoph_pattern_2007,thorburn_occams_1915}.
@@ -352,13 +352,13 @@ Examples include the usage of test sets or validations sets~\parencite{bishop_ch
 It is often possible to reformulate choices in loss functions as changes in the optimization scheme or compensate a more general hypothesis space with stricter regularization.
 It is not clear how a machine learning algorithm should be formulated from a formal perspective.
 However, problem-dependent adjustments to learning algorithms are generally informed by knowledge provided by domain-experts about the process that generated the data.
-An additional dimension is therefore given by the need to communicate assumptions and effects of choices with stakeholders which do not have a deep understanding of the field.
+An additional dimension is therefore given by the need to communicate assumptions and effects of choices with stakeholders that do not have a deep understanding of the field.
 If a learning algorithm should be interpretable and understandable, assumptions should be explicit and optimization schemes should be simple.
 The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 
 \section{Bayesian machine learning}
 \label{toc:bayesian_ml:bayesian_ml}
-The central modelling assumption of statistical learning theory is the unknown data distribution $\Prob*{\mat{z}}$.
+The central modeling assumption of statistical learning theory is the unknown data distribution $\Prob*{\mat{z}}$.
 Based on a limited number of observations, the task is to learn a model of either the complete distribution or some functional $F[\Prob*{\mat{z}}]$.
 Instead of selecting one solution (for example based on some regularization scheme), Bayesian approaches accept the inevitability of uncertainty due to the underspecified ML problem and represent it explicitly.
 Following the definition of functionals $F$, a Bayesian model is often formulated through independence assumptions in the data distribution.
@@ -366,7 +366,7 @@ Independence assumptions induce a factorization of the data distribution.
 Structural constraints can then be put on the different factors to encode expert knowledge.
 
 Because the available data is not sufficient to identify the unique correct solution, the goal of Bayesian machine learning is to instead infer a distribution of plausible solutions weighed by their likelihood given the data.
-The posterior distribution of plausible models is a combination of the prior assumptions about underlying structure and their capability of explaining observations.
+The posterior distribution of plausible models is a combination of the prior assumptions about the underlying structure and their capability of explaining observations.
 This section introduces probabilistic generative models as a natural consequence of the assumptions in statistical learning theory.
 Probabilistic generative models form a principled way to formulate interpretable hypothesis spaces with carefully chosen assumptions.
 With Bayes' rule, a structurally simple and formally consistent learning algorithm can be formulated to infer knowledge from data.
@@ -385,8 +385,8 @@ The chain rule is symmetric in the sense that the order of chaining random varia
 All possible interdependencies between random variables are represented in the expansion of conditional probabilities.
 
 A factorization along the chain rule does not impose any structure on the underlying distribution.
-The first step in Bayesian modelling is to impose such structure by assuming conditional independence between variables.
-Directed graphical models are an readable visualization of such independence assumptions.
+The first step in Bayesian modeling is to impose such structure by assuming conditional independence between variables.
+Directed graphical models are a readable visualization of such independence assumptions.
 A directed graphical model is a directed graph where every random variable is a node
 \tikz[x=2.5em,baseline=(a.base)]{
     \node[inline random variable] (a) {$\mat{a}$};
@@ -472,13 +472,13 @@ Here, the color of the nodes
 indicates that both nodes are part of the data distribution and are directly observed in a data set.
 We will introduce other nodes below.
 Closed forms for both $\Prob*{\mat{x}}$ and $\Prob*{\mat{y} \given \mat{x}}$ would fully characterize the data distribution.
-To solve the regression problem however, only the second term is required.
+To solve the regression problem, however, only the second term is required.
 
 In the notation typically employed in machine learning, the variables $\mat{x}$ and $\mat{y}$  in the graphical model denote both the factorization of the generative process as well as the functional dependencies between concrete realizations of $\mat{x}$ and $\mat{y}$.
 Assuming a regression problem over the reals $\Xc = \Yc = \Rb$, the functional $\Prob*{\mat{y} \given \mat{x}}$ is an infinite-dimensional object.
 To simplify reasoning about this object, we will reason about finitely many realizations of this process, the pairs $(\mat{x}_1, \mat{y}_1), \ldots, (\mat{x}_N, \mat{y}_N)$.
 This formulation describes both the model search and prediction steps:
-If the $N$ pairs are all part of some data set $\Dc$, model search can be formulated as finding a closed form for $\Prob*{\mat{y}_n \given \mat{x}_n}$ that explains the observations well.
+If the $N$ pairs are all part of some data set $\Dc$, model-search can be formulated as finding a closed form for $\Prob*{\mat{y}_n \given \mat{x}_n}$ that explains the observations well.
 For prediction, the graphical model is typically augmented with a new pair $(\mat{x}_\ast, \mat{y}_\ast) \not\in \Dc$, an arbitrary but previously unseen point.
 Making a prediction is equivalent to evaluating the closed form $\Prob*{\mat{y}_\ast \given \mat{x}_\ast}$.
 To simplify notation, we identify $\mat{x} = (\mat{x}_1, \dots, \mat{x}_N)$ and $\mat{y} = (\mat{y}_1, \dots, \mat{y}_N)$.
@@ -751,8 +751,8 @@ Applying the chain rule on the joint again yields the posterior
 \end{split}
 \end{align}
 where $\Prob*{\Dc} = \int \Prob*{\Dc \given \mat{\theta}} \Prob*{\mat{\theta}} \diff \mat{\theta}$ is a combination of the likelihood and and prior terms.
-Because all terms on the right hand side are known, this posterior can be evaluated, yielding a combination of modeling assumptions and observations.
-If a closed form solution cannot be found, Bayesian inference is often implemented using approximation techniques such as sampling or variational approaches~\parencite{bishop_christoph_pattern_2007}.
+Because all terms on the right-hand-side are known, this posterior can be evaluated, yielding a combination of modeling assumptions and observations.
+If a closed-form solution cannot be found, Bayesian inference is often implemented using approximation techniques such as sampling or variational approaches~\parencite{bishop_christoph_pattern_2007}.
 
 Having found a posterior $\Prob{\mat{\hat{\theta}}} = \Prob*{\mat{\theta} \given \Dc}$, Bayesian predictions for previously unseen points can be made by replacing $\Prob*{\mat{\theta}}$ with $\Prob{\mat{\hat{\theta}}}$ in the graphical model.
 In the regression case, this predictive posterior is given by
@@ -764,13 +764,13 @@ In the regression case, this predictive posterior is given by
 Because Bayesian linear regression is a parametric model and we assumed that $\mat{\theta}$ is a sufficient statistic for $\mat{f}$, predictions can be made independently of the training data in this case.
 
 In~\cref{toc:bayesian_ml:statistical_learning} we argued that considering finitely many observations instead of the full data distribution can lead to overfitting.
-An overfitted model explains the observed data well but might have high risk for unseen parts of the data distribution.
+An overfitted model explains the observed data well but might have a high risk for unseen parts of the data distribution.
 The empirical risk minimization learning algorithm can be subject to overfitting because the algorithm selects a single model from the hypothesis space that explains the data well.
 Bayesian inference is fundamentally different:
 A Bayesian posterior $\Prob*{f \given \Dc}$ for a functional of interest $f$ is a distribution over hypotheses rather than one single candidate.
 This distribution can be thought of as a subset of hypotheses weighed by how well the different hypotheses explain the data.
-Instead of a selecting a good candidate, a Bayesian inference step can be thought of removing all bad candidates from a hypothesis space.
-As a consequence, a Bayesian posterior contains both the models in the original hypothesis space that overfit to the observations as well as more desireable models with similar data likelihoods.
+Instead of selecting a good candidate, a Bayesian inference step can be thought of removing all bad candidates from a hypothesis space.
+As a consequence, a Bayesian posterior contains both the models in the original hypothesis space that overfit to the observations as well as more desirable models with similar data likelihoods.
 Their relative weights in the posterior are dependent on the prior assumptions formulated via the structure of the generative model and the prior $\Prob{\mat{\theta}}$.
 
 
@@ -781,7 +781,7 @@ Their relative weights in the posterior are dependent on the prior assumptions f
         \includestandalonewithpath{figures/polynoms_bayes_broad}
         \caption{
             Broad uncertainties
-            \label{fig:bayesian_ml:polynoms:bayes_broad}
+            \label{fig:bayesian_ml:polynomials:bayes_broad}
         }
     \end{subfigure}
     \hfill
@@ -790,12 +790,12 @@ Their relative weights in the posterior are dependent on the prior assumptions f
         \includestandalonewithpath{figures/polynoms_bayes_narrow}
         \caption{
             Narrow uncertainties
-            \label{fig:bayesian_ml:polynoms:bayes_narrow}
+            \label{fig:bayesian_ml:polynomials:bayes_narrow}
         }
     \end{subfigure}
     \caption[ML Interpolation]{
         ???
-        \label{fig:bayesian_ml:polynoms:bayes}
+        \label{fig:bayesian_ml:polynomials:bayes}
     }
 \end{figure}
 Statements about Bayesian models are made in terms of probabilities, including predictive posteriors for new inputs $\Prob*{\mat{y}_\ast \given \mat{x}_\ast, \Dc}$ in a regression problem or a posterior distributions $\Prob*{\mat{\theta} \given \Dc}$ for a parameter.
@@ -803,26 +803,26 @@ This distribution of predictions or parameters can be interpreted as uncertainty
 A Bayesian posterior is derived as the combination of prior knowledge and the data
 Since a Bayesian posterior is the combination of the data likelihood and prior assumptions, posterior uncertainties are not objective but depend on prior assumptions.
 
-\Cref{fig:bayesian_ml:polynoms:bayes} shows two predictive posteriors for a Bayesian linear regression on the data introduced in~\cref{fig:bayesian_ml:polynoms:data} using the graphical model in~\cref{eq:bayesian_ml:parametric}.
+\Cref{fig:bayesian_ml:polynomials:bayes} shows two predictive posteriors for a Bayesian linear regression on the data introduced in~\cref{fig:bayesian_ml:polynomials:data} using the graphical model in~\cref{eq:bayesian_ml:parametric}.
 Both linear regression are based on the same observations but differ in the prior assumptions about $\mat{\theta} = (\mat{W}, \mat{b})$.
 Choosing a broad prior $\mat{W}, \mat{b} \sim \Gaussian{0, 5^2}$ results in higher posterior uncertainties about both $\mat{W}$ and $\mat{b}$ than choosing a more narrow prior $\mat{W}, \mat{b} \sim \Gaussian{1, 1^2}$.
 Samples drawn from the posterior show why this is the case:
 A broader prior contains linear functions with steep slopes that could explain the data but are never considered by the narrow prior.
 Not considering these functions might be desired behavior if implied by expert knowledge.
-This situation of of having to choose a model from a set of plausible models is a model selection problem.
+This situation of having to choose a model from a set of plausible models is a model selection problem.
 
 In principle, model selection is not necessary in Bayesian machine learning.
 Because the result of inference is a distribution over models weighed by their plausibility, model selection is already included in a Bayesian posterior.
-However, this is only true for model components which receive a Bayesian treatment by calculating a posterior.
+However, this is only true for model components that receive a Bayesian treatment by calculating a posterior.
 No prior is typically placed on the structure of the graphical model itself or the parametric forms of its components, such as the linearity assumption in Bayesian linear regression.
-For a fully Bayesian treatments, priors would also have to be placed on priors, forming hyper-priors.
-Because such a fully Bayesian treatment is generally computationally intractable, certain parameters or structural assumptions are typically  fixed to one specific instantiation, a point estimate.
+For fully Bayesian treatments, priors would also have to be placed on priors, forming hyper-priors.
+Because such a fully Bayesian treatment is generally computationally intractable, certain parameters or structural assumptions are typically fixed to one specific instantiation, a point estimate.
 Introducing point estimates also introduces a model selection problem.
 
 Many strategies exist for Bayesian model selection~\parencite{andrew_gelman_bayesian_2013,murphy_machine_2012,david_barber_bayesian_2012} which are not discussed in detail here.
 Most strategies are related to the ideas of empirical risk minimization and consider a performance measure on the observed data.
 Given two hypotheses $H_1$ and $H_2$, it is common to compare the marginal likelihoods $\Prob*{\Dc \given H_1}$ and $\Prob*{\Dc \given H_2}$ where $\Prob*{\Dc \given H} = \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{x}_n, H}$.
-Choosing the $H_i$ with higher marginal likelihood is called a maximum likelihood estimation.
+Choosing the $H_i$ with the higher marginal likelihood is called a maximum likelihood estimation.
 Observing that
 \begin{align}
 \begin{split}

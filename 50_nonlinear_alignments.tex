@@ -1,4 +1,4 @@
-\chapter{Non-linear timeseries alignment}
+\chapter{Non-linear time-series alignment}
 \label{toc:alignment}
 In \cref{toc:data_association}, we used hierarchically structured Gaussian processes to solve a data association problem.
 We exploited the conditional independence between modes given associations to formulate an efficient variational approximation.
@@ -208,7 +208,7 @@ Given $\Variat{\rv{u}_f}$, the different outputs are conditionally independent o
 \label{toc:alignment:interpretation}
 The graphical model shown in \cref{fig:alignment:graphical_model_supervised} illustrates that the presented model can be interpreted as a group of $D$ deep GPs all of which share one layer which is a CP.
 This CP acts as an interface to share information between the different GPs which are otherwise conditionally independent.
-This modelling-choice introduces a new quality to the model when compared to standard deep GPs with multiple output dimensions, since the latter are not able in principle to learn dependencies between the different outputs.
+This modeling-choice introduces a new quality to the model when compared to standard deep GPs with multiple output dimensions, since the latter are not able in principle to learn dependencies between the different outputs.
 Compared to standard multi-output GPs, the AMO-GP introduces more flexibility with respect to the shared information.
 CPs make strong assumptions about the relative alignments of the different outputs, that is, they assume constant time-offsets.
 The AMO-GP extends this by introducing a principled Bayesian treatment of general nonlinear alignments $a_d$ on which we can place informative priors derived from the problem at hand.
@@ -513,12 +513,12 @@ With uncertainties decomposed along the hierarchy, our approach handles ambiguit
 This indicates the AMO-GP is a good approach for these kinds of dynamical system, where multiple misaligned sensors measure the same latent effect.
 
 We have shown how limitations in the independence assumptions of hierarchical GP approximations in~\cref{toc:data_association} can be overcome by introducing dependence in the generative proess.
-By modelling this dependence through a multi-output GP, we can derive an explicit posterior belief about how multimodal data interact.
+By modeling this dependence through a multi-output GP, we can derive an explicit posterior belief about how multimodal data interact.
 We have shown in~\cref{fig:alignment:wind_samples} that this belief leads to rich structure in the samples drawn from a hierarchical model.
 It allows us to formulate priors that specify which aspects of a dynamical system should be inferred.
 However, we also observe that the structure of samples drawn from the model is only considered indirectly during training through the marginal likelihood.
 Similarly, the concrete shape of different model components is only influenced through the prior and a semantically correct model cannot be recognized.
-Similar to how a \emph{correct} data association is subjective, the correct alignment of timeseries is subjective and subject to the problem domain.
+Similar to how a \emph{correct} data association is subjective, the correct alignment of time-series is subjective and subject to the problem domain.
 
 In the next chapter, we explore how this subjectivity can be incorporated into the model itself.
 First, we will formulate hierarchical structure for a problem in which model components can be immediately linked to system behavior and thus be interpreted by domain experts.

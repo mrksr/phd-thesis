@@ -66,6 +66,8 @@ Besides exchanging modes entirely, the spatial priors in the Bayesian associatio
 Since all explanations are plausible, a full Bayesian posterior should contain all possible associations and generating processes.
 Marginalizing all plausible model realizations would take all possible solutions of the assignment problem into account.
 This full posterior is highly complex however, containing strong dependencies between the different components of the hierarchical model.
+In this section, we describe why the variational inference schemes from~\cref{toc:dgp} based on strong independence assumptions can only represent posteriors of limited complexity.
+For additional details and detailed experiments, we refer to the associated publication~\parencite{ustyuzhaninov_compositional_2020}.
 
 \Cref{fig:composition:rotated_squares_example} illustrates this complexity in a toy example of mapping a square to another square in the two-dimensional euclidean plane.
 We formulate an overparameterized hierarchical model by representing the required affine transformation as the chain $T_2 \circ R_2 \circ T_1 \circ R_1$, with the $T_i$ representing translations and the $R_i$ representing rotations.
@@ -91,8 +93,38 @@ Relaxing these requirements to less constrained models requires advances in infe
 Recent work extends the variational approximations with dependencies between layers~\parencite{ustyuzhaninov_compositional_2020} or proposes inference based on stochastic gradient Hamilton Monte Carlo~\parencite{havasi_inference_2018}.
 While in their current state, such inference schemes are computationally expensive, they present promising directions of research.
 
-\section{Bayesian Optimization}
+\section{Surrogate models for Bayesian optimization}
 \label{toc:discussion:bo}
+Above we have argued that in hierarchical models, a high marginal likelihood may not be sufficient to identify desirable solution because the marginal likelihood does not take internal structure into account.
+In this section, we consider a complementary situation, where a model is embedded in a hierarchy.
+We consider Bayesian optimization (BO)~\parencite{snoek_practical_2012}, where an (often non-hierarchical) regression model is used to solve an optimization problem based on limited observations of the objective function.
+We make an argument why surrogate models with suboptimal marginal likelihood can be the model of choice for solving the downstream task.
+For additional details about the model and detailed experiments, we refer to the associated publication~\parencite{bodin_modulating_2020}.
+
+BO is a method for finding the optimum of functions that are unknown and expensive to evaluate.
+Let $f : \Xc \to \Rb$ be an unknown, noise-free objective function defined on a bounded subset $\Xc \subset \Rb^k$ for some $k \in \Nb$.
+The goal of BO is to solve the global optimization problem of finding
+\begin{align}
+    \mat{x}_\ast \in \argmin_{\mat{x} \in \Xc} f(\mat{x}).
+\end{align}
+By fitting a surrogate model to samples of an unknown objective, the BO procedure iteratively picks new samples for evaluation that are believed to be the most informative about where the optimum is located.
+In real world problems, the objective function is often not a well-behaved function and a suitable model is difficult to specify.
+A misspecified model can be especially problematic in sequential decision making tasks such as BO, where the model is not only used to locate the optimum based on the collected data but also to decide where to collect data for future decisions.
+
+There are many approaches to avoiding model misspecification in surrogate models for BO based on additional structure.
+For example, GP surrogates can be augmented with warpings to model non-stationarity~\parencite{snoek_input_2014}, separate the input space via tree-structures~\parencite{jenatton_bayesian_2017} or optima can be searched via pairwise comparison~\parencite{gonzalez_preferential_2017}.
+While carefully chosen extensions can avoid misspecification, inference over more sophisticated surrogates often requires more observations, which is not desirable in the BO setting.
+Importantly, the ultimate goal of BO is to locate the optimum, not to model the objective as precisely as possible.
+In practice, surrogates with high complexity often perform worse compared to simpler ones even if the former contains the true objective function while the latter does not.
+
+To formalize this observation, we consider the family of objective functions $f$ that can be represented as a composition
+\begin{align}
+    f(\mat{x}) = g(\mat{x}, \mat{h}), \quad \mat{h}=h(\mat{x}),
+\end{align}
+where $g$ is a well-behaved function that can be nicely modeled by a BO surrogate and the nuisance function $h(\mat{x})$ encodes the structures the surrogate model struggles to capture.
+Instead of building a complex surrogate model with minimal model misspecification, we propose to explicitly trade off accuracy in modeling the objective with efficiency of capturing informative structures from small amounts of data.
+For example, local oscillations and discontinuities are less important to capture in a BO setting than describing global trends.
+
 \begin{figure}[t]
     \centering
     \raisebox{-0.5\height}{\includegraphics[trim=15 15 0 0, clip, width=0.25\textwidth]{robust_bo_erik/illustrative_figure/gp.pdf}}
@@ -104,98 +136,16 @@ While in their current state, such inference schemes are computationally expensi
         As a result, the acquisition function can utilize a confidently discovered global trend to increase the efficiency of the search.
     }
 \end{figure}
-Bayesian optimization (BO)~\cite{snoek2012practical} is a method for finding the optimum of functions that are unknown and expensive to evaluate.
-By fitting a surrogate model to the samples of an unknown objective, the BO procedure iteratively picks the new samples of the objective believed to be the most informative about where the optimum is located.
+Assuming additive structure $f(\mat{x}) = g(\mat{x}) + h(\mat{x})$ and choosing the nuisance function to be input-independent noise $h(\mat{x}) \sim \Gaussian{\mat{0}, \sigma^2 \Eye}$ recovers GP regression with a Gaussian likelihood.
+For richer structure, we place a GP prior on $g(\mat{x}, \mat{h})$ and infer independent latent variables $\mat{h} \sim \Gaussian{\mat{0}, \sigma^2 \Eye}$ for all observations $\mat{x}$, giving rise to a Latent Gaussian process (LGP)~\cite{pfingsten_nonstationary_2006,wang_gaussian_2012,yousefi_unsupervised_2016,bodin_latent_2017}.
+Intuitively, increasing the absolute value of $\mat{h}$ is penalized by the prior but allows the surrogate to not interpolate an observation exactly and to ignore local structure.
+Similar to using noiseless predictions with Gaussian likelihoods, we ignore the nuisance parameters $\mat{h}$ in the search for the optimum and focus on the global trends captured by $g(\mat{x}, 0)$.
 
-Model misspecification has significant negative implications for any machine learning tasks.
-This is especially true for sequential decision making tasks such as BO, where the model is used not only to locate the optimum based on the collected data but also to decide where to collect data for future decisions.
-If the surrogate model is misspecified, it is likely to acquire samples that are less informative about the optimum, which will lead to a less efficient optimization.
-Therefore the quality of the surrogate model is essential to achieve both efficient and reliable results.
-
-Many works have been done towards avoiding model misspecification in the surrogate model for BO, such as handling non-stationary objective functions with warpings~\cite{snoek2014input}, tree-structured dependencies in the search space~\cite{jenatton2017bayesian}, and searching the optimum from piecewise comparisons~\cite{gonzalez2017preferential}.
-Comparing with the Gaussian process (GP) regression model in the standard BO setting, these methods avoid model misspecification in real-world problems by using more sophisticated surrogate models that are suitable for the corresponding problems.
-Bayesian inference with more sophisticated surrogate models will often require additional data to reduce uncertainty and confirm beliefs, because it considers more possibilities.
-Importantly the ultimate goal of BO is to find the optimum, not to model the unknown objective as precisely as possible.
-In practice, this means that using a surrogate with high complexity might perform worse compared to a simpler class
-even if the former contains the true objective function.
-
-Instead of building a complex surrogate model with minimal model misspecification,
-we propose an alternative approach which allows trading off accuracy in modeling the objective with efficiency of capturing informative structures from small amounts of data.
-For example, we observe that structures such as local oscillations and discontinuities are less important to capture for the purposes of BO.
-Such details often require a lot of data to be closely captured in a surrogate model but do not help the search for the optimum,
-unless the search reaches the last stage of pinpointing the exact location of the optimum.
-To ignore these details, we associate an independent random \emph{input} variable with every evaluation of the unknown function.
-As the random variables associated with new evaluations are conditionally independent of the posterior random variables associated with observed data given the function,
-this is referred to as \emph{irreducible uncertainty}.
-Such variables are similar to the noise variables in regression models, which are used to capture measurement noise and the data variance that cannot be attributed to the input variables.
-In contrast to noise variables for noisy outcomes,
-where there is irreducible uncertainty about the data, there is now irreducible uncertainty in the model of the function.
-
-We propose to use the surrogate models that are specified over well-behaved approximations of the objectives,
-which can be more useful for the search of the optimum (see Figure~\ref{fig:posterior}), augmented with flexible ``noise" distributions to treat the nuisance parameters.
-We will demonstrate that, using the same function approximation, a surrogate model with a more flexible nuisance parameter distribution is more robust against challenging structures.
-In this paper we focus on noise-free objectives with complicated, oscillatory or discontinuous structures.
-In particular, we propose to use a Latent Gaussian process (LGP)~\cite{pfingsten2006nonstationary,wang12_gauss_proces_regres_with_heter,yousefi_unsupervised_2016,bodin_latent_2017} as the surrogate model due to its flexible nuisance parameter distribution and show that it outperforms the surrogate models with less flexible distributions such as GPs with additive likelihoods.
-LGP allows us to disentangle the complicated structures a GP surrogate struggles to model while highlighting important structures.
-
-Let $f : X \to R$ be an unknown, noise-free objective function defined on a bounded subset $X \subset R^Q$.
-The goal of BO is to solve the global optimization problem of finding
-\begin{equation}
-    \mat{x}_{\text{min}} = \argmin_{\mat{x} \in X} f(\mat{x}).
-\end{equation}
-In real world problems,
-the objective function is often not a well-behaved function and a suitable model is difficult to specify.
-Instead of applying an automated model selection method~\cite{malkomes2018automating},
-we propose to model only the essential structure of the objective function that is well-behaved and leave the rest of the function details to be absorbed in a noise distribution.
-
-We consider the family of objective functions $f$ that can be represented as a composition of a well-behaved function and another arbitrary, latent function capturing the challenging details, i.e.
-\begin{equation}
-    \label{eq:well_behaved}
-    f(\mat{x}) := g(\mat{x}, \mat{h}), \quad \mat{h}:=h(\mat{x}),
-\end{equation}
-where $g$ is a well-behaved function that can be nicely modeled by a surrogate model of choice,
-which is a Gaussian process (GP) in this paper,
-and the vector-valued function $h(\mat{x})$ encodes the structures which the surrogate model struggles to capture.
-In general this composition allows for complicated interactions between $\mat{x}$ and $\mat{h}$, producing complicated realizations of the function
-which is observed through data.
-A simple, special case of a function composition is additive structure
-\footnote{Note that in the additive case, $h(\mat{x})$ must match the output in shape, i.e.~be one-dimensional.},
-i.e.\ $f(\mat{x}) = g(\mat{x}) + h(\mat{x})$.
-%which has been exploited for BO~\cite{gardner2017discovering, mutny2018efficient}.
-
-Instead of modeling $h(\mat{x})$ as part of the surrogate model,
-we propose to \textit{ignore} the structure of the objective function in $h(\mat{x})$ by replacing $h(\mat{x})$ with a random variable $\mat{h}$ per data point.
-The random variables $\mat{h}$ for different data points  are independent among each other.
-The objective function becomes a function of two variables $g(\mat{x}, \mat{h})$,
-in which $\mat{h}$ is a random variable which explain the data variance that cannot be explained by $\mat{x}$.
-In this paper, we use a normal distribution for the prior of $\mat{h}$, $\mat{h} \sim \mathcal{N}(0,  \mathbb{I})$.
-Note that, although the distribution of $h(\mat{x})$ induced by the data distribution for $\mat{x}$ may not be zero-mean and unit-variance, it is easy to reformulate it as a linear transformation of a normal distribution with zero-mean and unit-variance and the resulting linear transformation can be absorbed into the function $g$.
-For further details on the definition, see the supplement.
-
-With the above formulation, a BO method can be developed by constructing a model of the well-behaved function $g$
-and a model of $h$.
-%Data acquisition decisions can then be made based on a function free from the unwanted complicated structures that $h$ captures.
-At each step of the BO optimization, a set of input and output pairs of the objective function has been collected, denoted as $\mat{X} = (\mat{x}_1, \ldots, \mat{x}_N)^\top$ and $\mat{F} = (\mat{f}_1, \ldots, \mat{f}_N)^\top$.
-The output $\mat{F}$ denotes the noise-free observations of the objective function.
-The Bayesian inference of the model aims at inferring the posterior distribution
-\begin{equation}
-    \Prob{ \mat{H}, \mat{\theta} \given \mat{X}, \mat{F}}  \propto \Prob{\mat{F} \given \mat{X}, \mat{H}, \mat{\theta} }\Prob{\mat{H}}  \Prob{\mat{\theta}}
-\end{equation}
-where $\mat{\theta}$ are the hyperparameters of the surrogate model and $\mat{H} = (\mat{h}_1, \ldots, \mat{h}_N)^\top$ is the concatenation of the nuisance parameters associated with the individual data points.
-The location of the next evaluation is determined according to an acquisition function,
-which uses the predictive distribution $\Prob{\mat{f}_* \given \mat{x}_*,  \mat{X}, \mat{F}}$ of the surrogate model,
-\begin{align}
-    \label{eq:pred_dist}
-    \begin{split}
-        \MoveEqLeft\Prob{\mat{f}_* \given \mat{x}_*,  \mat{X}, \mat{F}} =
-        \int \Prob{\mat{f}_* \given \mat{x}_*, \mat{h}_*, \mat{X}, \mat{F},\mat{H}, \mat{\theta}}\\
-        &\qquad\Prob{\mat{H}, \mat{\theta} \given \mat{X}, \mat{F}} \Prob{\mat{h}_*} \diff{\mat{H}}\diff{\mat{\theta}}\diff{\mat{h}_*},
-    \end{split}
-\end{align}
-where $\mat{x}_*$ is the input of the prediction and $\mat{f}_*$ is the noise-free observation at the location $\mat{x}_*$.
-The predictive distribution of the latent variable $\Prob{\mat{h}_*}$ associated with new evaluations is as of the i.i.d.~assumption
-equal to the prior.
-As such $\Prob{\mat{h}_*}$ contains model uncertainty \emph{irreducible} by the active sampling loop,
+\Cref{fig:bo:posterior} compares three surrogates on a function with challenging local structure.
+A standard noiseless GP interpolates all observations exactly and must capture all local variations.
+Since this surrogate quickly reverts to the prior between observations, it cannot capture global trends and therefore is not very helpful in solving the global optimization problem.
+The LGP-based surrogate ignore local structure and does not interpolate observations exactly, which leads to a reduced marginal likelihood.
+However, the model uncovers a global trend, which allows the BO-scheme to identify the correct area of interest.\todo{Feels like there should be a summary of some sort here?}
 
 
 \section{Bayesian Reinforcement Learning}
@@ -216,15 +166,15 @@ As such $\Prob{\mat{h}_*}$ contains model uncertainty \emph{irreducible} by the 
     \newcolumntype{Y}{>{\centering\arraybackslash}X}
     \begin{tabularx}{.9\textwidth}{cYY}
         \toprule
-                                  & Statistical Learning   & Reinforcement Learning \\
+                                  & Statistical learning   & Reinforcement learning \\
         \midrule
-        $\Prob*{\mat{z}}$         & Latent Distribution    & True system-dynamics   \\
-        $\Sc$                     & Observations           & Batch or Online data   \\
-        $\Fc$                     & Functional of Interest & Optimal value          \\
+        $\Prob*{\mat{z}}$         & Latent distribution    & True system-dynamics   \\
+        $\Sc$                     & Observations           & Batch or online data   \\
+        $\Fc$                     & Functional of interest & Optimal value          \\
         \midrule
-        $F : \Probs{\Zc} \to \Fc$ & Functional Operator    & Bellman principle      \\
-        $S : \Probs{\Zc} \to \Sc$ & Sampling Operator      & Exploration            \\
-        $A : \Sc \to \Fc$         & Learning Algorithm     & Policy search          \\
+        $F : \Probs{\Zc} \to \Fc$ & Functional operator    & Bellman principle      \\
+        $S : \Probs{\Zc} \to \Sc$ & Sampling operator      & Exploration            \\
+        $A : \Sc \to \Fc$         & Learning algorithm     & Policy search          \\
         \bottomrule
     \end{tabularx}
 \end{table}

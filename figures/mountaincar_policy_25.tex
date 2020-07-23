@@ -15,6 +15,10 @@
             slim colorbar right,
             point meta min=0.,
             point meta max=1.,
+            colorbar style={
+                ytick={0,0.5,1},
+                yticklabels={-1,0,1},
+            }
         ]
 
         \addplot[
@@ -38,6 +42,10 @@
             point meta max=1.,
             ylabel=,
             yticklabels={,,},
+            colorbar style={
+                ytick={0,0.5,1},
+                yticklabels={0,1,2},
+            }
         ]
 
         \addplot[

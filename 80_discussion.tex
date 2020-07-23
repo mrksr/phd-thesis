@@ -33,8 +33,8 @@ In \cref{toc:discussion:composition}, we present an intuitive argument for why i
 Empirical risk minimization through high marginal likelihoods in Bayesian model selection is not always enough to identify semantically correct hierarchical models as it does not consider internal structure.
 Undesired explanations of the data can be removed from the posterior by formulating priors with strong constraints as discussed in \cref{toc:alignment}.
 However, this approach requires extensive prior knowledge and limits what can be learned from data.
-In \cref{toc:interpretable_rl}, model selection was realized through policy search in a reinforcement learning problem.
-In \cref{toc:discussion:bo,toc:discussion:mountaincar} we explore this idea further and consider how tasks can be included in the inference problem directly.
+In \cref{toc:discussion:bo} we argue why models with suboptimal marginal likelihoods can perform well in hierarchical systems.
+In \cref{toc:discussion:mountaincar} we explore this idea further and consider how tasks can be included in the inference problem directly.
 In \cref{toc:discussion:future_work} we discuss possible further directions of research.
 
 
@@ -55,10 +55,10 @@ In \cref{toc:discussion:future_work} we discuss possible further directions of r
     \includegraphics[width=\textwidth]{factorized_dgp_identity}
     \caption{
         \label{fig:composition:identity_factorised}
-        Example fits of a three-layer DGP \emph{with factorised inducing points} to a data set shown in the rightmost panel (black dots).
+        Example fits of a three-layer DGP with factorized inducing points to a data set shown in the rightmost panel (black dots).
         Different panels show the computations performed by each of the three layers and their compositions.
-        Different colours correspond to three models fitted to the same data with different random initialisations.
-        For each initialisation, ten samples (of the same colour) from the fitted model are shown on top of each other.
+        Different colours correspond to three models fitted to the same data with different random initializations.
+        For each initialization, ten samples (of the same colour) from the fitted model are shown on top of each other.
     }
 \end{figure}
 The experiments in~\cref{toc:data_association} showed that data association problem generally do not have a unique solution.
@@ -137,32 +137,32 @@ For example, local oscillations and discontinuities are less important to captur
     }
 \end{figure}
 Assuming additive structure $f(\mat{x}) = g(\mat{x}) + h(\mat{x})$ and choosing the nuisance function to be input-independent noise $h(\mat{x}) \sim \Gaussian{\mat{0}, \sigma^2 \Eye}$ recovers GP regression with a Gaussian likelihood.
-For richer structure, we place a GP prior on $g(\mat{x}, \mat{h})$ and infer independent latent variables $\mat{h} \sim \Gaussian{\mat{0}, \sigma^2 \Eye}$ for all observations $\mat{x}$, giving rise to a Latent Gaussian process (LGP)~\cite{pfingsten_nonstationary_2006,wang_gaussian_2012,yousefi_unsupervised_2016,bodin_latent_2017}.
+For richer structure, we place a GP prior on $g(\mat{x}, \mat{h})$ and infer independent latent variables $\mat{h} \sim \Gaussian{\mat{0}, \sigma^2 \Eye}$ for all observations $\mat{x}$, giving rise to a Latent Gaussian process (LGP)~\parencite{pfingsten_nonstationary_2006,wang_gaussian_2012,yousefi_unsupervised_2016,bodin_latent_2017}.
 Intuitively, increasing the absolute value of $\mat{h}$ is penalized by the prior but allows the surrogate to not interpolate an observation exactly and to ignore local structure.
-Similar to using noiseless predictions with Gaussian likelihoods, we ignore the nuisance parameters $\mat{h}$ in the search for the optimum and focus on the global trends captured by $g(\mat{x}, 0)$.
+Similar to using noiseless predictions with Gaussian likelihoods, we ignore the nuisance parameters $\mat{h}$ in the search for the optimum and focus on the global trends captured by $g(\mat{x}, \mat{0})$.
 
 \Cref{fig:bo:posterior} compares three surrogates on a function with challenging local structure.
 A standard noiseless GP interpolates all observations exactly and must capture all local variations.
 Since this surrogate quickly reverts to the prior between observations, it cannot capture global trends and therefore is not very helpful in solving the global optimization problem.
 The LGP-based surrogate ignore local structure and does not interpolate observations exactly, which leads to a reduced marginal likelihood.
-However, the model uncovers a global trend, which allows the BO-scheme to identify the correct area of interest.\todo{Feels like there should be a summary of some sort here?}
+However, the model uncovers a global trend, which allows the BO-scheme to identify the correct area of interest.
+
+The experiments in~\parencite{bodin_modulating_2020} give empirical evidence that this intuition holds for many BO tasks.
+The approach performs especially well in high-dimensional problems, where global trends tend to matter more in low-data regimes due to the curse of dimensionality.
+The idea that a surrogate in BO need not model the objective perfectly but yield informative insights for the optimization task was not formally included in the model formulation in this section.
+Instead, we considered a class of surrogates that implicitly have this property.
+In the next section, we go one step further and include the task of policy search in the inference problem of reinforcement learning explicitly.
 
 
 \section{Bayesian Reinforcement Learning}
 \label{toc:discussion:mountaincar}
-\begin{figure}[tp]
-    \centering
-    \includestandalonewithpath{figures/quantities_of_interest_statistical_learning}
-    \caption{
-        Statistical Learning
-        \label{fig:mountaincar:statistical_learning}
-    }
-\end{figure}
-\begin{table}[tp]
-    \caption{
+\begin{table}[t]
+    \caption[Statistical learning methodology in reinforcement learning]{
         \label{tab:mountaincar:quantities_of_interest}
+        Mapping of the statistical learning methodology to the reinforcement learning problem.
     }
     \centering
+    \includestandalonewithpath{figures/quantities_of_interest_statistical_learning}\\[\figureskip]
     \newcolumntype{Y}{>{\centering\arraybackslash}X}
     \begin{tabularx}{.9\textwidth}{cYY}
         \toprule
@@ -178,14 +178,6 @@ However, the model uncovers a global trend, which allows the BO-scheme to identi
         \bottomrule
     \end{tabularx}
 \end{table}
-\begin{figure}[tp]
-    \centering
-    \includestandalone{graphical_model_rl_deep_gp}
-    \caption{
-        \label{fig:mountaincar:graphical_model}
-        Deep GP RL graphical model.
-    }
-\end{figure}
 At the core of our model is the attempt to formulate the search for a good RL policy in a Bayesian manner.
 This means that instead of maintaining or optimizing one candidate policy which gets optimized until some stopping criterion is reached, we want to maintain a Bayesian belief about the optimal policy (or rather one of them).
 Intuitively, we want to start off with a very uninformed policy which, given any state, can generate any action.
@@ -197,56 +189,47 @@ More concretely, the main challenges for this model are:
     \item[Uncertainty propagation] How do we translate the uncertainty about the action into informative feedback about good actions?
 \end{description}
 
+\begin{figure}[t]
+    \centering
+    \includestandalone{graphical_model_rl_deep_gp}
+    \caption{
+        \label{fig:mountaincar:graphical_model}
+        Deep GP RL graphical model.
+    }
+\end{figure}
+Our goal is to formulate policy search in reinforcement learning as an inference problem in a hierarchical model.
+We start by interpreting the definition of the value function
+\begin{align}
+    J^\pi(\mat{s}_0) = \Moment*{\E}{\sum_{t=1}^T \gamma^t r(\mat{s}_t) \given f, \pi}
+\end{align}
+as a generative process with the associated graphical model~\cref{fig:mountaincar:graphical_model}.
+Starting with the initial state $\mat{s}_0$, trajectories are generated using the transition dynamics $f$ and policy $\pi$.
+If both the transition dynamics and policy are represented as GPs, the graphical model of a trajectory is a recurrent deep Gaussian process.
+The states are mapped to rewards using the known reward function $r$ and added to produce the value $J^\pi$, thereby defining a likelihood function.
+Instead of considering the value of any arbitrary policy $\pi$, we now reason about the uniquely defined optimal value $J_\ast$.
+Since the optimal value can be parameterized by an optimal policy $\pi_\ast$, it can be represented in our hierarchical model.
+Our goal is to formulate an equivalent to the marginal likelihood of the optimal value function and derive an inference scheme.
 
-\subsubsection{Imposed Structure}
-The most important structure we can derive from the problem is the definition of the value function $J^\pi$.
-In \cref{fig:mountaincar:graphical_model} we reproduce the graphical model for how the value $J^\pi(\mat{s}_0)$ of the initial state $\mat{s}_0$ is generated.
-Starting with the initial state, a trajectory is generated using the transition dynamics $f$ and policy $\pi$ or models thereof.
-If both the transition and policy are deterministic, this results in a unique trajectory and thus a unique value.
-However, most of the time, there will be uncertainties in the system and thus, a multitude of trajectories is possible.
-The states are mapped to rewards using the reward function $r$ which we assume to be known and differentiable.
-Lastly, a sum discounted by the constant $\gamma$ yields the value.
-This structure implies a hierarchical recurrent generative process as both the transition dynamics and policy are applied repeatedly.
-
-Note that in the batch RL setting, the dynamics model represented via $\mat{u}_f$ can be trained independently from this hierarchical structure.
-As we are presented with a set of transition in the original system, inferring a dynamics model is a standard regression task which can be solved before ever considering policy search.
-A special case of such a model could be a mathematical simulation or even the system itself.
-In the following, we will consider $\mat{u}_f$ to be fixed.
-
-There are two distinct sources of uncertainty in our model.
-First, knowledge of the dynamical system is either not perfect or the system is stochastic.
+There are two distinct sources of uncertainty in this model.
+First, knowledge of the dynamical system can be imperfect or the system can be stochastic in nature.
 Both effects make trajectories non-deterministic, even if the initial state and policy are fixed.
 This kind of uncertainty is reflected in the expected value of the original value definition and we retain these uncertainties.
-Second, we do not maintain a candidate policy which we want to optimize.
-Instead, we maintain a belief about the optimal policy which is imperfect.
-Analogously, we never calculate the value of some candidate policy but rather always estimate the value of the optimal policy, which itself is subject to uncertainty.
-Both kinds of uncertainty need to be handled and can neatly be separated through their respective integrals.
+Second, we do not maintain a candidate policy we want to optimize and approximate the optimal value instead.
+Since our knowledge about the optimal policy is imperfect, so is our knowledge about the optimal value.
+Both uncertainties are captured in the distribution $\Prob*{J_\ast \given \mat{s}_0}$.
 
-
-\subsubsection{Approximation of the Optimal Value}
-The only information about the optimal policy we have in general is that it maximizes the value.
-However, given a dynamics model, the search for an optimal policy and the search for an optimal value function is equivalent, so we cannot assume much prior knowledge about the optimal value function.
-Indeed, we can interpret our model as an inference problem for the optimal value function where the value function is parameterized in terms of a policy representation.
-Finding the optimal value function then has the side effect of finding an optimal policy.
-
-We can still bound the optimal value function.
-We assume wlog that the reward function is bounded and that $\max_{\mat{s}} r(\mat{s}) = 0$.
+To formulate an equivalent of the marginal likelihood, we can bound the optimal value function.
+We assume without loss of generality that the reward function is bounded and that $\max_{\mat{s}} r(\mat{s}) = 0$.
 Then we have that
 \begin{align}
-    \label{eq:inequality_chain}
+    \label{eq:mountaincar:inequality_chain}
     \forall \mat{s} \forall \mat{\pi} : J^\pi(\mat{s}) \leq J^{\pi^\ast}(\mat{s}) \leq J^\text{max} \coloneqq \sum_{t=0}^T \gamma^t \cdot 0 = 0,
 \end{align}
-that is, any arbitrary policy will achieve less than or equal value than the optimal policy and the optimal value can never be higher than the sum of maximum achievable rewards.
-Indeed, the upper bound will usually be rather loose and could be improved with prior knowledge.
-We suspect a connection to reward shaping here, the practice of changing reward functions to hint towards the goal.
-The inference problem is solved when the left relation is an equality.
-
-
-\subsubsection{Variational Lower Bound}
-To solve the inference problem, we need to formulate some equivalent of the marginal likelihood in the regression case.
+that is, any arbitrary policy will achieve a value less than or equal to the optimal policy and the optimal value can never be higher than the sum of maximum achievable rewards.
 Given by the structure discussed above we have
+The graphical model implies the marginal likelihood
 \begin{align}
-    \label{eq:true_likelihood}
+    \label{eq:mountaincar:true_likelihood}
     \Prob{\mat{J}^{\pi^\ast} \given \mat{s}_0}
      & = \int
     \underbrace{\Prob{\mat{J}^{\pi^\ast} \given \mat{J}}}_{\text{Likelihood}}
@@ -254,71 +237,68 @@ Given by the structure discussed above we have
     \underbrace{\Prob{\mat{\pi}^\ast, \mat{f}}}_{\text{System}}
     \diff \mat{J} \diff \mat{\pi}^\ast \diff \mat{f} \diff \mat{s}_0,
     \\
-    \label{eq:max_likelihood}
+    \label{eq:mountaincar:max_likelihood}
      & \geq \int
     \Prob{\mat{J}^{\text{max}} \given \mat{J}}
     \Prob{\mat{J} \given \mat{\pi}^\ast, \mat{s}_0, \mat{f}}
     \Prob{\mat{\pi}^\ast, \mat{f}}
     \diff \mat{J} \diff \mat{\pi}^\ast \diff \mat{f} \diff \mat{s}_0,
 \end{align}
-where the inequality is implied by \cref{eq:inequality_chain} if the likelihood is monotonically decreasing with distance.
+where the inequality is implied by \cref{eq:mountaincar:inequality_chain} if the likelihood is monotonically decreasing with distance.
 Both the trajectory and system terms can easily be interpreted, as they represent the recurrent structure and function approximators respectively.
-It is however not clear how to interpret the likelihood term.
-Given the value estimate $\mat{J}$, this term encapsulates an estimation of closeness to the optimal value and must somehow encode the assumption that higher value is better.
-Note that the left inequality ensures that we never overestimate the performance of a policy (given $f$).
+It is not clear, however, how to interpret the likelihood term.
+Given the value estimate $\mat{J}$, this term encapsulates an estimation of closeness to the optimal value and must encode that the optimal value is the highest possible value.
 
-We now assume variational distributions $\Variat{\mat{f}}$ and $\Variat{\mat{\pi}^\ast}$ obtained via the standard SVGP variational bound.
-Inspecting the log likelihood and applying the DSVI bound we (roughly) get
+We now assume variational distributions $\Variat{\mat{f}}$ and $\Variat{\mat{\pi}^\ast}$ introduced by the sparse GP formulations in~\cref{toc:dgp}.
+Analogously to the derivation of the DSVI-bound in~\cref{eq:dsvi:full_bound} we get
 \begin{align}
-    \label{eq:variational_bound}
-    \log \Prob{\mat{J}^{\pi^\ast} \given \mat{s}_0}
-     & \geq \log \Prob{\mat{J}^{\text{max}} \given \mat{s}_0}        \\
-     & = \log \int
-    \Prob{\mat{J}^{\text{max}} \given \mat{J}}
-    \Prob{\mat{J} \given \mat{\pi}^\ast, \mat{s}_0, \mat{f}}
-    \Prob{\mat{\pi}^\ast, \mat{f}}
-    \diff \mat{J} \diff \mat{\pi}^\ast \diff \mat{f} \diff \mat{s}_0 \\
-     & \geq
-    \Moment*{\E_{\Variat{\mat{s}_0, \dots, \mat{s}_T}}}{
-    \log \int
-    \Prob{\mat{J}^{\text{max}} \given \mat{J}}
-    \underbrace{\Prob{\mat{J} \given \mat{s}_0, \dots, \mat{s}_T}}_{\text{Deterministic}}
-    \diff \mat{J}
-    }
-    - T \cdot \text{klterm}
-    \\
-     & =
-    \Moment*{\E_{\Variat{\mat{J}}}}{\log \Prob{\mat{J}^{\text{max}} \given \mat{J}}}
-    - T \cdot \text{klterm},
+    \begin{split}
+        \label{eq:mountaincar:variational_bound}
+        \log \Prob{\mat{J}^{\pi^\ast} \given \mat{s}_0}
+        & \geq \log \Prob{\mat{J}^{\text{max}} \given \mat{s}_0}        \\
+        & = \log \int
+        \Prob{\mat{J}^{\text{max}} \given \mat{J}}
+        \Prob{\mat{J} \given \mat{\pi}^\ast, \mat{s}_0, \mat{f}}
+        \Prob{\mat{\pi}^\ast, \mat{f}}
+        \diff \mat{J} \diff \mat{\pi}^\ast \diff \mat{f} \diff \mat{s}_0 \\
+        & \geq
+        \Moment*{\E_{\Variat{\mat{s}_0, \dots, \mat{s}_T}}}{
+        \log \int
+        \Prob{\mat{J}^{\text{max}} \given \mat{J}}
+        \underbrace{\Prob{\mat{J} \given \mat{s}_0, \dots, \mat{s}_T}}_{\text{Deterministic}}
+        \diff \mat{J}
+        }
+        - T \cdot \text{klterm}
+        \\
+        & =
+        \Moment*{\E_{\Variat{\mat{J}}}}{\log \Prob{\mat{J}^{\text{max}} \given \mat{J}}}
+        - T \cdot \text{klterm},
+    \end{split}
 \end{align}
 with $\text{klterm} = \KL{\Variat{\mat{\pi}^\ast}}{\Prob{\mat{\pi}^\ast}} + \KL{\Variat{\mat{f}}}{\Prob{\mat{f}}}$ multiplied by $T$ due to the recurrent structure.
 The distribution $\Variat{\mat{J}}$ can easily be sampled from $\Variat{\mat{s}_0, \dots, \mat{s}_T}$ using the definition of the value function.
 A sample from $\Variat{\mat{s}_0, \dots, \mat{s}_T}$ can be drawn via the usual ancestral sampling scheme employed by DSVI.
-Assuming a good likelihood and that the sufficient statistics assumption holds for both $\mat{\pi}^\ast$ and $\mat{f}$, the optimal policy should still be a maximizer of this variational lower bound.
-We need to think about this some more.
-
-Note an interesting special case, where we assume an exponential likelihood, that is
+Assuming that the sufficient statistics assumption holds for both $\mat{\pi}^\ast$ and $\mat{f}$, the optimal policy is still maximizes variational lower bound if $\Prob*{\mat{J}^{\text{max}} \given \mat{J}}$ is monotonous.
+We choose an exponential likelihood, that is
 \begin{align}
     \begin{split}
         \Prob{\mat{J}^\text{max} \given \mat{J}}
         &\coloneqq \lambda \Fun{\exp}{-\lambda (\mat{J}^\text{max} - \mat{J})} \\
-        &= \lambda \Fun{\exp}{\lambda \mat{J}}
+        &= \lambda \Fun{\exp}{\lambda \mat{J}},
     \end{split}
 \end{align}
-because $\mat{J}^\text{max} = 0$.
-With $\lambda = 1$, the bound in \cref{eq:variational_bound} reduces to
+since $\mat{J}^\text{max} = 0$.
+With $\lambda = 1$, the bound in \cref{eq:mountaincar:variational_bound} reduces to
 \begin{align}
     \begin{split}
         \MoveEqLeft\Moment*{\E_{\Variat{\mat{J}}}}{\log \Prob{\mat{J}^{\text{max}} \given \mat{J}}} - T \cdot \text{klterm}
         \\
         &= \Moment*{\E_{\Variat{\mat{J}}}}{\log \Fun{\exp}{\mat{J}}} - T \cdot \text{klterm}
         \\
-        &= \Moment*{\E_{\Variat{\mat{J}}}}{\mat{J}} - T \cdot \KL{\Variat{\mat{\pi}^\ast}}{\Prob{\mat{\pi}^\ast}} + \text{const},
+        &= \Moment*{\E_{\Variat{\mat{J}}}}{\mat{J}} - T \cdot \KL{\Variat{\mat{\pi}^\ast}}{\Prob{\mat{\pi}^\ast}} + \text{const}.
     \end{split}
 \end{align}
-which recovers the original maximization of the (expected) value subject to the prior of $\mat{\pi}^\ast$.
-This is the bound we currently use for the experiments.
-It is an interesting question how to interpret the likelihood term and which likelihood to choose.
+This bound is similar to a standard policy iteration scheme but is also subject to the prior on $\mat{\pi}^\ast$.
 
 
 \subsubsection{Experiment}
@@ -340,7 +320,7 @@ It is an interesting question how to interpret the likelihood term and which lik
         Mountaincar policies after different iteration counts.
     }
 \end{figure}
-Mountaincar ist mountaincar!
+Mountaincar ist mountaincar~\parencite{moore_efficient_1990,sutton_reinforcement_2018}!
 
 \section{Future work}
 \label{toc:discussion:future_work}

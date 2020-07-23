@@ -178,16 +178,19 @@ In the next section, we go one step further and include the task of policy searc
         \bottomrule
     \end{tabularx}
 \end{table}
-At the core of our model is the attempt to formulate the search for a good RL policy in a Bayesian manner.
-This means that instead of maintaining or optimizing one candidate policy which gets optimized until some stopping criterion is reached, we want to maintain a Bayesian belief about the optimal policy (or rather one of them).
-Intuitively, we want to start off with a very uninformed policy which, given any state, can generate any action.
-The inference scheme then needs to be able to identify good actions and update the policy to reflect them subject to the prior.
-More concretely, the main challenges for this model are:
-\begin{description}
-    \item[Imposing structure and prior knowledge] How and where do we impose structure and add prior knowledge?
-    \item[An optimization goal] In standard regression, we want to maximize the likelihood of the observations. How does this translate to the RL setting?
-    \item[Uncertainty propagation] How do we translate the uncertainty about the action into informative feedback about good actions?
-\end{description}
+In statistical learning, the goal is to learn about an unknown latent probability distribution via a limited number of observations.
+The goal of learning is to recover some projection or functional of interest of the latent distribution.
+In this thesis, we have mostly focused on the regression setting, where the goal is to learn the marginal $\Prob*{\mat{y} \given \mat{x}}$ of a data distribution $\Prob*{\mat{x}, \mat{y}}$.
+We have formulated hierarchical models to incorporate prior knowledge about the generative process that informs the data distribution.
+We have argued that a high marginal likelihood may not be enough to identify a desirable hierarchical model that, besides reproducing data, also captures the true generative process well.
+
+In~\cref{toc:interpretable_rl}, we saw that well specified models solve decision problems in reinforcement learning significantly better than misspecified problems, even if they represent training data equally well.
+In this section, we formalize this insight and formulate the policy search problem in reinforcement learning via a generative process.
+This allows us to include the requirement for good performance in the inference problem and reason about it in a Bayesian manner.
+In~\cref{tab:mountaincar:quantities_of_interest}, we show how policy search in reinforcement learning problem can be formulated as a statistical learning problem.
+Based on latent true system dynamics, our goal is to identify the optimal value function and thus an optimal policy based on a limited number of interactions with the system.
+The optimal value is defined via the Bellman principle~\parencite{sutton_reinforcement_2018}, which is hard to apply directly in general.
+Instead, we observe batch or online data and apply an algorithm for policy search.
 
 \begin{figure}[t]
     \centering
@@ -249,6 +252,14 @@ Both the trajectory and system terms can easily be interpreted, as they represen
 It is not clear, however, how to interpret the likelihood term.
 Given the value estimate $\mat{J}$, this term encapsulates an estimation of closeness to the optimal value and must encode that the optimal value is the highest possible value.
 
+\begin{figure}[t]
+    \centering
+    \includestandalone{mountaincar_system}
+    \caption{
+        \label{fig:mountaincar:system}
+        Mountaincar system
+    }
+\end{figure}
 We now assume variational distributions $\Variat{\mat{f}}$ and $\Variat{\mat{\pi}^\ast}$ introduced by the sparse GP formulations in~\cref{toc:dgp}.
 Analogously to the derivation of the DSVI-bound in~\cref{eq:dsvi:full_bound} we get
 \begin{align}
@@ -300,16 +311,6 @@ With $\lambda = 1$, the bound in \cref{eq:mountaincar:variational_bound} reduces
 \end{align}
 This bound is similar to a standard policy iteration scheme but is also subject to the prior on $\mat{\pi}^\ast$.
 
-
-\subsubsection{Experiment}
-\begin{figure}[t]
-    \centering
-    \includestandalone{mountaincar_system}
-    \caption{
-        \label{fig:mountaincar:system}
-        Mountaincar system
-    }
-\end{figure}
 \begin{figure}[tp]
     \centering
     \includestandalone{mountaincar_policy_01}
@@ -320,7 +321,23 @@ This bound is similar to a standard policy iteration scheme but is also subject 
         Mountaincar policies after different iteration counts.
     }
 \end{figure}
-Mountaincar ist mountaincar~\parencite{moore_efficient_1990,sutton_reinforcement_2018}!
+As an example, we consider the mountain car system~\parencite{moore_efficient_1990,sutton_reinforcement_2018}.
+\Cref{fig:mountaincar:system} visualizes the task of driving an underpowered car up a mountain.
+The car's engine is not strong enough to overcome the slope and a successful agent must first drive away from the goal on the right to build momentum.
+The current state of the benchmark is described by the one-dimensional position and velocity of the car and the agent can accelerate the car in either direction.
+
+We train a dynamics model with random observations of the system and maximize the variational bound in~\cref{eq:mountaincar:variational_bound} to find an optimal policy to solve the benchmark problem.
+\Cref{fig:mountaincar:policy} shows how the Bayesian belief about the optimal policy evolves during optimization of the bound.
+Starting off with an uninformed policy for which all actions are plausible in all states, the approximation of the optimal value is very uncertain and uninformed.
+During training, the areas iun the input space which are relevant for solving the task emerge and a successful policy is found that oscillates in the valley to build momentum and overcome the mountain.
+The inference scheme also uncovers areas in the input space where uncertainty about the optimal policy is never reduced.
+Since this policy representation is used to parameterize the optimal value, these states are not relevant for a good approximation.
+In other words, these states are either never reached or all actions lead to success.
+
+Formulating policy search as an inference problem over the optimal value allows us to automatically uncover which parts of a system are relevant to solving a task.
+Similar to a surrogate in BO not needing to fully represent complicated structure away from the optimum, both a dynamics model and policy representation need not understand a system fully to solve a reinforcement learning task.
+Separating a system in relevant and irrelevant parts to steer exploration or policy search are promising directions of research.
+
 
 \section{Future work}
 \label{toc:discussion:future_work}

@@ -201,7 +201,7 @@ Instead, we observe batch or online data and apply an algorithm for policy searc
     }
 \end{figure}
 Our goal is to formulate policy search in reinforcement learning as an inference problem in a hierarchical model.
-We start by interpreting the definition of the value function
+We start by interpreting the definition of the $T$-step value function
 \begin{align}
     J^\pi(\mat{s}_0) = \Moment*{\E}{\sum_{t=1}^T \gamma^t r(\mat{s}_t) \given f, \pi}
 \end{align}
@@ -341,35 +341,34 @@ Separating a system in relevant and irrelevant parts to steer exploration or pol
 
 \section{Future work}
 \label{toc:discussion:future_work}
-I am passionate about making machine learning work in real world applications.
-I plan to address the following research questions:
+Taking the step to applying machine learning in the physical world is one of the most important challenges for machine learning today.
+ML-systems that operate in safety-critical areas, interact with people, or carry responsibility must be robust, trustworthy, and assessable.
+This thesis explored how structured Gaussian process models can be used to formalize abstract knowledge about hierarchical systems and gain new insights from data.
+Future research will allow us to generalize these results and explore the following questions:
 \begin{itemize}
     \item How do we formulate data-efficient models together with domain experts?
     \item How do we ensure models can be trusted to take responsibility?
     \item How do we implement models to yield robust results?
 \end{itemize}
-Successfully bridging the gap to to the physical world requires both advances in theory and interdisciplinary effort.
-I want to explore how to effectively formulate structural and semantic priors which are both expressive and interpretable and extend our understanding of such priors.
-I will build on my experience with formulating principled probabilistic models with domain experts in the natural sciences or the industry and identify promising research directions and collaborations.
 
-I am interested in ways to evaluate models beyond error measures and marginal predictions, taking into account the shape of samples drawn from generative models or the behavior of different components of a hierarchy.
-In recent work~\parencite{bodin_modulating_2020}, we presented a new interpretation of Bayesian optimization in which we formulate the surrogate to only model the components of the objective function that help in solving the optimization task.
-I want to explore how downstream tasks can be taken into account in a principled manner in model design by formulating joint Bayesian models for learning pipelines.
+Machine learning models can be effective tools for communication with experts if they allow extensive inspection to achieve interpretability.
+Formulating principled generative models based on expert understanding allows us to reproduce abstract expectations and combining such models with data allows us to gain new insights about the badly understood components of a system.
+In \cref{toc:discussion:bo,toc:discussion:mountaincar} we discussed approaches to including downstream tasks in modeling problems.
+Bayesian learning in piplines of tasks is an active area of study in probabilistic numerics~\parencite{cockayne_bayesian_2019}, where multiple numerical algorithms are applied in succession.
+It is an interesting research question how these ideas can be implemented in more general problem settings where priors and expectations are less well defined.
+
+In Bayesian inference, a model is typically evaluated with respect to subjective prior belief and the likelihood of observations which are typically assumed to be independent.
+Hierarchical models are often formulated with components that have clear responsibilities to allow experts to independently reason about the prior assumptions of different parts of a model.
+However, we have seen in~\cref{toc:discussion:composition} that once we include compositions of general function approximators in a generative model, strong dependency structures emerge and reasoning about priors is difficult~\parencite{duvenaud_avoiding_2014}.
+Future work will explore how to constrain hierarchical models beyond componentwise structural assumptions.
+Hierarchical models such as the alignment model in~\cref{toc:alignment} can show rich and expert-interpretable structure in the shape of samples drawn from generative models.
+One interesting direction of research is to explore how to formalize expectations about such samples as a new way to place constraints on the internal structure of hierarchical models.
 
 Interpretable models and principled uncertainty propagation often require costly computations.
-To implement models in practice, we need to rely on more efficient approximations.
-In recent work~\parencite{ustyuzhaninov_compositional_2020}, we discussed shortcomings of current approximation to deep Gaussian process structures and how these shortcomings could be overcome.
-I want to explore how the the benefits of principled statistical models can be combined with the efficiency of large parametric models to yield reliable and fast predictions in real world applications.
-
-Our research projects have been successfully published in leading machine learning venues and are being deployed in industrial applications.
-Our work on hierarchical GP models is being applied to challenging modeling tasks in the context of wind-turbines and gas turbines.
-Principled uncertainty propagation allows us to derive controllers for gas turbines that improve power generation and reduce emissions.
-Our work on Bayesian optimization is being used in large-scale automated design tasks.
-Working on interdisciplinary projects in the industry has taught me to effectively collaborate in teams with diverse backgrounds and how to communicate machine learning to non-experts.
-I have gained experience in identifying promising applications of machine learning, developing concepts together with domain experts, efficient experimentation and implementation and deployment of models to embedded devices.
-
-During my research, I have actively sought to bring industrial and academic experts together.
-I have established collaborations with academic institutions, initiated a three-month research stay of an academic advisor at Siemens and designed and organized an international workshop on uncertainty propagation with 25 attendees from academia and the industry.
-During my fellowship, I want to continue establishing collaborations both in academia and with industrial partners.
-I am convinced that taking the step to the physical world is one of the most important challenges for machine learning today, requiring models with principled statistical foundation and broad interdisciplinary collaboration.
-I think I am well suited to tackle these challenges as I have worked on relevant applications, experience in interdisciplinary groups and the required theoretical background.
+To implement models in practice, we need to rely on more efficient approximations which can limit the range of representable solutions.
+As we have seen in~\cref{toc:discussion:composition}, the current approaches to inference in deep Gaussian process models cannot represent complex hierarchical posteriors well and more expressive alternatives tend to be computationally expensive.
+The search for efficient and expressive inference schemes for Gaussian processes is an active area of research~\parencite{salimbeni_orthogonally_2018,shi_sparse_2020,wilson_efficiently_2020} and a natural future direction of research is to ask how such schemes can be extended to hierarchical models.
+Another interesting question is how to combine the advantages of principled generative models with computationally efficient alternatives.
+Large parametric models such as Bayesian neural networks (BNN) allow large-scale inference and fast predictions at the cost of badly understood prior assumptions.
+Recent work~\parencite{sun_functional_2019} explored how to formulate Gaussian process priors for BNN models.
+It would be interesting to extend these ideas to more informative priors.

@@ -1592,6 +1592,21 @@
   number = {2}
 }
 
+@article{sun_functional_2019,
+  title = {Functional {{Variational Bayesian Neural Networks}}},
+  author = {Sun, Shengyang and Zhang, Guodong and Shi, Jiaxin and Grosse, Roger},
+  date = {2019-03-13},
+  url = {http://arxiv.org/abs/1903.05779},
+  urldate = {2019-12-13},
+  abstract = {Variational Bayesian neural networks (BNNs) perform variational inference over weights, but it is difficult to specify meaningful priors and approximate posteriors in a high-dimensional weight space. We introduce functional variational Bayesian neural networks (fBNNs), which maximize an Evidence Lower BOund (ELBO) defined directly on stochastic processes, i.e. distributions over functions. We prove that the KL divergence between stochastic processes equals the supremum of marginal KL divergences over all finite sets of inputs. Based on this, we introduce a practical training objective which approximates the functional ELBO using finite measurement sets and the spectral Stein gradient estimator. With fBNNs, we can specify priors entailing rich structures, including Gaussian processes and implicit stochastic processes. Empirically, we find fBNNs extrapolate well using various structured priors, provide reliable uncertainty estimates, and scale to large datasets.},
+  archivePrefix = {arXiv},
+  eprint = {1903.05779},
+  eprinttype = {arxiv},
+  file = {/home/markus/Zotero/storage/XVIVRS9W/Sun et al. - 2019 - Functional Variational Bayesian Neural Networks.pdf;/home/markus/Zotero/storage/BQFH56UL/1903.html},
+  keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
+  primaryClass = {cs, stat}
+}
+
 @book{sutton_reinforcement_2018,
   title = {Reinforcement Learning: An Introduction},
   shorttitle = {Reinforcement Learning},
@@ -1726,6 +1741,21 @@
   publisher = {{The Royal Society London}},
   file = {/home/markus/Zotero/storage/LDGGEG9A/rstl.1779.html},
   number = {69}
+}
+
+@article{wilson_efficiently_2020,
+  title = {Efficiently {{Sampling Functions}} from {{Gaussian Process Posteriors}}},
+  author = {Wilson, James T. and Borovitskiy, Viacheslav and Terenin, Alexander and Mostowsky, Peter and Deisenroth, Marc Peter},
+  date = {2020-07-01},
+  url = {http://arxiv.org/abs/2002.09309},
+  urldate = {2020-07-24},
+  abstract = {Gaussian processes are the gold standard for many real-world modeling problems, especially in cases where a model's success hinges upon its ability to faithfully represent predictive uncertainty. These problems typically exist as parts of larger frameworks, wherein quantities of interest are ultimately defined by integrating over posterior distributions. These quantities are frequently intractable, motivating the use of Monte Carlo methods. Despite substantial progress in scaling up Gaussian processes to large training sets, methods for accurately generating draws from their posterior distributions still scale cubically in the number of test locations. We identify a decomposition of Gaussian processes that naturally lends itself to scalable sampling by separating out the prior from the data. Building off of this factorization, we propose an easy-to-use and general-purpose approach for fast posterior sampling, which seamlessly pairs with sparse approximations to afford scalability both during training and at test time. In a series of experiments designed to test competing sampling schemes' statistical properties and practical ramifications, we demonstrate how decoupled sample paths accurately represent Gaussian process posteriors at a fraction of the usual cost.},
+  archivePrefix = {arXiv},
+  eprint = {2002.09309},
+  eprinttype = {arxiv},
+  file = {/home/markus/Zotero/storage/6X3MSHVJ/Wilson et al. - 2020 - Efficiently Sampling Functions from Gaussian Proce.pdf;/home/markus/Zotero/storage/7FYS5KS9/2002.html},
+  keywords = {Computer Science - Machine Learning,Statistics - Computation,Statistics - Machine Learning},
+  primaryClass = {cs, stat}
 }
 
 @article{wilson_kernel_2015,

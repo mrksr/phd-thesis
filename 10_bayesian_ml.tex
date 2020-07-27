@@ -19,17 +19,17 @@
 
 %%%
 
-Machine learning methods have seen great success recently in a wide range of digital domains such as speech recognition, computer vision or translation.
-In such domains, data is abundant and the consequences of mistakes tend to be mild.
+Machine learning methods have seen great success recently in a wide range of digital domains such as speech recognition, computer vision, or translation.
+In such domains, data is abundant, and the consequences of mistakes tend to be mild.
 However, bridging the gap to applications in the physical world has proved challenging.
-Problem domains like robotics, industrial control, decision support systems or the natural sciences introduce a new set of requirements.
-ML-systems which operate in safety-critical areas, interact with people or carry responsibility must be robust, trustworthy and assessable.
+Problem domains like robotics, industrial control, decision support systems, or the natural sciences introduce a new set of requirements.
+ML-systems which operate in safety-critical areas, interact with people or carry responsibility must be robust, trustworthy, and assessable.
 As applications become more safety-relevant, gathering data through exploration can be problematic due to the adverse consequences of failure.
 
 Besides optimizing for good average-case performance, a responsible system needs to reason about plausible worst-cases and reliably avoid or inform about them.
 ML-systems need to be verified by domain experts before deployment and are used to test hypotheses or make impactful decisions, emphasizing a need for interpretability.
 Models are required to incorporate and reproduce expert knowledge and make consistent predictions.
-A key technique that allows us to cope with these requirements are principled probabilistic models that allow us to explicitly represent and propagate uncertainties.
+A key technique that allows us to cope with these requirements is principled probabilistic models that allow us to represent and propagate uncertainties explicitly.
 This allows us to both quantify confidence in predictions and take more unlikely but relevant scenarios into consideration.
 
 % At Siemens Research, I have worked on a number of pioneering applications of machine learning to industrial systems in safety-critical applications.
@@ -110,7 +110,7 @@ The problem
 \end{problem}
 is therefore not a computational problem and asking for a solution or algorithm for this problem is not a well-posed question.
 
-One can however derive computational problems from the regression problem by making assumptions about the nature of the function $f$ that characterize a unique solution.
+One can, however, derive computational problems from the regression problem by making assumptions about the nature of the function $f$ that characterize a unique solution.
 For example, one could ask for the simplest polynomial that explains the data.
 \begin{problem}[Lagrange Polynomial]
 \label{prob:bayesian_ml:lagrange}
@@ -131,7 +131,7 @@ It can be shown that this is indeed a well-posed computational problem whose uni
 The figure also shows another derived computational problem of linear interpolation.
 Here, the function is defined as being piecewise linear between the different data points, thus also reproducing the data.
 
-Both of these problems and derived algorithms would typically not be identified as ML approaches as it can be argued that they do not derive new insights from data.
+Both of these problems and derived algorithms would typically not be identified as ML approaches, as it can be argued that they do not derive new insights from data.
 Because of the explicit nature of their algorithms as seen in \cref{eq:bayesian_ml:lagrange}, they much more closely resemble classical algorithms such as sorting algorithms.
 
 \begin{figure}[t]
@@ -167,7 +167,7 @@ For example, a common assumption about the process used to generate the data is 
 The first summand $f$ captures the truly informative functional dependency between $x$ and $y$ that applies for all observations while the second term $\epsilon$ captures local error or noise that can be ignored.
 
 A direct consequence of this assumption is that output of the regression problem $f$ need no longer interpolate the data perfectly.
-However, this introduces the need for additional assumptions about how far from the data $f$ is allowed to be or, equivalently, about the shape of $\epsilon$.
+At the same time, additional reasoning is required about how far from the data $f$ is allowed to be or, equivalently, about the shape of $\epsilon$.
 One can choose $f$ to be a linear function, giving rise to the linear regression problem.
 \begin{problem}[Linear regression]
 \begin{labeling}{Output:}
@@ -188,9 +188,9 @@ With $f(x) = \mat{W}x + b$ those are
 \end{labeling}
 Altering the set of hypotheses $\Hc$ between linear, quadratic and cubic polynomials together with the squared error function results in the functions shown in \cref{fig:bayesian_ml:polynomials:polynomial}.
 
-It is important to note that none of these proposed algorithms and plotted functions is \emph{objectively} the correct solution to the regression problem.
-None of them is equal to the function that was used to generate the data and even if it was, there would be no way to tell.
-A core property of machine learning problems is that what characterizes the correct solution is an inherently \emph{subjective} question.
+It is important to note that none of these proposed algorithms and plotted functions is objectively the correct solution to the regression problem.
+None of them is equal to the function that was used to generate the data, and even if it was, there would be no way to tell.
+A core property of machine learning problems is that what characterizes the correct solution is an inherently subjective question.
 This subjectiveness is represented in multiple choices:
 \begin{enumerate}
     \item The assumed structure underlying the data.
@@ -326,7 +326,7 @@ In practice, if collection sufficient data is not possible, overfitting has to b
 Additionally, the empirical risk minimization algorithm is often extended to regularizing loss functions of the form $\ell^\prime : \Fc \times \Yc \times \Yc \to \Rb$ which depend on the structure of the candidate as well as its predictions.
 The Ridge error function shown in~\cref{fig:bayesian_ml:polynomials:linear} is an example of extending the least-squares error function with a preference for parameters with small absolute value.
 Regularization~\parencite{oates_modern_2019} adds back a global component to empirical risk minimization and has a close relation to the choice of hypothesis space $\Hc$.
-The constraint that $f_A \in \Hc \subseteq \Fc$ can be thought of as a binary regularization term which adds infinite loss to the set $\Fc \setminus \Hc$.
+The constraint that $f_A \in \Hc \subseteq \Fc$ can be thought of as a binary regularization term that adds infinite loss to the set $\Fc \setminus \Hc$.
 Conversely, continuous regularization terms formulate softer and less rigorous preferences within $\Hc$, for example for structurally simpler solutions~\parencite{bishop_christoph_pattern_2007,thorburn_occams_1915}.
 
 For complex loss functions and hypothesis spaces, finding the true minimum $\hat{f}_A$ is often unfeasible.
@@ -335,21 +335,21 @@ Examples include the usage of test sets or validations sets~\parencite{bishop_ch
 
 It is often possible to reformulate choices in loss functions as changes in the optimization scheme or compensate a more general hypothesis space with stricter regularization.
 It is not clear how a machine learning algorithm should be formulated from a formal perspective.
-However, problem-dependent adjustments to learning algorithms are generally informed by knowledge provided by domain-experts about the process that generated the data.
+However, problem-dependent adjustments to learning algorithms are generally informed by the knowledge provided by domain-experts about the process that generated the data.
 An additional dimension is therefore given by the need to communicate assumptions and effects of choices with stakeholders that do not have a deep understanding of the field.
-If a learning algorithm should be interpretable and understandable, assumptions should be explicit and optimization schemes should be simple.
+If a learning algorithm should be interpretable and understandable, assumptions should be explicit, and optimization schemes should be simple.
 The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
 
 \section{Bayesian machine learning}
 \label{toc:bayesian_ml:bayesian_ml}
 The central modeling assumption of statistical learning theory is the unknown data distribution $\Prob*{\mat{z}}$.
 Based on a limited number of observations, the task is to learn a model of either the complete distribution or some functional $F[\Prob*{\mat{z}}]$.
-Instead of selecting one solution (for example based on some regularization scheme), Bayesian approaches accept the inevitability of uncertainty due to the underspecified ML problem and represent it explicitly.
+Instead of selecting one solution (for example, using some regularization scheme), Bayesian approaches accept the inevitability of uncertainty due to the underspecified ML problem and represent it explicitly.
 Following the definition of functionals $F$, a Bayesian model is often formulated through independence assumptions in the data distribution.
 Independence assumptions induce a factorization of the data distribution.
 Structural constraints can then be put on the different factors to encode expert knowledge.
 
-Because the available data is not sufficient to identify the unique correct solution, the goal of Bayesian machine learning is to instead infer a distribution of plausible solutions weighed by their likelihood given the data.
+Because the available data is not sufficient to identify the unique correct solution, the goal of Bayesian machine learning is to infer a distribution of plausible solutions weighed by their likelihood given the data instead.
 The posterior distribution of plausible models is a combination of the prior assumptions about the underlying structure and their capability of explaining observations.
 This section introduces probabilistic generative models as a natural consequence of the assumptions in statistical learning theory.
 Probabilistic generative models form a principled way to formulate interpretable hypothesis spaces with carefully chosen assumptions.
@@ -458,11 +458,11 @@ We will introduce other nodes below.
 Closed forms for both $\Prob*{\mat{x}}$ and $\Prob*{\mat{y} \given \mat{x}}$ would fully characterize the data distribution.
 To solve the regression problem, however, only the second term is required.
 
-In the notation typically employed in machine learning, the variables $\mat{x}$ and $\mat{y}$  in the graphical model denote both the factorization of the generative process as well as the functional dependencies between concrete realizations of $\mat{x}$ and $\mat{y}$.
+In the notation typically employed in machine learning, the variables $\mat{x}$ and $\mat{y}$ in the graphical model denote both the factorization of the generative process as well as the functional dependencies between concrete realizations of $\mat{x}$ and $\mat{y}$.
 Assuming a regression problem over the reals $\Xc = \Yc = \Rb$, the functional $\Prob*{\mat{y} \given \mat{x}}$ is an infinite-dimensional object.
 To simplify reasoning about this object, we will reason about finitely many realizations of this process, the pairs $(\mat{x}_1, \mat{y}_1), \ldots, (\mat{x}_N, \mat{y}_N)$.
 This formulation describes both the model search and prediction steps:
-If the $N$ pairs are all part of some data set $\Dc$, model-search can be formulated as finding a closed form for $\Prob*{\mat{y}_n \given \mat{x}_n}$ that explains the observations well.
+If the $N$ pairs are all part of some data set $\Dc$, model-search can be formulated as finding a closed-form for $\Prob*{\mat{y}_n \given \mat{x}_n}$ that explains the observations well.
 For prediction, the graphical model is typically augmented with a new pair $(\mat{x}_\ast, \mat{y}_\ast) \not\in \Dc$, an arbitrary but previously unseen point.
 Making a prediction is equivalent to evaluating the closed form $\Prob*{\mat{y}_\ast \given \mat{x}_\ast}$.
 To simplify notation, we identify $\mat{x} = (\mat{x}_1, \dots, \mat{x}_N)$ and $\mat{y} = (\mat{y}_1, \dots, \mat{y}_N)$.
@@ -503,7 +503,7 @@ The rule of total probability~\parencite{bishop_christoph_pattern_2007} states t
     \end{split}
 \end{align}
 This rule allows us to add arbitrary nodes to the graphical model and recover the original distribution via marginalization, the calculation of the expectation with respect to the variable that should be removed.
-Introducing a new variable is helpful because it allows us to explicitly formulate independence assumptions we could not formulate before.
+Introducing a new variable is helpful because it allows us to formulate independence assumptions explicitly.
 To achieve conditional independence of the $\mat{y}_n$, we add variables $\mat{f}_n$ which represent the function values $\mat{f}_n = f(\mat{x}_n)$.
 Since the input $\mat{x}_n$ is no longer relevant once this function value is known, we assume that $\Prob*{\mat{y}_n \given \mat{f}_n, \mat{x}_n} = \Prob*{\mat{y}_n \given \mat{f}_n}$.
 This leads to the new graphical model
@@ -549,8 +549,9 @@ In the graphical model above, both terms are represented via
 \end{labeling}
 In this model, the noise term contains all part of the generative process for $\mat{y}_n$ which cannot be explained by $\mat{x}_n$ and is assumed to be fully independent given $\mat{f}_n$.
 
-The graphical model now contains a chain of nodes $\mat{x}_n$, $\mat{f}_n$, $\mat{y}_n$ which is repeated for every data point.
-This is a common pattern for generative models since while the functional of interest $f$ changes depending on the position in the input space $\mat{x}$, the structure of the generative process is assumed to be the same for all possible observations.
+The graphical model now contains a chain of nodes $\mat{x}_n$, $\mat{f}_n$, $\mat{y}_n$ that is repeated for every data point.
+This is a common pattern for generative models.
+While the functional of interest $f$ changes depending on the position in the input space $\mat{x}$, the structure of the generative process is assumed to be the same for all observations.
 To explicitly represent this repetition, we introduce plate notation:
 \begin{align}
     \label{eq:bayesian_ml:non_parametric}
@@ -656,8 +657,8 @@ where $\delta(\cdot)$ denotes the Dirac delta distribution~\parencite{murphy_mac
 Since $\mat{\theta}$ is a sufficient statistic, other observations are not required to evaluate the linear function.
 Even though we made the strong structural assumption about the linearity of the function resulting in a delta distribution, the marginalization of $\Prob*{\mat{\theta}}$ can still lead to more complicated $\Prob*{\mat{y} \given \mat{x}}$ distributions.
 
-To formulate more complex generative models, additional latent structure can be introduced.
-Assume for example that the functional of interest is known to have the shape $f(x) = h(k(x), g(x))$.
+Additional latent structure can be introduced to formulate more complex generative models.
+Assume, for example, that the functional of interest is known to have the shape $f(x) = h(k(x), g(x))$.
 The corresponding graphical model
 \begin{align}
     \begin{tikzpicture}[align graphical model]
@@ -783,7 +784,7 @@ Their relative weights in the posterior are dependent on the prior assumptions f
     }
 \end{figure}
 Statements about Bayesian models are made in terms of probabilities, including predictive posteriors for new inputs $\Prob*{\mat{y}_\ast \given \mat{x}_\ast, \Dc}$ in a regression problem or a posterior distributions $\Prob*{\mat{\theta} \given \Dc}$ for a parameter.
-This distribution of predictions or parameters can be interpreted as uncertainty due do insufficient knowledge about the generative process.
+This distribution of predictions or parameters can be interpreted as uncertainty due to insufficient knowledge about the generative process.
 A Bayesian posterior is derived as the combination of prior knowledge and the data
 Since a Bayesian posterior is the combination of the data likelihood and prior assumptions, posterior uncertainties are not objective but depend on prior assumptions.
 
@@ -806,7 +807,7 @@ Introducing point estimates also introduces a model selection problem.
 Many strategies exist for Bayesian model selection~\parencite{andrew_gelman_bayesian_2013,murphy_machine_2012,david_barber_bayesian_2012} which are not discussed in detail here.
 Most strategies are related to the ideas of empirical risk minimization and consider a performance measure on the observed data.
 Given two hypotheses $H_1$ and $H_2$, it is common to compare the marginal likelihoods $\Prob*{\Dc \given H_1}$ and $\Prob*{\Dc \given H_2}$ where $\Prob*{\Dc \given H} = \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{x}_n, H}$.
-Choosing the $H_i$ with the higher marginal likelihood is called a maximum likelihood estimation.
+Choosing the hypothesis $H_i$ with a higher marginal likelihood is called a maximum likelihood estimation.
 Observing that
 \begin{align}
 \begin{split}
@@ -816,7 +817,7 @@ Observing that
 a common extension to maximum likelihood estimation is to also consider how well the hypotheses conform to prior assumption through the prior odds $\sfrac{\Prob*{H_1}}{\Prob*{H_2}}$.
 
 While strategies based on marginal likelihoods often work well in practice, they are limited in scope.
-Since marginal distributions are considered, models are not evaluated with respect to the latent components in the generative model such as the shape of $\Prob*{\mat{f}}$ in Bayesian linear regression.
+Since marginal distributions are considered, models are not evaluated with respect to the latent components in the generative model, such as the shape of $\Prob*{\mat{f}}$ in Bayesian linear regression.
 Selecting models using maximum likelihood approaches enforces good predictive uncertainties around the observations in $\Dc$.
 No requirements are enforced concerning uncertainties away from the data, the shape of single samples drawn from the model or uncertainties in the latent part of the generative model.
 

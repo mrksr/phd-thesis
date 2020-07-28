@@ -75,7 +75,7 @@ and the conditional of $\mat{x}_1$ given $\mat{x}_2$ is a Gaussian as well with
     \end{split}
 \end{align}
 
-Modeling functions in general requires an infinite number of random variables, one for every function value.
+Modeling functions over infinite sets requires an infinite number of random variables, one for every function value.
 Such structure of a number of possibly dependent random variables mapping from the same probability space to the same value space is called a stochastic process and is represented via a function.
 \begin{definition}[Stochastic Process]
     \label{def:gp:stochastic_process}
@@ -303,9 +303,9 @@ The different length scale parameters $l_i$ roughly specify the distance of data
 \Cref{fig:gp:gp_samples} compares sample functions drawn from Gaussian processes with the linear kernel, squared exponential kernels with different hyper-parameters, and the arc cosine kernel~\parencite{cho_kernel_2009}.
 Arc cosine kernels mimic the behavior of infinitely wide neural networks with a single hidden layer.
 The order of an arc cosine kernel specifies the activation function of such a neural network.
-The first three orders assume step-functions, rectified linear units or rectified quadratic units respectively.
-Arc cosine kernels of low order behave similar to squared exponential kernels in practice but have different generalization properties.
-While GPs with an RBF kernel return to the prior away from data yielding predictions roughly in the area $\mu_f \pm 2\sigma_f$, the arc cosine kernel of order 1 generalizes linearly using the derivative at the closest data points\todo{really?}.
+The first three orders assume step-functions, rectified linear units, or rectified quadratic units respectively.
+Arc cosine kernels of low order behave similarly to squared exponential kernels in practice but have different generalization properties.
+While GPs with an RBF kernel return to the prior away from data yielding predictions roughly in the area $\mu_f \pm 2\sigma_f$, the arc cosine kernel of order one generalizes linearly using the derivative at the closest data points\todo{really?}.
 
 \subsubsection{Predictions and posterior}
 To use Gaussian processes for regression, observations need to be combined with a Gaussian process prior $f \sim \GP\Cond{\mat{0}, \K}$ to obtain a predictive posterior.
@@ -334,7 +334,7 @@ Combining the two distributions according to the law of total probability yields
     \end{split}
 \end{align}
 Note that this distribution is obtained by integrating over all possible latent function values $\mat{f}$ and thereby taking all possible function realizations into account.
-The closed-form solution of the integral is obtained using well-known results about Gaussian distributions, for example detailed in \cite{petersen_matrix_2008}.
+The closed-form solution of the integral is obtained using well-known results about Gaussian distributions, wich are, for example, detailed in \cite{petersen_matrix_2008}.
 
 \begin{figure}[t]
     \begin{subfigure}[b]{\halffigurewidth}
@@ -405,7 +405,7 @@ The predictive posterior for the test outputs $\mat{f}_\ast$ can therefore be di
 \end{lemma}
 
 This predictive posterior makes it possible to evaluate the function approximation based on the input at arbitrary points in the input space.
-Since any set of these points always has a joint Gaussian distribution, the predictive posterior defines a new Gaussian process, the posterior Gaussian process given the observations.
+Since any set of these points always has a joint Gaussian distribution, the predictive posterior defines a new Gaussian process, the posterior Gaussian process, given the observations.
 This posterior process $\GP(\mu_\text{post}, \K_\text{post})$ has new mean and covariance functions given by
 \begin{align}
     \begin{split}
@@ -419,14 +419,14 @@ Note that the posterior mean function is not necessarily the constant zero funct
 Computing the inverse $\left(\mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye \right)\inv$ takes $\Oh(N^3)$ time but can be done as a preprocessing step since it is independent of the test points.
 Predicting the mean function value of a single test point is a weighted sum of $N$ basis functions $\mu_\ast = \mat{K_{\ast \mat{f}}} \mat{\beta}$ where $\mat{\beta} = \left(\mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye \right)\inv \mat{y}$ which can be precomputed.
 After this pre-computation, predicting the mean of a single test point takes $\Oh(N)$ time.
-To predict the variance, it is still necessary to perform a vector-matrix multiplication which takes $\Oh(N^2)$ time for a single prediction.
+To predict the variance, it is still necessary to perform a vector-matrix multiplication, which takes $\Oh(N^2)$ time for a single prediction.
 Since all of these operations are dependent on the number of training points, evaluating Gaussian processes on large data sets can be computationally expensive.
 Before introducing sparse approximations with better asymptotic complexity, we first consider how to choose good values for the hyper-parameters $\mat{\theta}$.
 
 \subsubsection{Choosing hyper-parameters}
 In the previous section, we derived the posterior GP given constant hyper-parameters $\mat{\theta}$.
 In this case, Gaussian processes models do not have to be trained or optimized at all as the posterior GP can be computed analytically.
-Usually however, the correct choice of hyper-parameters is not clear a priori.
+Usually, however, the correct choice of hyper-parameters is not clear a priori.
 In a fully Bayesian setup we place a prior on the hyper-parameters $\Prob{\mat{\theta}}$ and marginalize it to derive the dependent distributions
 \begin{align}
     \begin{split}
@@ -480,9 +480,9 @@ and is calculated using standard approaches to non-convex optimization.
 The computational complexity of evaluating the likelihood term and its derivatives is dominated by the inversion of $\mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye$ with a time complexity of $\Oh(N^3)$.
 
 \section{Sparse Gaussian processes using inducing observations}
-A major drawback of Gaussian processes in real-world applications is their high computational cost for large data sets.
+A drawback of Gaussian processes in real-world applications is their high computational cost for large data sets.
 Assume a data set $(\mat{X}, \mat{y})$ with $N$ training samples, then the operations on a posterior Gaussian process are usually dominated by the inversion of the kernel matrix $\mat{K}_{\mat{f}\mat{f}}$ which takes $\Oh(N^3)$ time.
-While this inversion can be pre-computed, the cost of predicting the mean and variance of one test point remains $\Oh(N)$ and $\Oh(N^2)$ respectively.
+While this inversion can be pre-computed, the cost of predicting the mean and variance of one test point remains $\Oh(N)$ and $\Oh(N^2)$, respectively.
 Additionally, these operations have a space requirement of $\Oh(N^2)$.
 The goal of sparse approximations of Gaussian processes is to find model representations that avoid the cubic complexities or at least restrict them to the training phase of finding hyper-parameters.
 This section introduces one type of approximation based on representing the complete data set through a smaller set of points~\parencite{snelson_flexible_2007}.
@@ -492,7 +492,7 @@ The most direct approach to reducing the computational cost of inverting $\mat{K
 Calculating the posterior GP relative to these $M$ observations only has a time complexity of $\Oh(M^3)$.
 This approach can work for data sets with a very high level of redundancy but does impose the problem of choosing an appropriate subset.
 While choosing a random subset can be effective \cite{snelson_flexible_2007}, the optimal choice is dependent on the hyper-parameters.
-Both the subset and hyper-parameters should therefore be chosen in a joint optimization scheme.
+Both the subset and hyper-parameters should, therefore, be chosen in a joint optimization scheme.
 The selection of an appropriate subset defines a combinatorial optimization problem and is very hard to solve.
 
 To overcome this problem, inducing observation approximations lift the restriction of choosing points from the data set and instead allow arbitrary positions in the input space.
@@ -544,7 +544,7 @@ Using this prior, the inducing variables can be marginalized through an integral
     \end{split}
 \end{align}
 dropping the conditioning on $\mat{\theta}$ for notational simplicity.
-Due to the conditional independence assumption of the data given the inducing variables, this formulation is called the fully independent training conditional (FITC) and was originally introduced by \citeauthor{snelson_sparse_2005}~\parencite{snelson_sparse_2005,snelson_flexible_2007}.
+Due to the conditional independence assumption of the data given the inducing variables, this formulation is called the fully independent training conditional (FITC) and was introduced by \citeauthor{snelson_sparse_2005}~\parencite{snelson_sparse_2005,snelson_flexible_2007}.
 
 \begin{figure}[tp]
     \begin{subfigure}{\halffigurewidth}
@@ -845,7 +845,7 @@ The inducing inputs
     \node[inline random variable, variational] (f) {$\mat{Z}$};
 }
 are referred to as variational parameters.
-While the SGPR model is more computationally efficient, the dependencies between different observations are not completely removed.
+While the SGPR model is more computationally efficient, the dependencies between different observations are not wholely removed.
 The optimal choice for $\q^\ast(\mat{u})$ depends on the observations in~\cref{eq:gp:sgpr_optimal_q}.
 Because of this, the bound does not factorize along the data, preventing stochastic variational inference techniques~\parencite{hensman_gaussian_2013} and requiring the bound to be evaluated jointly for all data points.
 Additionally, evaluating the predictive posterior~\cref{eq:gp:sgpr_predictive_posterior} takes $\Oh(M^3 + MN)$ time.
@@ -962,8 +962,8 @@ SVGP directly infers a posterior about latent function values, which are shown i
 
 The $\Oh(M^3)$ computational cost due to the inversion of $\mat{K_{uu}}$ can still be prohibitive for models with a large number of inducing points.
 To reduce the number of required points, recent work explored how Bayesian inference can be employed in the search for good inducing point locations~\parencite{hensman_mcmc_2015,rossi_rethinking_2020}.
-There have also been multiple extensions to the variational inducing point approach to further reduce computational cost.
-One approach is to impose grid structure on the inducing inputs $\mat{Z}$~\parencite{wilson_kernel_2015}.
+There have also been multiple extensions to the variational inducing point approach to reduce the computational cost further.
+One approach is to impose a grid structure on the inducing inputs $\mat{Z}$~\parencite{wilson_kernel_2015}.
 Instead of optimizing their location, the position of a large number of inputs is fixed to perform fast computations exploiting the structure.
 While this approach suffers from the curse of dimensionality, it can increase performance for low input dimensionalities.
 Another approach is to orthogonally decouple the computations for predictive means and variances~\parencite{shi_sparse_2020,salimbeni_orthogonally_2018,cheng_variational_2017}.
@@ -1013,7 +1013,7 @@ This decoupling allows the calculation of the predictive mean in linear time, al
 \end{figure}
 While GPs offer a principled non-parametric approach to representing distributions over functions, they can be restrictive in the functions they are able to represent.
 Many extensions to standard GPs have been studied which introduce additional hierarchical structure such as GP latent variable models~\parencite{titsias_bayesian_2010,damianou_variational_2014}, warped GP models~\parencite{snelson_warped_2004,lazaro-gredilla_bayesian_2012} or mixtures of experts models~\parencite{tresp_mixtures_2001,rasmussen_infinite_2002,lazaro-gredilla_overlapping_2012}.
-Hierarchical structure typically introduces the requirement to propagate uncertainties through Gaussian processes, which is analytically intractable in most cases.
+The hierarchical structure typically introduces the requirement to propagate uncertainties through Gaussian processes, which is analytically intractable in most cases.
 Many extensions can be interpreted as special cases of the hierarchical or deep Gaussian process model~\parencite{lawrence_hierarchical_2007,damianou_deep_2013} in which a nested generative process is formulated by using the output of one GP as the input of another.
 
 In a deep GP, rather than assuming that observational data is generated through a draw from a single GP which is then corrupted by noise in $\mat{y} = f(\mat{x}) + \epsilon$, we assume that data is generated via a composition of $L$ functions
@@ -1040,14 +1040,14 @@ The joint probability of the function values and outputs can then be written as
 The structure of the conditionals $\Prob*{\mat{f}_l \given \mat{f}_{l-1}}$ is implied by the assumption that the $f_l$ are drawn from GPs and~\cref{eq:gp:gp_marginal_likelihood}.
 Note that following the original formulation in~\parencite{damianou_deep_2013}, we assume independent Gaussian noise $\sigma^2_l$ as part of every function $f_l$.
 We will denote the kernel matrix at the $\nth{l}$ level as $\mat{K}_{ll} = \mat{K}_{\mat{f}_l\mat{f}_l}$.
-The $\mat{f}_l$ are all latent variables and inference over them is very challenging.
+The $\mat{f}_l$ are all latent variables, and inference over them is very challenging.
 Because they capture the result of applying multiple GPs, they are highly dependent on each other, thereby implying dependence between the different functions as well.
 We will now derive two extensions of the sparse variational approximations in~\cref{toc:gp:sparse_gps} to the hierarchical case, nested variational compression~\parencite{hensman_nested_2014} and doubly stochastic variational inference~\parencite{salimbeni_doubly_2017} to approximate the marginal likelihood of the deep Gaussian process model
 \begin{align}
-\begin{split}
-    \label{eq:dgp:marginal_likelihood}
-    \Prob*{\mat{y} \given \mat{X}} = \int \Prob*{\mat{y}, \mat{f}_1, \dots, \mat{f}_L \given \mat{X}} \diff \mat{f}_1 \dots \diff \mat{f}_L.
-\end{split}
+    \begin{split}
+        \label{eq:dgp:marginal_likelihood}
+        \Prob*{\mat{y} \given \mat{X}} = \int \Prob*{\mat{y}, \mat{f}_1, \dots, \mat{f}_L \given \mat{X}} \diff \mat{f}_1 \dots \diff \mat{f}_L.
+    \end{split}
 \end{align}
 
 
@@ -1162,7 +1162,7 @@ Given inputs $\mat{X_{\ast}}$, we recursively marginalize the intermediate layer
 \end{align}
 with
 \begin{align*}
-    \mat{\bar{\mu}}_{l, \ast}    & = \mat{\Psi}_{l\ast} \mat{K}_{\mat{u}_l \mat{u}_l    }\inv \mat{m}_l                                       \\
+    \mat{\bar{\mu}}_{l, \ast}    & = \mat{\Psi}_{l\ast} \mat{K}_{\mat{u}_l \mat{u}_l    }\inv \mat{m}_l                                                    \\
     \mat{\bar{\Sigma}_{l, \ast}} & = \mat{\Psi}_{l\ast}\mat{K}_{\mat{u}_l \mat{u}_l}\inv\mat{S}_l\mat{K}_{\mat{u}_l \mat{u}_l}\inv\mat{\Psi}_{l\ast}\tran.
 \end{align*}
 For the first layer, the expectation collapses to usual SVGP predictions.

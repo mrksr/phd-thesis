@@ -5,46 +5,46 @@ We showed how this dependence both removes ambiguities in a learning problem and
 While comparisons to less semantic generative models showed similar behavior on training data, we showed that a more informed model shows more desirable generalization behaviors.
 In a regression problem, the evaluation of desirable behavior is usually limited to the inspection of marginal distributions at test points and manual inspection of samples.
 In this chapter, we explore how we can formalize desirable model behavior through the task a model will be used to solve.
-We formulate a hierarchical model based on the DAGP model in~\cref{toc:data_association} which is informed by abstract knowledge about a dynamic system and evaluate model behavior through a reinforcement learning task.
+We formulate a hierarchical model based on the DAGP model in~\cref{toc:data_association} that is informed by abstract knowledge about a dynamic system and evaluate model behavior through a reinforcement learning task.
 We show that while misspecified models yield similar marginal distributions as discussed in the previous chapter, a well-specified model can solve the posed task significantly better.
 
 Machine learning methods~\parencite{shalev-shwartz_understanding_2014} are designed to solve tasks where the underlying system we want to model is only partly known or understood.
 The hope when using machine learning methods is that we can reduce this uncertainty by exploiting statistical patterns in data generated from the underlying system.
 Reinforcement learning (RL)~\parencite{sutton_reinforcement_2018} is a machine learning paradigm designed to learn in a dynamic environment where we can specify a goal or have a notion of what a desirable behavior is.
-The goal of RL is to learn a policy which dynamically chooses actions in the environment to achieve a goal or behavior.
-Specifically, an RL agent's task is to learn a policy $\pi$ which, given the current state $\mat{s}$ of an environment, chooses an action $\mat{a}$ to achieve the goal specified by a reward function $r$ mapping system states to numerical rewards.
-To learn a policy, any RL system needs to understand the underlying dynamics governing the system, how the transition between states is effected by the actions taken.
+The goal of RL is to learn a policy that dynamically chooses actions in the environment to achieve a goal or behavior.
+Specifically, an RL agent's task is to learn a policy $\pi$ that, given the current state $\mat{s}$ of an environment, chooses an action $\mat{a}$ to achieve the goal specified by a reward function $r$ mapping system states to numerical rewards.
+To learn a policy, an RL system needs to understand the underlying dynamics governing the system, how the transition between states is affected by the actions taken.
 The next state $\mat{s}^\prime$ is determined by the latent and possibly stochastic transition function $\mat{s}^\prime = \Fun*{f}{\mat{s}, \mat{a}}$.
 How the dynamical system is treated is one of the main distinctions among different approaches to RL.
-In model-based RL, the dynamic model is an explicit part of the system, while in the model-free counterpart the transition dynamics are implicit and cannot be disentangled from the system.
+In model-based RL, the dynamics model is an explicit part of the system, while in the model-free counterpart, the transition dynamics are implicit and cannot be disentangled from the system.
 
-Applying RL in an industrial setting often implies trying to derive an alternative more efficient controller for an already existing system.
-In a critical application it is unlikely that we will be able to deploy an untested policy as this can lead to safety issues.
-This means that in practice we are often limited by previously collected data created by a different, possibly known, control mechanism in order to learn our model.
+Applying RL in an industrial setting often implies trying to derive an alternative, more efficient controller for an already existing system.
+In a critical application, it is unlikely that we will be able to deploy an untested policy, as this can lead to safety issues.
+In practice, we are often limited by previously collected data created by a different, possibly known, control mechanism in order to learn our model.
 In the literature, this scenario is referred to as batch RL~\parencite{lange_batch_2012}, where we are presented with a set of state transitions $\Dc = \Set{(\mat{s}_n, \mat{a}_n, \mat{s}_n^\prime)}_{n=1}^N$ and are unable to interact with the original system to find a policy.
 In order to be able to derive an efficient policy in this scenario, we need to use the available data as efficiently as possible.
 Data efficiency in machine learning comes from reducing the search space of solutions.
 In other words, data efficiency arises from being able to exploit as much prior knowledge of the system as possible \parencite{shalev-shwartz_understanding_2014}.
 
-To be able to use the available data as efficiently as possible we therefore need a model which provides explicit and interpretable handles such that we can easily introduce priors.
-The model-based approach to RL describes each component of the system in a modular fashion thereby providing an interface to incorporate prior knowledge.
-The challenge is how these priors should be specified and how they should be included such that the hypothesis space can be limited in a manner coherent with our knowledge of the system.
+To be able to use the available data as efficiently as possible, we therefore need a model that provides explicit and interpretable handles such that we can introduce priors easily.
+The model-based approach to RL describes each component of the system in a modular fashion, thereby providing an interface to incorporate prior knowledge.
+The challenge is how these priors should be specified, and how they should be included, such that the hypothesis space can be limited in a manner coherent with our knowledge of the system.
 
 Gaussian processes (GPs) are stochastic processes that can be used to specify probability distributions over the space of functions.
 While a GP specifies a distribution with support for all functions, it efficiently concentrates its probability mass to functions with specific characteristics.
 These characteristics make GPs well suited for RL as they do not impose hard constraints while still placing a significant structure on the space of functions.
-In \parencite{deisenroth_pilco_2011} the authors propose a model-based RL method where Gaussian processes are used as priors for the dynamics.
-They provide a principled approach of taking model uncertainty into account when evaluating the performance of a policy, thereby reducing the impact of model-bias.
+In \parencite{deisenroth_pilco_2011}, the authors propose a model-based RL method where Gaussian processes are used as priors for the dynamics.
+They provide a principled approach for taking model uncertainty into account when evaluating the performance of a policy, thereby reducing the impact of model-bias.
 However, the approach has several restrictions:
-Transition dynamics are modelled as standard Gaussian processes (GPs) and policies and rewards must be of specific forms.
+Transition dynamics are modeled as standard Gaussian processes (GPs), and policies and rewards must be of specific forms.
 
-In this chaper, we show how we can alleviate some of the limitations of \parencite{deisenroth_pilco_2011} to provide a richer and more efficient RL model.
+In this chapter, we show how we can alleviate some of the limitations of \parencite{deisenroth_pilco_2011} to provide a richer and more efficient RL model.
 We show how we can introduce additional constraints on the dynamic model allowing for multiple transitional signatures to be active simultaneously.
-Incorporating this knowledge facilitates learning by allowing us to more precisely state what we want to learn thereby significantly reducing the data requirements.
+Incorporating this knowledge facilitates learning by allowing us to more precisely state what we want to learn, thereby significantly reducing the data requirements.
 Furthermore, decomposing the transition model into several parts allows us to use reward shaping \parencite{sutton_reinforcement_2018} in order to discourage policies based on dynamic characteristics.
 
 Introducing constraints on the dynamic model based on abstract knowledge is an inherently problem-dependent process.
-This work explores this process for the heteroscedastic and bimodal Wet-Chicken benchmark~\parencite{tresp_wet_1994,hans_efficient_2009} which is both easy to understand and challenging to model.
+This work explores this process for the heteroscedastic and bimodal Wet-Chicken benchmark~\parencite{tresp_wet_1994,hans_efficient_2009} that is both easy to understand and challenging to model.
 A central challenge in this benchmark is how to formulate a model which can represent bimodalities.
 One approach is presented in~\parencite{bishop_mixture_1994}, where multimodal regression tasks are interpreted as a density estimation problem.
 A high number of candidate distributions is reweighed to match the observed data without modeling the underlying generative process.
@@ -54,7 +54,7 @@ In this work, we are interested in formulating a dynamics model which yields new
 We formulate a probabilistic model which contains such explicit models by interpreting the Wet-Chicken benchmark as a data association problem~\parencite{barshalom_tracking_1990,cox_review_1993}.
 While many probabilistic interpretations of this problem assume that the relative importance of different modes is constant~\parencite{lazaro-gredilla_overlapping_2012,bodin_latent_2017}, we base our formulation on the DAGP model from~\cref{toc:data_association} which learns a non-parametric model of each mode and where the associations between the modes themselves is further controlled by a non-stationary stochastic process.
 
-After introducing the Wet-Chicken benchmark, we show how high-level knowledge about this system can be used to impose Bayesian structure.
+After introducing the Wet-Chicken benchmark, we show how high-level knowledge about this system can be used to impose a Bayesian structure.
 We derive an efficient inference scheme for both the dynamics model and for probabilistic policy search based on variational inference.
 We show that this approach yields interpretable models and policies and is significantly more data-efficient than less interpretable alternatives.
 
@@ -77,7 +77,7 @@ The canoeist wants to get close to the waterfall to maximize the reward $\Fun*{r
 However, if the canoeist falls down the waterfall, they have to start over at the initial position $(0, 0)$.
 
 The river's flow consists of a deterministic velocity $v_t = 3 \cdot y_t w\inv$ and stochastic turbulence $b_t = 3.5 - v_t$, both of which depend on the position on the $y$-axis.
-The higher $y_t$ is, the faster the river flows but the less turbulent it becomes.
+The higher $y_t$ is, the faster the river flows, but the less turbulent it becomes.
 The canoeist chooses his paddle direction and intensity via an action $\mat{a}_t = (a_{t,x}, a_{t,y}) \in [-1, 1]^2$.
 The transition function $f : (\mat{s}_t, \mat{a}_t) \mapsto \mat{s}_{t+1} = (x_{t+1}, y_{t+1})$ is given by
 \begin{align}
@@ -105,7 +105,7 @@ and $\tau_t \sim \Fun*{\Uni}{-1, 1}$ is a uniform random variable that represent
 There is almost no turbulence at $y = w$, but the velocity is too high to paddle back.
 Similarly, the velocity is zero at $y = 0$, but the canoeist can fall down the waterfall unpredictably due to the high turbulence.
 A successful canoeist must find a balance between handling the stochasticity and velocities within the capabilities of the canoeist to get as close to the waterfall as possible.
-However, as the canoeist moves closer to the waterfall, the distribution over the next states become increasingly more bi-modal as the probability of falling down increases.
+However, as the canoeist moves closer to the waterfall, the distribution over the next states become increasingly more bi-modal as the probability of falling increases.
 Together with the heteroscedasticity introduced by the turbulence dependent on the current position, these properties make the Wet-Chicken problem especially difficult for model-based reinforcement learning problems.
 
 
@@ -121,8 +121,7 @@ Together with the heteroscedasticity introduced by the turbulence dependent on t
         The return is generated by the rewards which depend on their respective states only.
     }
 \end{figure}
-We are interested in finding a policy specified by the parameters $\mat{\theta}_\pi$ which maximizes the discounted return
-$J^\pi(\mat{\theta}_\pi) = \sum_{t=0}^T \gamma^t \Fun*{r}{\mat{s}_t} = \sum_{t=0}^T \gamma^t r_t$ with a constant discount factor $\gamma \in [0, 1]$.
+We are interested in finding a policy specified by the parameters $\mat{\theta}_\pi$ that maximizes the discounted return $J^\pi(\mat{\theta}_\pi) = \sum_{t=0}^T \gamma^t \Fun*{r}{\mat{s}_t} = \sum_{t=0}^T \gamma^t r_t$ with a constant discount factor $\gamma \in [0, 1]$.
 Starting from an initial state $\mat{s}_0$ we generate a trajectory of states $\mat{s}_0, \ldots, \mat{s}_T$ obtained by applying the action $\mat{a}_t = \Fun*{\pi}{\mat{s}_t}$ at every time step $t$.
 The next state is generated using the (latent) transition function $f$, yielding $\mat{s}_{t+1} = \Fun*{f}{\mat{s}_t, \mat{a}_t}$.
 
@@ -167,11 +166,11 @@ the deterministic flow-behavior of the river $\mat{f}_t$, some heteroscedastic n
 This prior imposes structure which allows us to explicitly state what we want to learn from the data and where we do not assume prior knowledge:
 How does the river flow?
 What kind of turbulence exists?
-When does the canoeist fall down?
+When does the canoeist fall?
 How do the actions influence the system?
 
 Each question is explicitly answered by one of the model's components.
-In \cref{toc:interpretable_rl:results} we will visualize these components and discuss how they can be used by experts to gain new insights about the system.
+In \cref{toc:interpretable_rl:results}, we will visualize these components and discuss how they can be used by experts to gain new insights about the system.
 Additionally, interpretable transition models help to build trust in derived policies:
 Since experts can assess the plausibility of the transition model, successful policies are unlikely to behave unexpectedly on the true system.
 
@@ -207,8 +206,8 @@ In our case, we use $K = 2$ modes, one for staying in the river and one for fall
 For every data point we infer a posterior belief $\Prob{\mat{l}_t}$ about which mode the data point belongs to, as we assume this separation can not be predetermined using expert knowledge.
 
 We place independent GP priors on the $\mat{f}^{\pix{k}}$, $\mat{\sigma}^{\pix{k}}$ and $\mat{\lambda}^{\pix{k}}$.
-Given the data a fixed set of assignments $\mat{L}$, our modeling assumptions imply independence between the $K$ modes.
-However, this independence is lost if the assignments are unknown and a discrete optimization problem has to be solved when doing joint inference over the different modes and the association problem.
+Given the data, a fixed set of assignments $\mat{L}$, our modeling assumptions imply independence between the $K$ modes.
+However, this independence is lost if the assignments are unknown, and a discrete optimization problem has to be solved for joint inference over the different modes and the association problem.
 We approximate the exact posterior via a factorized variational distribution
 \begin{align}
     \Variat*{\mat{f}, \mat{\lambda}, \mat{\sigma}, \mat{U}} & =
@@ -230,7 +229,7 @@ The variational parameters are optimized by minimizing a lower bound to the marg
     \end{split}
 \end{align}
 
-We obtain an explicit representation of the GP posteriors during variational inference which allows us to efficiently propagate samples through the model to simulate trajectories used for policy search.
+We obtain an explicit representation of the GP posteriors during variational inference, which allows us to efficiently propagate samples through the model to simulate trajectories used for policy search.
 Predictions for an unknown state $\mat{\hat{s}}_\ast$ are mixtures of $K$ independent Gaussians given by,
 \begin{align}
     \begin{split}
@@ -336,33 +335,32 @@ Importantly, we only need a small number of Monte Carlo samples at every iterati
         Linear cuts through the DAGP-based transition model with the waterfall on the right at $x_t = 5$.
         The plots show the dependency between $x_t$ and $x_{t+1}$ with respect to the action $a_t = 0$ and, from top to bottom, $y_t \in \Set{0, 1, 2.5, 4, 5}$.
         The DAGP-based transition model successfully separates the two modes introduced through flow (blue) and drop (green) behaviors and predicts the probability of being assigned to the drop mode (violet).
-        While drops can be modelled using a constant noiseless function, the flow speed (gradient and bias) and heteroscedastic noise (variance) varies in the different cuts.
+        While drops can be modeled using a constant noiseless function, the flow speed (gradient and bias) and heteroscedastic noise (variance) varies in the different cuts.
         For low $y_t$, the river flows slowly but is very turbulent, while for high $y_t$, the river flows fast but deterministically.
     }
 \end{figure}
 To solve the Wet-Chicken problem, we first train the dynamics model on batch data sampled from the true dynamics and then optimize neural policies with respect to this dynamics model.
 As the DAGP-based dynamics model is designed to be interpretable, we first discuss how, additionally to a joint posterior, the independent posteriors of its components yield insights about the Wet-Chicken problem.
-We then show how successful policies can be found with less data compared to the model-free NFQ~\parencite{riedmiller_neural_2005} and model-based Bayesian Neural Networks with latent variables (BNN+LV)~\parencite{depeweg_learning_2016}, two approaches which do not makes use of high-level expert knowledge.
-Thirdly, we show how the human-interpretable components of the dynamics models can be used for reward shaping, allowing us to easily formulate a requirement for conservative policies.
+We then show how successful policies can be found with fewer observations compared to the model-free NFQ~\parencite{riedmiller_neural_2005} and model-based Bayesian Neural Networks with latent variables (BNN+LV)~\parencite{depeweg_learning_2016}, two approaches which do not make use of high-level expert knowledge.
+Thirdly, we show how the human-interpretable components of the dynamics models can be used for reward shaping, allowing us to formulate a requirement for conservative policies.
 
 
 \subsubsection{Dynamics model}
 \label{toc:interpretable_rl:dynamics_model}
 The benchmark has two-dimensional state and action spaces from which we sample uniform random transitions with varying $N$ in the range \numrange{100}{5000}.
-For $N \geq 250$, our model is able to identify the underlying dynamics.
+For $N \geq 250$, our model can identify the underlying dynamics.
 In \cref{fig:interpretable_rl:wetchicken:cut} we show the joint predictive posterior of a DAGP-based transition model.
 The different plots show linear cuts through the Wet-Chicken system with respect to the action $a_t = 0$ and $y_t \in \Set{0, 1, 2.5, 4, 5}$.
 The transition model has successfully identified the two modes introduced through flow and drop behaviors and their relative importance.
-These cuts require additional examination to recover new knowledge about the system's behavior.
+These cuts require an additional examination to recover new knowledge about the system's behavior.
 In contrast, the separation of the learning problem in the DAGP-based dynamics model gives us explicit and separate posteriors about the different system components via the independent GP posteriors shown in \cref{fig:interpretable_rl:wetchicken:dynamics}.
 This belief can directly be reasoned about with experts to evaluate the environment in which policies will be trained, raising confidence in their correctness.
 
-While drops can be modelled using a constant noiseless function, the flow speed and heteroscedastic turbulence varies throughout the system.
-For low $y$ the river flows slowly but is very turbulent while for high $y$ the river flows fast but deterministically.
+While drops can be modeled using a constant noiseless function, the flow speed and heteroscedastic turbulence vary throughout the system.
+For low $y$, the river flows slowly but is very turbulent, while for high $y$, the river flows fast but deterministically.
 In the turbulent regime, falling down is possible but not certain for most $x$, while in the flow dominated regime, a drop becomes highly probable under a certain distance from the waterfall.
 Note that even though the turbulence as defined in \cref{toc:interpretable_rl:wetchicken} is independent of $x$, the heteroscedastic noise process has uncovered the implicit dependency for high $x$ as most possible turbulence values lead to falling down and thus assignment to the other mode.
-Similarly, the flow speed shown in \cref{fig:interpretable_rl:wetchicken:speed} is negative in the top left corner.
-This is due to the fact that the flow mode models the position after one step under the condition of not falling.
+Similarly, the flow speed shown in \cref{fig:interpretable_rl:wetchicken:speed} is negative in the top left corner, since the flow mode models the position after one step under the condition of not falling.
 As most turbulence into the direction of the waterfall leads to a drop, the posterior mean is further away from the waterfall as the turbulence dominates the low flow speed on the left side of the river.
 
 
@@ -463,34 +461,34 @@ As most turbulence into the direction of the waterfall leads to a drop, the post
 \end{figure}
 Given a posterior for the dynamics model, we now train a neural policy using probabilistic model rollouts.
 We sample initial states from the training data, use a horizon of $T = 5$ steps and average over $P = 20$ samples with $\gamma = 0.9$.
-We use a two-layer neural network with 20 ReLU-activated units each as our policy parametrization.
+We use a two-layer neural network, with 20 ReLU-activated units each, as our policy parametrization.
 For every state transition, we sample independently from the different model components to generate a sample for the next state using \cref{eq:interpretable_rl:predictions}.
 This incorporates both the stochasticity in the system introduced via heteroscedastic noise and the Bayesian uncertainty about the correct model in the policy search.
 During training, the policy thus implicitly learns to consider the stochasticity of the Wet-Chicken benchmark as different sample-trajectories generate gradients with respect to different realizations of the stochasticity of the Wet-Chicken benchmark.
 \Cref{fig:interpretable_rl:wetchicken:policy} shows how a successful policy has found a trade-off between the unpredictability on the left and the uncontrollable speed on the right.
 
 In Table~\ref{fig:interpretable_rl:wetchicken:table}, we compare policy search based on the DAGP-based dynamics model with a standard GP dynamics model and NFQ.
-We present expected returns for training runs with different amounts of data averaged over 10 experiments together with standard errors.
-A policy applying uniformly random actions yields a return of about \num{1.5} and a return above \num{2.2} indicates that a successful policy has been found.
+We present expected returns for training runs with different amounts of data averaged over ten experiments together with standard errors.
+A policy applying uniformly random actions yields a return of about \num{1.5}, and a return above \num{2.2} indicates that a successful policy has been found.
 We ran NFQ for 20 full model learning and sampling iterations using a neural network with one 10-unit hidden layer with sigmoid activations.
 
 A standard GP cannot model heteroscedastic noise or multi-modality.
-For any point in the input space, the GP can therefore only predict that the agent will always fall down, never fall down or, via very high uncertainties, that any state in system is possible.
+For any point in the input space, the GP can, therefore, only predict that the agent will always fall down, never fall down, or, via very high uncertainties, that any state in the system is possible.
 None of these possibilities represent the dynamics well enough to allow the policy search to derive a policy, illustrating our need for a more structured model.
-For $N \geq 250$, the DAGP-based dynamics model identifies the underlying dynamics well and policies can be found reliably.
+For $N \geq 250$, the DAGP-based dynamics model identifies the underlying dynamics well, and policies can be found reliably.
 
 BNN+LV is a more expressive model that can represent both heteroscedasticity and multi-modality.
-Due to the model's structure however, it is hard to incorporate high-level expert knowledge and therefore, more structure has to be learned from the data.
+Due to the model's structure, however, it is hard to incorporate high-level expert knowledge, and therefore, more structure has to be learned from the data.
 BNN+LV reliably finds good policies for $N \geq 1000$ and sometimes finds good policies for $N = 500$.
 As this approach is model-based and formulates a reasonable general-purpose prior on the dynamics, the results fall between the more informed DAGP, which is successful with less data, and NFQ, which is more uninformed.
 
 NFQ is a model-free approach.
 Instead of learning a dynamics model and using rollouts in that model to find a good policy, NFQ directly models the optimal Q-function and thus the optimal policy.
 A Q-function represents the expected return after taking a specified action in a specified state.
-Since the expected return already takes into account both the heteroscedasticity and multi-modality of the system, the Q-function itself can be modelled with a standard function approximator such as a neural network.
-Thus, no special modeling is needed when applying NFQ to the Wet-Chicken benchmark and given enough data, NFQ is able to find successful policies.
+Since the expected return already takes into account both the heteroscedasticity and multi-modality of the system, the Q-function itself can be modeled with a standard function approximator, such as a neural network.
+Thus, no special modeling is needed when applying NFQ to the Wet-Chicken benchmark and, given enough data, NFQ can find successful policies.
 However, at the same time, not modeling the dynamics explicitly also prevents us from utilizing the high-level expert knowledge we have about the system, thus increasing the required amount of data:
-Using DAGP-based dynamics models, a successful policy can be found with about an order of magnitude less data.
+Using DAGP-based dynamics models, a successful policy can be found with about an order of magnitude fewer observations.
 
 
 \subsubsection{Reward shaping}
@@ -500,7 +498,7 @@ A further advantage of the decomposition of the dynamics model in interpretable 
 In this example, we want to find a more conservative policy which, when compared to \cref{fig:interpretable_rl:wetchicken:policy}, sacrifices some return in order to avoid falling down the waterfall.
 
 Any successful agent has the implicit incentive to avoid drops as they move the canoeist away from the waterfall.
-However, a successful policy still accepts that it will fall down sometimes due to turbulence.
+However, a successful policy still accepts that it will fall sometimes due to turbulence.
 To encourage more conservative behavior, we use a conservative reward
 \begin{align}
     \Fun*{r_\text{cons}}{\mat{s}} =
@@ -512,11 +510,11 @@ For every state, the DAGP-based dynamics model yields an explicit drop-probabili
 The conservative reward punishes a high drop probability reweighed with the maximum original reward $\max_{\mat{s}} r_\text{orig}(\mat{s}) = 5$.
 
 \Cref{fig:interpretable_rl:conservative_wetchicken_policy} shows a resulting conservative policy.
-Such a policy avoids both the turbulent states on the left and the fast flowing states on the right.
+Such a policy avoids both the turbulent states on the left and the fast-flowing states on the right.
 It tries to reach a sweet spot, which, compared to \cref{fig:interpretable_rl:wetchicken:policy}, is further away from the waterfall and therefore safer.
 We compare 10 runs with $N=1000$ observations using the original reward and the conservative reward.
-The resulting conservative policies yield lower return than the more aggressive default policies but reliably reduce drop probabilities as well.
-The interpretable nature of the dynamics models have allowed us to easily influence policy behaviors.
+The resulting conservative policies yield a lower return than the more aggressive default policies but reliably reduce drop probabilities as well.
+The interpretable nature of the dynamics models has allowed us to influence policy behaviors.
 
 
 \subsubsection{Effects of model misspecification}
@@ -583,25 +581,25 @@ The interpretable nature of the dynamics models have allowed us to easily influe
 \end{figure}
 In \cref{toc:interpretable_rl:probabilistic_policy_search} we have formulated a dynamics model informed by high-level expert knowledge.
 One important insight we assumed is the bimodal nature of the Wet-Chicken problem introduced by the waterfall.
-In \cref{toc:interpretable_rl:policy_learning}, we compared our model to standard GPs and showed that modeling multi-modality is critical to solve Wet-Chicken.
+In \cref{toc:interpretable_rl:policy_learning}, we compared our model to standard GPs and showed that modeling multi-modality is critical to solving Wet-Chicken.
 We extend this comparison in this experiment and discuss the effects of model misspecification on our model's performance.
-Specifically, we investigate the case where additional modes are available to dynamics model to solve the underlying data association problem.
+Specifically, we investigate the case where additional modes are available to the dynamics model to solve the underlying data association problem.
 
 \Cref{tab:interpretable_rl:wetchicken:mode_table} shows results for $K \in \Set{1, \dots, 5}$, where $K=1$ is equivalent to standard GPs.
-All models have been trained for the same number of iterations and, for $K > 1$, all models have comparable marginal likelihoods.
-While $250$ data points are enough with $K=2$ to reliably solve the Wet-Chicken problem, more data is needed until working policies can be found with $K>2$ (e.g.\ for $K=5$, double the data was needed until one of the runs found a working policy).
-Most notably, performance fluctuates significantly with mis-specified models for different repetitions of the same experiment and good policies can not be found reliably.
+All models have been trained for the same number of iterations, and, for $K > 1$, all models have comparable marginal likelihoods.
+While $250$ data points are enough with $K=2$ to reliably solve the Wet-Chicken problem, more data is needed until working policies can be found with $K>2$ (for example for $K=5$, double the data was required for one of the runs to find a working policy).
+Most notably, performance fluctuates significantly with misspecified models for different repetitions of the same experiment, and good policies can not be found reliably.
 
 Using the additional modes available, the model can now find representations of the systems where multiple modes jointly represent the river's flow.
 This showcases how data association problems are inherently ill-posed in general~\parencite{barshalom_tracking_1990,cox_review_1993}.
-The additional representative power for $K>2$ introduces symmetries in the optimization landscape which both significantly complicate training~\parencite{lazaro-gredilla_overlapping_2012,minka_expectation_2001} and lead to undesired generalization behavior which is not driven by knowledge about the underlying system.
+The additional representative power for $K>2$ introduces symmetries in the optimization landscape that both complicate training~\parencite{lazaro-gredilla_overlapping_2012,minka_expectation_2001}, and lead to undesired generalization behavior which is not driven by knowledge about the underlying system.
 
 An example for undesired generalization is shown in \cref{fig:interpretable_rl:wetchicken:cut_comparison} which compares two models trained with $K=4$ and $N=2500$.
 While both models explain the overall training data well, the cuts through the system at $y_t = 5$ give an intuition why the first model leads to a successful policy, while the second model does not.
 Both models represent drops via one of the modes and share the remaining three modes to jointly explain the flow behavior.
-In the first model, two alternating modes have learned essentially equivalent models and a third more uninformed mode is almost irrelevant.
+In the first model, two alternating modes have learned essentially equivalent models, and a third more uninformed mode is almost irrelevant.
 The second model is similar, but the uninformed mode's model is closer to the RBF prior and more relevant.
-Note that due to the high noise variance, this choice of model still explains the data only slightly worse.
+Note that due to the high noise variance, this choice of the model still explains the data only slightly worse.
 Still, the second model does not generalize according to the underlying system.
 A significant amount of predictions from the second model are uninformed, leading to the failure of the policy search.
 
@@ -613,20 +611,20 @@ Models for $K=2$ both reliably identify the system using standard optimization m
 \section{Discussion}
 \label{toc:interpretable_rl:conclusion}
 We have presented a Bayesian reinforcement learning model-based on non-parametric Gaussian process priors.
-The model is motivated by the observation that in real world scenarios high-level prior knowledge of the system dynamics is often available.
+The model is motivated by the observation that in real-world scenarios, high-level prior knowledge of the system dynamics is often available.
 We believe that many tasks are characterized by dynamics that can be decomposed into several attributes.
-For example, when a physical structure is excited by a force oscillating at its natural frequency its response will change drastically.
-The approach we have presented is based on learning a modular dynamic model which decomposes this type of transitional behavior into separate components.
+For example, when a physical structure is excited by a force oscillating at its natural frequency, its response will change drastically.
+The approach we have presented is based on learning a modular dynamic model that decomposes this type of transitional behavior into separate components.
 The model learns both the individual components and the underlying structure of how the components interact within the system.
 The use of Gaussian process priors to quantify the uncertainty within components allows us to perform probabilistic policy search.
 
-The interpretable structure of our model facilitates data efficient learning by easily incorporating prior knowledge.
-We showed experimentally how this significantly reduces the data requirements compared to a model free approach.
+The interpretable structure of our model facilitates data-efficient learning by incorporating prior knowledge.
+We showed experimentally how an informed dynamics model reduces the data requirements compared to a model-free approach.
 Furthermore, the same knowledge can be used as a means for directing the policy search by discouraging solutions which exhibit a specific dynamic, such as avoiding falling down the waterfall in the Wet-Chicken benchmark.
 
 The model presented in this chapter is derived from the DAGP model in~\cref{toc:data_association} and therefore shares its limitations.
 Most importantly, the variational approximation which factorizes between layers cannot capture the full Bayesian posterior for ambiguities in the association problem.
 In~\cref{toc:data_association,toc:alignment}, we showed that it is hard to distinguish qualitatively different solutions automatically.
-This is a consequence of the difficulty to formally describe desirable model behavior besides high marginal likelihoods on training or test data.
+This difficulty is a consequence of the difficulty to formally describe desirable model behavior besides high marginal likelihoods on training or test data.
 In this chapter, we presented an approach to achieve this formal description by evaluating models on a reinforcement learning task they are designed to solve.
-A successful model both shows expert-interpretable internal structure and good performance on downstream tasks which depend on a correct representation of the dynamical system.
+A successful model both shows an expert-interpretable internal structure and good performance on downstream tasks that depend on a correct representation of the dynamical system.

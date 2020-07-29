@@ -1,4 +1,5 @@
-\documentclass[tikz,crop]{standalone}
+\documentclass[class=scrreprt,tikz,crop]{standalone}
+\KOMAoptions{fontsize=11pt}
 \input{preamble/tikz_standalone.tex}
 \input{preamble/tikz_colors.tex}
 \input{preamble/tikz_common.tex}
@@ -8,9 +9,9 @@
 \usepackage{enumitem}
 
 \newlength{\figurewidth}
-\setlength{\figurewidth}{170mm}
+\setlength{\figurewidth}{210mm}
 \newlength{\figureheight}
-\setlength{\figureheight}{240mm}
+\setlength{\figureheight}{297mm}
 
 \begin{document}
 \begin{tikzpicture}[x=\figurewidth, y=\figureheight, every node/.style={inner sep=0}]
@@ -34,12 +35,12 @@
     };
     \node[title text, align=center] (title) at ($(grade.north)!0.5!(0.5, 0.9)$) {
     \makeatletter
-    {\huge\bfseries\color{tumblue}\@title}
+    {\Huge\bfseries\color{tumblue}\@title}
 
     \bigskip
     \bigskip
 
-    {\large\bfseries\@author}
+    {\huge\bfseries\@author}
     \makeatother
     };
 

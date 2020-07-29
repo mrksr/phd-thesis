@@ -93,12 +93,12 @@ The transition function $f : (\mat{s}_t, \mat{a}_t) \mapsto \mat{s}_{t+1} = (x_{
     \end{cases}
 \end{align}
 where
-\begin{align}
+\begin{equation}
     \begin{split}
         \hat{x}_{t+1} &= x_t + (1.5 \cdot a_{t, x} - 0.5)  + v_t + b_t \cdot \tau_t, \\
         \hat{y}_{t+1} &= y_t + a_{t, y},
     \end{split}
-\end{align}
+\end{equation}
 and $\tau_t \sim \Fun*{\Uni}{-1, 1}$ is a uniform random variable that represents the turbulence.
 \Cref{fig:interpretable_rl:wetchicken} visualizes the core components of the transition function.
 
@@ -128,12 +128,12 @@ The next state is generated using the (latent) transition function $f$, yielding
 Many environments have stochastic elements, such as the random drift in the Wet-Chicken benchmark from \cref{toc:interpretable_rl:wetchicken}.
 We take this stochasticity into account by interpreting the problem from a Bayesian perspective where the discounted return specifies a generative model whose graphical model is shown in \cref{fig:interpretable_rl:graphical_model:rl}.
 Because of the Markov property assumed in RL, conditional independence between the states yields a recursive definition of the state probabilities given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob{\mat{s}_{t+1} \given f, \mat{\theta}_\pi} &= \int \Prob{\Fun{f}{\mat{s}_t, \mat{a}_t} \given \mat{s}_t, \mat{a}_t} \Prob{\mat{a}_t \given \mat{s}_t, \mat{\theta}_\pi} \Prob{\mat{s}_t} \diff \mat{a}_t \diff \mat{s}_t, \\
         \Prob{r_t \given \mat{\theta}_\pi} &= \int \Prob{\Fun*{r}{\mat{s}_t} \given \mat{s}_t} \Prob{\mat{s}_t \given \mat{\theta}_\pi} \diff \mat{s}_t.
     \end{split}
-\end{align}
+\end{equation}
 With stochasticity or an uncertain transition model, the discounted return becomes uncertain and the goal can be reformulated to optimize the expected return
 \begin{align}
     \Moment*{\E}{\Fun*{J^\pi}{\mat{\theta}_\pi}} = \sum_{t=0}^T \gamma^t \Moment*{\E_{\Prob{\mat{s}_t \given \mat{\theta}_\pi}}}{r_t}.
@@ -176,7 +176,7 @@ Since experts can assess the plausibility of the transition model, successful po
 
 We formulate a graphical model in \cref{fig:interpretable_rl:graphical_model:mdgp} using the DAGP model from~\cref{toc:data_association}, which allows us to handle the multi-modality introduced by falling down the waterfall and extend it to handle the heteroscedastic properties of the problem.
 We specify this separation via the marginal likelihood
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:interpretable_rl:true_marginal_likelihood}
         &\Prob*{\mat{s}_{t+1} \given \mat{\hat{s}}_t} =
@@ -187,10 +187,10 @@ We specify this separation via the marginal likelihood
         \Prob*{\mat{f}_t \given \mat{\hat{s}}_t}
         \diff \mat{\sigma}_t \diff \mat{l}_t \diff \mat{f}_t,
     \end{split}
-\end{align}
+\end{equation}
 where $\mat{f}_t = \left( \mat{f}_t^{\pix{1}}, \dots, \mat{f}_t^{\pix{K}} \right)$.
 The marginal likelihood consists of the two GPs $\Prob*{\mat{\sigma}_t \given \mat{\hat{s}}_t}$ and $\Prob*{\mat{f}_t \given \mat{\hat{s}}_t}$ and the two likelihoods
-\begin{align}
+\begin{equation}
     \begin{split}
         &\Prob*{\mat{s}_{t+1} \given \mat{\sigma}_t, \mat{f}_t, \mat{l}_t} =
         \prod_{k=1}^K
@@ -199,7 +199,7 @@ The marginal likelihood consists of the two GPs $\Prob*{\mat{\sigma}_t \given \m
         &\qquad\qquad\Prob*{\mat{l}_t \given \mat{\hat{s}}_t} =
         \int \Multinomial*{\mat{l}_t \given \Fun{\softmax}{\mat{\lambda}_t}} \Prob*{\mat{\lambda}_t \given \mat{\hat{s}}_t} \diff \rv{\lambda}_t
     \end{split}
-\end{align}
+\end{equation}
 where $\Multi$ denotes a multinomial distribution.
 These likelihood describe the regression and classification tasks implied by the problem respectively:
 In our case, we use $K = 2$ modes, one for staying in the river and one for falling down the waterfall.
@@ -217,7 +217,7 @@ which introduces variational inducing inputs and outputs $\mat{U}$ as described 
 These inducing inputs independently characterize the respective model parts and enable us to do inference via stochastic optimization.
 
 The variational parameters are optimized by minimizing a lower bound to the marginal likelihood which can be efficiently computed via sampling and enables stochastic optimization.
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:interpretable_rl:variational_bound}
         \Lc_{\text{DAGP}} &= \Moment*{\E_{\Variat*{\mat{F}, \mat{\lambda}, \mat{\sigma}, \mat{U}}}}{\log\frac{\Prob*{\mat{S}^\prime, \mat{F}, \mat{\lambda}, \mat{\sigma}, \mat{U} \given \mat{\hat{S}}}}{\Variat*{\mat{F}, \mat{\lambda}, \mat{\sigma}, \mat{U}}}} \\
@@ -227,11 +227,11 @@ The variational parameters are optimized by minimizing a lower bound to the marg
         &\quad
         - \sum_{k=1}^K \KL{\Variat*{\mat{u}^{\pix{k}}, \mat{u}_\lambda^{\pix{k}}, \mat{u}_\sigma}^{\pix{k}}}{\Prob*{\mat{u}^{\pix{k}}, \mat{u}_\lambda^{\pix{k}}, \mat{u}_\sigma}^{\pix{k}}}
     \end{split}
-\end{align}
+\end{equation}
 
 We obtain an explicit representation of the GP posteriors during variational inference, which allows us to efficiently propagate samples through the model to simulate trajectories used for policy search.
 Predictions for an unknown state $\mat{\hat{s}}_\ast$ are mixtures of $K$ independent Gaussians given by,
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:interpretable_rl:predictions}
         \Variat{\mat{s}^\prime_\ast \given \mat{\hat{s}}_\ast}
@@ -239,7 +239,7 @@ Predictions for an unknown state $\mat{\hat{s}}_\ast$ are mixtures of $K$ indepe
         &= \int \sum_{k=1}^K \Variat{l_\ast^{\pix{k}} \given \mat{\hat{s}}_\ast} \Variat{\mat{s}_\ast^{\prime\pix{k}} \given \mat{f}_\ast^{\pix{k}} \mat{\sigma}_\ast^{\pix{k}}} \Variat{\mat{f}_\ast^{\pix{k}}, \mat{\sigma}_\ast^{\pix{k}} \given \mat{\hat{s}}_\ast} \diff \mat{l}_\ast \diff \mat{f}_\ast \diff \mat{\sigma}_\ast \\
         &\approx \sum_{k=1}^K \tilde{l}_\ast^{\pix{k}} \mat{\tilde{s}}_\ast^{\prime\pix{k}}.
     \end{split}
-\end{align}
+\end{equation}
 We sample from the assignment process $\mat{l}_\ast$ and heteroscedastic noise process $\mat{\sigma}_\ast$.
 The $K$ predictive posteriors $\Variat{\mat{s}_\ast^{\prime\pix{k}} \given \mat{f}_\ast^{\pix{k}} \mat{\sigma}_\ast^{\pix{k}}}$ are then given by $K$ independent shallow GPs and can be computed analytically.
 

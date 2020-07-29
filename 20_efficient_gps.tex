@@ -21,18 +21,18 @@ A multivariate Gaussian $\mat{x} \sim \Gaussian{\mat{\mu}, \mat{\Sigma}}$ descri
 Every such element $\rv{x}_i$ is normally distributed according to $\rv{x}_i \sim \Gaussian{\mu_i, \Sigma_{ii}}$ and every linear combination of the $\mat{x}_i$ is also normally distributed~\parencite{astrom_introduction_1971}.
 For every pair $(\rv{x}_i, \rv{x}_j)$, their covariance is given by $\Moment{\cov}{\rv{x}_i, \rv{x}_j} = \mat{\Sigma}_{ij}$.
 The probability density of $\mat{x}$ is given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gaussian_pdf}
         \Prob*{\mat{x}}
         &= \Gaussian{\mat{x} \given \mat{\mu}, \mat{\Sigma}} \\
         &= \frac{1}{\sqrt{\det(2\pi\mat{\Sigma})}}\Fun*{\exp}{-\frac{1}{2}(\mat{x} - \mat{\mu})\tran \mat{\Sigma}\inv (\mat{x} - \mat{\mu})}.
     \end{split}
-\end{align}
+\end{equation}
 
 Multivariate Gaussians have several convenient closure properties~\parencite{astrom_introduction_1971}.
 Assume a split $\mat{x} = (\mat{x}_1, \mat{x}_2)$ into two partial vectors and denote
-\begin{align}
+\begin{equation}
     \begin{split}
         \begin{pmatrix}
             \mat{x}_1 \\
@@ -49,19 +49,19 @@ Assume a split $\mat{x} = (\mat{x}_1, \mat{x}_2)$ into two partial vectors and d
             \end{pmatrix}
         }
     \end{split}
-\end{align}
+\end{equation}
 the same split of the mean vector $\mat{\mu}$ and covariance matrix $\mat{\Sigma}$.
 Then, the marginal distribution of $\mat{x}_1$ is also a Gaussian with
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gaussian_marginal}
         \Prob*{\mat{x}_1}
         &= \int \Prob*{\mat{x}_1, \mat{x}_2} \diff \mat{x}_2 \\
         &= \Gaussian{\mat{\mu}_1, \mat{\Sigma}_1}
     \end{split}
-\end{align}
+\end{equation}
 and the conditional of $\mat{x}_1$ given $\mat{x}_2$ is a Gaussian as well with
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gaussian_conditional}
         \Prob*{\mat{x}_1 \given \mat{x}_2}
@@ -73,7 +73,7 @@ and the conditional of $\mat{x}_1$ given $\mat{x}_2$ is a Gaussian as well with
         &= \mat{\Sigma}_{11} - \mat{\Sigma}_{21} \mat{\Sigma}\inv_{22} \mat{\Sigma}_{12} \\
         &= \mat{\Sigma}_{11} - \mat{\Sigma}\tran_{12} \mat{\Sigma}\inv_{22} \mat{\Sigma}_{12}.
     \end{split}
-\end{align}
+\end{equation}
 
 Modeling functions over infinite sets requires an infinite number of random variables, one for every function value.
 Such structure of a number of possibly dependent random variables mapping from the same probability space to the same value space is called a stochastic process and is represented via a function.
@@ -131,13 +131,13 @@ Sampling a trajectory from $\rv{X}$ corresponds to sampling one possible functio
 
 Similar to the finite case, the random variables share a dependency structure.
 Instead of a mean vector $\mat{\mu}$ and a covariance matrix $\mat{\Sigma}$, a Gaussian process is completely determined by a mean function $\mu(a) = \Moment{\E}{f(a)}$ and a covariance function
-\begin{align}
+\begin{equation}
     \begin{split}
         \K(a, a^\prime) &\coloneqq \Moment{\E}{(f(a) - \mu(a))(f(a^\prime) - \mu_f(a^\prime))} \\
         &= \Moment{\cov}{f(a), f(a^\prime)} \\
         &= \Moment{\cov}{\rv{X}_a, \rv{X}_{a^\prime}}
     \end{split}
-\end{align}
+\end{equation}
 with $a, a^\prime \in A$.
 The mean function encodes the point-wise mean over all trajectories that could be sampled from $\rv{X}$.
 The covariance function is also called a kernel and describes the interaction between different parts of the function.
@@ -206,12 +206,12 @@ According to the definition of GPs, for any two input numbers $x$, $y \in \Rb$ t
         \end{bmatrix}}.
 \end{align}
 Assuming that both $x$ and $y$ are not equal to zero, the correlation coefficient $\rho$ of these two variables is given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \Moment{\rho}{\rv{f}_x, \rv{f}_y} &= \frac{\Moment{\cov}{\rv{f}_x, \rv{f}_y}}{\sqrt{\Moment{\var}{\rv{f}_x\vphantom{\rv{f}_y}}}\sqrt{\Moment{\var}{\rv{f}_y}}} \\
         &= \frac{\K(x, y)}{\sqrt{\K(x, x)} \sqrt{\K(y, y)}} = \frac{xy}{\sqrt{\vphantom{y^2}x^2}\sqrt{\vphantom{y^2}y^2}} \in \left\{ -1, 1 \right\}.
     \end{split}
-\end{align}
+\end{equation}
 A correlation coefficient of plus or minus one implies that the value of one of the random variables is a linear function of the other.
 Any function drawn from this Gaussian process, such as the ones shown in \cref{fig:gp:gp_samples:linear}, is, therefore, a linear function.
 This observation generalizes to higher dimensions \cite{rasmussen_gaussian_2006}.
@@ -285,9 +285,9 @@ The most important stationary kernel is the squared exponential kernel.
 \begin{definition}[Squared Exponential Kernel]
     \label{def:gp:rbf_kernel}
     For a finite dimensional euclidean vector space $\Rb^d$, the squared exponential kernel or RBF kernel is defined as
-    \begin{align}
+    \begin{equation}
         \K_{\text{SE}}(\mat{x}, \mat{y}) \coloneqq \sigma_f^2 \cdot \exp\!\left( -\frac{1}{2} (\mat{x} - \mat{y})\tran \mat{\Lambda}^{-1} (\mat{x} - \mat{y}) \right).
-    \end{align}
+    \end{equation}
     The parameter $\sigma_f^2 \in \Rb_{>0}$ is called the signal variance and $\mat{\Lambda} = \diag(l_1^2, \dots, l_d^2)$ is a diagonal matrix of the squared length scales $l_i \in \Rb_{>0}$.
 \end{definition}
 The similarity of two data points approaches one when they are close together and for larger distances approaches zero with exponential drop off.
@@ -311,28 +311,28 @@ While GPs with an RBF kernel return to the prior away from data yielding predict
 To use Gaussian processes for regression, observations need to be combined with a Gaussian process prior $f \sim \GP\Cond{\mat{0}, \K}$ to obtain a predictive posterior.
 We assume Gaussian noise $\epsilon \sim \Gaussian{0, \sigma^2}$ with $\mat{y}_n = f(\mat{x}_n) + \epsilon$ and denote the $N$ observations as $\mat{X} = (\mat{x}_1, \dots, \mat{x}_N)$ and $\mat{y} = (\mat{y}_1, \dots, \mat{y}_N)$.
 The likelihood of the observations given the latent function values $\mat{f}$ is given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob{\mat{y} \given f, \mat{X}, \sigma}
         = \Prob{\mat{y} \given \mat{f}, \sigma}
         &= \prod_{n = 1}^N \Gaussian{\mat{y}_n \given \mat{f}_n, \sigma^2} \\
         &= \Gaussian{\mat{y} \given \mat{f}, \sigma^2 \Eye}.
     \end{split}
-\end{align}
+\end{equation}
 Given a vector of hyper-parameters $\mat{\theta}$, the definition of Gaussian processes yields a joint Gaussian distribution for the latent function values $\mat{f}$ given by
 \begin{align}
     \Prob{\mat{f} \given \mat{X}, \mat{\theta}} = \Gaussian*{\mat{f} \given \mat{0}, \mat{K}_{\mat{f}\mat{f}}}
 \end{align}
 where $\mat{K}_{\mat{f}\mat{f}} = \K(\mat{X}, \mat{X})$ denotes the Gram matrix of the observed data.
 Combining the two distributions according to the law of total probability yields the probability distribution of the outputs conditioned on the inputs and is given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gp:gp_marginal_likelihood}
         \Prob{\mat{y} \given \mat{X}, \mat{\theta}} &= \int \Prob{\mat{y} \given \mat{f}} \Prob{\mat{f} \given \mat{X}, \mat{\theta}} \diff \mat{f} \\
         &= \int \Gaussian{\mat{y} \given \mat{f}, \sigma^2 \Eye} \Gaussian*{\mat{f} \given \mat{0}, \mat{K}_{\mat{f}\mat{f}}} \diff \mat{f} \\
         &= \Gaussian{\mat{y} \given \mat{0}, \mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye}.
     \end{split}
-\end{align}
+\end{equation}
 Note that this distribution is obtained by integrating over all possible latent function values $\mat{f}$ and thereby taking all possible function realizations into account.
 The closed-form solution of the integral is obtained using well-known results about Gaussian distributions, wich are, for example, detailed in \cite{petersen_matrix_2008}.
 
@@ -392,7 +392,7 @@ The predictive posterior for the test outputs $\mat{f}_\ast$ can therefore be di
     \label{lem:gp:gp_posterior}
     Given a latent function with a Gaussian process distribution $f \sim \GP(\mat{0}, \K)$ and $N$ training points $\mat{X}$ with noisy observations of the form $\mat{y} = f(\mat{X}) + \Gaussian{\mat{0}, \sigma^2 \Eye}$.
     The predictive posterior $\mat{f}_\ast$ of the test points $\mat{X}_\ast$ is then given by
-    \begin{align}
+    \begin{equation}
         \begin{split}
             \Prob{\mat{f}_\ast \given \mat{X}, \mat{y}, \mat{X}_\ast}
             &= \Gaussian*{\mat{f}_\ast \given \mat{\mu}_\ast, \mat{\Sigma}_\ast} \text{, where} \\
@@ -401,18 +401,18 @@ The predictive posterior for the test outputs $\mat{f}_\ast$ can therefore be di
             \mat{\Sigma}_\ast
             &= \mat{K}_{\ast\ast} - \mat{K}_{\ast \mat{f}} \left( \mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye \right)\inv \mat{K}_{\mat{f}\ast}.
         \end{split}
-    \end{align}
+    \end{equation}
 \end{lemma}
 
 This predictive posterior makes it possible to evaluate the function approximation based on the input at arbitrary points in the input space.
 Since any set of these points always has a joint Gaussian distribution, the predictive posterior defines a new Gaussian process, the posterior Gaussian process, given the observations.
 This posterior process $\GP(\mu_\text{post}, \K_\text{post})$ has new mean and covariance functions given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \mu_\text{post}(\mat{a}) &= \K(\mat{a}, \mat{X}) \left(\mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye \right)\inv \mat{y} \\
         \K_\text{post}(\mat{a}, \mat{b}) &= \K(\mat{a}, \mat{b}) - \K(\mat{a}, \mat{X}) \left( \mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye \right)\inv \K(\mat{X}, \mat{b}).
     \end{split}
-\end{align}
+\end{equation}
 Note that the posterior mean function is not necessarily the constant zero function.
 \Cref{fig:gp:gp_posterior} shows samples from a pair of prior and posterior Gaussian processes with an RBF kernel.
 
@@ -428,7 +428,7 @@ In the previous section, we derived the posterior GP given constant hyper-parame
 In this case, Gaussian processes models do not have to be trained or optimized at all as the posterior GP can be computed analytically.
 Usually, however, the correct choice of hyper-parameters is not clear a priori.
 In a fully Bayesian setup we place a prior on the hyper-parameters $\Prob{\mat{\theta}}$ and marginalize it to derive the dependent distributions
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gp:theta_posterior_integration}
         \Prob{f}
@@ -436,7 +436,7 @@ In a fully Bayesian setup we place a prior on the hyper-parameters $\Prob{\mat{\
         \Prob{\mat{y} \given \mat{X}}
         & = \int \Prob{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{X}, \mat{\theta}} \Prob{\mat{\theta}} \diff \mat{f} \diff \mat{\theta}.
     \end{split}
-\end{align}
+\end{equation}
 Updating the belief about the distribution of the hyper-parameters then becomes part of calculating the posterior using Bayes' theorem.
 However, the integration required in \cref{eq:gp:theta_posterior_integration} is expensive as no closed form solution exists.
 While true posteriors can be obtained for GPs with few observations such as in Bayesian optimization or probabilistic numerics contexts~\parencite{shahriari_taking_2016,oates_modern_2019}, the required calculations are often not tractable for larger problems.
@@ -444,25 +444,25 @@ While true posteriors can be obtained for GPs with few observations such as in B
 A common approximation is to use maximum-a-posteriori point-estimates instead.
 These estimates are obtained by maximizing $\Prob{\mat{\theta} \given \mat{X}, \mat{y}}$.
 This posterior is proportional to the numerator of Bayes' theorem and given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob{\mat{\theta} \given \mat{X}, \mat{y}}
         &\propto \Prob*{\mat{\theta}} \Prob{\mat{y} \given \mat{X}, \mat{\theta}} \\
         &= \int \Prob*{\mat{\theta}}\Prob{\mat{y} \given \mat{f}, \mat{\theta}} \Prob{\mat{f} \given \mat{X}, \mat{\theta}} \diff \mat{f}.
     \end{split}
-\end{align}
+\end{equation}
 If $\Prob*{\mat{\theta}}$ is set to a flat distribution, the prior term vanishes and only the likelihood term remains.
 Choosing hyper-parameters by maximizing the likelihood term is called a type II maximum likelihood estimate.
 
 The marginal likelihood is the integral of the product of Gaussians in~\cref{eq:gp:gp_marginal_likelihood} given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob{\mat{y} \given \mat{X}, \mat{\theta}}
         &= \Gaussian{\mat{y} \given \mat{0}, \mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye}.
     \end{split}
-\end{align}
+\end{equation}
 Instead of maximizing the marginal likelihood directly, it is numerically convenient to minimize the negative logarithm of the likelihood
-\begin{align}
+\begin{equation}
     \begin{split}
         \Lc(\mat{\theta}) &= -\log\Prob{\mat{y} \given \mat{X}, \mat{\theta}} \\
         &=
@@ -470,7 +470,7 @@ Instead of maximizing the marginal likelihood directly, it is numerically conven
         \frac{1}{2} \log \abs*{\mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye} +
         \frac{N}{2} \log(2\pi).
     \end{split}
-\end{align}
+\end{equation}
 Since the logarithm is a monotonous function it does not change the position of optima.
 The maximum likelihood estimate is the solution of the optimization problem
 \begin{align}
@@ -510,7 +510,7 @@ with $\mat{K}_{\mat{u}\mat{u}} = \K(\mat{Z}, \mat{Z})$ denoting the Gram matrix 
 
 The true data set is independent given the latent function $f$ and can be assumed independent given the inducing data set if it represents $f$ well.
 The likelihood of the original data under the Gaussian process trained on the inducing data set is given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob{\mat{y} \given \mat{X}, \mat{Z}, \mat{u}, \mat{\theta}}
         &= \prod_{n=1}^N \Prob{\mat{y}_n \given \mat{x}_n, \mat{Z}, \mat{u}, \mat{\theta}} \\
@@ -527,7 +527,7 @@ The likelihood of the original data under the Gaussian process trained on the in
         \Fun{\diag}{\mat{K}_{\mat{f}\mat{f}} - \mat{Q}_{\mat{f}\mat{f}}} + \sigma^2\Eye
         }
     \end{split}
-\end{align}
+\end{equation}
 with $\mat{Q}_{\mat{f}\mat{f}} \coloneqq \mat{K}_{\mat{f} \mat{u}} \mat{K}_{\mat{u}\mat{u}}\inv\mat{K}_{\mat{u} \mat{f}}$.
 
 Since the inducing variables $\mat{u}$ are latent function values, the original GP prior for $f$ is a reasonable prior for their values given by
@@ -535,14 +535,14 @@ Since the inducing variables $\mat{u}$ are latent function values, the original 
     \Prob*{\mat{u} \given \mat{Z}} = \Gaussian{\mat{u} \given \mat{0}, \mat{K}_{\mat{u}\mat{u}}}.
 \end{align}
 Using this prior, the inducing variables can be marginalized through an integral of a product of Gaussians in
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob*{\mat{y} \given \mat{X}, \mat{Z}}
         &= \int \Prob*{\mat{y} \given \mat{X}, \mat{Z}, \mat{u}} \Prob*{\mat{u} \given \mat{Z}} \diff \mat{u} \\
         &= \int \Prob*{\mat{y} \given \mat{X}, \mat{Z}, \mat{u}} \Gaussian{\mat{u} \given \mat{0}, \mat{K}_{\mat{u}\mat{u}}} \diff \mat{u} \\
         &= \Gaussian{\mat{y} \given \mat{0}, \mat{Q}_{\mat{f}\mat{f}} + \Fun{\diag}{\mat{K}_{\mat{f}\mat{f}} - \mat{Q}_{\mat{f}\mat{f}}}},
     \end{split}
-\end{align}
+\end{equation}
 dropping the conditioning on $\mat{\theta}$ for notational simplicity.
 Due to the conditional independence assumption of the data given the inducing variables, this formulation is called the fully independent training conditional (FITC) and was introduced by \citeauthor{snelson_sparse_2005}~\parencite{snelson_sparse_2005,snelson_flexible_2007}.
 
@@ -575,17 +575,17 @@ Due to the conditional independence assumption of the data given the inducing va
 This approximate marginal likelihood can be interpreted as the marginal likelihood of a specific GP defined on the original data set $(\mat{X}, \mat{y})$.
 In this GP, the original kernel $\K$ is replaced by the kernel $\K_{\text{FITC}}$.
 With $\Ind$ denoting the indicator function, it is defined as
-\begin{align}
+\begin{equation}
     \begin{split}
         \Qc(\mat{a}, \mat{b}) &\coloneqq \mat{K}_{\mat{a}\mat{u}} \mat{K}_{\mat{u}\mat{u}}\inv\mat{K}_{\mat{u}\mat{b}} \\
         \K_{\text{FITC}}(\mat{a}, \mat{b}) &\coloneqq \Qc(\mat{a}, \mat{b}) + \Indicator{\mat{a} = \mat{b}} \left( \K(\mat{a}, \mat{b}) - \Qc(\mat{a}, \mat{b}) \right).
     \end{split}
-\end{align}
+\end{equation}
 This kernel is equal to $\K$ when both arguments are identical and equal to $\Qc$ everywhere else.
 For well-chosen inducing inputs, $\mat{Q}_{\mat{f}\mat{f}}$ is a low-rank approximation of $\mat{K}_{\mat{f}\mat{f}}$~\parencite{snelson_flexible_2007}.
 The inducing inputs $\mat{Z}$ are hidden in the kernel matrix $\mat{K}_{\mat{u}\mat{u}}$ and are additional hyper-parameters to this kernel.
 The predictive posterior $\mat{f}_\ast$ of the test points $\mat{X}_\ast$ is then given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob{\mat{f}_\ast \given \mat{X}_\ast, \mat{X}, \mat{y}, \mat{Z}}
         &= \Gaussian*{\mat{f}_\ast \given \mat{\mu}_\ast, \mat{\Sigma}_\ast} \text{, where} \\
@@ -594,11 +594,11 @@ The predictive posterior $\mat{f}_\ast$ of the test points $\mat{X}_\ast$ is the
         \mat{\Sigma}_\ast
         &= \mat{K}_{\ast\ast} - \mat{Q}_{\ast \mat{f}} \left( \mat{Q}_{\mat{f}\mat{f}} + \diag(\mat{K}_{\mat{f}\mat{f}} - \mat{Q}_{\mat{f}\mat{f}}) + \sigma^2 \Eye \right)\inv \mat{Q}_{\mat{f} \ast}.
     \end{split}
-\end{align}
+\end{equation}
 and $\mat{Q}_{\mat{f}\mat{f}} \coloneqq \mat{K}_{\mat{f} \mat{u}} \mat{K}_{\mat{u}\mat{u}}\inv\mat{K}_{\mat{u} \mat{f}}$ obtained by inserting the kernel definition into~\cref{lem:gp:gp_posterior}.
 This formulation of the predictive posterior for the FITC approximation still requires the inversion of matrices of size $N \times N$ and therefore does not offer computational improvements.
 Using the matrix inversion lemma \cite{petersen_matrix_2008}, they can be rewritten in the form
-\begin{align}
+\begin{equation}
     \begin{split}
         \mat{\mu}_\ast
         &= \mat{K}_{\ast \mat{u}}\mat{B}\inv \mat{K}_{\mat{u}\mat{f}}\left(\Fun{\diag}{\mat{K}_{\mat{f}\mat{f}} - \mat{Q}_{\mat{f}\mat{f}}} + \sigma^2\Eye\right)\inv \mat{y} \\
@@ -607,7 +607,7 @@ Using the matrix inversion lemma \cite{petersen_matrix_2008}, they can be rewrit
         \mat{B}
         &= \mat{K}_{\mat{u}\mat{u}} + \mat{K}_{\mat{u}\mat{f}} \left(\Fun{\diag}{\mat{K}_{\mat{f}\mat{f}} - \mat{Q}_{\mat{f}\mat{f}}} + \sigma^2\Eye\right)\inv \mat{K}_{\mat{f}\mat{u}},
     \end{split}
-\end{align}
+\end{equation}
 which only involves the inversion of $M \times M$ matrices and one diagonal $N \times N$ matrix.
 Implemented this way, the calculation of all terms independent of the test points has a complexity of $\Oh(NM^2)$ and predicting individual means and variances takes $\Oh(M)$ and $\Oh(M^2)$ time respectively.
 The space requirement also drops to $\Oh(M^2)$.
@@ -639,14 +639,14 @@ More formally, we consider the predictive posterior of the augmented GP containi
 where we drop the conditioning on $\mat{X}$ and $\mat{Z}$ for notational simplicity.
 We adopt this convention for the rest of this chapter.
 The inducing observations are optimal if $\mat{f^\ast}$ and $\mat{f}$ are independent given $\mat{u}$ in
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob*{\mat{f^\ast} \given \mat{f}, \mat{u}}
         & = \Prob*{\mat{f^\ast} \given \mat{u}}                           \\
         \Prob*{\mat{f}, \mat{u} \given \mat{y}}
         & = \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u} \given \mat{y}}.
     \end{split}
-\end{align}
+\end{equation}
 In this case, $\mat{u}$ is said to be a sufficient statistic for $\mat{f}$, capturing all information contained in the latter.
 In practice, it is hard to find $(\mat{Z}, \mat{u})$ that are indeed a sufficient statistic for $\mat{f}$.
 We will approximate this situation with a variational distribution $\Variat*{\mat{f}, \mat{u}}$, thereby formulating a variational approximation to the original GP.
@@ -657,7 +657,7 @@ Due to the joint Gaussian distribution in~\cref{eq:gp:augmented_model}, it is co
 \end{align}
 where $\Prob*{\mat{f} \given \mat{u}}$ is a standard Gaussian conditional.
 Assuming $\mat{u}$ is indeed a sufficient statistic for $\mat{f}$, the variational predictive posterior reduces to
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gp:sgpr_predictive_posterior}
         \Variat*{\mat{f^\ast}}
@@ -665,7 +665,7 @@ Assuming $\mat{u}$ is indeed a sufficient statistic for $\mat{f}$, the variation
         & = \int \Prob*{\mat{f^\ast} \given \mat{u}} \Prob*{\mat{f} \given \mat{u}} \Variat*{\mat{u}} \diff \mat{f} \diff \mat{u} \\
         & = \int \Prob*{\mat{f^\ast} \given \mat{u}} \Variat*{\mat{u}} \diff \mat{u}.
     \end{split}
-\end{align}
+\end{equation}
 To formulate a variational lower bound on the original marginal likelihood $\Lc^{\text{GP}}$ in~\cref{eq:gp:gp_marginal_likelihood}, we have to decide how to choose $\mat{Z}$ and $\Variat*{\mat{u}}$ such that as much information of $\mat{f}$ is captured as possible.
 We will discuss two approaches.
 First, we derive the optimal choice of $\Variat*{\mat{u}}$ given a set of inducing inputs $\mat{Z}$.
@@ -673,23 +673,23 @@ Because calculating this optimal choice is computationally expensive, we will th
 
 \subsubsection{Optimal inducing outputs}
 We assume a free-form variational distribution $\Variat*{\mat{u}}$ to derive the variational lower bound to the likelihood $\Lc^{\text{SGPR}}$ of the augmented model.
-\begin{align}
+\begin{equation}
     \begin{split}
         \Lc^{\text{SGPR}}(\mat{\theta}, \mat{Z}, \Variat*{\mat{u}})
         & = -\log \Prob*{\mat{y} \given \mat{\theta}, \mat{Z}, \Variat*{\mat{u}}}                                                                                                                                                       \\
         & = -\log \int \Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}} \diff \mat{f} \diff \mat{u}                                                                                                        \\
         & = -\log \int \Variat*{\mat{f}, \mat{u}} \frac{\Prob*{\mat{y} \given \mat{f}} \Prob*{\mat{f} \given \mat{u}} \Prob*{\mat{u}}}{\Variat*{\mat{f}, \mat{u}}} \diff \mat{f} \diff \mat{u}.
     \end{split}
-\end{align}
+\end{equation}
 We bound the likelihood using Jensen's inequality~\parencite{bishop_christoph_pattern_2007} which states that for convex functions $f$ and integrable functions $g$ it holds that
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:jensens_inequality}
         \Fun*{f\,}{\int g(x) \diff x} \leq \int f(g(x)) \diff x.
     \end{split}
-\end{align}
+\end{equation}
 Since the natural logarithm is concave we have
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gp:sgpr_bound_1}
         \Lc^{\text{SGPR}}(\mat{\theta}, \mat{Z}, \Variat*{\mat{u}})
@@ -700,11 +700,11 @@ Since the natural logarithm is concave we have
         & = -\int \Variat*{\mat{u}} \left( \Moment*{\E_{\Prob*{\mat{f} \given \mat{u}}}}{\log \Prob*{\mat{y} \given \mat{f}}} + \log\frac{\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \right) \diff \mat{u} \\
         & = \Moment*{\E_{\Variat{\mat{f}}}}{\log \Prob*{\mat{y} \given \mat{f}}} - \KL*{\Variat*{\mat{u}}}{\Prob*{\mat{u}}},
     \end{split}
-\end{align}
+\end{equation}
 dropping the conditioning on $\mat{\theta}$ and $\mat{Z}$.
 We assume a Gaussian likelihood $\Prob*{\mat{y} \given \mat{f}} = \Gaussian{\mat{y} \given \mat{f}, \sigma_n^2\Eye}$.
 The expectation of the log-likelihood can be evaluated analytically~\parencite{petersen_matrix_2008} and is given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gp:expected_log_likelihood}
         \Moment*{\E_{\Prob*{\mat{f} \given \mat{u}}}}{\log \Prob*{\mat{y} \given \mat{f}}}
@@ -713,10 +713,10 @@ The expectation of the log-likelihood can be evaluated analytically~\parencite{p
         &= \log \Gaussian*{\mat{y} \given \mat{K_{fu}} \mat{K_{uu}}\inv \mat{u}, \sigma_n^2\Eye} - \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
         &= \log G(\mat{u}) - \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}},
     \end{split}
-\end{align}
+\end{equation}
 where we set $G(\mat{u}) = \Gaussian*{\mat{y} \given \mat{K_{fu}} \mat{K_{uu}}\inv \mat{u}, \sigma_n^2\Eye}$, remember $\mat{Q_{ff}} = \mat{K_{fu}} \mat{K_{uu}}\inv \mat{K_{uf}}$ and $\tr(\mat{M})$ denotes the trace of the matrix $\mat{M}$.
 Inserting~\cref{eq:gp:expected_log_likelihood} into~\cref{eq:gp:sgpr_bound_1} yields
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gp:sgpr_bound_2}
         \Lc^{\text{SGPR}}(\mat{\theta}, \mat{Z}, \Variat*{\mat{u}})
@@ -724,17 +724,17 @@ Inserting~\cref{eq:gp:expected_log_likelihood} into~\cref{eq:gp:sgpr_bound_1} yi
         &= -\int \Variat*{\mat{u}} \left( \log G(\mat{u}) - \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} + \log\frac{\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \right) \diff \mat{u} \\
         &= -\int \Variat*{\mat{u}} \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}}.
     \end{split}
-\end{align}
+\end{equation}
 
 The distribution $\Variat*{\mat{u}}$ is chosen optimally if it maximizes the variational bound $\Lc^{\text{SGPR}}$ in
-\begin{align}
+\begin{equation}
     \begin{split}
         \MoveEqLeft\argmax_{\Variat*{\mat{u}}}\Lc^{\text{SGPR}}(\mat{\theta}, \mat{Z}, \Variat*{\mat{u}})                                                                                             \\
         & = \argmax_{\Variat*{\mat{u}}} -\int \Variat*{\mat{u}} \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
         & = \argmax_{\Variat*{\mat{u}}} -\int \Variat*{\mat{u}} \log\frac{G(\mat{u})\Prob*{\mat{u}}}{\Variat*{\mat{u}}} \diff \mat{u}                                                                \\
         & = \argmin_{\Variat*{\mat{u}}} \KL*{\Variat*{\mat{u}}}{G(\mat{u})\Prob*{\mat{u}}},
     \end{split}
-\end{align}
+\end{equation}
 where $\KL{\q)}{\p}$ denotes the Kullback-Leibler divergence.
 This divergence is minimized if $\q$ and $\p$ are proportional and $G(\mat{u})\Prob*{\mat{u}}$ is a product of Gaussians
 \begin{align}
@@ -743,7 +743,7 @@ This divergence is minimized if $\q$ and $\p$ are proportional and $G(\mat{u})\P
 \end{align}
 where $\Prob*{\mat{u}}$ is due to the GP prior in~\cref{eq:gp:augmented_model}.
 Since the product of two Gaussian densities is an un-normalized Gaussian density, the optimal choice $\q^\ast(\mat{u})$ is a Gaussian given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gp:sgpr_optimal_q}
         \q^\ast(\mat{u})
@@ -756,9 +756,9 @@ Since the product of two Gaussian densities is an un-normalized Gaussian density
         \mat{B}
         & = \mat{K_{uu}} + \sigma_n^{-2} \mat{K_{uf}}\mat{K_{fu}}.
     \end{split}
-\end{align}
+\end{equation}
 Inserting $\q^\ast$ into~\cref{eq:gp:sgpr_bound_2} yields the final bound
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gp:sgpr_bound}
         \Lc^{\text{SGPR}}(\mat{\theta}, \mat{Z})
@@ -768,7 +768,7 @@ Inserting $\q^\ast$ into~\cref{eq:gp:sgpr_bound_2} yields the final bound
         &= -\log \int G(\mat{u}) \Prob*{\mat{u}} \diff \mat{u} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
         &= -\log \Gaussian*{\mat{y} \given \mat{0}, \mat{Q_{ff}} + \sigma_n^2\Eye} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}},
     \end{split}
-\end{align}
+\end{equation}
 which can be maximized to jointly find hyper-parameters $\mat{\theta}$ and the variational parameters $\mat{Z}$.
 Evaluating this bound takes $\Oh(NM^2)$ time.
 In contrast to the FITC approximation, where inducing inputs are additional hyper-parameters to the model that can lead to overfitting, adding inducing inputs $\mat{Z}$ to the variational model only improves the approximation to the full GP.
@@ -918,7 +918,7 @@ Poor choices of $\mat{m}$ and $\mat{S}$ can only worsen the variational approxim
 
 To derive the variational bound $\Lc^{\text{SVGP}}$, we start with the bound in~\cref{eq:gp:sgpr_bound_2}.
 Instead of inserting the optimal $\q^\ast(\mat{u})$, we reformulate the bound to recover an expectation and KL-divergence in
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gp:svgp_bound_1}
         \MoveEqLeft\Lc^{\text{SVGP}}(\mat{\theta}, \mat{Z}, \mat{m}, \mat{S}) \\
@@ -927,9 +927,9 @@ Instead of inserting the optimal $\q^\ast(\mat{u})$, we reformulate the bound to
         &= -\int \log G(\mat{u}) \Variat*{\mat{u}} \diff \mat{u} + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}} \\
         &= -\Moment*{\E_{\Variat*{\mat{u}}}}{\log G(\mat{u})} + \KL{\Variat*{\mat{u}}}{\Prob*{\mat{u}}} + \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}}.
     \end{split}
-\end{align}
+\end{equation}
 Similar to~\cref{eq:gp:expected_log_likelihood}, this expectation can be evaluated analytically and is given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gp:expected_log_likelihood_svgp}
         \Moment*{\E_{\Variat*{\mat{u}}}}{\log G(\mat{u})}
@@ -937,9 +937,9 @@ Similar to~\cref{eq:gp:expected_log_likelihood}, this expectation can be evaluat
         &= \int \log \Gaussian*{\mat{y} \given \mat{K_{fu}} \mat{K_{uu}}\inv \mat{u}, \sigma_n^2\Eye} \Gaussian*{\mat{u} \given \mat{m}, \mat{S}} \diff \mat{u} \\
         &= \log \Gaussian*{\mat{y} \given \mat{K_{fu}}\mat{K_{uu}}\inv \mat{m}, \sigma_n^2 \Eye} - \frac{1}{2\sigma_n^2} \Fun*{\tr}{\mat{K_{fu}}\mat{K_{uu}}\inv \mat{S}\mat{K_{uu}}\inv \mat{K_{uf}}}.
     \end{split}
-\end{align}
+\end{equation}
 Inserting~\cref{eq:gp:expected_log_likelihood_svgp} into~\cref{eq:gp:svgp_bound_1} yields the final bound for the SVGP model given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:gp:svgp_bound_2}
         \MoveEqLeft\Lc^{\text{SVGP}}(\mat{\theta}, \mat{Z}, \mat{m}, \mat{S}) \\
@@ -950,7 +950,7 @@ Inserting~\cref{eq:gp:expected_log_likelihood_svgp} into~\cref{eq:gp:svgp_bound_
         &\quad + \frac{1}{2\sigma_n^2} \Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}}
         + \frac{1}{2\sigma_n^2} \Fun*{\tr}{\mat{K_{fu}}\mat{K_{uu}}\inv \mat{S}\mat{K_{uu}}\inv \mat{K_{uf}}}.
     \end{split}
-\end{align}
+\end{equation}
 The KL-divergence is a divergence of two Gaussians which can be evaluated analytically.
 While evaluating the complete bound still takes $\Oh(NM^2)$, the data-likelihood term is given by a diagonal Gaussian which factorizes along the data.
 This enables stochastic optimization techniques like mini-batching, greatly increasing the scalability of the variational GP approximation to large data sets~\parencite{hensman_gaussian_2013}.
@@ -1017,18 +1017,18 @@ The hierarchical structure typically introduces the requirement to propagate unc
 Many extensions can be interpreted as special cases of the hierarchical or deep Gaussian process model~\parencite{lawrence_hierarchical_2007,damianou_deep_2013} in which a nested generative process is formulated by using the output of one GP as the input of another.
 
 In a deep GP, rather than assuming that observational data is generated through a draw from a single GP which is then corrupted by noise in $\mat{y} = f(\mat{x}) + \epsilon$, we assume that data is generated via a composition of $L$ functions
-\begin{align}
+\begin{equation}
     \begin{split}
         \mat{y} = f_L(f_{L-1}(\cdots(f_1(\mat{X})))) + \epsilon,
     \end{split}
-\end{align}
+\end{equation}
 where each $f_l$ is drawn from a GP.
 This new compositional prior $f_L \circ \cdots \circ f_1$ is no longer a Gaussian process~\parencite{duvenaud_avoiding_2014} and can represent a broader set of functions.
 
 \Cref{fig:dgp:graphical_model} shows the graphical model of a deep GP.
 We represent the result of applying the the first $l$ functions $f_l \circ \cdots \circ f_1$ on the inputs $\mat{X}$ as $\mat{f}_l$ and identify $\mat{f}_0 = \mat{X}$.
 The joint probability of the function values and outputs can then be written as
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:dgp:full_model}
         \Prob{\mat{y}, \mat{f}_1, \dots, \mat{f}_L \given \mat{X}}
@@ -1036,19 +1036,19 @@ The joint probability of the function values and outputs can then be written as
         \mat{y} \mid \mat{f}_L &\sim \Gaussian{\mat{f}_L, \sigma^2_n \Eye} \\
         \mat{f}_l \mid \mat{f}_{l-1} &\sim \Gaussian{\mat{0}, \mat{K}_{\mat{f}_l\mat{f}_l} + \sigma^2_l \Eye}.
     \end{split}
-\end{align}
+\end{equation}
 The structure of the conditionals $\Prob*{\mat{f}_l \given \mat{f}_{l-1}}$ is implied by the assumption that the $f_l$ are drawn from GPs and~\cref{eq:gp:gp_marginal_likelihood}.
 Note that following the original formulation in~\parencite{damianou_deep_2013}, we assume independent Gaussian noise $\sigma^2_l$ as part of every function $f_l$.
 We will denote the kernel matrix at the $\nth{l}$ level as $\mat{K}_{ll} = \mat{K}_{\mat{f}_l\mat{f}_l}$.
 The $\mat{f}_l$ are all latent variables, and inference over them is very challenging.
 Because they capture the result of applying multiple GPs, they are highly dependent on each other, thereby implying dependence between the different functions as well.
 We will now derive two extensions of the sparse variational approximations in~\cref{toc:gp:sparse_gps} to the hierarchical case, nested variational compression~\parencite{hensman_nested_2014} and doubly stochastic variational inference~\parencite{salimbeni_doubly_2017} to approximate the marginal likelihood of the deep Gaussian process model
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:dgp:marginal_likelihood}
         \Prob*{\mat{y} \given \mat{X}} = \int \Prob*{\mat{y}, \mat{f}_1, \dots, \mat{f}_L \given \mat{X}} \diff \mat{f}_1 \dots \diff \mat{f}_L.
     \end{split}
-\end{align}
+\end{equation}
 
 
 \subsubsection{Nested variational compression}
@@ -1060,16 +1060,16 @@ To derive a tractable variational lower bound, an additional step is necessary t
 
 The bound in \Cref{eq:gp:expected_log_likelihood_svgp} can be used directly to approximate $\Prob*{\mat{f}_1 \given \mat{X}}$ as the innermost function in a deep GP is a standard GP model.
 Our next goal is to derive a bound on the outputs of the second layer
-\begin{align}
+\begin{equation}
     \begin{split}
         \log \Prob{\mat{f}_2 \given \mat{u}_2}
         &= \log \int \Prob{\mat{f}_2, \mat{f}_1, \mat{u}_1 \given \mat{u}_2} \diff \mat{f}_1 \diff \mat{u}_1 \\
         &= \log \int \Prob{\mat{f}_2, \given \mat{u}_2, \mat{f}_1, \mat{u}_1} \Prob*{\mat{f}_1, \mat{u}_1} \diff \mat{f}_1 \diff \mat{u}_1,
     \end{split}
-\end{align}
+\end{equation}
 that is, an expression in which the uncertainty about the $\mat{f}_1$ and the cross-layer dependencies on the $\mat{u}_1$ are both marginalized.
 We start by considering the relevant terms from \cref{eq:dgp:full_model} and apply \cref{eq:gp:expected_log_likelihood_svgp} to marginalize $\mat{f}_1$ in
-\begin{align}
+\begin{equation}
     \begin{split}
         \log\Prob{\mat{f}_2 \given \mat{u}_2, \mat{u}_1}
         &= \log\int\Prob{\mat{f}_2, \mat{f}_1 \given \mat{u}_2, \mat{u}_1}\diff\mat{f}_1 \\
@@ -1079,20 +1079,20 @@ We start by considering the relevant terms from \cref{eq:dgp:full_model} and app
         &\qquad\qquad - \Moment*{\E_{\aProb{\mat{f}_1 \given \mat{u}_1}}}{\frac{1}{2\sigma_2^2} \Fun*{\tr}{\mat{K}_{22} - \mat{Q}_{22}}}
         - \frac{1}{2\sigma_1^2} \Fun*{\tr}{\mat{K}_{11} - \mat{Q}_{11}},
     \end{split}
-\end{align}
+\end{equation}
 where we write $\aProb{\mat{f}_1 \given \mat{u}_1} = \Gaussian*{\mat{f}_1 \given \mat{\mu}_1, \sigma_1^2 \Eye}$ to incorporate the Gaussian noise in the latent space.
 Due to our assumption that $\mat{u}_1$ is a sufficient statistic for $\mat{f}_1$ we choose the Gaussians
-\begin{align}
+\begin{equation}
     \label{eq:var_compression:variational_assumption}
     \begin{split}
         \Variat{\mat{f}_1 \given \mat{u}_1}
         &= \aProb{\mat{f}_1 \given \mat{u}_1}\text{, and}\\
         \Variat{\mat{f}_1} &= \int \aProb{\mat{f}_1 \given \mat{u}_1} \Variat{\mat{u}_1} \diff \mat{u}_1,
     \end{split}
-\end{align}
+\end{equation}
 and use another variational approximation to marginalize $\mat{u}_1$.
 This yields
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:var_compression:f_marginal_likelihood}
         \log \Prob{\mat{f}_2 \given \mat{u}_2}
@@ -1110,20 +1110,20 @@ This yields
         &\quad {} - \frac{1}{2\sigma_1^2} \Fun*{\tr}{\mat{K}_{11} - \mat{Q}_{11}}
         - \frac{1}{2\sigma_2^2} \Moment*{\E_{\Variat{\mat{f}_1}}}{\Fun*{\tr}{\mat{K}_{22} - \mat{Q}_{22}}},
     \end{split}
-\end{align}
+\end{equation}
 where we apply Fubini's theorem~\parencite{fubini_sugli_1907} to exchange the order of integration in the expected values.
 The expectations with respect to $\Variat{\mat{f}_1}$ involve expectations of kernel matrices, also called $\Psi$-statistics, in the same way as in \parencites{damianou_deep_2013} and are given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:var_compression:psi_statistics}
         \psi_2 &= \Moment*{\E_{\Variat{\mat{f}_1}}}{\Fun*{\tr}{\mat{K}_{\mat{f}_2 \mat{f}_2}}}, \\
         \mat{\Psi_2} &= \Moment*{\E_{\Variat{\mat{f}_1}}}{\mat{K}_{\mat{f}_2 \mat{u}_2}}, \\
         \mat{\Phi_2} &= \Moment*{\E_{\Variat{\mat{f}_1}}}{\mat{K}_{\mat{u}_2 \mat{f}_2}\mat{K}_{\mat{f}_2 \mat{u}_2}}. \\
     \end{split}
-\end{align}
+\end{equation}
 These $\Psi$-statistics can be computed analytically for multiple kernels, including the squared exponential kernel.
 To obtain the final formulation of the desired bound for $\log \Prob{\mat{f}_2 \given \mat{u}_2}$ we substitute \cref{eq:var_compression:psi_statistics} into \cref{eq:var_compression:f_marginal_likelihood} and get the analytically tractable bound
-\begin{align}
+\begin{equation}
     \begin{split}
         \log \Prob{\mat{f}_2 \given \mat{u}_2}
         &\geq \log\Gaussian*{\mat{f}_2 \given \mat{\Psi}_2\mat{K}_{\mat{u}_2\mat{u}_2}\inv \mat{m}_2, \sigma_2^2\Eye}
@@ -1132,10 +1132,10 @@ To obtain the final formulation of the desired bound for $\log \Prob{\mat{f}_2 \
         - \frac{1}{2\sigma_2^2} \left( \psi_2 - \Fun*{\tr}{\mat{\Psi_2}\mat{K}_{\mat{u}_2\mat{u}_2}\inv} \right) \\
         &\quad {} - \frac{1}{2\sigma_2^2} \tr\left(\left(\mat{\Phi}_2 - \mat{\Psi}_2\tran\mat{\Psi}_2\right) \mat{K}_{\mat{u}_2\mat{u}_2}\inv \left(\mat{m}_2\mat{m}_2\tran + \mat{S}_2\right)\mat{K}_{\mat{u}_2\mat{u}_2}\inv\right).
     \end{split}
-\end{align}
+\end{equation}
 This bound is structurally similar to the SVGP bound in~\cref{eq:gp:expected_log_likelihood_svgp} but contains additional terms introduced by the propagation of uncertainties from $\Prob*{\mat{f}_1}$.
 To derive a variational bound for~\cref{eq:dgp:marginal_likelihood} where all $\mat{f}_l$ have been marginalized, we can apply the same steps as described above recursively, resulting in the nested variational compression lower bound given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:var_compression:full_bound}
         \MoveEqLeft \Lc_{\text{NVC}} \geq \\
@@ -1145,13 +1145,13 @@ To derive a variational bound for~\cref{eq:dgp:marginal_likelihood} where all $\
         - \sum_{l=2}^L \frac{1}{2\sigma_l^2} \left( \psi_l - \Fun*{\tr}{\mat{\Psi_l}\mat{K}_{\mat{u}_l\mat{u}_l}\inv} \right) \\
         &- \sum_{l=2}^L \frac{1}{2\sigma_l^2} \tr\left(\left(\mat{\Phi}_l - \mat{\Psi}_l\tran\mat{\Psi}_l\right) \mat{K}_{\mat{u}_l\mat{u}_l}\inv \left(\mat{m}_l\mat{m}_l\tran + \mat{S}_l\right)\mat{K}_{\mat{u}_l\mat{u}_l}\inv\right).
     \end{split}
-\end{align}
+\end{equation}
 Just as the SVGP bound it factorizes along the data and enables stochastic optimization.
 However, depending on the kernel, the calculation of psi-statistics can be computationally expensive or analytically intractable, limiting the applicability of this bound to a limited set of hierarchical GP models.
 
 Since the nested variational compression bound introduces a conditional independence assumption between layers given the approximations of the latent variables $\Variat*{\mat{f}_l}$, approximate predictions can be derived by recursively calculating $\Variat*{\mat{f}_1}$ to $\Variat*{\mat{f}_L}$, all of which are Gaussian.
 Given inputs $\mat{X_{\ast}}$, we recursively marginalize the intermediate layers
-\begin{align}
+\begin{equation}
     \begin{split}
         \Variat{\mat{f}_{l, \ast}}
         &= \int \Variat{\mat{f}_{l, \ast}, \mat{f}_{l-1, \ast}} \diff \mat{f}_{l-1, \ast} \\
@@ -1159,7 +1159,7 @@ Given inputs $\mat{X_{\ast}}$, we recursively marginalize the intermediate layer
         &= \Moment*{\E_{\Variat{\mat{f}_{l-1, \ast}}}}{\Variat{\mat{f}_{l, \ast} \given \mat{f}_{l-1, \ast}}} \\
         &= \Gaussian*{\mat{f}_{l, \ast} \given \mat{\bar{\mu}}_{l, \ast}, \mat{\bar{\Sigma}}_{l, \ast}}
     \end{split}
-\end{align}
+\end{equation}
 with
 \begin{align*}
     \mat{\bar{\mu}}_{l, \ast}    & = \mat{\Psi}_{l\ast} \mat{K}_{\mat{u}_l \mat{u}_l    }\inv \mat{m}_l                                                    \\
@@ -1175,7 +1175,7 @@ As discussed in more detail in~\parencite{hensman_nested_2014}, nested variation
 To overcome some of the limitations of nested variational compression,~\textcite{salimbeni_doubly_2017} proposed the doubly stochastic variational inference (DSVI) approximation.
 Instead of relying on an explicit variational approximation for the $\mat{f}_l$, DSVI is based on the observation that due to the conditional independence assumption of the data introduced by the $\mat{u}_l$, function values $\mat{f}_{n,l}$ can be sampled independently and efficiently.
 Under the SVGP variational sufficient statistics assumptions, the posterior of a single GP can be written as
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:dsvi:variational_marginals}
         \Variat*{\mat{f}_l \given \mat{f}_{l-1}}
@@ -1189,38 +1189,38 @@ Under the SVGP variational sufficient statistics assumptions, the posterior of a
         \prod_{n=1}^N \Prob*{\mat{f}_{l,n} \given \mat{u}_l, \mat{f}_{l-1, n}}
         \diff \mat{u}_l,
     \end{split}
-\end{align}
+\end{equation}
 which can be evaluated analytically, since it is a convolution of Gaussians.
 For the hierarchical case, we choose the same variational independence assumptions as in the NVC approximation above
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:dsvi:variational_distribution}
         \Variat*{\mat{f}_1, \mat{u}_1, \dots, \mat{f}_L, \mat{u}_L}
         &= \prod_{l=1}^L \Prob*{\mat{f}_l \given \mat{u}_l, \mat{f}_{l-1}} \Variat*{\mat{u}_l}.
     \end{split}
-\end{align}
+\end{equation}
 The factorization along the data still holds in the variational hierarchical case.
 We can formulate the marginal function value of the $\nth{n}$ data point by inserting~\cref{eq:dsvi:variational_marginals} into~\cref{eq:dgp:marginal_likelihood} and obtain
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:dsvi:variational_layers}
         \Variat*{\mat{f}_{L,n}}
         &= \int \prod_{l=1}^{L-1} \Variat*{\mat{f}_{l,n} \given \mat{f}_{l-1,n}} \diff \mat{f}_{l, n} \\
         &= \int \prod_{l=1}^{L-1} \int \Variat*{\mat{u}_l} \Prob*{\mat{f}_{l,n} \given \mat{u}_l, \mat{f}_{l-1, n}} \diff \mat{u}_l \diff \mat{f}_{l, n}.
     \end{split}
-\end{align}
+\end{equation}
 A consequence of this formulation is that drawing a sample from $\Variat*{\mat{f}_{L,n}}$ can be achieved via ancestral sampling through the hierarchical GP model by drawing samples from the different $\Variat*{\mat{f}_{l, n}}$ in turn.
 Instead of passing Gaussian messages as in the NVC approximation, we can draw Monte-Carlo samples from $\Variat*{\mat{f}_{L, n}}$ directly.
 Because the data are independent under the variational assumptions, we can draw independent univariate samples per observation.
 Being able to sample $\Variat*{\mat{f}_{L, n}}$ directly also allows us to sample the bound in~\cref{eq:gp:sgpr_bound_1} which directly generalizes to the hierarchical case and is given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:dsvi:full_bound}
         \Lc_{\text{DSVI}} \geq
         \sum_{n=1}^N \Moment*{\E_{\Variat*{\mat{f}_{L, n}}}}{\log \Prob*{\mat{y}_n \given \mat{f}_{L, n}}}
         - \sum_{l=1}^L \KL*{\Variat*{\mat{u}_l}}{\Prob*{\mat{u}_l}}.
     \end{split}
-\end{align}
+\end{equation}
 Evaluating this bound requires $\Oh(NM^2D)$ computations.
 Through local reparametrization~\parencite{kingma_variational_2015}, gradients of the variational bound can be samples directly.
 Evaluations of the DSVI-bound and its gradients have two unbiased sources of stochasticity~\parencite{salimbeni_doubly_2017}.
@@ -1229,11 +1229,11 @@ Drawing Monte Carlo samples of the likelihood directly elimates the need for Psi
 
 Monte Carlo samples of approximate predictions can be drawn using~\cref{eq:dsvi:variational_layers} as well.
 The free-form predictive density can be approximated using the mixture
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:dsvi:approximate_predictions}
         \Variat*{\mat{f}_{L, \ast} \given \mat{X}_{\ast}}
         &\approx \frac{1}{S} \sum_{s=1}^S \Variat*{\mat{q}_{L, \ast} \given \mat{u}_L, \mat{f}_{L-1, \ast}},
     \end{split}
-\end{align}
+\end{equation}
 with $S$ samples propagated through the hierarchical GP starting from the $\mat{X}_{\ast}$.

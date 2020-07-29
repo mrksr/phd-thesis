@@ -75,7 +75,7 @@ We further denote the $\nth{k}$ latent function value associated with the $\nth{
 We refer to the $\nth{k}$ entry in $\mat{a}_n$ as $a_n^{\pix{k}}$ and denote $\mat{A} = \left(\mat{a}_1, \ldots, \mat{a}_N\right)$.
 
 Given this notation, the marginal likelihood of DAGP can be separated into the likelihood, the latent function processes, and the assignment process and is given by,
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:data_association:true_marginal_likelihood}
         \Prob*{\mat{Y} \given \mat{X}} &=
@@ -88,15 +88,15 @@ Given this notation, the marginal likelihood of DAGP can be separated into the l
         \prod_{n=1}^N\prod_{k=1}^K
         \Gaussian*{\mat{y}_n \given \mat{f}_n^{\pix{k}}, \left(\sigma^{\pix{k}}\right)^2}_{^{\displaystyle,}}^{\Fun{\Ind}{a_n^{\pix{k}} = 1}}
     \end{split}
-\end{align}
+\end{equation}
 where $\sigma^{\pix{k}}$ is the noise of the $\nth{k}$ Gaussian likelihood and $\Ind$ is the indicator function.
 
 Since we assume the $K$ processes to be independent given the data and assignments, we place independent GP priors on the latent functions
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob*{\mat{F} \given \mat{X}} = \prod_{k=1}^K \Gaussian*{\mat{F}^{\pix{k}} \given \Fun*{\mu^{\pix{k}}}{\mat{X}}, \Fun*{\K^{\pix{k}}}{\mat{X}, \mat{X}}}
     \end{split}
-\end{align}
+\end{equation}
 with mean function $\mu^{\pix{k}}$ and kernel $\K^{\pix{k}}$.
 Our prior on the assignment process is composite.
 First, we assume that the $\mat{a}_n$ are drawn independently from multinomial distributions with logit parameters $\mat{\alpha}_n = \left( \alpha_n^{\pix{1}}, \ldots, \alpha_n^{\pix{K}} \right)$.
@@ -105,7 +105,7 @@ Instead, we want to infer them from the data.
 Specifically, we assume that there is a relationship between the location in the input space $\mathbf{x}$ and the associations.
 By placing independent GP priors on $\mat{\alpha}^{\pix{k}}$, we can encode our prior knowledge of the associations via the choice of the covariance function $\Prob*{\mat{\alpha} \given \mat{X}} = \prod_{k=1}^K \Gaussian*{\rv{\alpha}^{\pix{k}} \given \mat{0}, \Fun{\K_\alpha^{\pix{k}}}{\mat{X}, \mat{X}}}$.
 The prior on the assignments $\mat{A}$ is given by marginalizing the $\mat{\alpha}^{\pix{k}}$, which, when normalized, parametrize a batch of multinomial distributions,
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:data_association:multinomial_likelihood}
         \Prob*{\mat{A} \given \mat{X}} &=
@@ -113,7 +113,7 @@ The prior on the assignments $\mat{A}$ is given by marginalizing the $\mat{\alph
         \Multinomial*{\mat{A} \given \Fun{\softmax}{\mat{\alpha}}} \Prob*{\mat{\alpha} \given \mat{X}}
         \diff \rv{\alpha}.
     \end{split}
-\end{align}
+\end{equation}
 Modelling the relationship between the input and the associations allows us to efficiently model data, which, for example, is unimodal in some parts of the input space and bimodal in others.
 A simple smoothness prior will encode a belief for how quickly the components switch across the input domain.
 
@@ -147,7 +147,7 @@ To simplify notation, we drop the dependency on $\mat{Z}$ in the following.
 A central assumption of this approximation is that given enough well-placed inducing variables $\mat{u}^{\pix{k}}$, they are a sufficient statistic for the latent function values $\mat{F}^{\pix{k}}$.
 This implies conditional independence of the $\mat{f}_n^{\pix{k}}$ given $\mat{u}^{\pix{k}}$ and $\mat{X}$.
 The variational posterior of a single GP can then be written as,
-\begin{align}
+\begin{equation}
     \begin{split}
         \Variat*{\mat{F}^{\pix{k}} \given \mat{X}}
         &=
@@ -160,7 +160,7 @@ The variational posterior of a single GP can then be written as,
         \prod_{n=1}^N \Prob*{\mat{f}_n^{\pix{k}} \given \mat{u}^{\pix{k}}, \mat{x}_n}
         \diff \mat{u}^{\pix{k}},
     \end{split}
-\end{align}
+\end{equation}
 which can be evaluated analytically, since it is a convolution of Gaussians.
 This formulation simplifies inference within single GPs.
 Next, we discuss how to handle the correlations between the different functions and the assignment processes.
@@ -170,7 +170,7 @@ This independence is lost if the assignments are unknown.
 In this case, both the (a priori independent) assignment processes and the functions influence each other through data with unclear assignments.
 Following the ideas of DSVI in~\cref{toc:dgp}, we maintain these correlations between different parts of the model while assuming factorization of the variational distribution.
 That is, our variational posterior takes the factorized form,
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:variational_distribution}
         \Variat*{\mat{F}, \mat{\alpha}, \mat{U}}
@@ -178,11 +178,11 @@ That is, our variational posterior takes the factorized form,
         \MoveEqLeft = \prod_{k=1}^K\prod_{n=1}^N \Prob*{\mat{\alpha}_n^{\pix{k}} \given \mat{u}_\alpha^{\pix{k}}, \mat{x}_n}\Variat*{\mat{u}_\alpha^{\pix{k}}}
         \prod_{k=1}^K \prod_{n=1}^N \Prob*{\mat{f}_n^{\pix{k}} \given \mat{u}^{\pix{k}}, \mat{x}_n}\Variat*{\mat{u}^{\pix{k}}}.
     \end{split}
-\end{align}
+\end{equation}
 
 Our goal is to recover a posterior for both the generating functions and the assignment of data.
 To achieve this, instead of marginalizing $\mat{A}$, we consider the variational joint of $\mat{Y}$ and $\mat{A}$,
-\begin{align}
+\begin{equation}
     \begin{split}
         \Variat*{\mat{Y}, \mat{A}} &=
         \int
@@ -191,10 +191,10 @@ To achieve this, instead of marginalizing $\mat{A}$, we consider the variational
         \Variat*{\mat{F}, \mat{\alpha}}
         \diff \mat{F} \diff \mat{\alpha},
     \end{split}
-\end{align}
+\end{equation}
 which retains both the Gaussian likelihood of $\mat{Y}$ and the multinomial likelihood of $\mat{A}$ in \cref{eq:data_association:multinomial_likelihood}.
 A lower bound $\Lc_{\text{DAGP}}$ for the log-joint $\log\Prob*{\mat{Y}, \mat{A} \given \mat{X}}$ of DAGP is given by,
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:data_association:variational_bound}
         \Lc_{\text{DAGP}} &= \Moment*{\E_{\Variat*{\mat{F}, \mat{\alpha}, \mat{U}}}}{\log\frac{\Prob*{\mat{Y}, \mat{A}, \mat{F}, \mat{\alpha}, \mat{U} \given \mat{X}}}{\Variat*{\mat{F}, \mat{\alpha}, \mat{U}}}} \\
@@ -203,7 +203,7 @@ A lower bound $\Lc_{\text{DAGP}}$ for the log-joint $\log\Prob*{\mat{Y}, \mat{A}
         &\quad - \sum_{k=1}^K \KL{\Variat*{\mat{u}^{\pix{k}}}}{\Prob*{\mat{u}^{\pix{k}} \given \mat{Z}^{\pix{k}}}}
         - \sum_{k=1}^K \KL{\Variat*{\mat{u}_\alpha^{\pix{k}}}}{\Prob*{\mat{u}_\alpha^{\pix{k}} \given \mat{Z}_\alpha^{\pix{k}}}}.
     \end{split}
-\end{align}
+\end{equation}
 Due to the structure of~\cref{eq:variational_distribution}, the bound factorizes along the data enabling stochastic optimization.
 This bound has complexity $\Fun*{\Oh}{NM^2K}$ to evaluate.
 
@@ -237,14 +237,14 @@ And second, the factorization of the bound along the data allows us to use mini-
 
 \subsubsection{Approximate predictions}
 Predictions for a test location $\mat{x}_\ast$ are mixtures of $K$ independent Gaussians, given by,
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:data_association:predictive_posterior}
         \Variat*{\mat{f}_\ast \given \mat{x}_\ast}
         &= \int \sum_{k=1}^K \Variat*{a_\ast^{\pix{k}} \given \mat{x}_\ast} \Variat*{\mat{f}_\ast^{\pix{k}} \given \mat{x}_\ast} \diff \mat{a}_\ast^{\pix{k}}
         \approx \sum_{k=1}^K \hat{a}_\ast^{\pix{k}} \mat{\hat{f}}_\ast^{\pix{k}}.
     \end{split}
-\end{align}
+\end{equation}
 The predictive posteriors of the $K$ functions $\Variat*{\mat{f}_\ast^{\pix{k}} \given \mat{x}_\ast}$ are given by $K$ independent shallow GPs and can be calculated analytically using~\cref{eq:gp:sgpr_predictive_posterior}.
 Samples from the predictive density over $\Variat*{\mat{a}_\ast \given \mat{x}_\ast}$ can be obtained by sampling from the GP posteriors $\Variat*{\mat{\alpha}_\ast^{\pix{k}} \given \mat{x}_\ast}$ and renormalizing the resulting vector $\mat{\alpha}_\ast$ using the $\softmax$-function.
 The distribution $\Variat*{\mat{a}_\ast \given \mat{x}_\ast}$ reflects the model's belief about how many and which of the $K$ generative processes are relevant at the test location $\mat{x}_\ast$ and their relative probability.
@@ -255,15 +255,15 @@ For clarity, we have described the variational bound in terms of a shallow GP.
 However, as long as their variational bound can be sampled efficiently, any model can be used in place of shallow GPs for the $f^{\pix{k}}$.
 Since our approximation is based on DSVI, an extension to deep GPs is straightforward.
 Out new prior assumption about the $\nth{k}$ latent function values $\Prob*{\mat{F}^{\prime\pix{k}} \given \mat{X}}$ is given by,
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob*{\mat{F}^{\prime\pix{k}} \given \mat{X}} = \prod_{l=1}^L \Prob*{\mat{F}_l^{\prime\pix{k}} \given \mat{u}_l^{\prime\pix{k}} \mat{F}_{l-1}^{\prime\pix{k}}, \mat{Z}_l^{\prime\pix{k}}},
     \end{split}
-\end{align}
+\end{equation}
 for an $L$-layer deep GP and with $\mat{F}_0^{\prime\pix{k}} \coloneqq \mat{X}$.
 Similar to the single-layer case, we introduce sets of inducing points $\mat{Z}_l^{\prime\pix{k}}$ and a variational distribution over their corresponding function values $\Variat*{\mat{u}_l^{\prime\pix{k}}} = \Gaussian*{\mat{u}_l^{\prime\pix{k}} \given \mat{m}_l^{\prime\pix{k}}, \mat{S}_l^{\prime\pix{k}}}$.
 We collect the latent multi-layer function values as $\mat{F^\prime} = \Set{\mat{F}_l^{\prime\pix{k}}}_{k=1,l=1}^{K,L}$ and corresponding $\mat{U^\prime}$ and assume an extended variational distribution,
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:data_association:deep_variational_distribution}
         \Variat*{\mat{F^\prime}, \mat{\alpha}, \mat{U^\prime}}
@@ -271,11 +271,11 @@ We collect the latent multi-layer function values as $\mat{F^\prime} = \Set{\mat
         \MoveEqLeft[4] = \prod_{k=1}^K\prod_{n=1}^N \Prob*{\mat{\alpha}_n^{\pix{k}} \given \mat{u}_\alpha^{\pix{k}}, \mat{x}_n}\Variat*{\mat{u}_\alpha^{\pix{k}}}
         \prod_{k=1}^K \prod_{l=1}^L \prod_{n=1}^N \Prob*{\mat{f}_{n,l}^{\prime\pix{k}} \given \mat{u}_l^{\prime\pix{k}}, \mat{x}_n}\Variat*{\mat{u}_l^{\prime\pix{k}}},
     \end{split}
-\end{align}
+\end{equation}
 where we identify $\mat{f}_n^{\prime\pix{k}} = \mat{f}_{n,L}^{\prime\pix{k}}$.
 As the $\nth{n}$ marginal of the $\nth{L}$ layer depends only on the $\nth{n}$ marginal of all layers above sampling from them remains straightforward~\parencite{salimbeni_doubly_2017}.
 The marginal is given by,
-\begin{align}
+\begin{equation}
     \begin{split}
         \Variat{\mat{f}_{n,L}^{\prime\pix{k}}} =
         \int
@@ -283,10 +283,10 @@ The marginal is given by,
         \prod_{l=1}^{L-1} \Variat{\mat{f}_{n,l}^{\prime\pix{k}} \given \mat{f}_{n,l-1}^{\prime\pix{k}}}
         \diff \mat{f}_{n,l}^{\prime\pix{k}}.
     \end{split}
-\end{align}
+\end{equation}
 
 The complete bound is structurally similar to \cref{eq:data_association:variational_bound} and given by,
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:data_association:deep_variational_bound}
         \Lc^\prime_{\text{DAGP}}
@@ -295,7 +295,7 @@ The complete bound is structurally similar to \cref{eq:data_association:variatio
         \MoveEqLeft - \sum_{k=1}^K \sum_{l=1}^L \KL{\Variat{\mat{u}_l^{\pix{k}}}}{\Prob{\mat{u}_l^{\pix{k}} \given \mat{Z}_l^{\pix{k}}}}
         - \sum_{k=1}^K \KL{\Variat*{\mat{u}_\alpha^{\pix{k}}}}{\Prob*{\mat{u}_\alpha^{\pix{k}} \given \mat{Z}_\alpha^{\pix{k}}}}.
     \end{split}
-\end{align}
+\end{equation}
 To calculate the first term, samples have to be propagated through the deep GP structures.
 This extended bound thus has complexity $\Fun*{\Oh}{NM^2LK}$ to evaluate in the general case and complexity $\Fun*{\Oh}{NM^2\cdot\Fun{\max}{L, K}}$ if the assignments $\mat{a}_n$ take binary values.
 

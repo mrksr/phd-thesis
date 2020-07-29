@@ -100,7 +100,7 @@ where $\mat{x}$ is $K$-dimensional and $\hat{\ell}_{d, d^\prime, r, k} = \sqrt{\
 Since exact inference in this model is intractable, we present a variational approximation to the model's marginal likelihood in this section.
 Analogously to $\mat{y}$, we denote the random vectors which contain the function values of the respective functions and outputs as $\rv{a}$ and $\rv{f}$.
 The joint probability distribution of the data can then be written as
-\begin{align}
+\begin{equation}
     \begin{split}
         \label{eq:alignment:full_model}
         \Prob{\rv{y}, \rv{f}, \rv{a} \given \mat{X}}
@@ -112,7 +112,7 @@ The joint probability distribution of the data can then be written as
         \rv{y_d} \ |\ \mat{f_d}
         &\sim \Gaussian{\mat{f_d}, \mat{K_{g, d}} + \sigma^2_{y, d}\Eye}.
     \end{split}
-\end{align}
+\end{equation}
 Here, we use $\mat{K}$ to refer to the Gram matrices corresponding to the respective GPs.
 All but the convolution processes factorize over the different levels of the model as well as the different outputs.
 
@@ -121,7 +121,7 @@ To approximate a single deep GP, we can use the approximations discussed in~\cre
 The structure of the AMO-GP model is closely related to a group of stacked GPs with additional dependencies in one of the layers.
 Since these dependencies are represented with a multi-output GP that, given the latent functions, yields conditionally independent outputs, nested variation compression generalizes to the AMO-GP.
 The variational lower bound for the AMO-GP is given by
-\begin{align}
+\begin{equation}
     \label{eq:alignment:full_bound}
     \begin{split}
         \MoveEqLeft\log \Prob{\rv{y}\given \mat{X}, \mat{Z}, \rv{u}} \geq
@@ -136,7 +136,7 @@ The variational lower bound for the AMO-GP is given by
         &- \sum_{d=1}^D\frac{1}{2\sigma_{y, d}^2} \tr\left(\left(\mat{\Phi_{g, d}} - \mat{\Psi_{g, d}}\tran\mat{\Psi_{g, d}}\right)
         \mat{K_{u_{g, d}u_{g, d}}}\inv \left(\mat{m_{g, d}}\mat{m_{g, d}}\tran + \mat{S_{g, d}}\right) \mat{K_{u_{g, d}u_{g, d}}}\inv\right).
     \end{split}
-\end{align}
+\end{equation}
 The bound contains one Gaussian fit term per output dimension and a series of regularization terms for every GP in the hierarchy.
 The KL-divergences connect the variational approximations to the prior, and the different trace terms regularize the variances of the different GPs.
 For a detailed discussion see \parencite{hensman_nested_2014}.
@@ -159,17 +159,17 @@ Since the closed form of the multi output kernel depends on the choice of output
 For notational simplicity, we only consider the case of one single latent process $w_r$.
 Since the latent processes are independent, the results can easily be generalized to multiple processes.
 Then, $\psi_f$ is given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \psi_f &= \Moment*{\E_{\Variat{\rv{a}}}}{\Fun*{\tr}{\mat{K_{ff}}}} \\
         &= \sum_{n=1}^N \Moment*{\E_{\Variat{\rv{a}_n}}}{\Moment*{\cov}{\Fun{\hat{f}}{\mat{a}_n}, \Fun{\hat{f}}{\mat{a}_n}}} \\
         &= \sum_{n=1}^N \int \Moment*{\cov}{\Fun{\hat{f}}{\mat{a}_n}, \Fun{\hat{f}}{\mat{a}_n}} \Variat{\rv{a}_n} \diff \rv{a}_n \\
         &= \sum_{n=1}^N \hat{\sigma}_{nn}^2.
     \end{split}
-\end{align}
+\end{equation}
 Similar to the notation $\Fun{\hat{f}}{\cdot}$, we use $\hat{\sigma}_{nn^\prime}$ to denote the variance term associated with the covariance function $\Moment{\cov}{\Fun{\hat{f}}{\mat{a}_n}, \Fun{\hat{f}}{\mat{a}_{n^\prime}}}$.
 The expectation $\mat{\Psi_f} = \Moment*{\E_{\Variat{\rv{a}}}}{\mat{K_{fu}}}$ connecting the alignments and the pseudo inputs is given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \mat{\Psi_f} &= \Moment*{\E_{\Variat{\rv{a}}}}{\mat{K_{fu}}}\text{, with} \\
         \left( \mat{\Psi_f} \right)_{ni}
@@ -177,10 +177,10 @@ The expectation $\mat{\Psi_f} = \Moment*{\E_{\Variat{\rv{a}}}}{\mat{K_{fu}}}$ co
         &= \hat{\sigma}_{ni}^2 \sqrt{\frac{(\mat{\Sigma}_a)_{nn}\inv}{\hat{\ell}_{ni} + (\mat{\Sigma}_a)_{nn}\inv}}
         \cdot \exp\left(-\frac{1}{2} \frac{(\mat{\Sigma}_a)_{nn}\inv\hat{\ell}_{ni}}{(\mat{\Sigma}_a)_{nn}\inv + \hat{\ell}_{ni}} \left((\mat{\mu}_a)_n - \mat{Z}_i\right)^2\right)
     \end{split}
-\end{align}
+\end{equation}
 where $\hat{\ell}_{ni}$ is the combined length scale corresponding to the same kernel as $\hat{\sigma}_{ni}$.
 Lastly, $\mat{\Phi_f} = \Moment*{\E_{\Variat{\rv{a}}}}{\mat{K_{uf}}\mat{K_{fu}}}$ connects alignments and pairs of pseudo inputs with the closed form
-\begin{align}
+\begin{equation}
     \begin{split}
         \mat{\Phi_f} &= \Moment*{\E_{\Variat{\rv{a}}}}{\mat{K_{uf}}\mat{K_{fu}}}\text{, with} \\
         \left(\mat{\Phi_f} \right)_{ij} &= \sum_{n=1}^N \int \Moment*{\cov}{\Fun{\hat{f}}{\mat{a}_n}, \Fun{\hat{f}}{\mat{Z}_i}}
@@ -190,7 +190,7 @@ Lastly, $\mat{\Phi_f} = \Moment*{\E_{\Variat{\rv{a}}}}{\mat{K_{uf}}\mat{K_{fu}}}
         &\quad {} - \frac{1}{2} \frac{(\mat{\Sigma}_a)_{nn}\inv(\hat{\ell}_{ni} + \hat{\ell}_{nj})}{(\mat{\Sigma}_a)_{nn}\inv + \hat{\ell}_{ni} + \hat{\ell}_{nj}}
         \cdot \left.\left( (\mat{\mu}_a)_n - \frac{\hat{\ell}_{ni} \mat{Z}_i + \hat{\ell}_{nj} \mat{Z}_j}{\hat{\ell}_{ni} + \hat{\ell}_{nj}} \right)^2 \right).
     \end{split}
-\end{align}
+\end{equation}
 
 Note that the $\Psi$-statistics factorize along the data, and we only need to consider the diagonal entries of $\mat{\Sigma}_a$.
 If all the data belong to the same output, the $\Psi$-statistics of the standard squared exponential kernel can be recovered as a special case.

@@ -120,13 +120,13 @@ For example, one could ask for the simplest polynomial that explains the data.
 \end{labeling}
 \end{problem}
 It can be shown that this is indeed a well-posed computational problem whose unique solution is the Lagrange polynomial $L$~\parencite{waring_vii._1779} given by the explicit form
-\begin{align}
+\begin{equation}
     \begin{split}
         L(x) &= \sum_{i=0}^N y_i \ell_i(x)\text{, with} \\
         \ell_i &= \prod_{\substack{j = 0\\j \neq i}}^N \frac{x - x_j}{x_i - x_j}.
     \end{split}
     \label{eq:bayesian_ml:lagrange}
-\end{align}
+\end{equation}
 \Cref{fig:bayesian_ml:polynomials:lagrange} shows the Lagrange polynomial interpolating the example dataset.
 The figure also shows another derived computational problem of linear interpolation.
 Here, the function is defined as being piecewise linear between the different data points, thus also reproducing the data.
@@ -250,12 +250,12 @@ We give a few examples here.
     \item[Dimensionality Reduction]
           In the dimensionality reduction or manifold learning problem, the assumption is that the support of the data distribution $\Prob*{\mat{z}}$ is a low dimensional manifold in $\Zc$.
           The task is to find a distribution $\Prob*{\mat{m}} \in \Probs{\Mc}$ and a mapping $f : \Mc \to \Zc$ with
-          \begin{align}
+          \begin{equation}
               \begin{split}
                   F_{\text{dim}}[\Prob*{\mat{z}}] & = (\Prob*{\mat{m}}, f)\text{, such that} \\
                   f(\Prob*{\mat{m}})              & = \Prob*{\mat{z}}
               \end{split}
-          \end{align}
+          \end{equation}
           and $\Fc = \Probs{\Mc} \times (\Mc \to \Zc)$ and a space $\Mc$ of lower dimensionality than $\Zc$.
           If $\Mc = \Zc$ this problem is called density estimation.
 \end{description}
@@ -357,14 +357,14 @@ With Bayes' rule, a structurally simple and formally consistent learning algorit
 
 \subsubsection{Directed graphical models}
 Any joint probability distribution $\Prob*{\mat{a}, \mat{c}, \mat{e}}$ can be formulated as a product of partial distributions via the chain rule of probability~\parencite{murphy_machine_2012} as
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob*{\mat{a}, \mat{c}, \mat{e}}
         &= \Prob*{\mat{a} \given \mat{c}, \mat{e}}\Prob*{\mat{c} \given \mat{e}}\Prob*{\mat{e}} \\
         &= \Prob*{\mat{e} \given \mat{a}, \mat{c}}\Prob*{\mat{a} \given \mat{c}}\Prob*{\mat{c}} \\
         &= \dots
     \end{split}
-\end{align}
+\end{equation}
 The chain rule is symmetric in the sense that the order of chaining random variables does not matter.
 All possible interdependencies between random variables are represented in the expansion of conditional probabilities.
 
@@ -405,12 +405,12 @@ In contrast to the factorization according to the chain rule, the graphical mode
 \end{align}
 
 More formally, the factorization belonging to a graphical model with nodes $\mat{a}_1, \dots, \mat{a}_N$ is given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob*{\mat{a}_1, \dots, \mat{a}_N}
         &= \prod_{n=1}^N \Prob*{\mat{a}_n \given \mathrm{parents}(\mat{a}_n)}
     \end{split}
-\end{align}
+\end{equation}
 with $\mathrm{parents}(\mat{a}_n)$ denoting the set of nodes with an edge towards $\mat{a}_n$.
 A circle
 \tikz[x=2.5em,baseline=(a.base)]{
@@ -497,11 +497,11 @@ The outputs $\mat{y}_1, \mat{y}_2, \dots$ are not independent however because th
 
 In the next step, we expand the model to reflect the fact that the $\mat{y}_N$ are conditionally independent given this functional dependency $f$.
 The rule of total probability~\parencite{bishop_christoph_pattern_2007} states that for any random variable $\mat{f}$, it holds that
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob*{\mat{y} \given \mat{x}} = \int \Prob*{\mat{y} \given \mat{f}, \mat{x}} \Prob*{\mat{f}} \diff \mat{f}.
     \end{split}
-\end{align}
+\end{equation}
 This rule allows us to add arbitrary nodes to the graphical model and recover the original distribution via marginalization, the calculation of the expectation with respect to the variable that should be removed.
 Introducing a new variable is helpful because it allows us to formulate independence assumptions explicitly.
 To achieve conditional independence of the $\mat{y}_n$, we add variables $\mat{f}_n$ which represent the function values $\mat{f}_n = f(\mat{x}_n)$.
@@ -602,13 +602,13 @@ Because the functional $f$ is implicit, all $\mat{f}_n$ inform each other.
 
 If $f$ is represented completely and explicitly via a set of parameters $\mat{\theta}$ in a parametric model, the $\mat{f}_n$ are independent given $\mat{\theta}$.
 If this conditional independence
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob*{\mat{f}_n \given \mat{\theta}, \Set{\mat{f}_m \with m \in \Set{1, \dots, N}, m \neq n}}
         =
         \Prob*{\mat{f}_n \given \mat{\theta}}
     \end{split}
-\end{align}
+\end{equation}
 holds, $\mat{\theta}$ is called a sufficient statistic for the functional $f$.
 In the parametric graphical model
 \begin{align}
@@ -648,11 +648,11 @@ In the parametric graphical model
 the joint distribution of the $\mat{f}_n$ factorizes given the parameters $\mat{\theta}$ and the loop no longer exists.
 Taking linear regression as an example, we assume the functional to be of the shape $f(x) = \mat{W}x + \mat{b}$ and choose the parameters $\mat{\theta} = (\mat{W}, \mat{b})$.
 The functional dependency in the graphical model is then given by
-\begin{align}
+\begin{equation}
     \begin{split}
         \Prob*{\mat{f}_n \given \mat{x}_n, \mat{\theta}} = \delta(\mat{W}\mat{x}_n + \mat{b}),
     \end{split}
-\end{align}
+\end{equation}
 where $\delta(\cdot)$ denotes the Dirac delta distribution~\parencite{murphy_machine_2012}.
 Since $\mat{\theta}$ is a sufficient statistic, other observations are not required to evaluate the linear function.
 Even though we made the strong structural assumption about the linearity of the function resulting in a delta distribution, the marginalization of $\Prob*{\mat{\theta}}$ can still lead to more complicated $\Prob*{\mat{y} \given \mat{x}}$ distributions.
@@ -720,20 +720,15 @@ Since we do not have access to the full data distribution, we use the available 
 To make statements about the interaction of the parameters $\mat{\theta}$ and the observations $\Dc = \Set*{(\mat{x}_n, \mat{y}_n)}_{n=1}^N$, we consider their joint probability distribution $\Prob*{\mat{\theta}, \Dc}$.
 Using the chain rule, this distribution can be written as a product
 \begin{align}
-    \begin{split}
-        \Prob*{\mat{\theta}, \Dc}
-        &= \Prob*{\Dc \given \mat{\theta}}\Prob*{\mat{\theta}},
-    \end{split}
+    \Prob*{\mat{\theta}, \Dc} &= \Prob*{\Dc \given \mat{\theta}}\Prob*{\mat{\theta}},
 \end{align}
 whose terms are called the likelihood $\Prob*{\Dc \given \mat{\theta}}$ and prior $\Prob*{\mat{\theta}}$.
 The structural assumptions formulated via the generative model allow us to directly evaluate the likelihood $\Prob*{\Dc \given \mat{\theta}} = \Prob*{\mat{x}, \mat{y} \given \mat{\theta}}$.
 The prior $\Prob*{\mat{\theta}}$ is a distribution over all possible parameters $\mat{\theta}$ and is part of the joint formulated in the generative model.
 Applying the chain rule on the joint again yields the posterior
 \begin{align}
-\begin{split}
     \Prob*{\mat{\theta} \given \Dc}
     &= \frac{\Prob*{\Dc \given \mat{\theta}}\Prob*{\mat{\theta}}}{\Prob*{\Dc}},
-\end{split}
 \end{align}
 where $\Prob*{\Dc} = \int \Prob*{\Dc \given \mat{\theta}} \Prob*{\mat{\theta}} \diff \mat{\theta}$ is a combination of the likelihood and and prior terms.
 Because all terms on the right-hand-side are known, this posterior can be evaluated, yielding a combination of modeling assumptions and observations.
@@ -742,9 +737,7 @@ If a closed-form solution cannot be found, Bayesian inference is often implement
 Having found a posterior $\Prob{\mat{\hat{\theta}}} = \Prob*{\mat{\theta} \given \Dc}$, Bayesian predictions for previously unseen points can be made by replacing $\Prob*{\mat{\theta}}$ with $\Prob{\mat{\hat{\theta}}}$ in the graphical model.
 In the regression case, this predictive posterior is given by
 \begin{align}
-\begin{split}
-    \Prob*{\mat{y}_\ast \given \mat{x}_\ast} = \int \Prob*{\mat{y}_\ast \given \mat{f}_\ast} \Prob{\mat{f}_\ast \given \mat{x}_\ast, \mat{\hat{\theta}}} \Prob{\mat{\hat{\theta}}} \diff \mat{f}_\ast \diff \mat{\hat{\theta}}.
-\end{split}
+    \Prob*{\mat{y}_\ast \given \mat{x}_\ast} &= \int \Prob*{\mat{y}_\ast \given \mat{f}_\ast} \Prob{\mat{f}_\ast \given \mat{x}_\ast, \mat{\hat{\theta}}} \Prob{\mat{\hat{\theta}}} \diff \mat{f}_\ast \diff \mat{\hat{\theta}}.
 \end{align}
 Because Bayesian linear regression is a parametric model and we assumed that $\mat{\theta}$ is a sufficient statistic for $\mat{f}$, predictions can be made independently of the training data in this case.
 
@@ -809,11 +802,11 @@ Most strategies are related to the ideas of empirical risk minimization and cons
 Given two hypotheses $H_1$ and $H_2$, it is common to compare the marginal likelihoods $\Prob*{\Dc \given H_1}$ and $\Prob*{\Dc \given H_2}$ where $\Prob*{\Dc \given H} = \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{x}_n, H}$.
 Choosing the hypothesis $H_i$ with a higher marginal likelihood is called a maximum likelihood estimation.
 Observing that
-\begin{align}
+\begin{equation}
 \begin{split}
     \frac{\Prob*{H_1 \given \Dc}}{\Prob*{H_2 \given \Dc}} = \frac{\Prob*{\Dc \given H_1}}{\Prob*{\Dc \given H_2}} \frac{\Prob*{H_1}}{\Prob*{H_2}},
 \end{split}
-\end{align}
+\end{equation}
 a common extension to maximum likelihood estimation is to also consider how well the hypotheses conform to prior assumption through the prior odds $\sfrac{\Prob*{H_1}}{\Prob*{H_2}}$.
 
 While strategies based on marginal likelihoods often work well in practice, they are limited in scope.

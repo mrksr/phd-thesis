@@ -1,0 +1,68 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/title.tex}
+\input{../preamble/abbreviations.tex}
+\usepackage{enumitem}
+
+\newlength{\figurewidth}
+\setlength{\figurewidth}{170mm}
+\newlength{\figureheight}
+\setlength{\figureheight}{240mm}
+
+\begin{document}
+\begin{tikzpicture}[x=\figurewidth, y=\figureheight, every node/.style={inner sep=0}]
+    \tikzstyle{title text} = [text width=.75\figurewidth, align=left]
+
+    \node[anchor=south west] at (0.05, 0.9) {
+        \includegraphics[height=1.5cm,keepaspectratio]{tum_info}
+    };
+    \node[anchor=south east] at (0.95, 0.9) {
+        \includegraphics[height=1.5cm,keepaspectratio]{tum}
+    };
+    \node[anchor=north, title text] (grade) at (0.5, 0.5) {
+        Vollständiger Abdruck der von der Fakultät für Informatik der Technischen Universität München zur Erlangung des akademischen Grades eines
+
+        \begin{center}
+            \large\bfseries
+            Doktors der Naturwissenschaften (Dr.~rer.~nat)
+        \end{center}
+
+        genehmigten Dissertation.
+    };
+    \node[title text, align=center] (title) at ($(grade.north)!0.5!(0.5, 0.9)$) {
+    \makeatletter
+    {\huge\bfseries\color{tumblue}\@title}
+
+    \bigskip
+    \bigskip
+
+    {\large\bfseries\@author}
+    \makeatother
+    };
+
+    \node[anchor=south, title text] (date) at (0.5, 0.1) {
+        \makeatletter
+        Die Dissertation wurde am \@date{} bei der Technischen Universität München eingereicht und durch die Fakultät für Informatik am \acceptdate{} angenommen.
+        \makeatother
+    };
+    \node[title text] (committee) at ($(date.north)!0.5!(grade.south)$) {
+        \textbf{Vorsitzender:}
+        \begin{itemize}[label=,topsep=2pt]
+            \item Prof.~Dr.~Jan Itor
+        \end{itemize}
+        \medskip
+        \textbf{Prüfende der Dissertation:}
+        \begin{enumerate}[parsep=0pt,itemsep=2pt,topsep=2pt]
+            \item Prof.~Dr.-Ing.~Thomas A.~Runkler
+            \item Prof.~Dr.~Alucard
+            \item Prof.~Dr.~Carl Henrik Ek,\\
+                  University of Cambridge
+        \end{enumerate}
+    };
+
+    \useasboundingbox (0, 0) rectangle (1, 1);
+\end{tikzpicture}
+\end{document}

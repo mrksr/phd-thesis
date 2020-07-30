@@ -113,9 +113,11 @@ Such structure of a number of possibly dependent random variables mapping from t
             ] {};
         \end{scope}
     \end{tikzpicture}
-    \caption{
-        GP graphical model.
+    \caption[Graphical model: Gaussian process]{
         \label{fig:gp:graphical_model}
+        The graphical model of a Gaussian process with $N$ observations $(\mat{x}_n, \mat{y}_n)$.
+        Different observations are independent given the latent function values $\mat{f}_n$ which are all jointly Gaussian.
+        They are informed by the mean function $\mu$ and kernel $\K$.
     }
 \end{figure}
 The index set of a stochastic process can be an arbitrary set.
@@ -269,12 +271,11 @@ Gaussian process regression with a linear kernel is equivalent to Bayesian linea
         }
     \end{subfigure}
     \caption[Samples from GP priors]{
-        Samples from GP priors
-        % Since the mean function $\mu_f$ is assumed to be constant zero, the kernel specifies the prior assumptions about the function.
-        % A dashed sample function can be drawn by sampling a multivariate Gaussian with the kernel's Gram matrix using a grid of discrete sampling positions.
-        % While samples from the linear kernel are always hyperplanes, the RBF kernel describes arbitrary smooth functions.
-        % The hyper-parameters $l$ and $\sigma_f$ of the kernel describe the assumed dynamic range in $x$ and $y$ directions respectively.
         \label{fig:gp:gp_samples}
+        A comparison of samples drawn from GP priors with different kernels and hyper-parameters.
+        Dashed lines are single samples and the shaded area contains depicts two standard deviations around the mean.
+        While samples from the linear kernel are always linear functions, samples from RBF kernels are smooth functions of different variability.
+        The arc cosine kernel mimics the behavior of an infinitely wide neural network with a single hidden layer.
     }
 \end{figure}
 
@@ -305,7 +306,7 @@ Arc cosine kernels mimic the behavior of infinitely wide neural networks with a 
 The order of an arc cosine kernel specifies the activation function of such a neural network.
 The first three orders assume step-functions, rectified linear units, or rectified quadratic units respectively.
 Arc cosine kernels of low order behave similarly to squared exponential kernels in practice but have different generalization properties.
-While GPs with an RBF kernel return to the prior away from data yielding predictions roughly in the area $\mu_f \pm 2\sigma_f$, the arc cosine kernel of order one generalizes linearly using the derivative at the closest data points\todo{really?}.
+While GPs with an RBF kernel return to the prior away from data yielding predictions roughly in the area $\mu_f \pm 2\sigma_f$, the arc cosine kernel of order one generalizes linearly using the derivative at the closest data points.
 
 \subsubsection{Predictions and posterior}
 To use Gaussian processes for regression, observations need to be combined with a Gaussian process prior $f \sim \GP\Cond{\mat{0}, \K}$ to obtain a predictive posterior.
@@ -351,11 +352,10 @@ The closed-form solution of the integral is obtained using well-known results ab
         \label{fig:gp:gp_posterior:posterior}
     \end{subfigure}
     \caption[GP posterior]{
-        \Cref{fig:gp:gp_posterior:prior} shows a GP prior with an RBF kernel.
-        After observing the black data points, the mean function of the posterior GP in \cref{fig:gp:gp_posterior:posterior} is no longer constant zero.
-        The dashed function samples of the posterior GP interpolate the data but can be different in-between.
-        The shaded area represents the point wise mean plus and minus two times the standard deviation.
         \label{fig:gp:gp_posterior}
+        A GP prior with an RBF kernel (left) and posterior given a six observations (right).
+        The posterior has a non-zero mean function that interpolates the data exactly.
+        Samples from the posterior interpolate the data but vary in-between.
     }
 \end{figure}
 Now consider a set of new points $\mat{X}_\ast$ for which the predictive posterior should be obtained.
@@ -479,7 +479,7 @@ The maximum likelihood estimate is the solution of the optimization problem
 and is calculated using standard approaches to non-convex optimization.
 The computational complexity of evaluating the likelihood term and its derivatives is dominated by the inversion of $\mat{K}_{\mat{f}\mat{f}} + \sigma^2 \Eye$ with a time complexity of $\Oh(N^3)$.
 
-\section{Sparse Gaussian processes using inducing observations}
+\section{Sparse Gaussian processes with inducing points}
 A drawback of Gaussian processes in real-world applications is their high computational cost for large data sets.
 Assume a data set $(\mat{X}, \mat{y})$ with $N$ training samples, then the operations on a posterior Gaussian process are usually dominated by the inversion of the kernel matrix $\mat{K}_{\mat{f}\mat{f}}$ which takes $\Oh(N^3)$ time.
 While this inversion can be pre-computed, the cost of predicting the mean and variance of one test point remains $\Oh(N)$ and $\Oh(N^2)$, respectively.
@@ -550,8 +550,9 @@ Due to the conditional independence assumption of the data given the inducing va
     \begin{subfigure}{\halffigurewidth}
         \centering
         \includestandalonewithpath{figures/spgp_full}
-        \caption{Full GP
+        \caption{
             \label{fig:sparse_gp:spgp_example:gp}
+            Full GP
         }
     \end{subfigure}
     \hfill
@@ -559,17 +560,16 @@ Due to the conditional independence assumption of the data given the inducing va
         \centering
         \includestandalonewithpath{figures/spgp_sparse}
         \caption{
-            FITC approximation
             \label{fig:sparse_gp:spgp_example:spgp}
+            FITC approximation
         }
     \end{subfigure}
-    \caption[FITC example]{
-        The black crosses signify data sampled from a noisy sine function.
-        \Cref{fig:sparse_gp:spgp_example:gp} shows a full GP trained on the complete data.
-        \Cref{fig:sparse_gp:spgp_example:spgp} shows FITC with inducing inputs located at the dart positions.
-        Since the inducing variables are marginalized, only their $x$-coordinate is meaningful.
-        Three inducing inputs are enough to approximate the full GP with reasonable accuracy.
+    \caption[FITC sparse GP approximation]{
         \label{fig:sparse_gp:spgp_example}
+        A FITC GP approximation compared to a full GP posterior with data from a noisy sine function.
+        The inducing inputs are located at the dart positions.
+        Since the inducing outputs are marginalized, only their $x$-coordinate is meaningful.
+        Three inducing inputs are enough to approximate the full GP with reasonable accuracy.
     }
 \end{figure}
 This approximate marginal likelihood can be interpreted as the marginal likelihood of a specific GP defined on the original data set $(\mat{X}, \mat{y})$.
@@ -622,6 +622,77 @@ To address these issues, a variational formulation of sparse GPs using inducing 
 
 \section{Variational sparse Gaussian process approximations}
 \label{toc:gp:sparse_gps}
+\begin{figure}[t]
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \begin{tikzpicture}[x=4em, y=5em]
+            \node[random variable, observed] at (0, 0) (X) {$\mat{x}_n$};
+            \node[random variable, latent] at (0, -1) (F) {$\mat{f}_n$};
+            \node[random variable, hyperparameter] at (-1, -1) (theta) {$\mat{\theta}$};
+            \node[random variable, variational] at (1, -0.75) (Z) {$\mat{Z}$};
+            \node[random variable, variational] at (1, -1.25) (u) {$\mat{u}^\ast$};
+            \node[random variable, observed] at (0, -2) (Y) {$\mat{y}_n$};
+            \draw[edge, directed] (X) -- (F);
+            \draw[edge, directed] (F) -- (Y);
+            \draw[edge, directed] (theta) -- (F);
+            \draw[edge, directed] (Z) -- (F);
+            \draw[edge, directed] (u) to (F);
+            \draw[edge, directed] (Y) to (u);
+            %
+            \begin{scope}[on background layer]
+                \node[
+                    align plate,
+                    inner xsep=10pt,
+                    fit=(X)(F)(Y),
+                    label={[anchor=south east]south east:$N$}
+                ] {};
+            \end{scope}
+        \end{tikzpicture}
+        \medskip
+        \caption{
+            SGPR
+            \label{fig:gp:sparse_graphical_model:sgpr}
+        }
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \begin{tikzpicture}[x=4em, y=5em]
+            \node[random variable, observed] at (0, 0) (X) {$\mat{x}_n$};
+            \node[random variable, latent] at (0, -1) (F) {$\mat{f}_n$};
+            \node[random variable, hyperparameter] at (-1, -1) (theta) {$\mat{\theta}$};
+            \node[random variable, variational] at (1, -0.75) (Z) {$\mat{Z}$};
+            \node[random variable, variational] at (1, -1.25) (u) {$\mat{u}$};
+            \node[random variable, observed] at (0, -2) (Y) {$\mat{y}_n$};
+            \draw[edge, directed] (X) -- (F);
+            \draw[edge, directed] (F) -- (Y);
+            \draw[edge, directed] (theta) -- (F);
+            \draw[edge, directed] (Z) -- (F);
+            \draw[edge, directed] (u) -- (F);
+            %
+            \begin{scope}[on background layer]
+                \node[
+                    align plate,
+                    inner xsep=10pt,
+                    fit=(X)(F)(Y),
+                    label={[anchor=south east]south east:$N$}
+                ] {};
+            \end{scope}
+        \end{tikzpicture}
+        \medskip
+        \caption{
+            SVGP
+            \label{fig:gp:sparse_graphical_model:svgp}
+        }
+    \end{subfigure}
+    \caption[Graphical model: Variational sparse GP]{
+        \label{fig:gp:sparse_graphical_model}
+        Graphical models of variational sparse GP approximations with inducing inputs.
+        The latent function values $\mat{f}_n$ are assumed to be independent given the variational parameters $\mat{Z}$, $\mat{u}$ and hyper-parameters $\mat{\theta}$.
+        Since the observations $\mat{y}_n$ inform the optimal $\q^\ast(\mat{u})$ distribution in the SGPR approximations, they are not conditionally independent in the SGPR approximation.
+        In the SVGP approximation, the parameters for $\q(\mat{u})$ are part of the variational bound, which implies conditional independence between observations and enables stochastic optimization techniques.
+    }
+\end{figure}
 \Textcite{titsias_variational_2009} introduced a variational interpretation of sparse GPs with inducing observations $(\mat{Z}, \mat{u})$.
 Similar to the FITC approximation discussed above, inducing observations are assumed to be generated from the latent function $\mat{u} = f(\mat{Z})$.
 Due to the consistency of GPs, the true data and inducing data are jointly Gaussian.
@@ -773,72 +844,6 @@ which can be maximized to jointly find hyper-parameters $\mat{\theta}$ and the v
 Evaluating this bound takes $\Oh(NM^2)$ time.
 In contrast to the FITC approximation, where inducing inputs are additional hyper-parameters to the model that can lead to overfitting, adding inducing inputs $\mat{Z}$ to the variational model only improves the approximation to the full GP.
 
-\begin{figure}[t]
-    \begin{subfigure}[b]{\halffigurewidth}
-        \centering
-        \begin{tikzpicture}[x=4em, y=5em]
-            \node[random variable, observed] at (0, 0) (X) {$\mat{x}_n$};
-            \node[random variable, latent] at (0, -1) (F) {$\mat{f}_n$};
-            \node[random variable, hyperparameter] at (-1, -1) (theta) {$\mat{\theta}$};
-            \node[random variable, variational] at (1, -0.75) (Z) {$\mat{Z}$};
-            \node[random variable, variational] at (1, -1.25) (u) {$\mat{u}^\ast$};
-            \node[random variable, observed] at (0, -2) (Y) {$\mat{y}_n$};
-            \draw[edge, directed] (X) -- (F);
-            \draw[edge, directed] (F) -- (Y);
-            \draw[edge, directed] (theta) -- (F);
-            \draw[edge, directed] (Z) -- (F);
-            \draw[edge, directed] (u) to (F);
-            \draw[edge, directed] (Y) to (u);
-            %
-            \begin{scope}[on background layer]
-                \node[
-                    align plate,
-                    inner xsep=10pt,
-                    fit=(X)(F)(Y),
-                    label={[anchor=south east]south east:$N$}
-                ] {};
-            \end{scope}
-        \end{tikzpicture}
-        \caption{
-            SGPR
-            \label{fig:gp:sparse_graphical_model:sgpr}
-        }
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{\halffigurewidth}
-        \centering
-        \begin{tikzpicture}[x=4em, y=5em]
-            \node[random variable, observed] at (0, 0) (X) {$\mat{x}_n$};
-            \node[random variable, latent] at (0, -1) (F) {$\mat{f}_n$};
-            \node[random variable, hyperparameter] at (-1, -1) (theta) {$\mat{\theta}$};
-            \node[random variable, variational] at (1, -0.75) (Z) {$\mat{Z}$};
-            \node[random variable, variational] at (1, -1.25) (u) {$\mat{u}$};
-            \node[random variable, observed] at (0, -2) (Y) {$\mat{y}_n$};
-            \draw[edge, directed] (X) -- (F);
-            \draw[edge, directed] (F) -- (Y);
-            \draw[edge, directed] (theta) -- (F);
-            \draw[edge, directed] (Z) -- (F);
-            \draw[edge, directed] (u) -- (F);
-            %
-            \begin{scope}[on background layer]
-                \node[
-                    align plate,
-                    inner xsep=10pt,
-                    fit=(X)(F)(Y),
-                    label={[anchor=south east]south east:$N$}
-                ] {};
-            \end{scope}
-        \end{tikzpicture}
-        \caption{
-            SVGP
-            \label{fig:gp:sparse_graphical_model:svgp}
-        }
-    \end{subfigure}
-    \caption{
-        Sparse GP graphical model.
-        \label{fig:gp:sparse_graphical_model}
-    }
-\end{figure}
 \Cref{fig:gp:sparse_graphical_model:sgpr} shows the graphical model for the variational GP approximation using the optimal $\q^\ast(\mat{u})$ distribution.
 The inducing inputs
 \tikz[x=2.5em,baseline=(f.base)]{
@@ -858,8 +863,8 @@ We will now consider the SVGP model introduced by~\textcite{hensman_gaussian_201
         \centering
         \includestandalonewithpath{figures/variational_gp_spgp}
         \caption{
-            spgp
             \label{fig:gp:variational:spgp}
+            FITC with $M = 10$
         }
     \end{subfigure}
     \hfill
@@ -867,16 +872,16 @@ We will now consider the SVGP model introduced by~\textcite{hensman_gaussian_201
         \centering
         \includestandalonewithpath{figures/variational_gp_spgp_huge}
         \caption{
-            spgp huge
             \label{fig:gp:variational:spgp_huge}
+            FITC with $M = 300$
         }
     \end{subfigure}\\[\figureskip]
     \begin{subfigure}[b]{\halffigurewidth}
         \centering
         \includestandalonewithpath{figures/variational_gp_sgpr}
         \caption{
-            SGPR
             \label{fig:gp:variational:sgpr}
+            SGPR with $M = 10$
         }
     \end{subfigure}
     \hfill
@@ -884,16 +889,16 @@ We will now consider the SVGP model introduced by~\textcite{hensman_gaussian_201
         \centering
         \includestandalonewithpath{figures/variational_gp_sgpr_huge}
         \caption{
-            SGPR huge
             \label{fig:gp:variational:sgpr_huge}
+            SGPR with $M = 300$
         }
     \end{subfigure}\\[\figureskip]
     \begin{subfigure}[b]{\halffigurewidth}
         \centering
         \includestandalonewithpath{figures/variational_gp_svgp}
         \caption{
-            SVGP
             \label{fig:gp:variational:svgp}
+            SVGP with $M = 10$
         }
     \end{subfigure}
     \hfill
@@ -901,13 +906,16 @@ We will now consider the SVGP model introduced by~\textcite{hensman_gaussian_201
         \centering
         \includestandalonewithpath{figures/variational_gp_svgp_huge}
         \caption{
-            SVGP huge
             \label{fig:gp:variational:svgp_huge}
+            SVGP with $M = 300$
         }
     \end{subfigure}
     \caption[Variational GP posteriors]{
-        Variational GP posteriors
         \label{fig:gp:variational}
+        A comparison of sparse GP approximations with inducing inputs.
+        While the FITC approximation does not converge to the full GP for large $M$, both variational approaches do.
+        For SGPR and FITC, the inducing outputs are marginalized and only the $x$-coordinates are meaningful.
+        For SVGP, inducing outputs are optimized as well.
     }
 \end{figure}
 In the SGPR approximation, a linear dependency on the number of points in the true data set is introduced through $\q^\ast(\mat{u})$.
@@ -972,45 +980,6 @@ This decoupling allows the calculation of the predictive mean in linear time, al
 
 \section{Hierarchical Gaussian processes}
 \label{toc:dgp}
-\begin{figure}[t]
-    \centering
-    \begin{tikzpicture}[x=4em, y=5em]
-        \node[random variable, observed] at (0, 0) (X) {$\mat{x}_n$};
-        %
-        \node[random variable, latent] at (0, -1) (F1) {$\mat{f}_{n,1}$};
-        \node[random variable, variational] at (1, -1) (u1) {$\mat{u}_1$};
-        %
-        \node[random variable, latent] at (0, -2) (Fl) {$\mat{f}_{n,L}$};
-        \node[random variable, variational] at (1, -2) (ul) {$\mat{u}_L$};
-        %
-        \node[random variable, hyperparameter] at (-1, -1.5) (theta) {$\mat{\theta}$};
-        \node[random variable, observed] at (0, -3) (Y) {$\mat{y}_n$};
-        \draw[edge, directed] (X) -- (F1);
-        %
-        \draw[edge, directed] (theta) |- (F1);
-        \draw[edge, directed] (u1) -- (F1);
-        %
-        \draw[edge, directed, densely dashed] (F1) -- (Fl);
-        %
-        \draw[edge, directed] (theta) |- (Fl);
-        \draw[edge, directed] (ul) -- (Fl);
-        %
-        \draw[edge, directed] (Fl) -- (Y);
-        %
-        \begin{scope}[on background layer]
-            \node[
-                align plate,
-                inner xsep=10pt,
-                fit=(X)(Y),
-                label={[anchor=south east]south east:$N$}
-            ] {};
-        \end{scope}
-    \end{tikzpicture}
-    \caption{
-        Deep GP
-        \label{fig:dgp:graphical_model}
-    }
-\end{figure}
 While GPs offer a principled non-parametric approach to representing distributions over functions, they can be restrictive in the functions they are able to represent.
 Many extensions to standard GPs have been studied which introduce additional hierarchical structure such as GP latent variable models~\parencite{titsias_bayesian_2010,damianou_variational_2014}, warped GP models~\parencite{snelson_warped_2004,lazaro-gredilla_bayesian_2012} or mixtures of experts models~\parencite{tresp_mixtures_2001,rasmussen_infinite_2002,lazaro-gredilla_overlapping_2012}.
 The hierarchical structure typically introduces the requirement to propagate uncertainties through Gaussian processes, which is analytically intractable in most cases.
@@ -1025,6 +994,51 @@ In a deep GP, rather than assuming that observational data is generated through 
 where each $f_l$ is drawn from a GP.
 This new compositional prior $f_L \circ \cdots \circ f_1$ is no longer a Gaussian process~\parencite{duvenaud_avoiding_2014} and can represent a broader set of functions.
 
+\begin{figure}[t]
+    \centering
+    \begin{tikzpicture}[x=4em, y=5em]
+        \node[random variable, observed] at (0, 0) (X) {$\mat{x}_n$};
+        %
+        \node[random variable, latent] at (0, -1) (F1) {$\mat{f}_{n,1}$};
+        \node[random variable, variational] at (1, -0.75) (Z1) {$\mat{Z}_1$};
+        \node[random variable, variational] at (1, -1.25) (u1) {$\mat{u}_1$};
+        %
+        \node[random variable, latent] at (0, -2) (Fl) {$\mat{f}_{n,L}$};
+        \node[random variable, variational] at (1, -1.75) (Zl) {$\mat{Z}_L$};
+        \node[random variable, variational] at (1, -2.25) (ul) {$\mat{u}_L$};
+        %
+        \node[random variable, hyperparameter] at (-1, -1.5) (theta) {$\mat{\theta}$};
+        \node[random variable, observed] at (0, -3) (Y) {$\mat{y}_n$};
+        \draw[edge, directed] (X) -- (F1);
+        %
+        \draw[edge, directed] (theta) |- (F1);
+        \draw[edge, directed] (u1) -- (F1);
+        \draw[edge, directed] (Z1) -- (F1);
+        %
+        \draw[edge, directed, densely dashed] (F1) -- (Fl);
+        %
+        \draw[edge, directed] (theta) |- (Fl);
+        \draw[edge, directed] (ul) -- (Fl);
+        \draw[edge, directed] (Zl) -- (Fl);
+        %
+        \draw[edge, directed] (Fl) -- (Y);
+        %
+        \begin{scope}[on background layer]
+            \node[
+                align plate,
+                inner xsep=10pt,
+                fit=(X)(Y),
+                label={[anchor=south east]south east:$N$}
+            ] {};
+        \end{scope}
+    \end{tikzpicture}
+    \caption[Graphical model: Deep GP]{
+        \label{fig:dgp:graphical_model}
+        Graphical model of a variational deep GP approximation with inducing inputs.
+        A deep GP is a composition of $L$ functions where each $f_l$ is drawn from a GP.
+        Similar to shallow variational GP approximations, each GP is augmented with inducing observations.
+    }
+\end{figure}
 \Cref{fig:dgp:graphical_model} shows the graphical model of a deep GP.
 We represent the result of applying the the first $l$ functions $f_l \circ \cdots \circ f_1$ on the inputs $\mat{X}$ as $\mat{f}_l$ and identify $\mat{f}_0 = \mat{X}$.
 The joint probability of the function values and outputs can then be written as

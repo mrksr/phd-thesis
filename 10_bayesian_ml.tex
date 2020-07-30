@@ -77,7 +77,7 @@ This knowledge can then be used to describe common patterns in the data or gener
         \centering
         \includestandalonewithpath{figures/polynoms_data}
         \caption{
-            Data
+            Dataset
             \label{fig:bayesian_ml:polynomials:data}
         }
     \end{subfigure}
@@ -86,13 +86,14 @@ This knowledge can then be used to describe common patterns in the data or gener
         \centering
         \includestandalonewithpath{figures/polynoms_lagrange}
         \caption{
-            \enquote{Algorithms}
+            Algorithms for interpolation
             \label{fig:bayesian_ml:polynomials:lagrange}
         }
     \end{subfigure}
-    \caption[Algorithmic Interpolation]{
-        ???
+    \caption[Algorithms for interpolation]{
         \label{fig:bayesian_ml:polynoms}
+        Computational problems defined on a dataset have a well-defined and unique solution.
+        This solution can be characterized through algorithms such as linear interpolation or Lagrange polynomials.
     }
 \end{figure}
 
@@ -139,7 +140,7 @@ Because of the explicit nature of their algorithms as seen in \cref{eq:bayesian_
         \centering
         \includestandalonewithpath{figures/polynoms_linear}
         \caption{
-            Linear ML
+            Linear regression
             \label{fig:bayesian_ml:polynomials:linear}
         }
     \end{subfigure}
@@ -148,13 +149,15 @@ Because of the explicit nature of their algorithms as seen in \cref{eq:bayesian_
         \centering
         \includestandalonewithpath{figures/polynoms_polynomial}
         \caption{
-            Polynomial ML
+            Polynomial regression
             \label{fig:bayesian_ml:polynomials:polynomial}
         }
     \end{subfigure}
-    \caption[ML Interpolation]{
-        ???
+    \caption[Polynomial regression]{
         \label{fig:bayesian_ml:polynomials:ml}
+        Problems in machine learning do not have a well-defined solution but require additional assumptions about the hypothesis space and error function.
+        For the linear regression problem (left), the squared error (LS), absolute error (LAE) and Ridge error functions lead to different solutions.
+        Similarly, alternating the hypothesis space between polynomials of different degrees (right) yields qualitatively different results.
     }
 \end{figure}
 A common approach to formulating a problem that lets the data speak for itself is to formulate more implicit requirements.
@@ -204,9 +207,11 @@ In the following, statistical learning and Bayesian machine learning are introdu
 \begin{figure}[t]
     \centering
     \includestandalonewithpath{figures/quantities_of_interest_statistical_learning}
-    \caption{
-        Statistical Learning
+    \caption[Statistical learning]{
         \label{fig:bayesian_ml:statistical_learning}
+        Statistical learning characterizes machine learning through a latent data distribution $\Prob*{\mat{z}}$.
+        The task is to learn about a functional of interest $F[\Prob*{\mat{z}}] = f \in \Fc$ based on a set of observations $S[\Prob*{\mat{z}}] \in \Sc$.
+        A machine learning algorithm $A : \Sc \to \Fc$ is successful if it recovers $f$ such that $A \circ S \simeq F$.
     }
 \end{figure}
 The objective of machine learning is to derive knowledge about a process generating data from a limited set of observations.
@@ -262,9 +267,9 @@ We give a few examples here.
 \end{problem}
 
 A machine learning Algorithm $A : \Sc \to \Fc$ is a function mapping from the space of samples to the space of functionals, thereby recovering structure from data.
-Such an algorithm is successful if it recovers the correct functional $f \in F$ given observations $\Dc$.
+Such an algorithm is successful if it recovers the correct functional $f \in \Fc$ given observations $\Dc$.
 \Cref{fig:bayesian_ml:statistical_learning} shows the introduced components in a directed diagram.
-An algorithm is successful if this diagram (approximately) commutes such that $A \circ D \simeq F$.
+An algorithm is successful if this diagram (approximately) commutes such that $A \circ S \simeq F$.
 Similarly, a model $f_A \in \Fc$ can be considered good if it is similar to the true functional~$f$.
 
 The similarity of two functionals can be measured via a distance measure in $\Fc$.
@@ -758,7 +763,7 @@ Their relative weights in the posterior are dependent on the prior assumptions f
         \centering
         \includestandalonewithpath{figures/polynoms_bayes_broad}
         \caption{
-            Broad uncertainties
+            Uncertain prior $\mat{W}, \mat{b} \sim \Gaussian{0, 5^2}$
             \label{fig:bayesian_ml:polynomials:bayes_broad}
         }
     \end{subfigure}
@@ -767,13 +772,15 @@ Their relative weights in the posterior are dependent on the prior assumptions f
         \centering
         \includestandalonewithpath{figures/polynoms_bayes_narrow}
         \caption{
-            Narrow uncertainties
+            Certain prior $\mat{W}, \mat{b} \sim \Gaussian{1, 1^2}$
             \label{fig:bayesian_ml:polynomials:bayes_narrow}
         }
     \end{subfigure}
-    \caption[ML Interpolation]{
-        ???
+    \caption[Bayesian linear regression posteriors]{
         \label{fig:bayesian_ml:polynomials:bayes}
+        Two predictive posteriors for a Bayesian linear regression on the same data.
+        Different choices for prior distributions lead to different predictive uncertainties.
+        Which posterior to use is problem-dependent and a subjective choice.
     }
 \end{figure}
 Statements about Bayesian models are made in terms of probabilities, including predictive posteriors for new inputs $\Prob*{\mat{y}_\ast \given \mat{x}_\ast, \Dc}$ in a regression problem or a posterior distributions $\Prob*{\mat{\theta} \given \Dc}$ for a parameter.

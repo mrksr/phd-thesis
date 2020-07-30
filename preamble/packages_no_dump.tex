@@ -1,7 +1,16 @@
 % Fonts
 \usepackage{fontspec}
 \usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
-\usepackage[osf]{libertinus}
+\usepackage[
+    osf,
+    nomath,
+    ScaleSF=1.05,
+    ScaleRM=1.05,
+    ScaleTT=1.05,
+    ]{libertinus}
+% NOTE(mrksr): We set libertinus mathfonts manually to apply scaling.
+\setmathfont{LibertinusMath-Regular.otf}[Scale=1.05]
+\setmathfont[version=bold,RawFeature={embolden=3}]{LibertinusMath-Regular.otf}[Scale=1.05]
 \usepackage{microtype}
 
 % Language
@@ -15,7 +24,7 @@
     color=sTealDark,
     linecolor=sTealDark,
     backgroundcolor=sTealDark!25,
-    textsize=footnotesize,
+    textsize=small,
     colorinlistoftodos,
     minNoteWidth=1cm,
 ]{luatodonotes}

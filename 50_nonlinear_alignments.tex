@@ -33,17 +33,17 @@ This MO-GP acts as an interface to share information between the different GPs t
 \begin{figure}[t]
     \centering
     \includestandalone{figures/wind_graphical_model}
-    \caption{
+    \caption[Graphical model: Aligned multi-output GP]{
         \label{fig:alignment:graphical_model_supervised}
-        The graphical model of AMO-GP with variational parameters (blue).
-        A CP, informed by $R$ latent processes, models shared information between multiple data sets with nonlinear alignments and warpings.
-        This CP connects multiple deep GPs through a shared layer.
+        The graphical model of AMO-GP.
+        A convolution process, informed by $R$ latent processes, models shared information between multiple data sets with nonlinear alignments and warpings.
+        The shared information connects $D$ deep GPs through a shared layer.
     }
 \end{figure}
 \begin{figure}[t]
     \centering
     \includestandalonewithpath{figures/dampened_sine_decomposition_true}
-    \caption{
+    \caption[Artificial composite data]{
         \label{fig:alignment:dampened_sine_decomposition}
         An artificial example of hierarchical composite data with multiple observations of shared latent information.
         This hierarchy generates two data sets using a dampened sine function which is never observed directly.
@@ -207,7 +207,7 @@ Given $\Variat{\rv{u}_f}$, the different outputs are conditionally independent o
 
 \section{Model interpretation}
 \label{toc:alignment:interpretation}
-The graphical model shown in \cref{fig:alignment:graphical_model_supervised} illustrates that the presented model can be interpreted as a group of $D$ deep GPs all of which share one layer which is a CP.
+The graphical model of the aligned multi-output Gaussian process model (AMO-GP) in \cref{fig:alignment:graphical_model_supervised} illustrates that the presented model can be interpreted as a group of $D$ deep GPs all of which share one layer which is a CP.
 This CP acts as an interface to share information between the different GPs that are otherwise conditionally independent.
 This modeling-choice introduces a new quality to the model when compared to standard deep GPs with multiple output dimensions since the latter cannot learn dependencies between the different outputs.
 Compared to standard multi-output GPs, the AMO-GP introduces more flexibility with respect to the shared information.
@@ -264,7 +264,7 @@ The bound reflects the dependencies of the different outputs as the sharing of i
             \label{fig:alignment:dampened_sine_model_decomposition:d}
         }
     \end{subfigure}
-    \caption{
+    \caption[Artificial composite experiment]{
         \label{fig:alignment:dampened_sine_model_decomposition}
         A comparison of the AMO-GP with other GP models.
         The plots show mean predictions and a shaded area of two standard deviations.
@@ -327,7 +327,7 @@ This allows us to evaluate and compare the generative properties of our model in
 
 \begin{table}[t]
     \centering
-    \caption{
+    \caption[Alignment experiments]{
         \label{tab:alignment:dampened_sine_model_log_likelihoods}
         Test-log-likelihoods for the models presented in \cref{toc:alignment:experiments}.
     }
@@ -380,7 +380,7 @@ This allows us to evaluate and compare the generative properties of our model in
             Samples from the AMO-GP.
         }
     \end{subfigure}
-    \caption{
+    \caption[Comparison of samples from wind-turbine models]{
         \label{fig:alignment:wind_samples}
         A comparison of noiseless samples drawn from a GP, a MO-GP, a DGP and the AMO-GP.
         The separation of uncertainties implied by the model structure of AMP-GP gives rise to an informative model.
@@ -390,7 +390,7 @@ This allows us to evaluate and compare the generative properties of our model in
 \begin{figure}[tp]
     \centering
     \includestandalonewithpath{figures/wind_joint_model}
-    \caption{
+    \caption[Wind-turbine experiment]{
         \label{fig:alignment:wind_joint_model}
         The joint posterior for two time-series $\rv{y}_1$ and $\rv{y}_2$ of power production for a pair of wind-turbines.
         The top and bottom plots show the two observed time-series with training data and dashed missing data.
@@ -453,9 +453,10 @@ Samples show that it has learned that a maximum which is missing in the training
             MO-GP
         }
     \end{subfigure}
-    \caption{
+    \caption[Variational bound loseness I]{
         \label{fig:alignment:approximate_joint:first}
-        Approximate joints
+        Comparison of joint predictions (blue and green) and the variational approximations (violet).
+        Both the GP and MO-GP are shallow models and the variational approximations are tight.
     }
 \end{figure}
 \begin{figure}[p]
@@ -475,9 +476,11 @@ Samples show that it has learned that a maximum which is missing in the training
             AMO-GP (Ours)
         }
     \end{subfigure}
-    \caption{
+    \caption[Variational bound loseness II]{
         \label{fig:alignment:approximate_joint:second}
-        Approximate joints
+        Comparison of joint predictions (blue and green) and the variational approximations (violet).
+        The DGP model has few constraints and the variational bound is very loose.
+        The knowledge encoded in AMO-GP leads to a more informed and thighter approximation.
     }
 \end{figure}
 In~\cref{fig:alignment:approximate_joint:first,fig:alignment:approximate_joint:second}, we compare joint predictions and the variational approximations for different model types in the wind example.

@@ -43,22 +43,24 @@ In \cref{toc:discussion:future_work}, we discuss possible further directions of 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\textwidth]{composite_uncertainty/rotated_squares_example}
-    \caption{
+    \caption[Rotated squares example]{
         \label{fig:composition:rotated_squares_example}
-        Compositional model (toy example): the transformation of the solid rectangle onto the dashed one is decomposed as $T_2 \circ R_2 \circ T_1 \circ R_1$ where $R_i$ and $T_i$ are rotations and translations.
-        Different sampled realizations of these transformations are overlaid, showing the \emph{compositional uncertainty}.
-        Approximating $R_i$ and $T_i$ as independent transformations does not allow us to capture such uncertainty, collapsing to a single realisation of the composition.
+        The rotated squares example.
+        An overparameterized composite model should map the solid rectangle onto the dashed one.
+        The required affine transformation is parameterized as $T_2 \circ R_2 \circ T_1 \circ R_1$, where $R_i$ and $T_i$ are rotations and translations.
+        Different possible solutions show the complexity of the solution space.
+        Approximating $R_i$ and $T_i$ as independent transformations does not allow us to capture a full posterior but collapses to a single solution.
     }
 \end{figure}
 \begin{figure}[t]
     \centering
     \includegraphics[width=\textwidth]{composite_uncertainty/factorized_dgp_identity}
-    \caption{
+    \caption[Three layer identity function]{
         \label{fig:composition:identity_factorised}
-        Example fits of a three-layer DGP with factorized inducing points to a data set shown in the rightmost panel (black dots).
-        Different panels show the computations performed by each of the three layers and their compositions.
-        Different colours correspond to three models fitted to the same data with different random initializations.
-        For each initialization, ten samples (of the same colour) from the fitted model are shown on top of each other.
+        The identity function example.
+        An identity function is parameterized as a composition of three linear functions with positive or negative slope.
+        Different colors show three deep GP posteriors.
+        Since the correct choice of the third layer depends on the first two layers, and independent approximation collapses to a single solution.
     }
 \end{figure}
 The experiments in~\cref{toc:data_association} showed that the data association problem generally does not have a unique solution.
@@ -132,9 +134,12 @@ For example, local oscillations and discontinuities are less important to captur
     \raisebox{-0.5\height}{\includegraphics[trim=15 15 0 0, clip, width=0.25\textwidth]{robust_bo_erik/illustrative_figure/homo_gp.pdf}}
     \raisebox{-0.5\height}{\includegraphics[trim=15 15 0 0, clip, width=0.25\textwidth]{robust_bo_erik/illustrative_figure/modulating_lgp.pdf}}
     \raisebox{-0.45\height}{{\includegraphics[width=0.20\textwidth]{robust_bo_erik/illustrative_figure/legend_compact.pdf}}}
-    \caption{
+    \caption[Comparison of BO surrogates]{
         \label{fig:bo:posterior}
-        As a result, the acquisition function can utilize a confidently discovered global trend to increase the efficiency of the search.
+        A comparison of Gaussian process posteriors for a noise-free GP (left), a homoscedastic GP with Gaussian noise (center) and a LGP (right).
+        A noise-free GP learns a low lengthscale to explain the rapid oscillations in the data, while a homoscedastic GP explains them with a high noise level.
+        Both surrogates lead to poorly informed decisions for the next BO query via the EI-acquisition.
+        The LGP-surrogate sacrifices local exactness to recover global trends and yields an informed posterior.
     }
 \end{figure}
 Assuming additive structure $f(\mat{x}) = g(\mat{x}) + h(\mat{x})$ and choosing the nuisance function to be input-independent noise $h(\mat{x}) \sim \Gaussian{\mat{0}, \sigma^2 \Eye}$ recovers GP regression with a Gaussian likelihood.
@@ -161,6 +166,8 @@ In the next section, we go one step further and include the task of policy searc
     \caption[Statistical learning methodology in reinforcement learning]{
         \label{tab:mountaincar:quantities_of_interest}
         Mapping of the statistical learning methodology to the reinforcement learning problem.
+        An optimal policy is characterized by the Bellman principle.
+        An RL algorithm must find a policy based on a limited amount of interaction with the system.
     }
     \centering
     \includestandalonewithpath{figures/quantities_of_interest_statistical_learning}\\[\figureskip]
@@ -196,9 +203,10 @@ Instead, we observe batch or online data and apply an algorithm for policy searc
 \begin{figure}[t]
     \centering
     \includestandalone{graphical_model_rl_deep_gp}
-    \caption{
+    \caption[Graphical model: Policy search as a hierarchical GP]{
         \label{fig:mountaincar:graphical_model}
-        Deep GP RL graphical model.
+        An interpration of the generative process of the optimal value as a hierarchical GP model.
+        A transition model $\mat{f}$ and policy $\mat{\pi}$ parameterize the value through a deep GP and a special likelihood function.
     }
 \end{figure}
 Our goal is to formulate the policy search in reinforcement learning as an inference problem in a hierarchical model.
@@ -256,9 +264,12 @@ Given the value estimate $\mat{J}$, this term encapsulates an estimation of clos
 \begin{figure}[t]
     \centering
     \includestandalone{mountaincar_system}
-    \caption{
+    \caption[The mountaincar system]{
         \label{fig:mountaincar:system}
-        Mountaincar system
+        The core components of the mountaincar benchmark.
+        The task is to drive an underpowered car up a mountain.
+        The car has a one-dimensional position and velocity value and the agent can accelerate to the left or right.
+        A successful policy must build momentum by first moving away from the goal to the right.
     }
 \end{figure}
 We now assume variational distributions $\Variat{\mat{f}}$ and $\Variat{\mat{\pi}^\ast}$ introduced by the sparse GP formulations in~\cref{toc:dgp}.
@@ -317,9 +328,11 @@ This bound is similar to a standard policy iteration scheme but is also subject 
     \includestandalone{mountaincar_policy_01}
     \includestandalone{mountaincar_policy_10}
     \includestandalone{mountaincar_policy_25}
-    \caption{
+    \caption[A probabilistic mountaincar policy]{
         \label{fig:mountaincar:policy}
-        Mountaincar policies after different iteration counts.
+        Bayesian belief about an optimal mountaincar policy after 1, 10 and 25 iterations (top to bottom).
+        Starting off with an uninformed policy, the critical areas of the benchmark are quickly identified and the policy becomes certain about the correct action.
+        Other areas remain uncertain, implying that the states are either never reached, or all actions lead to success.
     }
 \end{figure}
 As an example, we consider the mountain car system~\parencite{moore_efficient_1990,sutton_reinforcement_2018}.

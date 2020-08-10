@@ -214,7 +214,7 @@ We start by interpreting the definition of the $T$-step value function
 \begin{align}
     J^\pi(\mat{s}_0) = \Moment*{\E}{\sum_{t=1}^T \gamma^t r(\mat{s}_t) \given f, \pi}
 \end{align}
-as a generative process with the associated graphical model~\cref{fig:mountaincar:graphical_model}.
+as a generative process with the associated graphical model in~\cref{fig:mountaincar:graphical_model}.
 Starting with the initial state $\mat{s}_0$, trajectories are generated using the transition dynamics $f$ and policy $\pi$.
 If both the transition dynamics and policy are represented as GPs, the graphical model of a trajectory is a recurrent deep Gaussian process.
 The states are mapped to rewards using the known reward function $r$ and added to produce the value $J^\pi$, thereby defining a likelihood function.

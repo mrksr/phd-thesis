@@ -1,0 +1,57 @@
+\chapter{Introduction}
+\label{toc:introduction}
+
+% Machine learning methods have seen great success recently in a wide range of digital domains such as speech recognition, computer vision, or translation.
+% However, bridging the gap to applications in the physical world has proved challenging.
+% Problem domains like robotics, industrial control, decision support systems, or the natural sciences introduce a new set of requirements.
+% ML-systems that operate in safety-critical areas, interact with people, or carry responsibility must be robust, trustworthy, and assessable.
+% Besides optimizing for good average-case performance, a responsible system needs to reason about plausible worst-cases and reliably avoid or inform about them.
+
+% In this workshop, we will identify a list of properties required in real-world scenarios and discuss how they can be evaluated.
+% We aim to address challenges arising from the need for interaction of machine learning researchers and domain experts in successful applications.
+% How do we design models which facilitate communication with experts and how do we evaluate interpretability?
+% How can we benchmark the trustworthiness and robustness of a model and ensure that it can cope with unobserved situations?
+% What do uncertainties mean in practice and how do we make use of them to reason about worst-case performance?
+
+% We want to bring together computer scientists, mathematicians, and statisticians with domain experts to discuss approaches that facilitate interdisciplinary dialogue.
+% We welcome contributions on explainable and interpretable models, human-in-the-loop learning, uncertainty quantification, and learning guarantees.
+% We hope to introduce open problems to a broader community and discuss benchmarks and success criteria for requirements driven by machine learning problems in the physical world.
+
+%%%
+
+Machine learning methods have seen great success recently in a wide range of digital domains such as speech recognition, computer vision, or translation.
+In such domains, data is abundant, and the consequences of mistakes tend to be mild.
+However, bridging the gap to applications in the physical world has proved challenging.
+Problem domains like robotics, industrial control, decision support systems, or the natural sciences introduce a new set of requirements.
+ML-systems which operate in safety-critical areas, interact with people or carry responsibility must be robust, trustworthy, and assessable.
+As applications become more safety-relevant, gathering data through exploration can be problematic due to the adverse consequences of failure.
+
+Besides optimizing for good average-case performance, a responsible system needs to reason about plausible worst-cases and reliably avoid or inform about them.
+ML-systems need to be verified by domain experts before deployment and are used to test hypotheses or make impactful decisions, emphasizing a need for interpretability.
+Models are required to incorporate and reproduce expert knowledge and make consistent predictions.
+A key technique that allows us to cope with these requirements is principled probabilistic models that allow us to represent and propagate uncertainties explicitly.
+This allows us to both quantify confidence in predictions and take more unlikely but relevant scenarios into consideration.
+
+% At Siemens Research, I have worked on a number of pioneering applications of machine learning to industrial systems in safety-critical applications.
+% In industrial control problems, machine learning is often used to find more efficient or safer control strategies not obvious to the engineers designing a machine.
+% Relevant data for finding new strategies is scarce since the most valuable data such as when a machine will fail or how it will behave in new situations is never produced.
+% Finding exploration strategies is a collaborative task combining the knowledge of machine learning experts and domain experts.
+% Above all, interdisciplinary work requires a common language and understanding.
+% One of my research goals is to explore how to effectively formulate robust models together with domain experts to combine the available data with their knowledge.
+% This knowledge is often based on an intuitive understanding of the underlying physics leading to coarse expectations about system-behavior on different layers of abstraction.
+% In recent work\footnote{Bayesian Alignments of Warped Multi-Output Gaussian Processes, \url{https://arxiv.org/abs/1710.02766}}, we formulated a model that is capable of representing the complex interactions between turbines in a wind-farm.
+% We combined strong hierarchical prior knowledge about wind propagation and turbine behavior with the flexibility of general function approximations to separate stochastic turbulence from adverse wake effects.
+% During my fellowship, I will build on this work and explore how abstract expert knowledge can be embedded in hierarchical models efficiently.
+
+\todoi{And so on, and so forth...}
+
+\section{Thesis outline}
+\todo[inline]{Is it finished yet?}
+
+% \begin{itemize}
+%     \item We consider hierarchical problems
+%     \item Technically, we're interested in formulating relaxed but informative priors
+%     \item We want to understand what makes a hierarchical model good and argue that the marginal likelihood is not quite enough.
+%     \item Industrial ML motivates our thesis, where we want to formulate models that are inherently interpretable and trustworthy
+%     \item It will turn out that in this space, judging whether a model is good is actually very tricky.
+% \end{itemize}

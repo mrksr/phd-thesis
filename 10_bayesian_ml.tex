@@ -1,53 +1,5 @@
-\chapter{Introduction}
+\chapter{Machine learning problems}
 \label{toc:bayesian_ml}
-
-% Machine learning methods have seen great success recently in a wide range of digital domains such as speech recognition, computer vision, or translation.
-% However, bridging the gap to applications in the physical world has proved challenging.
-% Problem domains like robotics, industrial control, decision support systems, or the natural sciences introduce a new set of requirements.
-% ML-systems that operate in safety-critical areas, interact with people, or carry responsibility must be robust, trustworthy, and assessable.
-% Besides optimizing for good average-case performance, a responsible system needs to reason about plausible worst-cases and reliably avoid or inform about them.
-
-% In this workshop, we will identify a list of properties required in real-world scenarios and discuss how they can be evaluated.
-% We aim to address challenges arising from the need for interaction of machine learning researchers and domain experts in successful applications.
-% How do we design models which facilitate communication with experts and how do we evaluate interpretability?
-% How can we benchmark the trustworthiness and robustness of a model and ensure that it can cope with unobserved situations?
-% What do uncertainties mean in practice and how do we make use of them to reason about worst-case performance?
-
-% We want to bring together computer scientists, mathematicians, and statisticians with domain experts to discuss approaches that facilitate interdisciplinary dialogue.
-% We welcome contributions on explainable and interpretable models, human-in-the-loop learning, uncertainty quantification, and learning guarantees.
-% We hope to introduce open problems to a broader community and discuss benchmarks and success criteria for requirements driven by machine learning problems in the physical world.
-
-%%%
-
-Machine learning methods have seen great success recently in a wide range of digital domains such as speech recognition, computer vision, or translation.
-In such domains, data is abundant, and the consequences of mistakes tend to be mild.
-However, bridging the gap to applications in the physical world has proved challenging.
-Problem domains like robotics, industrial control, decision support systems, or the natural sciences introduce a new set of requirements.
-ML-systems which operate in safety-critical areas, interact with people or carry responsibility must be robust, trustworthy, and assessable.
-As applications become more safety-relevant, gathering data through exploration can be problematic due to the adverse consequences of failure.
-
-Besides optimizing for good average-case performance, a responsible system needs to reason about plausible worst-cases and reliably avoid or inform about them.
-ML-systems need to be verified by domain experts before deployment and are used to test hypotheses or make impactful decisions, emphasizing a need for interpretability.
-Models are required to incorporate and reproduce expert knowledge and make consistent predictions.
-A key technique that allows us to cope with these requirements is principled probabilistic models that allow us to represent and propagate uncertainties explicitly.
-This allows us to both quantify confidence in predictions and take more unlikely but relevant scenarios into consideration.
-
-% At Siemens Research, I have worked on a number of pioneering applications of machine learning to industrial systems in safety-critical applications.
-% In industrial control problems, machine learning is often used to find more efficient or safer control strategies not obvious to the engineers designing a machine.
-% Relevant data for finding new strategies is scarce since the most valuable data such as when a machine will fail or how it will behave in new situations is never produced.
-% Finding exploration strategies is a collaborative task combining the knowledge of machine learning experts and domain experts.
-% Above all, interdisciplinary work requires a common language and understanding.
-% One of my research goals is to explore how to effectively formulate robust models together with domain experts to combine the available data with their knowledge.
-% This knowledge is often based on an intuitive understanding of the underlying physics leading to coarse expectations about system-behavior on different layers of abstraction.
-% In recent work\footnote{Bayesian Alignments of Warped Multi-Output Gaussian Processes, \url{https://arxiv.org/abs/1710.02766}}, we formulated a model that is capable of representing the complex interactions between turbines in a wind-farm.
-% We combined strong hierarchical prior knowledge about wind propagation and turbine behavior with the flexibility of general function approximations to separate stochastic turbulence from adverse wake effects.
-% During my fellowship, I will build on this work and explore how abstract expert knowledge can be embedded in hierarchical models efficiently.
-
-\todoi{And so on, and so forth...}
-
-
-\section{Machine learning problems}
-\label{toc:bayesian_ml:ml_problems}
 One of the roots of machine learning (ML) lies in the study of algorithms in theoretical computer science.
 An algorithm is a well-defined sequence of computational steps transforming a set of inputs to a set of outputs.
 It is a tool for solving a computational problem, which is defined by an abstract problem of admissible inputs and expected outputs.
@@ -332,11 +284,11 @@ Additionally, the empirical risk minimization algorithm is often extended to reg
 The Ridge error function shown in~\cref{fig:bayesian_ml:polynomials:linear} is an example of extending the least-squares error function with a preference for parameters with small absolute value.
 Regularization~\parencite{oates_modern_2019} adds back a global component to empirical risk minimization and has a close relation to the choice of hypothesis space $\Hc$.
 The constraint that $f_A \in \Hc \subseteq \Fc$ can be thought of as a binary regularization term that adds infinite loss to the set $\Fc \setminus \Hc$.
-Conversely, continuous regularization terms formulate softer and less rigorous preferences within $\Hc$, for example for structurally simpler solutions~\parencite{bishop_christoph_pattern_2007,thorburn_occams_1915}.
+Conversely, continuous regularization terms formulate softer and less rigorous preferences within $\Hc$, for example for structurally simpler solutions~\parencite{bishop_pattern_2007,thorburn_occams_1915}.
 
 For complex loss functions and hypothesis spaces, finding the true minimum $\hat{f}_A$ is often unfeasible.
 Another common extension is to modify the optimization scheme to increase the likelihood of selecting a favorable solution.
-Examples include the usage of test sets or validations sets~\parencite{bishop_christoph_pattern_2007}, cross validation~\parencite{stone_cross-validatory_1974}, early stopping~\parencite{morgan_generalization_1990} or specific parameter choices~\parencite{daniely_toward_2016}.
+Examples include the usage of test sets or validations sets~\parencite{bishop_pattern_2007}, cross validation~\parencite{stone_cross-validatory_1974}, early stopping~\parencite{morgan_generalization_1990} or specific parameter choices~\parencite{daniely_toward_2016}.
 
 It is often possible to reformulate choices in loss functions as changes in the optimization scheme or compensate a more general hypothesis space with stricter regularization.
 It is not clear how a machine learning algorithm should be formulated from a formal perspective.
@@ -426,7 +378,7 @@ A circle
 }
 denotes that the variables $\mat{a}$ and $\mat{c}$ need to be considered jointly as $\Prob*{\mat{a}, \mat{c}}$.
 Graphical models have been studied in great detail.
-We refer to~\parencite{murphy_machine_2012,bishop_christoph_pattern_2007,david_barber_bayesian_2012,trevor_hastie_elements_2013} for additional information.
+We refer to~\parencite{murphy_machine_2012,bishop_pattern_2007,david_barber_bayesian_2012,trevor_hastie_elements_2013} for additional information.
 
 \subsubsection{Generative models}
 In the algorithmic view of machine learning problems formulated in~\cref{toc:bayesian_ml:ml_problems}, the observational data is used to formulate an error function to select a model from a set of candidates without the notion of explaining said data.
@@ -501,7 +453,7 @@ Similar to the assumption of independent draws for a data set $\Dc$ in statistic
 The outputs $\mat{y}_1, \mat{y}_2, \dots$ are not independent however because they have been generated using the same functional dependency $f$ we wish to model.
 
 In the next step, we expand the model to reflect the fact that the $\mat{y}_N$ are conditionally independent given this functional dependency $f$.
-The rule of total probability~\parencite{bishop_christoph_pattern_2007} states that for any random variable $\mat{f}$, it holds that
+The rule of total probability~\parencite{bishop_pattern_2007} states that for any random variable $\mat{f}$, it holds that
 \begin{equation}
     \begin{split}
         \Prob*{\mat{y} \given \mat{x}} = \int \Prob*{\mat{y} \given \mat{f}, \mat{x}} \Prob*{\mat{f}} \diff \mat{f}.
@@ -737,7 +689,7 @@ Applying the chain rule on the joint again yields the posterior
 \end{align}
 where $\Prob*{\Dc} = \int \Prob*{\Dc \given \mat{\theta}} \Prob*{\mat{\theta}} \diff \mat{\theta}$ is a combination of the likelihood and and prior terms.
 Because all terms on the right-hand-side are known, this posterior can be evaluated, yielding a combination of modeling assumptions and observations.
-If a closed-form solution cannot be found, Bayesian inference is often implemented using approximation techniques such as sampling or variational approaches~\parencite{bishop_christoph_pattern_2007}.
+If a closed-form solution cannot be found, Bayesian inference is often implemented using approximation techniques such as sampling or variational approaches~\parencite{bishop_pattern_2007}.
 
 Having found a posterior $\Prob{\mat{\hat{\theta}}} = \Prob*{\mat{\theta} \given \Dc}$, Bayesian predictions for previously unseen points can be made by replacing $\Prob*{\mat{\theta}}$ with $\Prob{\mat{\hat{\theta}}}$ in the graphical model.
 In the regression case, this predictive posterior is given by
@@ -819,16 +771,4 @@ a common extension to maximum likelihood estimation is to also consider how well
 While strategies based on marginal likelihoods often work well in practice, they are limited in scope.
 Since marginal distributions are considered, models are not evaluated with respect to the latent components in the generative model, such as the shape of $\Prob*{\mat{f}}$ in Bayesian linear regression.
 Selecting models using maximum likelihood approaches enforces good predictive uncertainties around the observations in $\Dc$.
-No requirements are enforced concerning uncertainties away from the data, the shape of single samples drawn from the model or uncertainties in the latent part of the generative model.
-
-
-\section{Thesis outline}
-\todo[inline]{Is it finished yet?}
-
-% \begin{itemize}
-%     \item We consider hierarchical problems
-%     \item Technically, we're interested in formulating relaxed but informative priors
-%     \item We want to understand what makes a hierarchical model good and argue that the marginal likelihood is not quite enough.
-%     \item Industrial ML motivates our thesis, where we want to formulate models that are inherently interpretable and trustworthy
-%     \item It will turn out that in this space, judging whether a model is good is actually very tricky.
-% \end{itemize}
+No requirements are enforced concerning uncertainties away from the data, the shape of single samples drawn from the model or uncertainties in the latent part of the generative model\todo{Fix after intro}.

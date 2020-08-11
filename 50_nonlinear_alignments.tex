@@ -20,7 +20,7 @@ Also, standard approaches for extracting such information from data, for example
 Instead, we want to construct Bayesian nonlinear dynamic data-based models for wind conditions and warpings which handle the stochastic nature of the system in a principled manner.
 
 In this chapter, we look at a generalization of this type of problem and propose a novel Bayesian approach to finding nonlinear alignments of time-series based on latent shared information.
-We view the power production of different wind-turbines as the outputs of a multi-output Gaussian process (MO-GP)~\parencite{alvarez_kernels_2011} that models the latent wind fronts.
+We view the power production of different wind-turbines as the outputs of a multi-output Gaussian process (MO-GP)~\parencite{boyle_multiple_2005,alvarez_kernels_2011} that models the latent wind fronts.
 We embed this model in a hierarchy, adding a layer of non-linear alignments on top and a layer of non-linear warpings~\parencite{snelson_warped_2004,lazaro-gredilla_bayesian_2012} below which increases flexibility and encodes the original generative process.
 We show how the resulting model can be interpreted as a group of deep Gaussian processes with the added benefit of covariances between different outputs.
 The imposed structure is used to formulate prior knowledge in a principled manner, restrict the representational power to physically plausible models, and recover the desired latent wind fronts and relative alignments.
@@ -51,7 +51,7 @@ This MO-GP acts as an interface to share information between the different GPs t
 \end{figure}
 We are interested in formulating shared priors over a set of functions $\Set{f_d}_{d=1}^D$ using GPs, thereby directly parameterizing their interdependencies.
 In a traditional GP setting, multiple outputs are considered conditionally independent given the inputs, which significantly reduces the computational cost but also prevents the utilization of shared information.
-Such interdependencies can be formulated via convolution processes (CPs) as proposed by~\textcite{boyle_dependent_2004}, a generalization of the linear model of coregionalization (LMC)~\parencite{journel_mining_1978,coburn_geostatistics_2000}.
+Such interdependencies can be formulated via convolution processes (CPs) as proposed by~\textcite{boyle_dependent_2004,alvarez_sparse_2009,alvarez_efficient_2010}, a generalization of the linear model of coregionalization (LMC)~\parencite{journel_mining_1978,coburn_geostatistics_2000}.
 In the CP framework, the output functions are the result of a convolution of the latent processes $w_r$ with smoothing kernel functions $T_{d,r}$ for each output $f_d$, defined as
 \begin{align}
     f_d(\mat{x}) = \sum_{r=1}^R \int T_{d,r}(\mat{x} - \mat{z}) \cdot w_r(\mat{z}) \diff \mat{z}.

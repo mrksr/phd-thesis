@@ -33,7 +33,7 @@ The challenge is how these priors should be specified, and how they should be in
 Gaussian processes (GPs) are stochastic processes that can be used to specify probability distributions over the space of functions.
 While a GP specifies a distribution with support for all functions, it efficiently concentrates its probability mass to functions with specific characteristics.
 These characteristics make GPs well suited for RL as they do not impose hard constraints while still placing a significant structure on the space of functions.
-In \parencite{deisenroth_pilco_2011}, the authors propose a model-based RL method where Gaussian processes are used as priors for the dynamics.
+In \parencite{deisenroth_pilco_2011,deisenroth_efficient_2010}, the authors propose a model-based RL method where Gaussian processes are used as priors for the dynamics.
 They provide a principled approach for taking model uncertainty into account when evaluating the performance of a policy, thereby reducing the impact of model-bias.
 However, the approach has several restrictions:
 Transition dynamics are modeled as standard Gaussian processes (GPs), and policies and rewards must be of specific forms.

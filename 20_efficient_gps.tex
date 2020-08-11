@@ -3,7 +3,7 @@
 Bayesian graphical models as introduced in~\cref{toc:bayesian_ml:bayesian_ml} encode structural assumptions about a machine learning problem.
 The central assumption in the regression problem is a latent function $f$ that maps inputs to outputs.
 In the Bayesian linear regression example, a posterior over linear functions could be calculated by calculating a posterior over parameters instead, since every parameter explicitly represents a linear function.
-A Gaussian process (GP) is a non-parametric model that directly represents a distribution over functions.
+A Gaussian process (GP) is a non-parametric model that directly represents a distribution over functions~\parencite{bernardo_regression_1998,rasmussen_gaussian_2006}.
 Instead of formulating an explicit parameterized formula, a GP prior encodes more general assumptions about $f$ such as differentiability or variability.
 A GP posterior can be calculated analytically, making Bayesian inference over GPs computationally feasible.
 While GPs offer a principled non-parametric approach to representing distributions over functions, they can be restrictive in the functions they can represent.
@@ -983,7 +983,7 @@ This decoupling allows the calculation of the predictive mean in linear time, al
 While GPs offer a principled non-parametric approach to representing distributions over functions, they can be restrictive in the functions they are able to represent.
 Many extensions to standard GPs have been studied which introduce additional hierarchical structure such as GP latent variable models~\parencite{titsias_bayesian_2010,damianou_variational_2014}, warped GP models~\parencite{snelson_warped_2004,lazaro-gredilla_bayesian_2012} or mixtures of experts models~\parencite{tresp_mixtures_2001,rasmussen_infinite_2002,lazaro-gredilla_overlapping_2012}.
 The hierarchical structure typically introduces the requirement to propagate uncertainties through Gaussian processes, which is analytically intractable in most cases.
-Many extensions can be interpreted as special cases of the hierarchical or deep Gaussian process model~\parencite{lawrence_hierarchical_2007,damianou_deep_2013} in which a nested generative process is formulated by using the output of one GP as the input of another.
+Many extensions can be interpreted as special cases of the hierarchical or deep Gaussian process model~\parencite{lawrence_hierarchical_2007,damianou_deep_2013,damianou_deep_2015} in which a nested generative process is formulated by using the output of one GP as the input of another.
 
 In a deep GP, rather than assuming that observational data is generated through a draw from a single GP which is then corrupted by noise in $\mat{y} = f(\mat{x}) + \epsilon$, we assume that data is generated via a composition of $L$ functions
 \begin{equation}

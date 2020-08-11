@@ -61,7 +61,14 @@
 \usepackage{url}
 \usepackage[capitalise, nameinlink, noabbrev]{cleveref}
 \crefformat{equation}{(#2#1#3)}
-\usepackage[style=numeric, backend=biber, url=false, maxcitenames=1, maxbibnames=5]{biblatex}
+\usepackage[
+    style=numeric,
+    backend=biber,
+    url=false,
+    maxcitenames=1,
+    maxbibnames=5,
+    citetracker=true,
+]{biblatex}
 
 % Misc
 \usepackage{pdfpages}

@@ -97,16 +97,43 @@ There are two cultures.
 We explore a third.
 This fall.
 
+\begin{itemize}
+    \item Introduce regression as a functional dependency in nature we want to model.
+    \item Following \textcite{breiman_statistical_2001}, we can tackle the problem using algorithmic (black-box) and data (white-box) models.
+    \item Traditional statistics favor white-box models and care about describing and understanding observational data.
+          In this view of the world, we need to come up with a model of nature that completely explains all aspects of the data and learning comes down to fitting a limited number of highly interpretable parameters.
+          The smaller the number of parameters the better, as we want to develop a simple and specific theory that explains the data well (Occam's razor).
+          We do not necessarily care about predictions.
+    \item The other end of the spectrum are black-box or algorithmic models which are more closely associated with machine learning.
+          Here, we accept that we cannot model nature and instead recognize that there is some functional dependency in the data a general function approximator can, given enough data, approximate arbitrarily well.
+          Since a successfully powerful approximator can explain any observation set, we need to measure performance in terms of predictions and that is actually what we care about.
+          We never claim that we are able to uncover the correct model or the true generative process.
+    \item In this thesis, we want to study what we call structured models.
+          Structured models live between these extremes because we design models based on our understanding of nature (the underlying problem).
+          At the same time, we accept that there are things we do not (or cannot) understand and insert general function approximators.
+          Our goal is to be more data efficient compared to black-box models because there is less we need to infer from data thanks to our prior knowledge.
+          At the same time, we want to gain insights from the data thanks to the general function approximators, so our model is not purely descriptive either.
+    \item Many successes in machine learning are based on highly structured models which are often motivated differently.
+          Examples include convolutional networks for vision, LSTM for language processing or Monte-Carl tree search for two-player perfect information games.
+          Since these models are generally understood as being black-box, they do not care about statistical measures such as uncertainty quantification or actual insights about the generating process.
+          They are being used as engineering-tools instead.
+          In this thesis we care about well-founded probabilistic models.
+\end{itemize}
+
 
 \section{Thesis outline}
 \todoi{Is it finished yet?}
-% \begin{itemize}
-%     \item We consider hierarchical problems
-%     \item Technically, we're interested in formulating relaxed but informative priors
-%     \item We want to understand what makes a hierarchical model good and argue that the marginal likelihood is not quite enough.
-%     \item Industrial ML motivates our thesis, where we want to formulate models that are inherently interpretable and trustworthy
-%     \item It will turn out that in this space, judging whether a model is good is actually very tricky.
-% \end{itemize}
+We will explore two things in the thesis.
+\begin{itemize}
+    \item We show two approaches to adding structure to a learning problem.
+          First, we use what might be called formal structure motivated by the mathematical formulation of an underlying problem, the data association problem.
+          This is closer to black-box models.
+          And second, we use structure motivated by expert understanding of the underlying physical process that generated the data, which is closer to white-box models.
+    \item As it turns out, since the models live in-between the two extremes, their respective tools for judging whether a model is good are not sufficient.
+          Only looking at data-fits (both in training and test) is not enough since things like symmetries or ambiguities in the general function approximators can lead to multiple plausible models that show similar performance.
+          Marignal likelihoods do not capture the inner shape of a model and we there is no straightforward way to formalize success.
+          Because of this, we discuss measuring success based on a downstream task which requires a model to actually represent the true underlying generative process.
+\end{itemize}
 
 
 \section{Publications}

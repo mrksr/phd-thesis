@@ -1,0 +1,30 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \begin{scope}[x=5em, y=11ex]
+        \node[random variable, observed] (x) at (0, 2) {$\mat{x}$};
+        \node[random variable, observed] (y) at (0, 0) {$\mat{y}$};
+
+        % ---
+
+        \node[
+            black box component,
+            minimum height=42pt,
+            text width=100pt,
+            align=center,
+            shape=rectangle,
+        ] (nature) at (0, 1) {Gaussian processes\\Neural networks\\Deep learning};
+
+        % ---
+
+        \draw[edge, directed] (x) -- (nature);
+        \draw[edge, directed] (nature) -- (y);
+    \end{scope}
+\end{tikzpicture}
+\end{document}

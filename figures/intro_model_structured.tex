@@ -1,0 +1,42 @@
+\documentclass[tikz,crop]{standalone}
+\input{preamble/tikz_standalone.tex}
+\input{preamble/tikz_colors.tex}
+\input{preamble/tikz_common.tex}
+\input{preamble/tikz_style.tex}
+\input{../preamble/abbreviations.tex}
+
+\begin{document}
+\begin{tikzpicture}
+    \begin{scope}[x=3em, y=8.5ex]
+        \node[random variable, observed] (x) at (0, 5) {$\mat{x}$};
+        \node[random variable, observed] (y) at (0, 0) {$\mat{y}$};
+
+        % ---
+
+        \node[black box component] (a) at (0, 4) {};
+        \node[black box component] (b) at (-1, 3) {};
+        \node[black box component] (c) at (1, 3) {};
+        \node[black box component] (d) at (0, 1.5) {};
+        % \node[black box component] (e) at (0, 1) {};
+        \node (e) at (0, 1) {};
+
+        % ---
+
+        \draw[edge, directed] (x) -- (a);
+        \draw[edge, directed] (a) -- (b);
+        \draw[edge, directed] (a) -- (c);
+        \draw[edge, directed] (b) -- (d);
+        \draw[edge, directed] (c) -- (d);
+        % \draw[edge, directed] (d) -- (e);
+        % \draw[edge, directed] (e) -- (y);
+        \draw[edge, directed] (d) -- (y);
+    \end{scope}
+
+    \begin{scope}[on background layer]
+        \node[
+        white box,
+        fit=(a)(b)(c)(e),
+        ] {};
+    \end{scope}
+\end{tikzpicture}
+\end{document}

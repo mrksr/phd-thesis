@@ -99,6 +99,30 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                Intro                                %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tikzstyle{white box} = [
+    plate,
+    inner sep=10pt,
+    black,
+    fill=white,
+    fill opacity=0,
+]
+\tikzstyle{box component} = [
+    random variable,
+    inner sep=0pt,
+    minimum size=10pt,
+]
+\tikzstyle{black box component} = [
+    box component,
+    regular polygon,
+    regular polygon sides=4,
+    inner sep=-1.5pt,
+    fill=sStoneDark!50,
+]
+\tikzstyle{white box component} = [
+    box component,
+    fill=sStoneDark!10,
+]
+
 \pgfplotsset{polynomial plot/.style = {
             half label plot,
             ymin=-3.5,

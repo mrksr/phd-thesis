@@ -1,5 +1,785 @@
-\chapter{Computationally efficient hierarchical Gaussian processes}
+\chapter{Preliminaries}
 \label{toc:gp}
+Structured models are cool. Let's make them using GPs!
+\todoi{New intro}
+
+\section{Machine learning problems}
+\label{toc:bayesian_ml}
+One of the roots of machine learning (ML) lies in the study of algorithms in theoretical computer science.
+An algorithm is a well-defined sequence of computational steps transforming a set of inputs to a set of outputs.
+It is a tool for solving a computational problem, which is defined by an abstract problem of admissible inputs and expected outputs.
+An algorithm solves such a problem if, for every possible input, the algorithm provably yields the correct output.
+
+Consider the computational problem of sorting a list of numbers in ascending order.
+One possible formulation~\parencite{cormen_introduction_2009} of the sorting problem is:
+\begin{problem}[Sorting]
+\label{prob:bayesian_ml:sorting}
+\begin{labeling}{Output:}
+    \item[Input:] A sequence of $N$ integers $\mat{I} = (i_1, \dots, i_N)$
+    \item[Output:] A reordering of $\mat{I}$ called $\mat{O} = (o_1, \dots, o_N)$ such that $o_1 \leq \dots \leq o_N$.
+\end{labeling}
+\end{problem}
+For example, for the input $\mat{\hat{I}}=(12, 8, 23, 4)$ the correct output is $\mat{\hat{O}}=(4, 8, 12, 23)$.
+A concrete input $\mat{\hat{I}}$ is called an instance of a problem.
+Importantly, such an instance contains all the required information to compute the unique output $\mat{\hat{O}}$.
+The correctness of the output can be checked via the formal problem.
+The various available (correct) sorting algorithms only differ in which and how many computational steps they take to arrive at the output, not in the output itself.
+
+Machine learning can be seen as an extension of algorithmics towards problems where a formal description of a uniquely defined solution does not exist.
+Instead, problems in ML are characterized by the observation of finitely many examples or data together with the objective to derive knowledge about how these examples were generated.
+This knowledge can then be used to describe common patterns in the data or generate new examples that conform to previous observations.
+
+\begin{figure}[t]
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/polynoms_data}
+        \caption{
+            Dataset
+            \label{fig:bayesian_ml:polynomials:data}
+        }
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/polynoms_lagrange}
+        \caption{
+            Algorithms for interpolation
+            \label{fig:bayesian_ml:polynomials:lagrange}
+        }
+    \end{subfigure}
+    \caption[Algorithms for interpolation]{
+        \label{fig:bayesian_ml:polynoms}
+        Computational problems defined on a dataset have a well-defined and unique solution.
+        This solution can be characterized through algorithms such as linear interpolation or Lagrange polynomials.
+    }
+\end{figure}
+
+As an example, consider the data shown in \cref{fig:bayesian_ml:polynomials:data}, a set of $N$ pairs of real numbers for which we assume that all $x_i$ are pairwise different.
+The knowledge about this data to be uncovered is the functional dependency between the two data dimensions that were used to generate the data.
+This is called a regression problem and is strongly under-specified:
+There exist uncountably many functions on the real numbers that explain any finite set of observed points.
+The problem
+\begin{problem}[Regression]
+\label{prob:bayesian_ml:regression}
+\begin{labeling}{Output:}
+    \item[Input:] A set of $N$ pairs of real numbers $\Dc = \Set*{\left(x_n, y_n\right)}_{n=1}^N \subseteq \Xc \times \Yc$
+    \item[Output:] The functional dependency $f : \Xc \to \Yc$ used to generate the data.
+\end{labeling}
+\end{problem}
+is therefore not a computational problem and asking for a solution or algorithm for this problem is not a well-posed question.
+
+One can, however, derive computational problems from the regression problem by making assumptions about the nature of the function $f$ that characterize a unique solution.
+For example, one could ask for the simplest polynomial that explains the data.
+\begin{problem}[Lagrange Polynomial]
+\label{prob:bayesian_ml:lagrange}
+\begin{labeling}{Output:}
+    \item[Input:] A set of $N$ pairs of real numbers $\Dc = \Set*{\left(x_n, y_n\right)}_{n=1}^N \subseteq \Xc \times \Yc$
+    \item[Output:] The polynomial of smallest degree for which $f(x_n) = y_n$ holds for all $(x_n, y_n) \in \Dc$.
+\end{labeling}
+\end{problem}
+It can be shown that this is indeed a well-posed computational problem whose unique solution is the Lagrange polynomial $L$~\parencite{waring_vii._1779} given by the explicit form
+\begin{equation}
+    \begin{split}
+        L(x) &= \sum_{i=0}^N y_i \ell_i(x)\text{, with} \\
+        \ell_i &= \prod_{\substack{j = 0\\j \neq i}}^N \frac{x - x_j}{x_i - x_j}.
+    \end{split}
+    \label{eq:bayesian_ml:lagrange}
+\end{equation}
+\Cref{fig:bayesian_ml:polynomials:lagrange} shows the Lagrange polynomial interpolating the example dataset.
+The figure also shows another derived computational problem of linear interpolation.
+Here, the function is defined as being piecewise linear between the different data points, thus also reproducing the data.
+
+Both of these problems and derived algorithms would typically not be identified as ML approaches, as it can be argued that they do not derive new insights from data.
+Because of the explicit nature of their algorithms as seen in \cref{eq:bayesian_ml:lagrange}, they much more closely resemble classical algorithms such as sorting algorithms.
+
+\begin{figure}[t]
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/polynoms_linear}
+        \caption{
+            Linear regression
+            \label{fig:bayesian_ml:polynomials:linear}
+        }
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/polynoms_polynomial}
+        \caption{
+            Polynomial regression
+            \label{fig:bayesian_ml:polynomials:polynomial}
+        }
+    \end{subfigure}
+    \caption[Polynomial regression]{
+        \label{fig:bayesian_ml:polynomials:ml}
+        Problems in machine learning do not have a well-defined solution but require additional assumptions about the hypothesis space and error function.
+        For the linear regression problem (left), the squared error (LS), absolute error (LAE) and Ridge error functions lead to different solutions.
+        Similarly, alternating the hypothesis space between polynomials of different degrees (right) yields qualitatively different results.
+    }
+\end{figure}
+A common approach to formulating a problem that lets the data speak for itself is to formulate more implicit requirements.
+Instead of describing exactly one possible function (such as the Lagrange Polynomial), one can choose a broader set of candidate functions or hypotheses $\Hc$ and then select one of the candidates $f \in \Hc$ that is optimal with respect to some measure of performance.
+For example, a common assumption about the process used to generate the data is that it separates into two additive components
+\begin{align}
+    \label{eq:bayesian_ml:additive_noise}
+    y_n = f(x_n) + \epsilon(x_n).
+\end{align}
+The first summand $f$ captures the truly informative functional dependency between $x$ and $y$ that applies for all observations while the second term $\epsilon$ captures local error or noise that can be ignored.
+
+A direct consequence of this assumption is that output of the regression problem $f$ need no longer interpolate the data perfectly.
+At the same time, additional reasoning is required about how far from the data $f$ is allowed to be or, equivalently, about the shape of $\epsilon$.
+One can choose $f$ to be a linear function, giving rise to the linear regression problem.
+\begin{problem}[Linear regression]
+\begin{labeling}{Output:}
+    \item[Input:] A set of $N$ pairs of real numbers $\Dc = \Set*{\left(x_n, y_n\right)}_{n=1}^N \subseteq \Xc \times \Yc$ and an error function $e : \Hc \times \Xc \times \Yc \to \Rb$
+    \item[Output:] A function $f$ such that
+    \begin{align}
+        f \in \argmin_{f \in \Hc} e(f, \Dc)
+    \end{align}
+    with $\Hc$ being the set of linear functions.
+\end{labeling}
+\end{problem}
+\Cref{fig:bayesian_ml:polynomials:linear} shows the different results of three algorithms with different choices of error functions $e$.
+With $f(x) = \mat{W}x + b$ those are
+\begin{labeling}{Absolute error:}
+    \item[Squared error:] $e(f, \Dc) = \sum_{n=1}^N (y_n - f(x_n))^2$
+    \item[Absolute error:] $e(f, \Dc) = \sum_{n=1}^N \abs{y_n - f(x_n)}$
+    \item[Ridge:] $e(f, \Dc) = \sum_{n=1}^N (y_n - f(x_n))^2 - \norm{\mat{W}}_2 - b^2$.
+\end{labeling}
+Altering the set of hypotheses $\Hc$ between linear, quadratic and cubic polynomials together with the squared error function results in the functions shown in \cref{fig:bayesian_ml:polynomials:polynomial}.
+
+It is important to note that none of these proposed algorithms and plotted functions is objectively the correct solution to the regression problem.
+None of them is equal to the function that was used to generate the data, and even if it was, there would be no way to tell.
+A core property of machine learning problems is that what characterizes the correct solution is an inherently subjective question.
+This subjectiveness is represented in multiple choices:
+\begin{enumerate}
+    \item The assumed structure underlying the data.
+    \item The space of hypotheses for valid solutions.
+    \item The algorithm used to select from these hypotheses.
+\end{enumerate}
+In the following, statistical learning and Bayesian machine learning are introduced as tools to formalize these choices and establish a mathematical framework.
+
+\section{Statistical learning}
+\label{toc:bayesian_ml:statistical_learning}
+\begin{figure}[t]
+    \centering
+    \includestandalonewithpath{figures/quantities_of_interest_statistical_learning}
+    \caption[Statistical learning]{
+        \label{fig:bayesian_ml:statistical_learning}
+        Statistical learning characterizes machine learning through a latent data distribution $\Prob*{\mat{z}}$.
+        The task is to learn about a functional of interest $F[\Prob*{\mat{z}}] = f \in \Fc$ based on a set of observations $S[\Prob*{\mat{z}}] \in \Sc$.
+        A machine learning algorithm $A : \Sc \to \Fc$ is successful if it recovers $f$ such that $A \circ S \simeq F$.
+    }
+\end{figure}
+The objective of machine learning is to derive knowledge about a process generating data from a limited set of observations.
+Knowledge is represented as a model that both explains existing observations and can generalize to new data points.
+Statistical learning theory~\parencite{gareth_james_introduction_2013,trevor_hastie_elements_2013} offers a set of tools to reason about generalization and to formulate what it means for a model to be good.
+This section presents an interpretation of statistical learning theory similar to the definition of probabilistic numerics in~\parencite{oates_modern_2019,cockayne_bayesian_2019}.
+
+In the following, we denote the space of probability measures over a set $\Zc$ as $\Probs{\Zc}$.
+We adopt an overloaded notation common in machine learning where $\Prob*{\mat{z}}$ can both refer to a probability measure and the evaluation of the same probability measure on a specific point $\mat{z} \in \Zc$ depending on the context.
+Similarly, $\mat{z}$ can both refer to a random variable with the distribution $\Prob*{\mat{z}}$ and an element $\mat{z} \in \Zc$.
+That is, $\mat{k} \sim \Prob*{\mat{z}}$ denotes that the distribution of the random variable $\mat{k}$ is $\Prob*{\mat{z}}$ and $\Moment*{\E}{\mat{z}} = \int \mat{z} \Prob*{\mat{z}} \diff \mat{z}$ denotes the expected value of the random variable $\mat{z}$ under the distribution $\Prob*{\mat{z}}$.
+In less ambiguous notation one would assume a random variable $\mat{Z}$ with distribution $\Prob*{\mat{Z}}$ and denote the expected value as $\Moment*{\E}{\mat{Z}} = \int_{\Zc} z \Prob*{\mat{Z} = z} \diff z$.
+Here, $\mat{Z}$ and $z$ are identified with each other as $\mat{z}$.
+
+Assume an unknown data-generating distribution $\Prob{\mat{z}} \in \Probs{\Zc}$ over a known space of observations $\Zc$.
+The task in a machine learning problem is to infer properties of this distribution given a set of observations $\Dc \in \Sc$ obtained via some sampling operator $S : \Probs{\Zc} \to \Sc$.
+A common choice of $S$ is a draw of $N$ independent points $\Dc = \Set*{\mat{z}_1, \dots, \mat{z}_N \with \mat{z}_i \sim \Prob{\mat{z}}} \subseteq \Zc$ with $\Sc = \Zc^N$.
+Other choices include $S$ into the learning problem such as in active learning~\parencite{murphy_machine_2012} or reinforcement learning~\parencite{sutton_reinforcement_2018} settings.
+Depending on the machine learning problem, the task might not be to identify $\Prob*{\mat{z}}$ as a whole but instead identify some functional $f \in \Fc$ obtained via the functional operator $F : \Probs{\Zc} \to \Fc$.
+This formulation encompasses a large number of different machine learning problems via different choices for the spaces and operators.
+We give a few examples here.
+
+\begin{problem}[Common machine learning problems]
+\begin{description}
+    \item[Parameter estimation]
+          In a simple case, the functional $f$ can be chosen to be some constant statistic of $\Prob*{\mat{z}}$ such as the mean
+          \begin{align}
+              F_{\text{mean}}[\Prob*{\mat{z}}] = \int \mat{z} \Prob*{\mat{z}} \diff \mat{z},
+          \end{align}
+          with $\Fc = \Zc$.
+    \item[Regression]
+          Alternatively, assuming that $\Zc = \Xc \times \Yc$ separates into tuples of inputs $\Xc$ and continuous outputs $\Yc$ and choosing
+          \begin{align}
+              \label{eq:bayesian_ml:f_reg}
+              F_{\text{reg}}[\Prob*{\mat{x}, \mat{y}}](\mat{x}_\ast) = \Prob*{\mat{y}_\ast \given \mat{x}_\ast}
+          \end{align}
+          with $\Fc = \Xc \to \Probs{\Yc}$ gives rise to the regression problem discussed in~\cref{toc:bayesian_ml:ml_problems}.
+    \item[Classification]
+          Classification is a closely related to regression and assumes the same separation $\Zc = \Xc \times \Yc$.
+          In contrast to regression, $\Yc$ is assumed to be discrete, often without a known order.
+    \item[Dimensionality Reduction]
+          In the dimensionality reduction or manifold learning problem, the assumption is that the support of the data distribution $\Prob*{\mat{z}}$ is a low dimensional manifold in $\Zc$.
+          The task is to find a distribution $\Prob*{\mat{m}} \in \Probs{\Mc}$ and a mapping $f : \Mc \to \Zc$ with
+          \begin{equation}
+              \begin{split}
+                  F_{\text{dim}}[\Prob*{\mat{z}}] & = (\Prob*{\mat{m}}, f)\text{, such that} \\
+                  f(\Prob*{\mat{m}})              & = \Prob*{\mat{z}}
+              \end{split}
+          \end{equation}
+          and $\Fc = \Probs{\Mc} \times (\Mc \to \Zc)$ and a space $\Mc$ of lower dimensionality than $\Zc$.
+          If $\Mc = \Zc$ this problem is called density estimation.
+\end{description}
+\end{problem}
+
+A machine learning Algorithm $A : \Sc \to \Fc$ is a function mapping from the space of samples to the space of functionals, thereby recovering structure from data.
+Such an algorithm is successful if it recovers the correct functional $f \in \Fc$ given observations $\Dc$.
+\Cref{fig:bayesian_ml:statistical_learning} shows the introduced components in a directed diagram.
+An algorithm is successful if this diagram (approximately) commutes such that $A \circ S \simeq F$.
+Similarly, a model $f_A \in \Fc$ can be considered good if it is similar to the true functional~$f$.
+
+The similarity of two functionals can be measured via a distance measure in $\Fc$.
+In the case of learning about global properties such as the mean of $\Prob*{\mat{z}}$, a possible choice is the standard euclidean norm.
+Considering the regression case, where $\Fc$ is a function space mapping inputs to (possibly distributions over) outputs, the effects of choosing a distance measure is more subtle.
+While it is reasonable to require pointwise similarity, the choice of which points to evaluate allows us to define what we mean by generalization:
+Besides explaining the observations in $\Dc$, a good model should yield correct predictions for the complete data distribution $\Prob*{\mat{z}} = \Prob*{\mat{x}, \mat{y}}$.
+The concept of risk minimization is based on this observation.
+\begin{definition}[Risk minimization in the regression problem]
+    \label{def:risk_minimization}
+    Given a loss function $\ell: \Yc \times \Yc \to \Rb$ and a data distribution $\Prob*{\mat{x}, \mat{y}}$ for a regression problem, the \emph{risk} relative to $\ell$ is defined as
+    \begin{align}
+        \risk_\ell & : \left\{
+        \begin{aligned}
+            \Fc & \to \Rb                                                                                              \\
+            f_A & \mapsto \int \Fun*{\ell}{\mat{y}, f_A(\mat{x})} \Prob{\mat{x}, \mat{y}} \diff \mat{x} \diff \mat{y}.
+        \end{aligned}
+        \right.
+    \end{align}
+    \emph{Risk minimization} for a hypothesis space $\Hc \subseteq \Fc$ selects a hypothesis $\hat{f}_A$ with smallest possible risk
+    \begin{align}
+        \hat{f}_A & \in \argmin_{f_A \in \Hc} \risk_\ell(f_A).
+    \end{align}
+\end{definition}
+
+A model generalizes with respect to a loss function $\ell$ if it does not only explain the specific dataset $\Dc$ well but all possible choices of $\Dc$ via $S$.
+While risk minimization is a theoretical tool to define generalization, it does not immediately yield a learning algorithm.
+Since it includes an expectation over the unknown data distribution, the risk-term cannot be evaluated directly.
+Instead, calculating a Monte-Carlo estimate over the training data $\Dc$ gives rise to a fundamental machine learning algorithm, empirical risk minimization.
+
+\begin{definition}[Empirical risk minimization in the regression problem]
+    \label{def:empirical_risk_minimization}
+    Given a loss function $\ell: \Yc \times \Yc \to \Rb$ and a data distribution $\Prob*{\mat{x}, \mat{y}}$ for a regression problem, the \emph{empirical risk} relative to $\ell$ is defined as
+    \begin{align}
+        \risk^{\text{emp}}_\ell & : \left\{
+        \begin{aligned}
+            \Fc & \to \Rb                                                             \\
+            f_A & \mapsto \frac{1}{N} \sum_{i=1}^N \Fun*{\ell}{\mat{y}, f_A(\mat{z})}
+        \end{aligned}
+        \right.
+    \end{align}
+    \emph{Empirical risk minimization} for a hypothesis space $\Hc \subseteq \Fc$ selects a hypothesis $\hat{f}_A$ with smallest possible risk
+    \begin{align}
+        \hat{f}_A & \in \argmin_{f_A \in \Hc} \risk^{\text{emp}}_\ell(f_A).
+    \end{align}
+\end{definition}
+
+Intuitively, risk minimization describes global properties of $f_A$ which get approximated by a number of local properties at the observations in empirical risk minimization.
+The two questions
+\begin{enumerate}
+    \item under which conditions $\risk^{\text{emp}}$ converges to $\risk$ for $N \to \infty$ and
+    \item if so, what the convergence rates are
+\end{enumerate}
+underpin (statistical) learning theory~\parencite{vapnik_principles_1992}.
+It is safe to assume that for small $N$, $\risk^{\text{emp}}$ can significantly underestimate the true risk as the error on parts of the data distribution is not considered at all.
+This problem is called overfitting to the available training data, an example of which can arguably be seen in~\cref{fig:bayesian_ml:polynomials:lagrange}.
+
+In practice, if collection sufficient data is not possible, overfitting has to be avoided via problem-dependent choices for $\ell$ and $\Hc$.
+Additionally, the empirical risk minimization algorithm is often extended to regularizing loss functions of the form $\ell^\prime : \Fc \times \Yc \times \Yc \to \Rb$ which depend on the structure of the candidate as well as its predictions.
+The Ridge error function shown in~\cref{fig:bayesian_ml:polynomials:linear} is an example of extending the least-squares error function with a preference for parameters with small absolute value.
+Regularization~\parencite{oates_modern_2019} adds back a global component to empirical risk minimization and has a close relation to the choice of hypothesis space $\Hc$.
+The constraint that $f_A \in \Hc \subseteq \Fc$ can be thought of as a binary regularization term that adds infinite loss to the set $\Fc \setminus \Hc$.
+Conversely, continuous regularization terms formulate softer and less rigorous preferences within $\Hc$, for example for structurally simpler solutions~\parencite{bishop_pattern_2007,thorburn_occams_1915}.
+
+For complex loss functions and hypothesis spaces, finding the true minimum $\hat{f}_A$ is often unfeasible.
+Another common extension is to modify the optimization scheme to increase the likelihood of selecting a favorable solution.
+Examples include the usage of test sets or validations sets~\parencite{bishop_pattern_2007}, cross validation~\parencite{stone_cross-validatory_1974}, early stopping~\parencite{morgan_generalization_1990} or specific parameter choices~\parencite{daniely_toward_2016}.
+
+It is often possible to reformulate choices in loss functions as changes in the optimization scheme or compensate a more general hypothesis space with stricter regularization.
+It is not clear how a machine learning algorithm should be formulated from a formal perspective.
+However, problem-dependent adjustments to learning algorithms are generally informed by the knowledge provided by domain-experts about the process that generated the data.
+An additional dimension is therefore given by the need to communicate assumptions and effects of choices with stakeholders that do not have a deep understanding of the field.
+If a learning algorithm should be interpretable and understandable, assumptions should be explicit, and optimization schemes should be simple.
+The next section introduces Bayesian machine learning as a rigorous formal framework that builds on statistical learning theory and enables the principled formulation of complex hypothesis spaces.
+
+\section{Bayesian machine learning}
+\label{toc:bayesian_ml:bayesian_ml}
+The central modeling assumption of statistical learning theory is the unknown data distribution $\Prob*{\mat{z}}$.
+Based on a limited number of observations, the task is to learn a model of either the complete distribution or some functional $F[\Prob*{\mat{z}}]$.
+Instead of selecting one solution (for example, using some regularization scheme), Bayesian approaches accept the inevitability of uncertainty due to the underspecified ML problem and represent it explicitly.
+Following the definition of functionals $F$, a Bayesian model is often formulated through independence assumptions in the data distribution.
+Independence assumptions induce a factorization of the data distribution.
+Structural constraints can then be put on the different factors to encode expert knowledge.
+
+Because the available data is not sufficient to identify the unique correct solution, the goal of Bayesian machine learning is to infer a distribution of plausible solutions weighed by their likelihood given the data instead.
+The posterior distribution of plausible models is a combination of the prior assumptions about the underlying structure and their capability of explaining observations.
+This section introduces probabilistic generative models as a natural consequence of the assumptions in statistical learning theory.
+Probabilistic generative models form a principled way to formulate interpretable hypothesis spaces with carefully chosen assumptions.
+With Bayes' rule, a structurally simple and formally consistent learning algorithm can be formulated to infer knowledge from data.
+
+\subsubsection{Directed graphical models}
+Any joint probability distribution $\Prob*{\mat{a}, \mat{c}, \mat{e}}$ can be formulated as a product of partial distributions via the chain rule of probability~\parencite{murphy_machine_2012} as
+\begin{equation}
+    \begin{split}
+        \Prob*{\mat{a}, \mat{c}, \mat{e}}
+        &= \Prob*{\mat{a} \given \mat{c}, \mat{e}}\Prob*{\mat{c} \given \mat{e}}\Prob*{\mat{e}} \\
+        &= \Prob*{\mat{e} \given \mat{a}, \mat{c}}\Prob*{\mat{a} \given \mat{c}}\Prob*{\mat{c}} \\
+        &= \dots
+    \end{split}
+\end{equation}
+The chain rule is symmetric in the sense that the order of chaining random variables does not matter.
+All possible interdependencies between random variables are represented in the expansion of conditional probabilities.
+
+A factorization along the chain rule does not impose any structure on the underlying distribution.
+The first step in Bayesian modeling is to impose such structure by assuming conditional independence between variables.
+Directed graphical models are a readable visualization of such independence assumptions.
+A directed graphical model is a directed graph where every random variable is a node
+\tikz[x=2.5em,baseline=(a.base)]{
+    \node[inline random variable] (a) {$\mat{a}$};
+}
+and an edge
+\tikz[x=2.5em,baseline=(a.base)]{
+    \node[inline random variable] (a) {$\mat{a}$};
+    \node[inline random variable] (b) at (1, 0) {$\mat{c}$};
+    \draw[edge, directed] (a) -- (b);
+}
+denotes a dependency of $\mat{c}$ on $\mat{a}$.
+In contrast to the factorization according to the chain rule, the graphical model below encodes the assumption that $\mat{e}$ is independent of $\mat{a}$ given $\mat{c}$.
+\begin{align}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -1);
+        \node[random variable] at (0, 0) (X) {$\mat{a}$};
+        \node[random variable] at (0, -1) (Y) {$\mat{c}$};
+        \node[random variable] at (0, -2) (Z) {$\mat{e}$};
+        \draw[edge, directed] (X) -- (Y);
+        \draw[edge, directed] (Y) -- (Z);
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{a}, \mat{c}, \mat{e}}
+     & =
+    \left\{
+    \begin{aligned}
+         & \Prob*{\mat{a}}                      \\
+         & \cdot \Prob*{\mat{c} \given \mat{a}} \\
+         & \cdot \Prob*{\mat{e} \given \mat{c}}
+    \end{aligned}
+    \right.
+\end{align}
+
+More formally, the factorization belonging to a graphical model with nodes $\mat{a}_1, \dots, \mat{a}_N$ is given by
+\begin{equation}
+    \begin{split}
+        \Prob*{\mat{a}_1, \dots, \mat{a}_N}
+        &= \prod_{n=1}^N \Prob*{\mat{a}_n \given \mathrm{parents}(\mat{a}_n)}
+    \end{split}
+\end{equation}
+with $\mathrm{parents}(\mat{a}_n)$ denoting the set of nodes with an edge towards $\mat{a}_n$.
+A circle
+\tikz[x=2.5em,baseline=(a.base)]{
+    \node[inline random variable] (a) {$\mat{a}$};
+    \node[inline random variable] (b) at (1, 0) {$\mat{c}$};
+    \draw[edge, directed, bend left=15] (a) to (b);
+    \draw[edge, directed, bend left=15] (b) to (a);
+}
+denotes that the variables $\mat{a}$ and $\mat{c}$ need to be considered jointly as $\Prob*{\mat{a}, \mat{c}}$.
+Graphical models have been studied in great detail.
+We refer to~\parencite{murphy_machine_2012,bishop_pattern_2007,david_barber_bayesian_2012,trevor_hastie_elements_2013} for additional information.
+
+\subsubsection{Generative models}
+In the algorithmic view of machine learning problems formulated in~\cref{toc:bayesian_ml:ml_problems}, the observational data is used to formulate an error function to select a model from a set of candidates without the notion of explaining said data.
+To formulate what it means to generalize, statistical learning theory in~\cref{toc:bayesian_ml:statistical_learning} bases the learning problem on an unknown or latent data distribution, with the observational data being just one of many possible samples from that distribution.
+A generative model captures this sampling process and formulates an algorithm to generate arbitrary data sets from the data distribution $\Prob*{\mat{z}}$.
+A generative model is successful if the observational data set is a likely draw from the model.
+Using the regression problem as an example, we will now introduce the building blocks of a Bayesian generative model.
+
+The functional of interest $F_{\text{reg}} = \Prob*{\mat{y} \given \mat{x}}$ for the regression problem formulated in~\cref{eq:bayesian_ml:f_reg} is the conditional probability of the output $\mat{y}$ given the input $\mat{x}$ for the data distribution $\Prob*{\mat{z}} = \Prob*{\mat{x}, \mat{y}}$.
+Formulating a generative model starts with the factorization of the data distribution such that this conditional is made explicit:
+\begin{align}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -0.5);
+        \node[random variable, observed] at (0, 0) (X) {$\mat{x}$};
+        \node[random variable, observed] at (0, -1) (Y) {$\mat{y}$};
+        \draw[edge, directed] (X) -- (Y);
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{x}, \mat{y}}
+     & =
+    \left\{
+    \begin{aligned}
+         & \Prob*{\mat{x}}                      \\
+         & \cdot \Prob*{\mat{y} \given \mat{x}}
+    \end{aligned}
+    \right.
+\end{align}
+Here, the color of the nodes
+\tikz[x=2.5em,baseline=(x.base)]{
+    \node[inline random variable, observed] (x) {$\mat{x}$};
+}
+indicates that both nodes are part of the data distribution and are directly observed in a data set.
+We will introduce other nodes below.
+Closed forms for both $\Prob*{\mat{x}}$ and $\Prob*{\mat{y} \given \mat{x}}$ would fully characterize the data distribution.
+To solve the regression problem, however, only the second term is required.
+
+In the notation typically employed in machine learning, the variables $\mat{x}$ and $\mat{y}$ in the graphical model denote both the factorization of the generative process as well as the functional dependencies between concrete realizations of $\mat{x}$ and $\mat{y}$.
+Assuming a regression problem over the reals $\Xc = \Yc = \Rb$, the functional $\Prob*{\mat{y} \given \mat{x}}$ is an infinite-dimensional object.
+To simplify reasoning about this object, we will reason about finitely many realizations of this process, the pairs $(\mat{x}_1, \mat{y}_1), \ldots, (\mat{x}_N, \mat{y}_N)$.
+This formulation describes both the model search and prediction steps:
+If the $N$ pairs are all part of some data set $\Dc$, model-search can be formulated as finding a closed-form for $\Prob*{\mat{y}_n \given \mat{x}_n}$ that explains the observations well.
+For prediction, the graphical model is typically augmented with a new pair $(\mat{x}_\ast, \mat{y}_\ast) \not\in \Dc$, an arbitrary but previously unseen point.
+Making a prediction is equivalent to evaluating the closed form $\Prob*{\mat{y}_\ast \given \mat{x}_\ast}$.
+To simplify notation, we identify $\mat{x} = (\mat{x}_1, \dots, \mat{x}_N)$ and $\mat{y} = (\mat{y}_1, \dots, \mat{y}_N)$.
+Using this formulation, the graphical model is reformulated as
+\begin{align}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -0.5);
+        \node[random variable, observed] at (0, 0) (X1) {$\mat{x}_1$};
+        \node[random variable, observed] at (0, -1) (Y1) {$\mat{y}_1$};
+        \node[random variable, observed] at (1, 0) (X2) {$\mat{x}_2$};
+        \node[random variable, observed] at (1, -1) (Y2) {$\mat{y}_2$};
+        \node at (1.5, -0.5) (dots) {$\cdots$};
+        \draw[edge, directed] (X1) -- (Y1);
+        \draw[edge, directed] (X1) -- (Y2);
+        \draw[edge, directed] (X2) -- (Y2);
+        \draw[edge, directed] (X2) -- (Y1);
+        \draw[edge, directed, bend left=20] (Y1) to (Y2);
+        \draw[edge, directed, bend left=20] (Y2) to (Y1);
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{x}, \mat{y}}
+     & =
+    \left\{
+    \begin{aligned}
+         & \Prob*{\mat{x}_1, \mat{x}_2}                                    \\
+         & \cdot \Prob*{\mat{y}_1, \mat{y}_2 \given \mat{x}_1, \mat{x}_2}.
+    \end{aligned}
+    \right.
+\end{align}
+Similar to the assumption of independent draws for a data set $\Dc$ in statistical learning theory, the inputs $\mat{x}_1, \mat{x}_2, \dots$ to a generative regression model are typically assumed to be independent.
+The outputs $\mat{y}_1, \mat{y}_2, \dots$ are not independent however because they have been generated using the same functional dependency $f$ we wish to model.
+
+In the next step, we expand the model to reflect the fact that the $\mat{y}_N$ are conditionally independent given this functional dependency $f$.
+The rule of total probability~\parencite{bishop_pattern_2007} states that for any random variable $\mat{f}$, it holds that
+\begin{equation}
+    \begin{split}
+        \Prob*{\mat{y} \given \mat{x}} = \int \Prob*{\mat{y} \given \mat{f}, \mat{x}} \Prob*{\mat{f}} \diff \mat{f}.
+    \end{split}
+\end{equation}
+This rule allows us to add arbitrary nodes to the graphical model and recover the original distribution via marginalization, the calculation of the expectation with respect to the variable that should be removed.
+Introducing a new variable is helpful because it allows us to formulate independence assumptions explicitly.
+To achieve conditional independence of the $\mat{y}_n$, we add variables $\mat{f}_n$ which represent the function values $\mat{f}_n = f(\mat{x}_n)$.
+Since the input $\mat{x}_n$ is no longer relevant once this function value is known, we assume that $\Prob*{\mat{y}_n \given \mat{f}_n, \mat{x}_n} = \Prob*{\mat{y}_n \given \mat{f}_n}$.
+This leads to the new graphical model
+\begin{align}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -1);
+        \node[random variable, observed] at (0, 0) (X1) {$\mat{x}_1$};
+        \node[random variable, latent] at (0, -1) (F1) {$\mat{f}_1$};
+        \node[random variable, observed] at (0, -2) (Y1) {$\mat{y}_1$};
+        \node[random variable, observed] at (1, 0) (X2) {$\mat{x}_2$};
+        \node[random variable, latent] at (1, -1) (F2) {$\mat{f}_2$};
+        \node[random variable, observed] at (1, -2) (Y2) {$\mat{y}_2$};
+        \node at (1.5, -1) (dots) {$\cdots$};
+        \draw[edge, directed] (X1) -- (F1);
+        \draw[edge, directed] (F1) -- (Y1);
+        \draw[edge, directed, bend left=20] (F1) to (F2);
+        \draw[edge, directed] (X2) -- (F2);
+        \draw[edge, directed] (F2) -- (Y2);
+        \draw[edge, directed, bend left=20] (F2) to (F1);
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{x}, \mat{y}}
+     & =
+    \left\{
+    \begin{aligned}
+         & \Prob*{\mat{x}_1, \mat{x}_2}                                                      \\
+         & \cdot \int \Prob*{\mat{f}_1, \mat{f}_2 \given \mat{x}_1, \mat{x}_2}               \\
+         & \quad \cdot \Prob*{\mat{y}_1 \given \mat{f}_1} \Prob*{\mat{y}_2 \given \mat{f}_2} \\
+         & \quad \cdot \diff \mat{f}_1 \diff \mat{f}_2
+    \end{aligned}
+    \right.
+\end{align}
+with the additional latent nodes
+\tikz[x=2.5em,baseline=(f.base)]{
+    \node[inline random variable, latent] (f) {$\mat{f}$};
+}
+which are never directly observed.
+The function values are (usually) assumed to not be directly observed due to the additive noise assumption in~\cref{eq:bayesian_ml:additive_noise}, which states that only a noisy version $\mat{y}_n = f(\mat{x}_n) + \epsilon_n$ of the true functional dependency is observed to motivate regularization terms.
+In the graphical model above, both terms are represented via
+\begin{labeling}{$\Prob*{\mat{f}_n \given \mat{x}_n}$}
+    \item [$\Prob*{\mat{f}_n \given \mat{x}_n}$:] The true functional dependency $f$, the functional of interest.
+    \item [$\Prob*{\mat{y}_n \given \mat{f}_n}$:] The independent noise term $\epsilon$.
+\end{labeling}
+In this model, the noise term contains all part of the generative process for $\mat{y}_n$ which cannot be explained by $\mat{x}_n$ and is assumed to be fully independent given $\mat{f}_n$.
+
+The graphical model now contains a chain of nodes $\mat{x}_n$, $\mat{f}_n$, $\mat{y}_n$ that is repeated for every data point.
+This is a common pattern for generative models.
+While the functional of interest $f$ changes depending on the position in the input space $\mat{x}$, the structure of the generative process is assumed to be the same for all observations.
+To explicitly represent this repetition, we introduce plate notation:
+\begin{align}
+    \label{eq:bayesian_ml:non_parametric}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -1);
+        \node[random variable, observed] at (0, 0) (X) {$\mat{x}_n$};
+        \node[random variable, latent] at (0, -1) (F) {$\mat{f}_n$};
+        \node[random variable, observed] at (0, -2) (Y) {$\mat{y}_n$};
+        \draw[edge, directed] (X) -- (F);
+        \draw[edge, directed] (F) -- (Y);
+        \draw[edge, directed] (F) to[loop left] (F);
+        %
+        \begin{scope}[on background layer]
+            \node[
+                align plate,
+                inner xsep=10pt,
+                fit=(X)(F)(Y),
+                label={[anchor=south east]south east:$N$}
+            ] {};
+        \end{scope}
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{x}, \mat{y}}
+     & =
+    \left\{
+    \begin{aligned}
+         & \Prob*{\mat{x}_1, \dots, \mat{x}_N}                                               \\
+         & \cdot \int \Prob*{\mat{f}_1, \dots, \mat{f}_N \given \mat{x}_1, \dots, \mat{x}_N} \\
+         & \quad \cdot \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{f}_n}                      \\
+         & \quad \cdot \diff \mat{f}_1 \dots \diff \mat{f}_N
+    \end{aligned}
+    \right.
+\end{align}
+Within the plate, all nodes indexed with $n$ are repeated $N$ times.
+The loop on $\mat{f}_n$ denotes that all $\mat{f}_n$ are dependent on each other.
+Having separated the functional of interest from the noise term, the next step is to formulate a representation of $\Prob*{\mat{f}_1, \dots, \mat{f}_N \given \mat{x}_1, \dots, \mat{x}_N}$.
+The choice of this distribution over functions is informed by two challenges.
+First, the support of the distribution can be restricted to a specific class of functions to shrink the hypothesis space.
+And second, for a model to be the result of an algorithm, it needs to be represented via finitely many parameters.
+
+There exist two paths to achieving a finite representation:
+\begin{labeling}{Non-parametric:}
+    \item[Non-parametric:] The functional dependency is represented implicitly using the existing observations $\Dc$. Examples include nearest neighbor models, Gaussian processes or polynomial splines.
+    \item[Parametric:] The functional dependency is represented explicitly using a specific class of functions with parameters $\mat{\theta}$. Examples include neural networks, linear regression or polynomial regression.
+\end{labeling}
+The model in~\cref{eq:bayesian_ml:non_parametric} is non-parametric because it does not contain any parameters besides the $N$ pairs $(\mat{x}_n, \mat{y}_n)$.
+Because the functional $f$ is implicit, all $\mat{f}_n$ inform each other.
+
+If $f$ is represented completely and explicitly via a set of parameters $\mat{\theta}$ in a parametric model, the $\mat{f}_n$ are independent given $\mat{\theta}$.
+If this conditional independence
+\begin{equation}
+    \begin{split}
+        \Prob*{\mat{f}_n \given \mat{\theta}, \Set{\mat{f}_m \with m \in \Set{1, \dots, N}, m \neq n}}
+        =
+        \Prob*{\mat{f}_n \given \mat{\theta}}
+    \end{split}
+\end{equation}
+holds, $\mat{\theta}$ is called a sufficient statistic for the functional $f$.
+In the parametric graphical model
+\begin{align}
+    \label{eq:bayesian_ml:parametric}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -1);
+        \node[random variable, observed] at (0, 0) (X) {$\mat{x}_n$};
+        \node[random variable, latent] at (0, -1) (F) {$\mat{f}_n$};
+        \node[random variable, latent] at (-1, -1) (theta) {$\mat{\theta}$};
+        \node[random variable, observed] at (0, -2) (Y) {$\mat{y}_n$};
+        \draw[edge, directed] (X) -- (F);
+        \draw[edge, directed] (F) -- (Y);
+        \draw[edge, directed] (theta) -- (F);
+        %
+        \begin{scope}[on background layer]
+            \node[
+                align plate,
+                inner xsep=10pt,
+                fit=(X)(F)(Y),
+                label={[anchor=south east]south east:$N$}
+            ] {};
+        \end{scope}
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{x}, \mat{y}}
+     & =
+    \left\{
+    \begin{aligned}
+         & \Prob*{\mat{x}}                                                           \\
+         & \cdot \int \prod_{n=1}^N \Prob*{\mat{f}_n \given \mat{x}_n, \mat{\theta}} \\
+         & \quad \cdot \Prob*{\mat{\theta}} \diff \mat{\theta}                       \\
+         & \quad \cdot \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{f}_n}              \\
+         & \quad \cdot \diff \mat{f}_1 \dots \diff \mat{f}_N                         \\
+    \end{aligned}
+    \right.
+\end{align}
+the joint distribution of the $\mat{f}_n$ factorizes given the parameters $\mat{\theta}$ and the loop no longer exists.
+Taking linear regression as an example, we assume the functional to be of the shape $f(x) = \mat{W}x + \mat{b}$ and choose the parameters $\mat{\theta} = (\mat{W}, \mat{b})$.
+The functional dependency in the graphical model is then given by
+\begin{equation}
+    \begin{split}
+        \Prob*{\mat{f}_n \given \mat{x}_n, \mat{\theta}} = \delta(\mat{W}\mat{x}_n + \mat{b}),
+    \end{split}
+\end{equation}
+where $\delta(\cdot)$ denotes the Dirac delta distribution~\parencite{murphy_machine_2012}.
+Since $\mat{\theta}$ is a sufficient statistic, other observations are not required to evaluate the linear function.
+Even though we made the strong structural assumption about the linearity of the function resulting in a delta distribution, the marginalization of $\Prob*{\mat{\theta}}$ can still lead to more complicated $\Prob*{\mat{y} \given \mat{x}}$ distributions.
+
+Additional latent structure can be introduced to formulate more complex generative models.
+Assume, for example, that the functional of interest is known to have the shape $f(x) = h(k(x), g(x))$.
+The corresponding graphical model
+\begin{align}
+    \begin{tikzpicture}[align graphical model]
+        \coordinate (baseline) at (0, -1.5);
+        \node[random variable, observed] at (0.5, 0) (X) {$\mat{x}_n$};
+        \node[random variable, latent] at (0, -1) (F) {$\mat{k}_n$};
+        \node[random variable, latent] at (1, -1) (G) {$\mat{g}_n$};
+        \node[random variable, latent] at (-1, -1) (theta) {$\mat{\theta}$};
+        \node[random variable, latent] at (0.5, -2) (H) {$\mat{h}_n$};
+        \node[random variable, observed] at (0.5, -3) (Y) {$\mat{y}_n$};
+        \draw[edge, directed] (X) -- (F);
+        \draw[edge, directed] (F) -- (H);
+        \draw[edge, directed] (X) -- (G);
+        \draw[edge, directed] (G) -- (H);
+        \draw[edge, directed] (H) -- (Y);
+        \draw[edge, directed] (theta) -- (F);
+        \draw[edge, directed, bend left=45] (theta) to (G);
+        \draw[edge, directed] (theta) to (H);
+        %
+        \begin{scope}[on background layer]
+            \node[
+                align plate,
+                inner xsep=10pt,
+                fit=(X)(F)(G)(H)(Y),
+                label={[anchor=south east]south east:$N$}
+            ] {};
+        \end{scope}
+    \end{tikzpicture}
+     &   &
+    \Prob*{\mat{x}, \mat{y}}
+     & =
+    \left\{
+    \begin{aligned}
+         & \Prob*{\mat{x}}                                                                       \\
+         & \cdot \int \prod_{n=1}^N \Prob*{\mat{k}_n \given \mat{x}_n, \mat{\theta}}             \\
+         & \quad \cdot \prod_{n=1}^N \Prob*{\mat{g}_n \given \mat{x}_n, \mat{\theta}}            \\
+         & \quad \cdot \prod_{n=1}^N \Prob*{\mat{h}_n \given \mat{k}_n, \mat{g}_n, \mat{\theta}} \\
+         & \quad \cdot \Prob*{\mat{\theta}} \diff \mat{\theta}                                   \\
+         & \quad \cdot \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{k}_n, \mat{g}_n, \mat{h}_n}    \\
+         & \quad \cdot \diff \Set*{\mat{k}_n, \mat{g}_n, \mat{h}_n}_{n=1}^N                      \\
+    \end{aligned}
+    \right.
+\end{align}
+contains separate nodes for the different functions.
+By constructing a hypothesis space as a combination of multiple sub-hypothesis spaces, generative models can represent detailed assumptions while remaining formally principled through marginalization.
+Having formulated structural assumptions about how a data set has been generated, the next step is interpret these assumptions in a statistical learning context and connect them with data.
+
+\subsubsection{Bayesian inference}
+The generative model for linear regression formulated in~\cref{eq:bayesian_ml:parametric} formulates a factorization of the unknown data distribution $\Prob*{\mat{x}, \mat{y}}$.
+By introducing the parameters $\mat{\theta} = (\mat{W}, \mat{b})$ which are sufficient statistics for the functional dependency between $\mat{x}$ and $\mat{y}$ under our assumptions, learning about the regression functional $f$ has been reduced to learning about finitely many parameters.
+In other words, the formulation of a generative model yields a formal description of what we mean by linear regression in a statistical learning context.
+The next step is to derive a learning algorithm that connects this model to observations.
+
+In~\cref{toc:bayesian_ml:statistical_learning}, a good solution to a learning problem was characterized with the risk minimization algorithm, which demands that any data that could be observed by form the data distribution would be well-explained by the solution.
+In the context of generative models, we can formulate the same idea by demanding that sampling from the true data distribution or from the generative model leads to the same data sets.
+Or equivalently, that samples drawn from the data distribution have high probability under the generative model and vice versa.
+Since we do not have access to the full data distribution, we use the available observations as an empirical estimate again.
+
+To make statements about the interaction of the parameters $\mat{\theta}$ and the observations $\Dc = \Set*{(\mat{x}_n, \mat{y}_n)}_{n=1}^N$, we consider their joint probability distribution $\Prob*{\mat{\theta}, \Dc}$.
+Using the chain rule, this distribution can be written as a product
+\begin{align}
+    \Prob*{\mat{\theta}, \Dc} & = \Prob*{\Dc \given \mat{\theta}}\Prob*{\mat{\theta}},
+\end{align}
+whose terms are called the likelihood $\Prob*{\Dc \given \mat{\theta}}$ and prior $\Prob*{\mat{\theta}}$.
+The structural assumptions formulated via the generative model allow us to directly evaluate the likelihood $\Prob*{\Dc \given \mat{\theta}} = \Prob*{\mat{x}, \mat{y} \given \mat{\theta}}$.
+The prior $\Prob*{\mat{\theta}}$ is a distribution over all possible parameters $\mat{\theta}$ and is part of the joint formulated in the generative model.
+Applying the chain rule on the joint again yields the posterior
+\begin{align}
+    \Prob*{\mat{\theta} \given \Dc}
+     & = \frac{\Prob*{\Dc \given \mat{\theta}}\Prob*{\mat{\theta}}}{\Prob*{\Dc}},
+\end{align}
+where $\Prob*{\Dc} = \int \Prob*{\Dc \given \mat{\theta}} \Prob*{\mat{\theta}} \diff \mat{\theta}$ is a combination of the likelihood and and prior terms.
+Because all terms on the right-hand-side are known, this posterior can be evaluated, yielding a combination of modeling assumptions and observations.
+If a closed-form solution cannot be found, Bayesian inference is often implemented using approximation techniques such as sampling or variational approaches~\parencite{bishop_pattern_2007}.
+
+Having found a posterior $\Prob{\mat{\hat{\theta}}} = \Prob*{\mat{\theta} \given \Dc}$, Bayesian predictions for previously unseen points can be made by replacing $\Prob*{\mat{\theta}}$ with $\Prob{\mat{\hat{\theta}}}$ in the graphical model.
+In the regression case, this predictive posterior is given by
+\begin{align}
+    \Prob*{\mat{y}_\ast \given \mat{x}_\ast} & = \int \Prob*{\mat{y}_\ast \given \mat{f}_\ast} \Prob{\mat{f}_\ast \given \mat{x}_\ast, \mat{\hat{\theta}}} \Prob{\mat{\hat{\theta}}} \diff \mat{f}_\ast \diff \mat{\hat{\theta}}.
+\end{align}
+Because Bayesian linear regression is a parametric model and we assumed that $\mat{\theta}$ is a sufficient statistic for $\mat{f}$, predictions can be made independently of the training data in this case.
+
+In~\cref{toc:bayesian_ml:statistical_learning} we argued that considering finitely many observations instead of the full data distribution can lead to overfitting.
+An overfitted model explains the observed data well but might have a high risk for unseen parts of the data distribution.
+The empirical risk minimization learning algorithm can be subject to overfitting because the algorithm selects a single model from the hypothesis space that explains the data well.
+Bayesian inference is fundamentally different:
+A Bayesian posterior $\Prob*{f \given \Dc}$ for a functional of interest $f$ is a distribution over hypotheses rather than one single candidate.
+This distribution can be thought of as a subset of hypotheses weighed by how well the different hypotheses explain the data.
+Instead of selecting a good candidate, a Bayesian inference step can be thought of removing all bad candidates from a hypothesis space.
+As a consequence, a Bayesian posterior contains both the models in the original hypothesis space that overfit to the observations as well as more desirable models with similar data likelihoods.
+Their relative weights in the posterior are dependent on the prior assumptions formulated via the structure of the generative model and the prior $\Prob{\mat{\theta}}$.
+
+
+\subsubsection{Bayesian model selection}
+\begin{figure}[t]
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/polynoms_bayes_broad}
+        \caption{
+            Uncertain prior $\mat{W}, \mat{b} \sim \Gaussian{0, 5^2}$
+            \label{fig:bayesian_ml:polynomials:bayes_broad}
+        }
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\halffigurewidth}
+        \centering
+        \includestandalonewithpath{figures/polynoms_bayes_narrow}
+        \caption{
+            Certain prior $\mat{W}, \mat{b} \sim \Gaussian{1, 1^2}$
+            \label{fig:bayesian_ml:polynomials:bayes_narrow}
+        }
+    \end{subfigure}
+    \caption[Bayesian linear regression posteriors]{
+        \label{fig:bayesian_ml:polynomials:bayes}
+        Two predictive posteriors for a Bayesian linear regression on the same data.
+        Different choices for prior distributions lead to different predictive uncertainties.
+        Which posterior to use is problem-dependent and a subjective choice.
+    }
+\end{figure}
+Statements about Bayesian models are made in terms of probabilities, including predictive posteriors for new inputs $\Prob*{\mat{y}_\ast \given \mat{x}_\ast, \Dc}$ in a regression problem or a posterior distributions $\Prob*{\mat{\theta} \given \Dc}$ for a parameter.
+This distribution of predictions or parameters can be interpreted as uncertainty due to insufficient knowledge about the generative process.
+A Bayesian posterior is derived as the combination of prior knowledge and the data.
+Since a Bayesian posterior is the combination of the data likelihood and prior assumptions, posterior uncertainties are not objective but depend on prior assumptions.
+
+\Cref{fig:bayesian_ml:polynomials:bayes} shows two predictive posteriors for a Bayesian linear regression on the data introduced in~\cref{fig:bayesian_ml:polynomials:data} using the graphical model in~\cref{eq:bayesian_ml:parametric}.
+Both linear regression are based on the same observations but differ in the prior assumptions about $\mat{\theta} = (\mat{W}, \mat{b})$.
+Choosing a broad prior $\mat{W}, \mat{b} \sim \Gaussian{0, 5^2}$ results in higher posterior uncertainties about both $\mat{W}$ and $\mat{b}$ than choosing a more narrow prior $\mat{W}, \mat{b} \sim \Gaussian{1, 1^2}$.
+Samples drawn from the posterior show why this is the case:
+A broader prior contains linear functions with steep slopes that could explain the data but are never considered by the narrow prior.
+Not considering these functions might be desired behavior if implied by expert knowledge.
+This situation of having to choose a model from a set of plausible models is a model selection problem.
+
+In principle, model selection is not necessary in Bayesian machine learning.
+Because the result of inference is a distribution over models weighed by their plausibility, model selection is already included in a Bayesian posterior.
+However, this is only true for model components that receive a Bayesian treatment by calculating a posterior.
+No prior is typically placed on the structure of the graphical model itself or the parametric forms of its components, such as the linearity assumption in Bayesian linear regression.
+For fully Bayesian treatments, priors would also have to be placed on priors, forming hyper-priors.
+Because such a fully Bayesian treatment is generally computationally intractable, certain parameters or structural assumptions are typically fixed to one specific instantiation, a point estimate.
+Introducing point estimates also introduces a model selection problem.
+
+Many strategies exist for Bayesian model selection~\parencite{andrew_gelman_bayesian_2013,murphy_machine_2012,david_barber_bayesian_2012} which are not discussed in detail here.
+Most strategies are related to the ideas of empirical risk minimization and consider a performance measure on the observed data.
+Given two hypotheses $H_1$ and $H_2$, it is common to compare the marginal likelihoods $\Prob*{\Dc \given H_1}$ and $\Prob*{\Dc \given H_2}$ where $\Prob*{\Dc \given H} = \prod_{n=1}^N \Prob*{\mat{y}_n \given \mat{x}_n, H}$.
+Choosing the hypothesis $H_i$ with a higher marginal likelihood is called a maximum likelihood estimation.
+Observing that
+\begin{equation}
+    \begin{split}
+        \frac{\Prob*{H_1 \given \Dc}}{\Prob*{H_2 \given \Dc}} = \frac{\Prob*{\Dc \given H_1}}{\Prob*{\Dc \given H_2}} \frac{\Prob*{H_1}}{\Prob*{H_2}},
+    \end{split}
+\end{equation}
+a common extension to maximum likelihood estimation is to also consider how well the hypotheses conform to prior assumption through the prior odds $\sfrac{\Prob*{H_1}}{\Prob*{H_2}}$.
+
+While strategies based on marginal likelihoods often work well in practice, they are limited in scope.
+Since marginal distributions are considered, models are not evaluated with respect to the latent components in the generative model, such as the shape of $\Prob*{\mat{f}}$ in Bayesian linear regression.
+Selecting models using maximum likelihood approaches enforces good predictive uncertainties around the observations in $\Dc$.
+No requirements are enforced concerning uncertainties away from the data, the shape of single samples drawn from the model or uncertainties in the latent part of the generative model.
+
+\todoi{Old intro below}
+
 Bayesian graphical models as introduced in~\cref{toc:bayesian_ml:bayesian_ml} encode structural assumptions about a machine learning problem.
 The central assumption in the regression problem is a latent function $f$ that maps inputs to outputs.
 In the Bayesian linear regression example, a posterior over linear functions could be calculated by calculating a posterior over parameters instead, since every parameter explicitly represents a linear function.

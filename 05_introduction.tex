@@ -102,7 +102,7 @@ With growing computational power and the availability of large data sets, black-
 Since black-box models do not claim to uncover or represent knowledge about the true process in nature, their internal structure is generally not human-interpretable and their behavior is not well-understood.
 As a result, their applicability in critical systems in the physical world is often limited.
 
-In this thesis, we will study what we call structured models.
+We will study what we call structured models.
 Structured models exist between these extremes as they are designed based on our scientific understanding of the underlying problem.
 At the same time, we accept that there are problem-components we do not or cannot understand and use general function approximators to model these components.
 \Cref{fig:introduction:models:structured} shows a structured model that has internal structure inspired by the more complex white-box model in~\cref{fig:introduction:models:white_box} but which also contains black-box components.
@@ -122,31 +122,61 @@ These insights lead to concepts such as the long short-term memory (LSTM)~\paren
 
 
 \section{Thesis outline}
-\todoi{Is it finished yet?}
-We will explore two things in the thesis.
-\begin{itemize}
-    \item We show two approaches to adding structure to a learning problem.
-          First, we use what might be called formal structure motivated by the mathematical formulation of an underlying problem, the data association problem.
-          This is closer to black-box models.
-          And second, we use structure motivated by expert understanding of the underlying physical process that generated the data, which is closer to white-box models.
-    \item As it turns out, since the models live in-between the two extremes, their respective tools for judging whether a model is good are not sufficient.
-          Only looking at data-fits (both in training and test) is not enough since things like symmetries or ambiguities in the general function approximators can lead to multiple plausible models that show similar performance.
-          Marignal likelihoods do not capture the inner shape of a model and we there is no straightforward way to formalize success.
-          Because of this, we discuss measuring success based on a downstream task which requires a model to actually represent the true underlying generative process.
-\end{itemize}
+In this thesis, we will study how to formulate Bayesian structural models using methods of Bayesian nonparametrics.
+We interpret recent advances in inference schemes for deep Gaussian processes~\parencite{damianou_deep_2013} in the context of structural models and formulate informative hierarchical priors based on expert knowledge.
+We discuss two approaches to adding such structure.
+First, we relax formal mathematical structure to allow a hierarchical system to learn from data.
+And second, we use structure motivated by expert understanding of an underlying physical process to formulate constraints to a data-centric approach.
+Having explored approaches to formulating structured Bayesian models, we discuss why Bayesian model selection based on marginal likelihoods is insufficient to identify desireable models.
+To take internal model structure into account, we interpret Bayesian model selection as an inference problem that takes a reinforcement learning task into account.
+The content is structured as follows.
 
+In \cref{toc:gp}, we provide a short introduction to Bayesian machine learning and Bayesian nonparametrics with a focus on Gaussian processes (GPs).
+We discuss the connection between Statistical learning theory and Bayesian inference and their application to hierarchical models.
+After introducing GPs, we discuss variational approaches to sparse GPs, their generalization to deep GP models and inference schemes.
+
+In \cref{toc:data_association}, we explore how to generalize black-box deep GP models to structural priors using the data-association problem as an example.
+We use formal mathematical structure to separate the data-association problem into separate hierarchical components and derive a joint inference scheme, resulting in a fully Bayesian model.
+We show that this model is able to factorize multi-modal data into independent processes, providing explicit models fot both the processes and assignment probabilities.
+We discuss the limitations of formal structural models arising from ambiguities in the learning problem.
+
+In \cref{toc:alignment}, we discuss how to remove ambiguities using additional constraints arising from expert knowledge about the data generation process.
+We interpret the problem of modeling the power production of multiple wind-turbines in a wind-farm as a nonlinear alignment problem.
+Based on expert knowledge about the underlying latent and turbulent wind field, we can derive a structural model that enforces a physically plausible dependency structure between multiple timeseries.
+We discuss how these constraints help solving an otherwise highly ambiguous learning problem and show that the imposed structure leads to rich internal model-structure.
+
+In \cref{toc:interpretable_rl}, we consider how to formalize the subjectiveness introduced via expert knowledge and model ambiguities by incorporating it into the model itself.
+We include the task a model will be used to solve into model selection, which allows us to distinguish between qualitatively different models showing similar performance metrics.
+We revisit the data-association problem and embed it into a reinforcement learning problem, where identifying the correct underlying dynamics is critical to finding a successful policy.
+We show that semantic hierarchical structure increases data efficiency and allows domain experts to influence agent behavior through detailed insights into the dynamics of a system.
+
+\Cref{toc:discussion} concludes the work presented in this thesis.
+In \cref{toc:discussion:composition}, we present an intuitive argument for why inference schemes based on factorizations between layers cannot represent heterogeneous posteriors.
+In \cref{toc:discussion:bo}, we argue why models with suboptimal marginal likelihoods can perform well in hierarchical systems.
+In \cref{toc:discussion:mountaincar}, we explore this idea further and consider how tasks can be included in the inference problem directly.
+Finally, we discuss possible further directions of research.
 
 \section{Associated Publications}
 \subsubsection{Papers}
 \begin{itemize}
     \item \fullfullcite{kaiser_bayesian_2018}
 
-          Here, I did great things.
+          \Cref{toc:alignment}
     \item \fullfullcite{kaiser_data_2019}
+
+          \Cref{toc:data_association}
     \item \fullfullcite{kaiser_interpretable_2019}
+
+          \Cref{toc:interpretable_rl}
     \item \fullfullcite{kaiser_bayesian_2020}
+
+          \Cref{toc:interpretable_rl}
     \item \fullfullcite{bodin_modulating_2020}
+
+          \Cref{toc:discussion:bo}
     \item \fullfullcite{ustyuzhaninov_compositional_2020}
+
+          \Cref{toc:discussion:composition}
 \end{itemize}
 
 \subsubsection{Patents}

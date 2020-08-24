@@ -12,15 +12,16 @@ figures:
 $(FMT): $(HEADER)
 	lualatex --shell-escape -ini -jobname="$(JOB)" "&lualatex mylatexformat.ltx $(JOB).tex"
 
-$(JOB).pdf: $(FMT) figures
+# By default assume pre-made figures
+$(JOB).pdf: $(FMT)
 	latexmk
+
+full: $(JOB).pdf figures
 
 preview: all
 	latexmk -pvc
 
-# For time reasons, assume that figures are precompiled in the github CI
-github: $(FMT)
-	latexmk
+github: $(JOB).pdf
 
 clean:
 	$(RM) $(FMT)

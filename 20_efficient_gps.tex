@@ -2004,7 +2004,7 @@ We can formulate the marginal function value of the $\nth{n}$ data point by inse
 A consequence of this formulation is that drawing a sample from $\Variat*{\mat{f}_{L,n}}$ can be achieved via ancestral sampling through the hierarchical GP model by drawing samples from the different $\Variat*{\mat{f}_{l, n}}$ in turn.
 Instead of passing Gaussian messages as in the NVC approximation, we can draw Monte-Carlo samples from $\Variat*{\mat{f}_{L, n}}$ directly.
 Because the data are independent under the variational assumptions, we can draw independent univariate samples per observation.
-Being able to sample $\Variat*{\mat{f}_{L, n}}$ directly also allows us to sample the bound in~\cref{eq:gp:sgpr_bound_1} which directly generalizes to the hierarchical case and is given by
+Sampling $\Variat*{\mat{f}_{L, n}}$ directly also allows us to sample the bound in~\cref{eq:gp:sgpr_bound_1} that generalizes to the hierarchical case and is given by
 \begin{equation}
     \begin{split}
         \label{eq:dsvi:full_bound}

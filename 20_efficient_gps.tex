@@ -213,7 +213,7 @@ We give a few examples here.
               \label{eq:bayesian_ml:f_reg}
               F_{\text{reg}}[\Prob*{\mat{x}, \mat{y}}](\mat{x}_\ast) = \Prob*{\mat{y}_\ast \given \mat{x}_\ast}
           \end{align}
-          with $\Fc = \Xc \to \Probs{\Yc}$ gives rise to the regression problem discussed in~\cref{toc:bayesian_ml:ml_problems}.
+          with $\Fc = \Xc \to \Probs{\Yc}$ gives rise to the regression problem discussed in~\cref{toc:bayesian_ml}.
     \item[Classification]
           Classification is a closely related to regression and assumes the same separation $\Zc = \Xc \times \Yc$.
           In contrast to regression, $\Yc$ is assumed to be discrete, often without a known order.
@@ -394,7 +394,7 @@ Graphical models have been studied in great detail.
 We refer to~\parencite{murphy_machine_2012,bishop_pattern_2007,david_barber_bayesian_2012,trevor_hastie_elements_2013} for additional information.
 
 \subsubsection{Generative models}
-In the algorithmic view of machine learning problems formulated in~\cref{toc:bayesian_ml:ml_problems}, the observational data is used to formulate an error function to select a model from a set of candidates without the notion of explaining said data.
+In the algorithmic view of machine learning problems formulated in~\cref{toc:bayesian_ml}, the observational data is used to formulate an error function to select a model from a set of candidates without the notion of explaining said data.
 To formulate what it means to generalize, statistical learning theory in~\cref{toc:bayesian_ml:statistical_learning} bases the learning problem on an unknown or latent data distribution, with the observational data being just one of many possible samples from that distribution.
 A generative model captures this sampling process and formulates an algorithm to generate arbitrary data sets from the data distribution $\Prob*{\mat{z}}$.
 A generative model is successful if the observational data set is a likely draw from the model.

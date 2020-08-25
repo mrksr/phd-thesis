@@ -1,6 +1,5 @@
 \chapter{Introduction}
 \label{toc:introduction}
-
 Machine learning (ML) methods have seen great success recently in a wide range of digital domains such as speech recognition~\parencite{chorowski_attention-based_2015}, computer vision~\parencite{russakovsky_imagenet_2015}, video games~\parencite{berner_dota_2019}, or machine translation~\parencite{johnson_googles_2017}.
 In such domains, data is often abundant, which shifts the focus away from traditional statistical models to approaches that are highly adaptable and scalable.
 At the same time, the consequences of mistakes tend to be mild, enabling fast prototyping and heuristic design choices that can be validated in the deployed systems using the performance metrics of interest.
@@ -8,11 +7,11 @@ At the same time, the consequences of mistakes tend to be mild, enabling fast pr
 However, bridging the gap to applications in critical systems in the physical world has proved challenging.
 Problem domains like robotics or industrial control introduce a new set of requirements.
 In industrial control, machine learning is used to find more efficient or safer control strategies not obvious to the engineers designing a machine~\parencite{hein_benchmark_2017}.
-In such scenarios, relevant data for finding new strategies is often scarce, since the most valuable data such as when a machine will fail, or how it will behave in new situations, is never produced.
+In such scenarios, relevant data for finding new strategies are often scarce, since the most valuable data such as when a machine will fail, or how it will behave in new situations, is never produced.
 As applications become more safety-relevant, gathering data through exploration can be problematic due to the adverse consequences of failure.
 As a consequence, machine learning systems are required to handle low data regimes and uncertainties about a system's true behavior.
 
-If they are to operate in safety critical areas, interact with people or carry responsibility, machine learning systems must be robust, trustworthy, and assessable.
+If they are to operate in safety-critical areas, interact with people or carry responsibility, machine learning systems must be robust, trustworthy, and assessable.
 Besides optimizing for good average-case performance, a responsible system needs to reason about plausible worst-cases to be able to avoid them.
 To ensure trust, ML-systems often need to be verified by domain experts before deployment and are used to test hypotheses or make impactful decisions, emphasizing a need for interpretability.
 Models are required to incorporate and reproduce expert knowledge and make consistent predictions, while at the same time yielding new insights from data.
@@ -24,7 +23,7 @@ To make predictions, all plausible models are taken into account, allowing us to
 
 For applications in the physical world, expert knowledge is often based on an intuitive understanding of the underlying physics leading to coarse expectations about system-behavior on different layers of abstraction.
 This dissertation explores how such abstract knowledge can be exploited to formulate structured Bayesian models that reproduce expectations but are still able to learn from data.
-We will investigate the properties of such models in concrete applications and discuss how a requirements such as trustworthiness can be formalized by taking downstream tasks into account.
+We will investigate the properties of such models in concrete applications and discuss how requirements such as trustworthiness can be formalized by taking downstream tasks into account.
 In this chapter, we will introduce the notion of structured models and discuss their relation to other modeling approaches and the main contributions of the work presented in this thesis.
 
 
@@ -69,7 +68,7 @@ In this chapter, we will introduce the notion of structured models and discuss t
         In many machine learning problems, a model must be derived for a process in nature that is not fully understood.
         Pairs of observations $(\mat{x}, \mat{y})$ are available and the process is formalized as some functional dependence $\mat{y} = f(\mat{x})$.
         The black-box approach uses general function approximators to approximate the function $f$ given enough data but does not claim to yield insights into nature.
-        The wite-box approach uses scientific understanding to formulate a detailed model that explains the process in nature and uses data to find values for few interpretable parameters.
+        The white-box approach uses scientific understanding to formulate a detailed model that explains the process in nature and uses data to find values for a small number of interpretable parameters.
         A structured model uses insights from both approaches and accepts that some processes cannot be modeled in full detail.
         Some structure is formulated based on scientific understanding and the datils are explained with general approximators trained with the available observations.
     }
@@ -86,18 +85,18 @@ Such a model typically has a small number of unknown parameters whose values are
 \Cref{fig:introduction:models:white_box} shows how white-box models are typically formulated:
 Based on the scientific understanding of nature, the process of interest is factorized into smaller components that are modeled separately and that interact to jointly explain the data.
 Crucially, all components of a white-box model are designed by humans and are white-box as well to ensure an interpretable result.
-Since white-box models represent a scientific understanding of nature, a model can be evaluated by how well it is able to describe the available observations:
+Since white-box models represent a scientific understanding of nature, a model can be evaluated by how well it can describe the available observations:
 A simple model with few parameters which is able to explain observations is expected to approximate the true process in nature reasonably well, thereby implementing Occam's razor~\parencite{thorburn_occams_1915}.
-White-box models have been the driving force behind many advances in economics, medicine and the natural sciences and allowed researchers to find and understand structure in complex and heterogenous data~\parencite{efron_modern_2005,giulio_d._agostini_bayesian_2003}.
+White-box models have been the driving force behind many advances in economics, medicine, and the natural sciences and allowed researchers to find and understand the structure in complex and heterogenous data~\parencite{efron_modern_2005,giulio_d._agostini_bayesian_2003}.
 However, as processes get more complex and the amount of available data grows, formulating white-box models becomes a very difficult task~\parencite{sutton_bitter_2019}.
 
 The black-box culture is more closely associated with machine learning~\parencite{mitchell_machine_1997,goodfellow_deep_2016}.
 When formulating a black-box model, we accept that we cannot model nature directly and instead focus on the functional dependency $f$ between inputs and outputs in~\cref{fig:introduction:models:black_box}.
 Since it can be shown that many algorithms including neural networks or Gaussian processes are general approximators for smooth functions~\parencite{rasmussen_gaussian_2006}, given enough observations, they are expected to be able to approximate $f$ as well.
-Since a sufficiently powerful approximator can explain any observation set, a black-box model can no longer evaluated by how well it explains the training data.
+Since a sufficiently powerful approximator can explain any observation set, a black-box model can no longer be evaluated by how well it explains the training data.
 Many functional dependencies can be used to generate a finite set of observations and since a black-box model does not have a scientific basis, it is hard to judge if the true process has been uncovered.
-Instead, the performance of a black-box model is typically measured in terms of it's ability to predict a test set of previously unseen data.
-With growing computational power and the availability of large data sets, black-box approaches have lead to impressive advancements in domains that are hard to formalize such as image recognition tasks~\parencite{lecun_backpropagation_1989} or playing the game of Go~\parencite{silver_mastering_2016}.
+Instead, the performance of a black-box model is typically measured in terms of its ability to predict a test set of previously unseen data.
+With growing computational power and the availability of large data sets, black-box approaches have led to impressive advancements in domains that are hard to formalize such as image recognition tasks~\parencite{lecun_backpropagation_1989} or playing the game of Go~\parencite{silver_mastering_2016}.
 Since black-box models do not claim to uncover or represent knowledge about the true process in nature, their internal structure is generally not human-interpretable and their behavior is not well-understood.
 As a result, their applicability in critical systems in the physical world is often limited.
 
@@ -109,10 +108,10 @@ The goal of the structured modeling approach is to be more data-efficient compar
 At the same time, imposing structure allows us to characterize desired solutions and formulate what we want to learn from data.
 As a result, structured models can be formulated to gain insights about poorly understood system components from data.
 
-In fact, many successes in machine learning are based on structured models.
-A well-known example are convolutional neural networks (CNNs) used in computer vision tasks~\parencite{lecun_backpropagation_1989}.
+Many successes in machine learning are based on structured models.
+A well-known example is the convolutional neural network (CNN) used in computer vision tasks~\parencite{lecun_backpropagation_1989}.
 Instead of, for example, using a standard multi-layer perceptron with, sigmoid activation functions, the structure of a CNN is inspired by high-level knowledge about vision tasks.
-Recognizing the importance of edge-detection and scale-invariance, a CNN consists of a stack of layers which implement a potentially large set of convolution kernels.
+Recognizing the importance of edge-detection and scale-invariance, a CNN consists of a stack of layers that implement a potentially large set of convolution kernels.
 In contrast to earlier (more white-box) approaches to vision such as SIFT-features~\parencite{lowe_object_1999}, the parameters of the convolutions are learned from the data, thereby introducing a black-box component.
 Another application of structured models can be found in natural language processing.
 Formulating a white-box model for human language is prohibitively difficult.
@@ -123,26 +122,26 @@ These insights lead to concepts such as the long short-term memory (LSTM)~\paren
 \section{Thesis outline}
 In this thesis, we will study how to formulate Bayesian structural models using methods of Bayesian nonparametrics.
 We interpret recent advances in inference schemes for deep Gaussian processes~\parencite{damianou_deep_2013} in the context of structural models and formulate informative hierarchical priors based on expert knowledge.
-We discuss two approaches to adding such structure.
+We discuss two approaches to adding such a structure.
 First, we relax formal mathematical structure to allow a hierarchical system to learn from data.
 And second, we use structure motivated by expert understanding of an underlying physical process to formulate constraints to a data-centric approach.
-Having explored approaches to formulating structured Bayesian models, we discuss why Bayesian model selection based on marginal likelihoods is insufficient to identify desireable models.
-To take internal model structure into account, we interpret Bayesian model selection as an inference problem that takes a reinforcement learning task into account.
+Having explored approaches to formulating structured Bayesian models, we discuss why Bayesian model selection based on marginal likelihoods is insufficient to identify desirable models.
+To take the internal model structure into account, we interpret Bayesian model selection as an inference problem that takes a reinforcement learning task into account.
 The content is structured as follows.
 
 In \cref{toc:gp}, we provide a short introduction to Bayesian machine learning and Bayesian nonparametrics with a focus on Gaussian processes (GPs).
 We discuss the connection between Statistical learning theory and Bayesian inference and their application to hierarchical models.
-After introducing GPs, we discuss variational approaches to sparse GPs, their generalization to deep GP models and inference schemes.
+After introducing GPs, we discuss variational approaches to sparse GPs, their generalization to deep GP models, and inference schemes.
 
 In \cref{toc:data_association}, we explore how to generalize black-box deep GP models to structural priors using the data-association problem as an example.
-We use formal mathematical structure to separate the data-association problem into separate hierarchical components and derive a joint inference scheme, resulting in a fully Bayesian model.
+We use the formal mathematical structure to separate the data-association problem into separate hierarchical components and derive a joint inference scheme, resulting in a fully Bayesian model.
 We show that this model is able to factorize multi-modal data into independent processes, providing explicit models for both the processes and assignment probabilities.
 We discuss the limitations of formal structural models arising from ambiguities in the learning problem.
 
 In \cref{toc:alignment}, we discuss how to remove ambiguities using additional constraints arising from expert knowledge about the data generation process.
 We interpret the problem of modeling the power production of multiple wind-turbines in a wind-farm as a nonlinear alignment problem.
-Based on expert knowledge about the underlying latent and turbulent wind field, we can derive a structural model that enforces a physically plausible dependency structure between multiple timeseries.
-We discuss how these constraints help solving an otherwise highly ambiguous learning problem and show that the imposed structure leads to rich internal model-structure.
+Based on expert knowledge about the underlying latent and turbulent wind field, we can derive a structural model that enforces a physically plausible dependency structure between multiple time-series.
+We discuss how these constraints help to solve an otherwise highly ambiguous learning problem and show that the imposed structure leads to a rich internal model-structure.
 
 In \cref{toc:interpretable_rl}, we consider how to formalize the subjectiveness introduced via expert knowledge and model ambiguities by incorporating it into the model itself.
 We include the task a model will be used to solve into model selection, which allows us to distinguish between qualitatively different models showing similar performance metrics.
@@ -158,7 +157,7 @@ Finally, we discuss possible further directions of research.
 \section{Associated Publications}
 The work covered in this thesis was developed during an industrial placement with Siemens AG and was, partially, inspired by problems that arise when applying machine learning in industrial applications.
 The main contributions presented in this thesis appeared in a number of peer-reviewed publications outlined below.
-Additionally, this work has been the basis of a number of patents, four of which have been published at the writing of this thesis.
+Additionally, this work has been the basis of several patents, four of which have been published at the time of writing this thesis.
 We provide a list of these patents below.
 
 \subsubsection{Papers}

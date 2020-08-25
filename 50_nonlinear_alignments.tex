@@ -116,7 +116,6 @@ The joint probability distribution of the data can then be written as
 Here, we use $\mat{K}$ to refer to the Gram matrices corresponding to the respective GPs.
 All but the convolution processes factorize over the different levels of the model as well as the different outputs.
 
-\subsubsection{Variational lower bound}
 To approximate a single deep GP, we can use the approximations discussed in~\cref{toc:dgp}.
 The structure of the AMO-GP model is closely related to a group of stacked GPs with additional dependencies in one of the layers.
 Since these dependencies are represented with a multi-output GP that, given the latent functions, yields conditionally independent outputs, nested variation compression generalizes to the AMO-GP.
@@ -142,10 +141,10 @@ The KL-divergences connect the variational approximations to the prior, and the 
 For a detailed discussion see \parencite{hensman_nested_2014}.
 This bound depends on the hyper parameters of the kernel and likelihood $\left\{ \mat{\ell}, \mat{\sigma} \right\}$ and the variational parameters $\Set*{\mat{Z}_{l,d}, \mat{m}_{l,d}, \mat{S}_{l,d} \with l \in \Set{\rv{a}, \rv{f}, \rv{d}}, d \in [D]}$.
 
-The bound can be calculated in $\Oh(NM^2)$ time and factorizes along the data points, which enables stochastic optimization.
+The bound can be calculated in $\Oh(NM^2)$ time and factorizes along the data points, enabling stochastic optimization.
 Since every of the $N$ data points is associated with one of the $D$ outputs, the computational cost of the model is independent of $D$.
 Information is only shared between the different outputs using the inducing points in $\mat{f}$.
-As the different outputs share a common function, increasing $D$ allows us to reduce the number of variational parameters per output, because the shared function can still be represented completely.
+As the different outputs share a common function, increasing $D$ allows us to reduce the number of variational parameters per output and still represent the shared information.
 
 A central component of this bound are expectations over kernel matrices, the three $\Psi$-statistics $\psi_f = \Moment*{\E_{\Variat{\rv{a}}}}{\Fun*{\tr}{\mat{K_{ff}}}}$, $\mat{\Psi_f} = \Moment*{\E_{\Variat{\rv{a}}}}{\mat{K_{fu}}}$ and $\mat{\Phi_f} = \Moment*{\E_{\Variat{\rv{a}}}}{\mat{K_{uf}}\mat{K_{fu}}}$.
 Closed-form solutions for these statistics depend on the choice of kernel and are known for specific kernels, such as linear or RBF kernels, for example shown in~\parencite{damianou_deep_2013}.
@@ -163,7 +162,7 @@ Then, $\psi_f$ is given by
     \begin{split}
         \psi_f &= \Moment*{\E_{\Variat{\rv{a}}}}{\Fun*{\tr}{\mat{K_{ff}}}} \\
         &= \sum_{n=1}^N \Moment*{\E_{\Variat{\rv{a}_n}}}{\Moment*{\cov}{\Fun{\hat{f}}{\mat{a}_n}, \Fun{\hat{f}}{\mat{a}_n}}} \\
-        &= \sum_{n=1}^N \int \Moment*{\cov}{\Fun{\hat{f}}{\mat{a}_n}, \Fun{\hat{f}}{\mat{a}_n}} \Variat{\rv{a}_n} \diff \rv{a}_n \\
+        % &= \sum_{n=1}^N \int \Moment*{\cov}{\Fun{\hat{f}}{\mat{a}_n}, \Fun{\hat{f}}{\mat{a}_n}} \Variat{\rv{a}_n} \diff \rv{a}_n \\
         &= \sum_{n=1}^N \hat{\sigma}_{nn}^2.
     \end{split}
 \end{equation}

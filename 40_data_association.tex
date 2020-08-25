@@ -4,7 +4,7 @@ The deep Gaussian processes introduced in~\cref{toc:dgp} are motivated with prac
 It is hard to represent some functions of interest with a standard GP with a smooth prior, most notably functions which have non-smooth components.
 By repeatedly warping the input space, a deep GP can represent nonstationary structure through the repeated application of smooth functions.
 In such a deep GP model, only the joint application of all smooth layers is informative as the separation is not driven through domain assumptions or a generative process.
-In the following, we explore problems for which a hierarchical generative process can be formulated and learn explicit and separate posteriors for the different parts of the hierarchy.
+In the following, we explore problems for which a hierarchical structure can be formulated and learn explicit and separate posteriors for the different parts of the hierarchy.
 
 Real-world data often include multiple operational regimes of the considered system, for example, a wind-turbine or gas turbine~\parencite{hein_benchmark_2017}.
 As an example, consider a model describing the lift resulting from airflow around the wing profile of an airplane as a function of the attack angle.
@@ -608,4 +608,4 @@ However, the lower three models in~\cref{fig:data_association:semi_bimodal_multi
 
 In the DAGP model, these qualitatively different solutions cannot be distinguished automatically but can only be identified through inspection by experts.
 While the predictive posterior close to the data is similar, the different solutions could generalize differently, introducing a subjective choice of what constitutes the \emph{correct} model.
-In the next chapter, we explore how this ambiguity can be removed by introducing a prior on the dependence between modes.
+In the next chapter, we explore how this ambiguity can be removed by introducing a prior on the dependence between modes through structured informed by expert knowledge.

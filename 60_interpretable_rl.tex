@@ -8,7 +8,7 @@ In this chapter, we explore how we can formalize desirable model behavior throug
 We formulate a hierarchical model based on the DAGP model in~\cref{toc:data_association} that is informed by abstract knowledge about a dynamic system and evaluate model behavior through a reinforcement learning task.
 We show that while misspecified models yield similar marginal distributions as discussed in the previous chapter, a well-specified model can solve the posed task significantly better.
 
-Machine learning methods~\parencite{shalev-shwartz_understanding_2014} are designed to solve tasks where the underlying system we want to model is only partly known or understood.
+Machine learning methods are designed to solve tasks where the underlying system we want to model is only partly known or understood.
 The hope when using machine learning methods is that we can reduce this uncertainty by exploiting statistical patterns in data generated from the underlying system.
 Reinforcement learning (RL)~\parencite{sutton_reinforcement_2018} is a machine learning paradigm designed to learn in a dynamic environment where we can specify a goal or have a notion of what a desirable behavior is.
 The goal of RL is to learn a policy that dynamically chooses actions in the environment to achieve a goal or behavior.
@@ -24,7 +24,7 @@ In practice, we are often limited by previously collected data created by a diff
 In the literature, this scenario is referred to as batch RL~\parencite{lange_batch_2012}, where we are presented with a set of state transitions $\Dc = \Set{(\mat{s}_n, \mat{a}_n, \mat{s}_n^\prime)}_{n=1}^N$ and are unable to interact with the original system to find a policy.
 In order to be able to derive an efficient policy in this scenario, we need to use the available data as efficiently as possible.
 Data efficiency in machine learning comes from reducing the search space of solutions.
-In other words, data efficiency arises from being able to exploit as much prior knowledge of the system as possible \parencite{shalev-shwartz_understanding_2014}.
+In other words, data efficiency arises from being able to exploit as much prior knowledge of the system as possible~\parencite{shalev-shwartz_understanding_2014}.
 
 To be able to use the available data as efficiently as possible, we therefore need a model that provides explicit and interpretable handles such that we can introduce priors easily.
 The model-based approach to RL describes each component of the system in a modular fashion, thereby providing an interface to incorporate prior knowledge.

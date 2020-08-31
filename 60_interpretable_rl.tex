@@ -47,7 +47,7 @@ Introducing constraints on the dynamic model based on abstract knowledge is an i
 This work explores this process for the heteroscedastic and bimodal Wet-Chicken benchmark~\parencite{tresp_wet_1994,hans_efficient_2009} that is both easy to understand and challenging to model.
 A central challenge in this benchmark is how to formulate a model which can represent bimodalities.
 One approach is presented in~\parencite{bishop_mixture_1994}, where multimodal regression tasks are interpreted as a density estimation problem.
-A high number of candidate distributions is reweighed to match the observed data without modeling the underlying generative process.
+A high number of candidate distributions are reweighed to match the observed data without modeling the underlying generative process.
 Reformulated in a Bayesian framework using latent variables, this approach has been applied to the Wet-Chicken benchmark in~\parencite{depeweg_learning_2016,depeweg_decomposition_2018}.
 However, such models are hard to interpret as they do not yield explicit models for the different modalities or their relative importance.
 In this work, we are interested in formulating a dynamics model which yields new interpretable insights about the underlying system.
@@ -143,7 +143,7 @@ With stochasticity or an uncertain transition model, the discounted return becom
 \end{align}
 
 A model-based policy search method consists of two key parts~\parencite{deisenroth_pilco_2011}.
-First, a dynamics model is learned from state transition data.
+First, a dynamics model is learned from the state transition data.
 Second, this dynamics model is used to learn the parameters $\mat{\theta}_\pi$ of the policy $\pi$ which maximize the expected return $\Moment*{\E}{\Fun*{J^\pi}{\mat{\theta}_\pi}}$.
 We discuss both steps in the following.
 
@@ -160,7 +160,7 @@ We discuss both steps in the following.
         Latent variables $\mat{l}_t$ represent the belief that the $\nth{t}$ data point is a drop event.
     }
 \end{figure}
-We formulate a probabilistic transition model-based on high-level knowledge about the Wet-Chicken benchmark.
+We formulate a probabilistic transition model based on high-level knowledge about the Wet-Chicken benchmark.
 Importantly, we do not formulate a specific parametric dynamics model as would be required to derive a controller.
 Instead, we make assumptions on a level typically available from domain experts.
 
@@ -204,7 +204,7 @@ The marginal likelihood consists of the two GPs $\Prob*{\mat{\sigma}_t \given \m
     \end{split}
 \end{equation}
 where $\Multi$ denotes a multinomial distribution.
-These likelihood describe the regression and classification tasks implied by the problem respectively:
+These likelihoods describe the regression and the classification tasks implied by the problem respectively:
 In our case, we use $K = 2$ modes, one for staying in the river and one for falling down the waterfall.
 For every data point we infer a posterior belief $\Prob{\mat{l}_t}$ about which mode the data point belongs to, as we assume this separation can not be predetermined using expert knowledge.
 
@@ -219,7 +219,7 @@ We approximate the exact posterior via a factorized variational distribution
 which introduces variational inducing inputs and outputs $\mat{U}$ as described in~\cref{toc:gp}.
 These inducing inputs independently characterize the respective model parts and enable us to do inference via stochastic optimization.
 
-The variational parameters are optimized by minimizing a lower bound to the marginal likelihood which can be efficiently computed via sampling and enables stochastic optimization.
+The variational parameters are optimized by minimizing a lower bound on the marginal likelihood which can be efficiently computed via sampling and enables stochastic optimization:
 \begin{equation}
     \begin{split}
         \label{eq:interpretable_rl:variational_bound}

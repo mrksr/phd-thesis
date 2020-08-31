@@ -134,7 +134,7 @@ For example, a common assumption about the process used to generate the data is 
 \end{align}
 The first summand $f$ captures the truly informative functional dependency between $x$ and $y$ that applies for all observations while the second term $\epsilon$ captures local error or noise that can be ignored.
 
-A direct consequence of this assumption is that output of the regression problem $f$ need no longer interpolate the data perfectly.
+A direct consequence of this assumption is that the output of the regression problem $f$ need no longer interpolate the data perfectly.
 At the same time, additional reasoning is required about how far from the data $f$ is allowed to be or, equivalently, about the shape of $\epsilon$.
 One can choose $f$ to be a linear function, giving rise to the linear regression problem.
 \begin{problem}[Linear regression]
@@ -179,7 +179,7 @@ In the following, statistical learning and Bayesian machine learning are introdu
         A machine learning algorithm $A : \Sc \to \Fc$ is successful if it recovers $f$ such that $A \circ S \simeq F$.
     }
 \end{figure}
-The objective of machine learning is to derive knowledge about a process generating data from a limited set of observations.
+The objective of machine learning is to derive knowledge about a process generating the data from a limited set of observations.
 Knowledge is represented as a model that both explains existing observations and can generalize to new data points.
 Statistical learning theory~\parencite{gareth_james_introduction_2013,trevor_hastie_elements_2013} offers a set of tools to reason about generalization and to formulate what it means for a model to be good.
 This section presents an interpretation of statistical learning theory similar to the definition of probabilistic numerics in~\parencite{oates_modern_2019,cockayne_bayesian_2019}.
@@ -215,7 +215,7 @@ We give a few examples here.
           \end{align}
           with $\Fc = \Xc \to \Probs{\Yc}$ gives rise to the regression problem discussed in~\cref{toc:bayesian_ml}.
     \item[Classification]
-          Classification is a closely related to regression and assumes the same separation $\Zc = \Xc \times \Yc$.
+          Classification is closely related to regression and assumes the same separation $\Zc = \Xc \times \Yc$.
           In contrast to regression, $\Yc$ is assumed to be discrete, often without a known order.
     \item[Dimensionality Reduction]
           In the dimensionality reduction or manifold learning problem, the assumption is that the support of the data distribution $\Prob*{\mat{z}}$ is a low dimensional manifold in $\Zc$.
@@ -238,7 +238,7 @@ An algorithm is successful if this diagram (approximately) commutes such that $A
 Similarly, a model $f_A \in \Fc$ can be considered good if it is similar to the true functional~$f$.
 
 The similarity of two functionals can be measured via a distance measure in $\Fc$.
-In the case of learning about global properties such as the mean of $\Prob*{\mat{z}}$, a possible choice is the standard euclidean norm.
+In the case of learning about global properties such as the mean of $\Prob*{\mat{z}}$, a possible choice is the standard Euclidean norm.
 Considering the regression case, where $\Fc$ is a function space mapping inputs to (possibly distributions over) outputs, the effects of choosing a distance measure is more subtle.
 While it is reasonable to require pointwise similarity, the choice of which points to evaluate allows us to define what we mean by generalization:
 Besides explaining the observations in $\Dc$, a good model should yield correct predictions for the complete data distribution $\Prob*{\mat{z}} = \Prob*{\mat{x}, \mat{y}}$.
@@ -254,7 +254,7 @@ The concept of risk minimization is based on this observation.
         \end{aligned}
         \right.
     \end{align}
-    \emph{Risk minimization} for a hypothesis space $\Hc \subseteq \Fc$ selects a hypothesis $\hat{f}_A$ with smallest possible risk
+    \emph{Risk minimization} for a hypothesis space $\Hc \subseteq \Fc$ selects a hypothesis $\hat{f}_A$ with the smallest possible risk
     \begin{align}
         \hat{f}_A & \in \argmin_{f_A \in \Hc} \risk_\ell(f_A).
     \end{align}
@@ -282,7 +282,7 @@ Instead, calculating a Monte-Carlo estimate over the training data $\Dc$ gives r
     \end{align}
 \end{definition}
 
-Intuitively, risk minimization describes global properties of $f_A$ which get approximated by a number of local properties at the observations in empirical risk minimization.
+Intuitively, risk minimization describes the global properties of $f_A$ which get approximated by a number of local properties at the observations in empirical risk minimization.
 The two questions
 \begin{enumerate}
     \item under which conditions $\risk^{\text{emp}}$ converges to $\risk$ for $N \to \infty$ and
@@ -292,7 +292,7 @@ underpin (statistical) learning theory~\parencite{vapnik_principles_1992}.
 It is safe to assume that for small $N$, $\risk^{\text{emp}}$ can significantly underestimate the true risk as the error on parts of the data distribution is not considered at all.
 This problem is called overfitting to the available training data, an example of which can arguably be seen in~\cref{fig:bayesian_ml:polynomials:lagrange}.
 
-In practice, if collection sufficient data is not possible, overfitting has to be avoided via problem-dependent choices for $\ell$ and $\Hc$.
+In practice, if the collection of sufficient data is not possible, overfitting has to be avoided via problem-dependent choices for $\ell$ and $\Hc$.
 Additionally, the empirical risk minimization algorithm is often extended to regularizing loss functions of the form $\ell^\prime : \Fc \times \Yc \times \Yc \to \Rb$ which depend on the structure of the candidate as well as its predictions.
 The Ridge error function shown in~\cref{fig:bayesian_ml:polynomials:linear} is an example of extending the least-squares error function with a preference for parameters with small absolute value.
 Regularization~\parencite{oates_modern_2019} adds back a global component to empirical risk minimization and has a close relation to the choice of hypothesis space $\Hc$.
@@ -303,7 +303,7 @@ For complex loss functions and hypothesis spaces, finding the true minimum $\hat
 Another common extension is to modify the optimization scheme to increase the likelihood of selecting a favorable solution.
 Examples include the usage of test sets or validations sets~\parencite{bishop_pattern_2007}, cross validation~\parencite{stone_cross-validatory_1974}, early stopping~\parencite{morgan_generalization_1990} or specific parameter choices~\parencite{daniely_toward_2016}.
 
-It is often possible to reformulate choices in loss functions as changes in the optimization scheme or compensate a more general hypothesis space with stricter regularization.
+It is often possible to reformulate choices in loss functions as changes in the optimization scheme or constrain a more general hypothesis space with stricter regularization.
 It is not clear how a machine learning algorithm should be formulated from a formal perspective.
 However, problem-dependent adjustments to learning algorithms are generally informed by the knowledge provided by domain-experts about the process that generated the data.
 An additional dimension is therefore given by the need to communicate assumptions and effects of choices with stakeholders that do not have a deep understanding of the field.
@@ -319,8 +319,8 @@ Following the definition of functionals $F$, a Bayesian model is often formulate
 Independence assumptions induce a factorization of the data distribution.
 Structural constraints can then be put on the different factors to encode expert knowledge.
 
-Because the available data is not sufficient to identify the unique correct solution, the goal of Bayesian machine learning is to infer a distribution of plausible solutions weighed by their likelihood given the data instead.
-The posterior distribution of plausible models is a combination of the prior assumptions about the underlying structure and their capability of explaining observations.
+Since the available data is not sufficient to identify the unique correct solution, the goal of Bayesian machine learning is to infer a distribution of plausible solutions weighed by their likelihood given the data instead.
+The posterior distribution of plausible models is a combination of the prior assumptions about the underlying structure and their capability of explaining the observations.
 This section introduces probabilistic generative models as a natural consequence of the assumptions in statistical learning theory.
 Probabilistic generative models form a principled way to formulate interpretable hypothesis spaces with carefully chosen assumptions.
 With Bayes' rule, a structurally simple and formally consistent learning algorithm can be formulated to infer knowledge from data.
@@ -682,7 +682,7 @@ By introducing the parameters $\mat{\theta} = (\mat{W}, \mat{b})$ which are suff
 In other words, the formulation of a generative model yields a formal description of what we mean by linear regression in a statistical learning context.
 The next step is to derive a learning algorithm that connects this model to observations.
 
-In~\cref{toc:bayesian_ml:statistical_learning}, a good solution to a learning problem was characterized with the risk minimization algorithm, which demands that any data that could be observed by form the data distribution would be well-explained by the solution.
+In~\cref{toc:bayesian_ml:statistical_learning}, a good solution to a learning problem was characterized with the risk minimization algorithm, which demands that any data that could be observed form the data distribution would be well-explained by the solution.
 In the context of generative models, we can formulate the same idea by demanding that sampling from the true data distribution or from the generative model leads to the same data sets.
 Or equivalently, that samples drawn from the data distribution have high probability under the generative model and vice versa.
 Since we do not have access to the full data distribution, we use the available observations as an empirical estimate again.
@@ -692,7 +692,7 @@ Using the chain rule, this distribution can be written as a product
 \begin{align}
     \Prob*{\mat{\theta}, \Dc} & = \Prob*{\Dc \given \mat{\theta}}\Prob*{\mat{\theta}},
 \end{align}
-whose terms are called the likelihood $\Prob*{\Dc \given \mat{\theta}}$ and prior $\Prob*{\mat{\theta}}$.
+whose terms are called the likelihood $\Prob*{\Dc \given \mat{\theta}}$ and the prior $\Prob*{\mat{\theta}}$.
 The structural assumptions formulated via the generative model allow us to directly evaluate the likelihood $\Prob*{\Dc \given \mat{\theta}} = \Prob*{\mat{x}, \mat{y} \given \mat{\theta}}$.
 The prior $\Prob*{\mat{\theta}}$ is a distribution over all possible parameters $\mat{\theta}$ and is part of the joint formulated in the generative model.
 Applying the chain rule on the joint again yields the posterior
@@ -717,8 +717,8 @@ The empirical risk minimization learning algorithm can be subject to overfitting
 Bayesian inference is fundamentally different:
 A Bayesian posterior $\Prob*{f \given \Dc}$ for a functional of interest $f$ is a distribution over hypotheses rather than one single candidate.
 This distribution can be thought of as a subset of hypotheses weighed by how well the different hypotheses explain the data.
-Instead of selecting a good candidate, a Bayesian inference step can be thought of removing all bad candidates from a hypothesis space.
-As a consequence, a Bayesian posterior contains both the models in the original hypothesis space that overfit to the observations as well as more desirable models with similar data likelihoods.
+Instead of selecting a good candidate, a Bayesian inference step can be thought of as removing all bad candidates from a hypothesis space.
+As a consequence, a Bayesian posterior contains both the models in the original hypothesis space that overfit to the observations as well as the more desirable models with similar data likelihoods.
 Their relative weights in the posterior are dependent on the prior assumptions formulated via the structure of the generative model and the prior $\Prob{\mat{\theta}}$.
 
 
@@ -750,15 +750,15 @@ Their relative weights in the posterior are dependent on the prior assumptions f
 \end{figure}
 Statements about Bayesian models are made in terms of probabilities, including predictive posteriors for new inputs $\Prob*{\mat{y}_\ast \given \mat{x}_\ast, \Dc}$ in a regression problem or a posterior distributions $\Prob*{\mat{\theta} \given \Dc}$ for a parameter.
 This distribution of predictions or parameters can be interpreted as uncertainty due to insufficient knowledge about the generative process.
-A Bayesian posterior is derived as the combination of prior knowledge and the data.
-Since a Bayesian posterior is the combination of the data likelihood and prior assumptions, posterior uncertainties are not objective but depend on prior assumptions.
+A Bayesian posterior is derived as the combination of the prior knowledge and the data.
+Since a Bayesian posterior is the combination of the data likelihood and the prior assumptions, the posterior uncertainties are not objective but depend on the prior assumptions.
 
 \Cref{fig:bayesian_ml:polynomials:bayes} shows two predictive posteriors for a Bayesian linear regression on the data introduced in~\cref{fig:bayesian_ml:polynomials:data} using the graphical model in~\cref{eq:bayesian_ml:parametric}.
-Both linear regression are based on the same observations but differ in the prior assumptions about $\mat{\theta} = (\mat{W}, \mat{b})$.
+Both models of linear regression are based on the same observations but differ in the prior assumptions about $\mat{\theta} = (\mat{W}, \mat{b})$.
 Choosing a broad prior $\mat{W}, \mat{b} \sim \Gaussian{0, 5^2}$ results in higher posterior uncertainties about both $\mat{W}$ and $\mat{b}$ than choosing a more narrow prior $\mat{W}, \mat{b} \sim \Gaussian{1, 1^2}$.
 Samples drawn from the posterior show why this is the case:
 A broader prior contains linear functions with steep slopes that could explain the data but are never considered by the narrow prior.
-Not considering these functions might be desired behavior if implied by expert knowledge.
+Not considering these functions might be the desired behavior if implied by the expert knowledge.
 This situation of having to choose a model from a set of plausible models is a model selection problem.
 
 In principle, model selection is not necessary in Bayesian machine learning.
@@ -779,17 +779,17 @@ Observing that
         \frac{\Prob*{H_1 \given \Dc}}{\Prob*{H_2 \given \Dc}} = \frac{\Prob*{\Dc \given H_1}}{\Prob*{\Dc \given H_2}} \frac{\Prob*{H_1}}{\Prob*{H_2}},
     \end{split}
 \end{equation}
-a common extension to maximum likelihood estimation is to also consider how well the hypotheses conform to prior assumption through the prior odds $\sfrac{\Prob*{H_1}}{\Prob*{H_2}}$.
+a common extension to maximum likelihood estimation is to also consider how well the hypotheses conform to the prior assumption through the prior odds $\sfrac{\Prob*{H_1}}{\Prob*{H_2}}$.
 
 While strategies based on marginal likelihoods often work well in practice, they are limited in scope.
 Since marginal distributions are considered, models are not evaluated with respect to the latent components in the generative model, such as the shape of $\Prob*{\mat{f}}$ in Bayesian linear regression.
 Selecting models using maximum likelihood approaches enforces good predictive uncertainties around the observations in $\Dc$.
-No requirements are enforced concerning uncertainties away from the data, the shape of single samples drawn from the model or uncertainties in the latent part of the generative model.
+No requirements are enforced concerning uncertainties away from the data, the shape of the individual samples drawn from the model or the uncertainties in the latent part of the generative model.
 
 \section{Gaussian processes}
 Bayesian graphical models encode structural assumptions about a machine learning problem.
 The central assumption in the regression problem is a latent function $f$ that maps inputs to outputs.
-In the Bayesian linear regression example, a posterior over linear functions could be calculated by calculating a posterior over parameters instead, since every parameter explicitly represents a linear function.
+In the Bayesian linear regression example, a posterior over linear functions could be derived by calculating a posterior over parameters instead, since every parameter explicitly represents a linear function.
 A Gaussian process (GP) is a non-parametric model that directly represents a distribution over functions~\parencite{bernardo_regression_1998,rasmussen_gaussian_2006}.
 Instead of formulating an explicit parameterized formula, a GP prior encodes more general assumptions about $f$ such as differentiability or variability.
 A GP posterior can be calculated analytically, making Bayesian inference over GPs computationally feasible.
@@ -925,11 +925,11 @@ A function that is distributed according to a Gaussian process is denoted as $f 
 
 A GP can be used as a distribution over functions in the graphical model for regression problems in~\cref{eq:bayesian_ml:non_parametric}.
 Because the random variables $\mat{f}_n$ modeling the function value $f(\mat{x}_n)$ are jointly Gaussian, they are not independent and thus are connected in the graphical model in~\cref{fig:gp:graphical_model}.
-The choice of mean function
+The choice of the mean function
 \tikz[x=2.5em,baseline=(f.base)]{
     \node[inline random variable, hyperparameter] (f) {$\mu$};
 }
-and kernel
+and the kernel
 \tikz[x=2.5em,baseline=(f.base)]{
     \node[inline random variable, hyperparameter] (f) {$\K$};
 }
@@ -941,11 +941,10 @@ The Gaussian process based on the observations $\left( \mat{X}, \mat{y^\prime} \
 It is the covariance functions that encode the assumptions about the underlying function.
 
 \subsubsection{Kernels}
-The covariance for any pair of random variables $(\rv{X}_i, \mat{X}_j)$ in a GP is given by the the kernel $\Moment{\cov}{\rv{X}_i, \rv{X}_j} = \K(i, j)$.
+The covariance for any pair of random variables $(\rv{X}_i, \mat{X}_j)$ in a GP is given by the kernel $\Moment{\cov}{\rv{X}_i, \rv{X}_j} = \K(i, j)$.
 A kernel, therefore, can not be any arbitrary function but must yield valid covariance matrices $\mat{\Sigma}$.
 The matrix obtained by applying a kernel pairwise to finitely many random variables is called the Gram matrix.
-Given two sets $\mat{A} = \Set*{\mat{a}_i \with i \in [n]}$ and $\mat{B} = \Set*{\mat{b}_j \with j \in [m]}$ and $[n] = \Set*{1, \dots, n}$.
-The Gram matrix with respect to $\mat{A}$ and $\mat{B}$ using kernel $\K$ is given by
+Given two sets $\mat{A} = \Set*{\mat{a}_i \with i \in [n]}$ and $\mat{B} = \Set*{\mat{b}_j \with j \in [m]}$ and $[n] = \Set*{1, \dots, n}$, the Gram matrix with respect to $\mat{A}$ and $\mat{B}$ using kernel $\K$ is given by
 \begin{align}
     \K(\mat{A}, \mat{B}) = \mat{K_{\mat{A}\mat{B}}} \coloneqq \bigg( \K(\mat{a}_i, \mat{b}_j) \bigg)_{\substack{i \in [n], \\ j \in [m]}}.
 \end{align}
@@ -972,24 +971,25 @@ A simple example of such a non-stationary kernel is the linear kernel.
 \begin{definition}[Linear Kernel]
     For a finite dimensional euclidean vector space $\Rb^d$, the linear kernel is defined as
     \begin{align}
-        \K_{\text{linear}}(\mat{x}, \mat{y}) \coloneqq \mat{x}\tran \mat{y} = \left\langle \mat{x}, \mat{y}\right\rangle.
+        \K_{\text{linear}}(\mat{x}_i, \mat{x}_j) \coloneqq \mat{x}_i\tran \mat{x}_j = \left\langle \mat{x}, \mat{x}_j\right\rangle.
     \end{align}
 \end{definition}
 Consider a function $f \colon \Rb \to \Rb$ which is distributed according to a GP with the linear kernel $f \sim \GP\Cond{\mat{0}, \K_{\text{linear}}}$.
-According to the definition of GPs, for any two input numbers $x$, $y \in \Rb$ their corresponding random variables $\rv{f}_x$ and $\rv{f}_y$ have a joint Gaussian distribution
+According to the definition of GPs, for any two input numbers $x_i, x_j \in \Rb$ their corresponding random variables $\rv{f}_{x_i}$ and $\rv{f}_{x_j}$ have a joint Gaussian distribution
 \begin{align}
     \begin{pmatrix}
-        \rv{f}_x \\ \rv{f}_y
+        \rv{f}_{x_i} \\ \rv{f}_{x_j}
     \end{pmatrix} \sim \Gaussian*{\mat{0}, \begin{bmatrix}
-            \K(x, x) & \K(x, y) \\
-            \K(y, x) & \K(y, y)
+            \K(x_i, x_i) & \K(x_i, x_j) \\
+            \K(x_j, x_i) & \K(x_j, x_j)
         \end{bmatrix}}.
 \end{align}
-Assuming that both $x$ and $y$ are not equal to zero, the correlation coefficient $\rho$ of these two variables is given by
+Assuming that both $x_i$ and $x_j$ are not equal to zero, the correlation coefficient $\rho$ of these two variables is given by
 \begin{equation}
     \begin{split}
-        \Moment{\rho}{\rv{f}_x, \rv{f}_y} &= \frac{\Moment{\cov}{\rv{f}_x, \rv{f}_y}}{\sqrt{\Moment{\var}{\rv{f}_x\vphantom{\rv{f}_y}}}\sqrt{\Moment{\var}{\rv{f}_y}}} \\
-        &= \frac{\K(x, y)}{\sqrt{\K(x, x)} \sqrt{\K(y, y)}} = \frac{xy}{\sqrt{\vphantom{y^2}x^2}\sqrt{\vphantom{y^2}y^2}} \in \left\{ -1, 1 \right\}.
+        \Moment{\rho}{\rv{f}_{x_i}, \rv{f}_{x_j}}
+        &= \frac{\Moment{\cov}{\rv{f}_{x_i}, \rv{f}_{x_j}}}{\sqrt{\Moment{\var}{\rv{f}_{x_i}\vphantom{\rv{f}_{x_j}}}}\sqrt{\Moment{\var}{\rv{f}_{x_j}}}} \\
+        &= \frac{\K(x_i, x_j)}{\sqrt{\K(x_i, x_i)} \sqrt{\K(x_j, x_j)}} = \frac{x_ix_j}{\sqrt{\vphantom{x_j^2}x_i^2}\sqrt{\vphantom{x_j^2}x_j^2}} \in \left\{ -1, 1 \right\}.
     \end{split}
 \end{equation}
 A correlation coefficient of plus or minus one implies that the value of one of the random variables is a linear function of the other.
@@ -1010,7 +1010,7 @@ Gaussian process regression with a linear kernel is equivalent to Bayesian linea
         \centering
         \includestandalonewithpath{figures/gp_prior_rbf}
         \caption{
-            RBF with $\sigma_f = 1$ and $l=1$
+            SE with $\sigma_f = 1$ and $l=1$
             \label{fig:gp:gp_samples:rbf_normal}
         }
     \end{subfigure}\\[\figureskip]
@@ -1018,7 +1018,7 @@ Gaussian process regression with a linear kernel is equivalent to Bayesian linea
         \centering
         \includestandalonewithpath{figures/gp_prior_rbf_amplitude}
         \caption{
-            RBF with $\sigma_f = \sqrt{2}$ and $l=1$
+            SE with $\sigma_f = \sqrt{2}$ and $l=1$
             \label{fig:gp:gp_samples:rbf_noisy}
         }
     \end{subfigure}
@@ -1027,7 +1027,7 @@ Gaussian process regression with a linear kernel is equivalent to Bayesian linea
         \centering
         \includestandalonewithpath{figures/gp_prior_rbf_lengthscale}
         \caption{
-            RBF with $\sigma_f = 1$ and $l = \sfrac{1}{4}$
+            RSE with $\sigma_f = 1$ and $l = \sfrac{1}{4}$
             \label{fig:gp:gp_samples:rbf_lengthscale}
         }
     \end{subfigure}\\[\figureskip]
@@ -1051,21 +1051,21 @@ Gaussian process regression with a linear kernel is equivalent to Bayesian linea
     \caption[Samples from GP priors]{
         \label{fig:gp:gp_samples}
         A comparison of samples drawn from GP priors with different kernels and hyper-parameters.
-        Dashed lines are single samples and the shaded area contains depicts two standard deviations around the mean.
-        While samples from the linear kernel are always linear functions, samples from RBF kernels are smooth functions of different variability.
+        Dashed lines are single samples and the shaded area depicts two standard deviations around the mean.
+        While samples from the linear kernel are always linear functions, samples from squared exponential (SE) kernels are smooth functions of different variability.
         The arc cosine kernel mimics the behavior of an infinitely wide neural network with a single hidden layer.
     }
 \end{figure}
 
 It is often of interest to also represent non-linear dependencies.
 A common approach is to restrict information to local neighborhoods.
-A kernel which is a function of $\norm{\mat{x} - \mat{y}}$ is called stationary and is invariant to translations in the input space.
+A kernel which is a function of $\norm{\mat{x}_i - \mat{x}_j}$ is called stationary and is invariant to translations in the input space.
 The most important stationary kernel is the squared exponential kernel.
 \begin{definition}[Squared Exponential Kernel]
     \label{def:gp:rbf_kernel}
     For a finite dimensional euclidean vector space $\Rb^d$, the squared exponential kernel or RBF kernel is defined as
     \begin{equation}
-        \K_{\text{SE}}(\mat{x}, \mat{y}) \coloneqq \sigma_f^2 \cdot \exp\!\left( -\frac{1}{2} (\mat{x} - \mat{y})\tran \mat{\Lambda}^{-1} (\mat{x} - \mat{y}) \right).
+        \K_{\text{SE}}(\mat{x}_i, \mat{x}_j) \coloneqq \sigma_f^2 \cdot \exp\!\left( -\frac{1}{2} (\mat{x}_i - \mat{x}_j)\tran \mat{\Lambda}^{-1} (\mat{x}_i - \mat{x}_j) \right).
     \end{equation}
     The parameter $\sigma_f^2 \in \Rb_{>0}$ is called the signal variance and $\mat{\Lambda} = \diag(l_1^2, \dots, l_d^2)$ is a diagonal matrix of the squared length scales $l_i \in \Rb_{>0}$.
 \end{definition}
@@ -1168,7 +1168,7 @@ In this distribution, the training outputs $\mat{y}$ are known.
 The predictive posterior for the test outputs $\mat{f}_\ast$ can therefore be directly obtained by applying~\cref{eq:gaussian_conditional} to~\cref{eq:gp:predictive_joint} and is also a Gaussian.
 \begin{lemma}[GP predictive posterior]
     \label{lem:gp:gp_posterior}
-    Given a latent function with a Gaussian process distribution $f \sim \GP(\mat{0}, \K)$ and $N$ training points $\mat{X}$ with noisy observations of the form $\mat{y} = f(\mat{X}) + \Gaussian{\mat{0}, \sigma^2 \Eye}$.
+    Assume a latent function with a Gaussian process distribution $f \sim \GP(\mat{0}, \K)$ and $N$ training points $\mat{X}$ with noisy observations of the form $\mat{y} = f(\mat{X}) + \Gaussian{\mat{0}, \sigma^2 \Eye}$.
     The predictive posterior $\mat{f}_\ast$ of the test points $\mat{X}_\ast$ is then given by
     \begin{equation}
         \begin{split}
@@ -1203,7 +1203,7 @@ Before introducing sparse approximations with better asymptotic complexity, we f
 
 \subsubsection{Choosing hyper-parameters}
 In the previous section, we derived the posterior GP given constant hyper-parameters $\mat{\theta}$.
-In this case, Gaussian processes models do not have to be trained or optimized at all as the posterior GP can be computed analytically.
+In this case, Gaussian process models do not have to be trained or optimized at all as the posterior GP can be computed analytically.
 Usually, however, the correct choice of hyper-parameters is not clear a priori.
 In a fully Bayesian setup we place a prior on the hyper-parameters $\Prob{\mat{\theta}}$ and marginalize it to derive the dependent distributions
 \begin{equation}
@@ -1270,11 +1270,11 @@ The most direct approach to reducing the computational cost of inverting $\mat{K
 Calculating the posterior GP relative to these $M$ observations only has a time complexity of $\Oh(M^3)$.
 This approach can work for data sets with a very high level of redundancy but does impose the problem of choosing an appropriate subset.
 While choosing a random subset can be effective \cite{snelson_flexible_2007}, the optimal choice is dependent on the hyper-parameters.
-Both the subset and hyper-parameters should, therefore, be chosen in a joint optimization scheme.
+Both the subset and the hyper-parameters should, therefore, be chosen in a joint optimization scheme.
 The selection of an appropriate subset defines a combinatorial optimization problem and is very hard to solve.
 
 To overcome this problem, inducing observation approximations lift the restriction of choosing points from the data set and instead allow arbitrary positions in the input space.
-The original data set is replaced by an inducing data set $(\mat{Z}, \mat{u})$ of inducing inputs $\mat{Z}$ and inducing variables $\mat{u} = f(\mat{Z})$ which are equal to the true latent values of the function function $f \sim \GP(\mat{0}, \K)$.
+The original data set is replaced by an inducing data set $(\mat{Z}, \mat{u})$ of inducing inputs $\mat{Z}$ and inducing variables $\mat{u} = f(\mat{Z})$ which are equal to the true latent values of the function $f \sim \GP(\mat{0}, \K)$.
 Since they are not true observations, they are assumed to be noise-free.
 Given an inducing data set and hyper-parameters $\mat{\theta}$, the predictive posterior of this approximation is a standard GP posterior
 \begin{align}
@@ -1390,7 +1390,7 @@ which only involves the inversion of $M \times M$ matrices and one diagonal $N \
 Implemented this way, the calculation of all terms independent of the test points has a complexity of $\Oh(NM^2)$ and predicting individual means and variances takes $\Oh(M)$ and $\Oh(M^2)$ time respectively.
 The space requirement also drops to $\Oh(M^2)$.
 Since the positions of the inducing inputs $\mat{Z}$ are additional hyper-parameters in $\K_{\text{FITC}}$, they can be chosen together with the hyper-parameters of the original kernel $\mat{\theta}$ using maximum likelihood.
-This optimization chooses the positions in such a way that together with appropriate other hyper-parameters, the original data is represented as good as possible.
+This optimization chooses the positions in such a way that together with appropriate other hyper-parameters, the original data is represented as well as possible.
 \Cref{fig:sparse_gp:spgp_example} shows that a surprisingly small number of inducing inputs can be enough to represent the dynamics of a function.
 
 However, with a large number of inducing inputs, the number of hyper-parameters can grow large as well.
@@ -1563,7 +1563,7 @@ The expectation of the log-likelihood can be evaluated analytically~\parencite{p
         &= \log G(\mat{u}) - \frac{1}{2\sigma_n^2}\Fun*{\tr}{\mat{K_{ff}} - \mat{Q_{ff}}},
     \end{split}
 \end{equation}
-where we set $G(\mat{u}) = \Gaussian*{\mat{y} \given \mat{K_{fu}} \mat{K_{uu}}\inv \mat{u}, \sigma_n^2\Eye}$, remember $\mat{Q_{ff}} = \mat{K_{fu}} \mat{K_{uu}}\inv \mat{K_{uf}}$ and $\tr(\mat{M})$ denotes the trace of the matrix $\mat{M}$.
+where we set $G(\mat{u}) = \Gaussian*{\mat{y} \given \mat{K_{fu}} \mat{K_{uu}}\inv \mat{u}, \sigma_n^2\Eye}$, $\mat{Q_{ff}} = \mat{K_{fu}} \mat{K_{uu}}\inv \mat{K_{uf}}$ and where $\tr(\mat{M})$ denotes the trace of the matrix $\mat{M}$.
 Inserting~\cref{eq:gp:expected_log_likelihood} into~\cref{eq:gp:sgpr_bound_1} yields
 \begin{equation}
     \begin{split}
@@ -1584,7 +1584,7 @@ The distribution $\Variat*{\mat{u}}$ is chosen optimally if it maximizes the var
         & = \argmin_{\Variat*{\mat{u}}} \KL*{\Variat*{\mat{u}}}{G(\mat{u})\Prob*{\mat{u}}},
     \end{split}
 \end{equation}
-where $\KL{\q)}{\p}$ denotes the Kullback-Leibler divergence.
+where $\KL{\q}{\p}$ denotes the Kullback-Leibler divergence.
 This divergence is minimized if $\q$ and $\p$ are proportional and $G(\mat{u})\Prob*{\mat{u}}$ is a product of Gaussians
 \begin{align}
     \q^\ast(\mat{u}) \propto G(\mat{u}) \Prob*{\mat{u}}
@@ -1818,8 +1818,8 @@ This new compositional prior $f_L \circ \cdots \circ f_1$ is no longer a Gaussia
     }
 \end{figure}
 \Cref{fig:dgp:graphical_model} shows the graphical model of a deep GP.
-We represent the result of applying the the first $l$ functions $f_l \circ \cdots \circ f_1$ on the inputs $\mat{X}$ as $\mat{f}_l$ and identify $\mat{f}_0 = \mat{X}$.
-The joint probability of the function values and outputs can then be written as
+We represent the result of applying the first $l$ functions $f_l \circ \cdots \circ f_1$ on the inputs $\mat{X}$ as $\mat{f}_l$ and identify $\mat{f}_0 = \mat{X}$.
+The joint probability of the function values and the outputs can then be written as
 \begin{equation}
     \begin{split}
         \label{eq:dgp:full_model}
@@ -1938,7 +1938,7 @@ To derive a variational bound for~\cref{eq:dgp:marginal_likelihood} where all $\
         &- \sum_{l=2}^L \frac{1}{2\sigma_l^2} \tr\left(\left(\mat{\Phi}_l - \mat{\Psi}_l\tran\mat{\Psi}_l\right) \mat{K}_{\mat{u}_l\mat{u}_l}\inv \left(\mat{m}_l\mat{m}_l\tran + \mat{S}_l\right)\mat{K}_{\mat{u}_l\mat{u}_l}\inv\right).
     \end{split}
 \end{equation}
-Just as the SVGP bound it factorizes along the data and enables stochastic optimization.
+Just as the SVGP bound, it factorizes along the data and enables stochastic optimization.
 However, depending on the kernel, the calculation of psi-statistics can be computationally expensive or analytically intractable, limiting the applicability of this bound to a limited set of hierarchical GP models.
 
 Since the nested variational compression bound introduces a conditional independence assumption between layers given the approximations of the latent variables $\Variat*{\mat{f}_l}$, approximate predictions can be derived by recursively calculating $\Variat*{\mat{f}_1}$ to $\Variat*{\mat{f}_L}$, all of which are Gaussian.
@@ -1992,7 +1992,7 @@ For the hierarchical case, we choose the same variational independence assumptio
     \end{split}
 \end{equation}
 The factorization along the data still holds in the variational hierarchical case.
-We can formulate the marginal function value of the $\nth{n}$ data point by inserting~\cref{eq:dsvi:variational_marginals} into~\cref{eq:dgp:marginal_likelihood} and obtain
+We can formulate the marginal function value of the $\nth{n}$ data point by inserting~\cref{eq:dsvi:variational_marginals} into~\cref{eq:dgp:marginal_likelihood} to obtain
 \begin{equation}
     \begin{split}
         \label{eq:dsvi:variational_layers}
@@ -2014,7 +2014,7 @@ Sampling $\Variat*{\mat{f}_{L, n}}$ directly also allows us to sample the bound 
     \end{split}
 \end{equation}
 Evaluating this bound requires $\Oh(NM^2D)$ computations.
-Through local reparametrization~\parencite{kingma_variational_2015}, gradients of the variational bound can be samples directly.
+Through local reparametrization~\parencite{kingma_variational_2015}, the gradients of the variational bound can be sampled directly.
 Evaluations of the DSVI-bound and its gradients have two unbiased sources of stochasticity~\parencite{salimbeni_doubly_2017}.
 First, the expected likelihood is approximated through Monte Carlo samples and second, since the likelihood factorizes along the data, mini-batching is possible.
 Drawing Monte Carlo samples of the likelihood directly elimates the need for Psi-statistics as in~\cref{eq:var_compression:full_bound}, making DSVI applicable to a broader set of hierarchical Gaussian process models.
@@ -2029,3 +2029,4 @@ The free-form predictive density can be approximated using the mixture
     \end{split}
 \end{equation}
 with $S$ samples propagated through the hierarchical GP starting from the $\mat{X}_{\ast}$.
+\todoi{Add some thoughts about the bigger picture here?}

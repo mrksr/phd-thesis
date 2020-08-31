@@ -65,8 +65,6 @@ This knowledge can then be used to describe common patterns in the data or gener
 As an example, consider the data shown in \cref{fig:bayesian_ml:polynomials:data}, a set of $N$ pairs of real numbers for which we assume that all $x_i$ are pairwise different.
 The knowledge about this data to be uncovered is the functional dependency between the two data dimensions that were used to generate the data.
 This is called a regression problem and is strongly under-specified:
-There exist uncountably many functions on the real numbers that explain any finite set of observed points.
-The problem
 \begin{problem}[Regression]
 \label{prob:bayesian_ml:regression}
 \begin{labeling}{Output:}
@@ -74,7 +72,8 @@ The problem
     \item[Output:] The functional dependency $f : \Xc \to \Yc$ used to generate the data.
 \end{labeling}
 \end{problem}
-is therefore not a computational problem and asking for a solution or algorithm for this problem is not a well-posed question.
+There exist uncountably many functions on the real numbers that explain any finite set of observed points.
+The problem is therefore not a computational problem and asking for a solution or algorithm for this problem is not a well-posed question.
 
 One can, however, derive computational problems from the regression problem by making assumptions about the nature of the function $f$ that characterize a unique solution.
 For example, one could ask for the simplest polynomial that explains the data.
@@ -232,7 +231,7 @@ We give a few examples here.
 \end{problem}
 
 A machine learning Algorithm $A : \Sc \to \Fc$ is a function mapping from the space of samples to the space of functionals, thereby recovering structure from data.
-Such an algorithm is successful if it recovers the correct functional $f \in \Fc$ given observations $\Dc$.
+Such an algorithm is successful if it recovers the correct functional $f \in \Fc$ given observations~$\Dc$.
 \Cref{fig:bayesian_ml:statistical_learning} shows the introduced components in a directed diagram.
 An algorithm is successful if this diagram (approximately) commutes such that $A \circ S \simeq F$.
 Similarly, a model $f_A \in \Fc$ can be considered good if it is similar to the true functional~$f$.
@@ -382,7 +381,7 @@ More formally, the factorization belonging to a graphical model with nodes $\mat
     \end{split}
 \end{equation}
 with $\mathrm{parents}(\mat{a}_n)$ denoting the set of nodes with an edge towards $\mat{a}_n$.
-A circle
+A cycle
 \tikz[x=2.5em,baseline=(a.base)]{
     \node[inline random variable] (a) {$\mat{a}$};
     \node[inline random variable] (b) at (1, 0) {$\mat{c}$};
@@ -422,6 +421,10 @@ Formulating a generative model starts with the factorization of the data distrib
 Here, the color of the nodes
 \tikz[x=2.5em,baseline=(x.base)]{
     \node[inline random variable, observed] (x) {$\mat{x}$};
+}
+and
+\tikz[x=2.5em,baseline=(y.base)]{
+    \node[inline random variable, observed] (y) {$\mat{y}$};
 }
 indicates that both nodes are part of the data distribution and are directly observed in a data set.
 We will introduce other nodes below.

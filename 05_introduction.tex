@@ -1,33 +1,5 @@
 \chapter{Introduction}
 \label{toc:introduction}
-Machine learning (ML) methods have seen great success recently in a wide range of digital domains such as speech recognition~\parencite{chorowski_attention-based_2015}, computer vision~\parencite{russakovsky_imagenet_2015}, video games~\parencite{berner_dota_2019}, or machine translation~\parencite{johnson_googles_2017}.
-In such domains, data is often abundant, which shifts the focus away from traditional statistical models to approaches that are highly adaptable and scalable.
-At the same time, the consequences of mistakes tend to be mild, enabling fast prototyping and heuristic design choices that can be validated in the deployed systems using the performance metrics of interest.
-
-However, bridging the gap to applications in critical systems in the physical world has proved challenging.
-Problem domains like robotics or industrial control introduce a new set of requirements.
-In industrial control, machine learning is used to find more efficient or safer control strategies not obvious to the engineers designing a machine~\parencite{hein_benchmark_2017}.
-In such scenarios, relevant data for finding new strategies are often scarce, since the most valuable data such as when a machine will fail, or how it will behave in new situations, is never produced.
-As applications become more safety-relevant, gathering data through exploration can be problematic due to the adverse consequences of failure.
-As a consequence, machine learning systems are required to handle low data regimes and uncertainties about a system's true behavior.
-
-If they are to operate in safety-critical areas, interact with people, or carry responsibility, machine learning systems must be robust, trustworthy, and assessable.
-Besides optimizing for good average-case performance, a responsible system needs to reason about plausible worst-cases to be able to avoid them.
-To ensure trust, ML-systems often need to be verified by domain experts before deployment and are used to test hypotheses or make impactful decisions, emphasizing a need for interpretability.
-Models are required to incorporate and reproduce expert knowledge and make consistent predictions, while at the same time yielding new insights from data.
-
-A key technique that allows us to cope with these requirements is probabilistic modeling.
-Bayesian inference offers a framework to formalize expert knowledge as in prior assumptions and combine them with potentially uncertain data to represent knowledge about a system.
-Using Bayes' rule, a distribution of plausible models is reweighed by their ability to explain observed data to yield a posterior distribution over plausible explanations.
-To make predictions, all plausible models are taken into account, allowing us to both quantify confidence in predictions and take more unlikely but relevant scenarios into consideration.
-
-For applications in the physical world, expert knowledge is often based on an intuitive understanding of the underlying physics leading to coarse expectations about system-behavior on different layers of abstraction.
-This dissertation explores how such abstract knowledge can be exploited to formulate structured Bayesian models that reproduce expectations but are still able to learn from data.
-We will investigate the properties of such models in concrete applications and discuss how requirements such as trustworthiness can be formalized by taking downstream tasks into account.
-In this chapter, we will introduce the notion of structured models and discuss their relation to other modeling approaches and the main contributions of the work presented in this thesis.
-
-
-\section{Structured Machine Learning Models}
 \begin{figure}[tp]
     \begin{subfigure}[b]{\halffigurewidth}
         \centering
@@ -118,15 +90,79 @@ Formulating a white-box model for human language is prohibitively difficult.
 However, insights from formal language theory~\parencite{chomsky_aspects_2014} can be used to formulate abstract expectations about the interaction of words in any language.
 These insights lead to concepts such as the long short-term memory (LSTM)~\parencite{hochreiter_long_1997} or the attention mechanism~\parencite{bahdanau_neural_2014,chorowski_attention-based_2015}.
 
+These and similar methods have seen great success recently in a wide range of digital domains such as speech recognition~\parencite{chorowski_attention-based_2015}, computer vision~\parencite{russakovsky_imagenet_2015}, video games~\parencite{berner_dota_2019}, or machine translation~\parencite{johnson_googles_2017}.
+In such domains, data is often abundant, which shifts the focus away from traditional statistical models to approaches that are highly adaptable and scalable.
+At the same time, the consequences of mistakes tend to be mild, enabling fast prototyping and heuristic design choices that can be validated in the deployed systems using the performance metrics of interest.
 
-\section{Thesis outline}
-In this thesis, we will study how to formulate Bayesian structural models using methods of Bayesian nonparametrics.
+However, bridging the gap to applications in critical systems in the physical world has proved challenging.
+Problem domains like robotics or industrial control introduce a new set of requirements.
+In industrial control, machine learning is used to find more efficient or safer control strategies not obvious to the engineers designing a machine~\parencite{hein_benchmark_2017}.
+In such scenarios, relevant data for finding new strategies are often scarce, since the most valuable data such as when a machine will fail, or how it will behave in new situations, is never produced.
+As applications become more safety-relevant, gathering data through exploration can be problematic due to the adverse consequences of failure.
+As a consequence, machine learning systems are required to handle low data regimes and uncertainties about a system's true behavior.
+
+If they are to operate in safety-critical areas, interact with people, or carry responsibility, machine learning systems must be robust, trustworthy, and assessable.
+Besides optimizing for good average-case performance, a responsible system needs to reason about plausible worst-cases to be able to avoid them.
+To ensure trust, ML-systems often need to be verified by domain experts before deployment and are used to test hypotheses or make impactful decisions, emphasizing a need for interpretability.
+Models are required to incorporate and reproduce expert knowledge and make consistent predictions, while at the same time yielding new insights from data.
+
+The highly adaptable and scalable models that lead to success in digital domains are not well-suited to be deployed in safety-critical environments.
+Large neural networks employed suffer from low interpretability, requirements of large amounts of data and their inability to quantify uncertainties~\parencite{goodfellow_deep_2016}.
+This work explores an alternative approach to formulating structured machine learning models based on probabilistic modelling that can satisfy the requirements of physical environments.
+
+A key technique that allows us to cope with the requirements of critical systems in the physical world is probabilistic modeling.
+Bayesian inference offers a framework to formalize expert knowledge as in prior assumptions and combine them with potentially uncertain data to represent knowledge about a system.
+Using Bayes' rule, a distribution of plausible models is reweighed by their ability to explain observed data to yield a posterior distribution over plausible explanations.
+To make predictions, all plausible models are taken into account, allowing us to both quantify confidence in predictions and take more unlikely but relevant scenarios into consideration.
+
+\section{Structure with Gaussian processes}
+\begin{itemize}
+    \item We have black-box deep GPs on one side and white-box Bayesian non-parametrics on the other. How can we combine them to formulate structured models?
+    \item Where do Bayesian structured priors come from? Starting from Bayesian non-parametrics problem descriptions in \cref{toc:data_association}, how do we make the whole thing a bit more relaxed?
+    \item Starting from expert knowledge and black-box models in \cref{toc:alignment}, how do we make the whole thing a bit more strict?
+    \item Seeing as we are between two cultures now, how do we combine evaluation strategies?
+\end{itemize}
+For applications in the physical world, expert knowledge is often based on an intuitive understanding of the underlying physics leading to coarse expectations about system-behavior on different layers of abstraction.
+This dissertation explores how such abstract knowledge can be exploited to formulate structured Bayesian models that reproduce expectations but are still able to learn from data.
+We will investigate the properties of such models in concrete applications and discuss how requirements such as trustworthiness can be formalized by taking downstream tasks into account.
+
+\section{Contributions}
 We interpret recent advances in inference schemes for deep Gaussian processes~\parencite{damianou_deep_2013} in the context of structural models and formulate informative hierarchical priors based on expert knowledge.
 We discuss two approaches to adding such a structure.
 First, we relax formal mathematical structure to allow a hierarchical system to learn from data.
 And second, we use structure motivated by expert-understanding of an underlying physical process to formulate constraints to a data-centric approach.
 Having explored approaches to formulating structured Bayesian models, we discuss why Bayesian model selection based on marginal likelihoods is insufficient to identify desirable models.
 To take the internal model structure into account, we interpret Bayesian model selection as an inference problem that takes a reinforcement learning task into account.
+
+The work covered in this thesis was developed during an industrial placement with Siemens AG and was, partially, inspired by problems that arise when applying machine learning in industrial applications.
+The main contributions presented in this thesis appeared in a number of peer-reviewed publications outlined below.
+Additionally, this work has been the basis of several patents, four of which have been published at the time of writing this thesis.
+We provide a list of these patents below.
+
+\cref{toc:alignment,contrib:composition,contrib:patent_egedal}
+
+\subsubsection{Papers}
+\begin{enumerate}
+    \item \label[contribution]{contrib:windpower}\fullfullcite{kaiser_bayesian_2018}
+    \item \label[contribution]{contrib:data_association}\fullfullcite{kaiser_data_2019}
+    \item \label[contribution]{contrib:interpretable_rl}\fullfullcite{kaiser_interpretable_2019}
+    \item \label[contribution]{contrib:multi_modal_rl}\fullfullcite{kaiser_bayesian_2020}
+    \item \label[contribution]{contrib:surrogates}\fullfullcite{bodin_modulating_2020}
+    \item \label[contribution]{contrib:composition}\fullfullcite{ustyuzhaninov_compositional_2020}
+\end{enumerate}
+
+\subsubsection{Patents}
+\begin{enumerate}
+    \setcounter{enumi}{6}
+    \item \label[contribution]{contrib:patent_egedal}\fullfullcite{egedal_verfahren_2019}
+    \item \label[contribution]{contrib:patent_kaiser}\fullfullcite{kaiser_verfahren_2019}
+    \item \label[contribution]{contrib:patent_geipel}\fullfullcite{geipel_transferlernen_2020}
+    \item \label[contribution]{contrib:patent_depeweg}\fullfullcite{depeweg_computer_2020}
+\end{enumerate}
+
+
+\section{Thesis outline}
+In this thesis, we will study how to formulate and evaluate Bayesian structural models using methods of Bayesian nonparametrics.
 The content is structured as follows.
 
 In \cref{toc:gp}, we provide a short introduction to Bayesian machine learning and Bayesian nonparametrics with a focus on Gaussian processes (GPs).
@@ -153,39 +189,3 @@ In \cref{toc:discussion:composition}, we present an intuitive argument for why i
 In \cref{toc:discussion:bo}, we argue why models with suboptimal marginal likelihoods can perform well in hierarchical systems.
 In \cref{toc:discussion:mountaincar}, we explore this idea further and consider how tasks can be included in the inference problem directly.
 Finally, we discuss possible further directions of research.
-
-\section{Associated Publications}
-The work covered in this thesis was developed during an industrial placement with Siemens AG and was, partially, inspired by problems that arise when applying machine learning in industrial applications.
-The main contributions presented in this thesis appeared in a number of peer-reviewed publications outlined below.
-Additionally, this work has been the basis of several patents, four of which have been published at the time of writing this thesis.
-We provide a list of these patents below.
-
-\subsubsection{Papers}
-\begin{itemize}
-    \item \fullfullcite{kaiser_bayesian_2018}
-
-          %           \Cref{toc:alignment}
-    \item \fullfullcite{kaiser_data_2019}
-
-          % \Cref{toc:data_association}
-    \item \fullfullcite{kaiser_interpretable_2019}
-
-          % \Cref{toc:interpretable_rl}
-    \item \fullfullcite{kaiser_bayesian_2020}
-
-          % \Cref{toc:interpretable_rl}
-    \item \fullfullcite{bodin_modulating_2020}
-
-          % \Cref{toc:discussion:bo}
-    \item \fullfullcite{ustyuzhaninov_compositional_2020}
-
-          % \Cref{toc:discussion:composition}
-\end{itemize}
-
-\subsubsection{Patents}
-\begin{itemize}
-    \item \fullfullcite{egedal_verfahren_2019}
-    \item \fullfullcite{kaiser_verfahren_2019}
-    \item \fullfullcite{geipel_transferlernen_2020}
-    \item \fullfullcite{depeweg_computer_2020}
-\end{itemize}

@@ -110,36 +110,75 @@ The highly adaptable and scalable models that lead to success in digital domains
 Large neural networks employed suffer from low interpretability, requirements of large amounts of data and their inability to quantify uncertainties~\parencite{goodfellow_deep_2016}.
 This work explores an alternative approach to formulating structured machine learning models based on probabilistic modelling that can satisfy the requirements of physical environments.
 
+\section{Bayesian structured models with Gaussian processes}
 A key technique that allows us to cope with the requirements of critical systems in the physical world is probabilistic modeling.
 Bayesian inference offers a framework to formalize expert knowledge as in prior assumptions and combine them with potentially uncertain data to represent knowledge about a system.
 Using Bayes' rule, a distribution of plausible models is reweighed by their ability to explain observed data to yield a posterior distribution over plausible explanations.
 To make predictions, all plausible models are taken into account, allowing us to both quantify confidence in predictions and take more unlikely but relevant scenarios into consideration.
 
-\section{Structure with Gaussian processes}
-\begin{itemize}
-    \item We have black-box deep GPs on one side and white-box Bayesian non-parametrics on the other. How can we combine them to formulate structured models?
-    \item Where do Bayesian structured priors come from? Starting from Bayesian non-parametrics problem descriptions in \cref{toc:data_association}, how do we make the whole thing a bit more relaxed?
-    \item Starting from expert knowledge and black-box models in \cref{toc:alignment}, how do we make the whole thing a bit more strict?
-    \item Seeing as we are between two cultures now, how do we combine evaluation strategies?
-\end{itemize}
+Bayesian reasoning was pioneered by Pierre-Simon Laplace in the eighteenth century.
+Laplace extended the prevalent mechanistic world-view held by scholars like Newton with the idea that knowledge can be imperfect or incomplete.
+Laplace used Bayesian inference to formalize scientific reasoning under uncertainty and to enable the integration of multiple sources of data of varying quality.
+Based on white-box models grounded in scientific understanding, this reasoning for example led to improved estimates of the masses of Jupiter and Saturn and the discovery of the uneven proportion of male and female human births~\parencite{pulskamp_laplace_2020,laplace_theorie_1820}.
+Modern science has moved beyond phenomena that can be explained by a deterministic world-view held by Newton and Laplace towards subjects where randomness plays a major role.
+Large-scale experiments in fields such as particle physics~\parencite{khachatryan_observation_2015} or astronomical observations~\parencite{collaboration_first_2019,the_ligo_scientific_collaboration_observation_2016} uncover scientific knowledge hidden in a sea of random events.
+While Bayesian statistics is successfully used to identify the signal in highly noisy measurements, this analysis is still based on white-box modelling approaches to ensure that results conform to the requirements of scientific rigor.
+
+This dissertation explores how advances in black-box machine learning can be integrated in Bayesian reasoning to futher relax the mechanistic world-view and allow us to tackle problems where white-box models are not available.
 For applications in the physical world, expert knowledge is often based on an intuitive understanding of the underlying physics leading to coarse expectations about system-behavior on different layers of abstraction.
-This dissertation explores how such abstract knowledge can be exploited to formulate structured Bayesian models that reproduce expectations but are still able to learn from data.
-We will investigate the properties of such models in concrete applications and discuss how requirements such as trustworthiness can be formalized by taking downstream tasks into account.
+However, complete Bayesian white-box models are often too complex to formulate or computationally intractable.
+We will discuss how abstract knowledge can be exploited to formulate structured Bayesian models that reproduce expectations but are still able to learn from data.
+We will explore two approaches to adding such a structure.
+First, white-box mathematical structure can be relaxed to a structured hierarchical system to learn new insights from data.
+And second, structure motivated by expert-understanding of an underlying physical process can be used to formulate semantic constraints to a data-centric black-box approach.
+
+The black-box and white-box modelling cultures follow different approaches to evaluating models.
+While a white-box model is evaluated through a combination of goodness-of-fit measures on observations used during inference and subjective measures based on interpretability, black-box approaches typically focus on performance measures on test-sets.
+Since structured models combine white-box and black-box properties, evaluation strategies should be a combination of both approaches.
+We will show that good predictive performance is often not sufficient to identify a desirable structured model.
+To formalize the subjectiveness in the description of desirable models, we will explore how downstream tasks can be taken into account during model selection.
+
+
+\section{Thesis outline}
+In this thesis, we will study how to formulate and evaluate Bayesian structural models using methods of Bayesian nonparametrics.
+\todoi{Why GPs?}
+The content is structured as follows.
+In \cref{toc:gp}, we provide a short introduction to Bayesian machine learning and Bayesian nonparametrics with a focus on Gaussian processes (GPs).
+We discuss the connection between statistical learning theory and Bayesian inference and their application to hierarchical models.
+After introducing GPs, we discuss variational approaches to sparse GPs, their generalization to deep GP models, and inference schemes.
+
+In \cref{toc:data_association}, we explore how to relax white-box structure in a structured hierarchical model using the data-association problem as an example.
+We use the formal mathematical structure to separate the data-association problem into separate hierarchical components and derive a joint inference scheme, resulting in a fully Bayesian model.
+We show that this model is able to factorize multi-modal data into independent processes, providing explicit models for both the processes and assignment probabilities.
+
+In \cref{toc:alignment}, we discuss how to introduce additional constraints arising from expert knowledge about the data generation process to black-box deep GPs.
+We interpret the problem of modeling the power production of multiple wind-turbines in a wind-farm as a nonlinear alignment problem.
+Based on expert knowledge about the underlying latent and turbulent wind field, we can derive a structural model that enforces a physically plausible dependency structure between multiple time-series.
+We discuss how these constraints help to solve an otherwise highly ambiguous learning problem and show that the imposed structure leads to a rich internal model-structure.
+
+In \cref{toc:interpretable_rl}, we consider how to formalize the subjectiveness introduced via expert knowledge and model ambiguities by incorporating it into the model itself.
+We include the task a model will be used to solve into model selection, which allows us to distinguish between qualitatively different models showing similar performance metrics.
+We revisit the data-association problem and embed it into a reinforcement learning problem, where identifying the correct underlying dynamics is critical to finding a successful policy.
+We show that semantic hierarchical structure increases data efficiency and allows domain experts to influence agent behavior through detailed insights into the dynamics of a system.
+
+\Cref{toc:discussion} concludes the work presented in this thesis.
+In \cref{toc:discussion:composition}, we present an intuitive argument for why inference schemes based on factorizations between layers cannot represent heterogeneous posteriors.
+In \cref{toc:discussion:bo}, we argue why models with suboptimal marginal likelihoods can perform well in hierarchical systems.
+In \cref{toc:discussion:mountaincar}, we explore this idea further and consider how tasks can be included in the inference problem directly.
+Finally, we discuss possible further directions of research.
+
 
 \section{Contributions}
-We interpret recent advances in inference schemes for deep Gaussian processes~\parencite{damianou_deep_2013} in the context of structural models and formulate informative hierarchical priors based on expert knowledge.
-We discuss two approaches to adding such a structure.
-First, we relax formal mathematical structure to allow a hierarchical system to learn from data.
-And second, we use structure motivated by expert-understanding of an underlying physical process to formulate constraints to a data-centric approach.
-Having explored approaches to formulating structured Bayesian models, we discuss why Bayesian model selection based on marginal likelihoods is insufficient to identify desirable models.
-To take the internal model structure into account, we interpret Bayesian model selection as an inference problem that takes a reinforcement learning task into account.
+This work presents novel Bayesian structured models inspired by industrial applications.
+In \cref{contrib:data_association}, we formulate a fully Bayesian interpretation of the data association problem.
+\Cref{contrib:patent_depeweg,contrib:patent_geipel} discuss an application of this model to the prediction of the combustion dynamics of a gas-turbine.
+We formulate a hierarchical Bayesian model for a nonlinear alignment problem that is capable of representing the complex interactions between turbines in a wind farm in \cref{contrib:windpower,contrib:patent_egedal,contrib:patent_kaiser}.
 
-The work covered in this thesis was developed during an industrial placement with Siemens AG and was, partially, inspired by problems that arise when applying machine learning in industrial applications.
-The main contributions presented in this thesis appeared in a number of peer-reviewed publications outlined below.
-Additionally, this work has been the basis of several patents, four of which have been published at the time of writing this thesis.
-We provide a list of these patents below.
+Using these methods, we investigate the behavior of Bayesian structured models and discuss evaluation strategies.
+In \cref{contrib:interpretable_rl,contrib:multi_modal_rl}, we apply our data association model to a reinforcement learning task and we show how a semantic decomposition of the dynamics reduces the data requirements and produces interpretable solutions.
+In \cref{contrib:surrogates}, we argue why models with suboptimal marginal likelihoods can perform well in hierarchical systems such as Bayesian optimization problems.
+In \cref{contrib:composition}, we present an argument for why inference schemes based on factorizations between layers cannot represent heterogeneous posteriors.
 
-\cref{toc:alignment,contrib:composition,contrib:patent_egedal}
 
 \subsubsection{Papers}
 \begin{enumerate}
@@ -159,33 +198,3 @@ We provide a list of these patents below.
     \item \label[contribution]{contrib:patent_geipel}\fullfullcite{geipel_transferlernen_2020}
     \item \label[contribution]{contrib:patent_depeweg}\fullfullcite{depeweg_computer_2020}
 \end{enumerate}
-
-
-\section{Thesis outline}
-In this thesis, we will study how to formulate and evaluate Bayesian structural models using methods of Bayesian nonparametrics.
-The content is structured as follows.
-
-In \cref{toc:gp}, we provide a short introduction to Bayesian machine learning and Bayesian nonparametrics with a focus on Gaussian processes (GPs).
-We discuss the connection between Statistical learning theory and Bayesian inference and their application to hierarchical models.
-After introducing GPs, we discuss variational approaches to sparse GPs, their generalization to deep GP models, and inference schemes.
-
-In \cref{toc:data_association}, we explore how to generalize black-box deep GP models to structural priors using the data-association problem as an example.
-We use the formal mathematical structure to separate the data-association problem into separate hierarchical components and derive a joint inference scheme, resulting in a fully Bayesian model.
-We show that this model is able to factorize multi-modal data into independent processes, providing explicit models for both the processes and assignment probabilities.
-We discuss the limitations of formal structural models arising from ambiguities in the learning problem.
-
-In \cref{toc:alignment}, we discuss how to remove ambiguities using additional constraints arising from expert knowledge about the data generation process.
-We interpret the problem of modeling the power production of multiple wind-turbines in a wind-farm as a nonlinear alignment problem.
-Based on expert knowledge about the underlying latent and turbulent wind field, we can derive a structural model that enforces a physically plausible dependency structure between multiple time-series.
-We discuss how these constraints help to solve an otherwise highly ambiguous learning problem and show that the imposed structure leads to a rich internal model-structure.
-
-In \cref{toc:interpretable_rl}, we consider how to formalize the subjectiveness introduced via expert knowledge and model ambiguities by incorporating it into the model itself.
-We include the task a model will be used to solve into model selection, which allows us to distinguish between qualitatively different models showing similar performance metrics.
-We revisit the data-association problem and embed it into a reinforcement learning problem, where identifying the correct underlying dynamics is critical to finding a successful policy.
-We show that semantic hierarchical structure increases data efficiency and allows domain experts to influence agent behavior through detailed insights into the dynamics of a system.
-
-\Cref{toc:discussion} concludes the work presented in this thesis.
-In \cref{toc:discussion:composition}, we present an intuitive argument for why inference schemes based on factorizations between layers cannot represent heterogeneous posteriors.
-In \cref{toc:discussion:bo}, we argue why models with suboptimal marginal likelihoods can perform well in hierarchical systems.
-In \cref{toc:discussion:mountaincar}, we explore this idea further and consider how tasks can be included in the inference problem directly.
-Finally, we discuss possible further directions of research.

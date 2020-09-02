@@ -2020,7 +2020,7 @@ Evaluating this bound requires $\Oh(NM^2D)$ computations.
 Through local reparametrization~\parencite{kingma_variational_2015}, the gradients of the variational bound can be sampled directly.
 Evaluations of the DSVI-bound and its gradients have two unbiased sources of stochasticity~\parencite{salimbeni_doubly_2017}.
 First, the expected likelihood is approximated through Monte Carlo samples and second, since the likelihood factorizes along the data, mini-batching is possible.
-Drawing Monte Carlo samples of the likelihood directly elimates the need for Psi-statistics as in~\cref{eq:var_compression:full_bound}, making DSVI applicable to a broader set of hierarchical Gaussian process models.
+Drawing samples of the likelihood directly elimates the need for Psi-statistics as in~\cref{eq:var_compression:full_bound}, making DSVI applicable to a broader set of hierarchical Gaussian process models.
 
 Monte Carlo samples of approximate predictions can be drawn using~\cref{eq:dsvi:variational_layers} as well.
 The free-form predictive density can be approximated using the mixture
@@ -2032,4 +2032,3 @@ The free-form predictive density can be approximated using the mixture
     \end{split}
 \end{equation}
 with $S$ samples propagated through the hierarchical GP starting from the $\mat{X}_{\ast}$.
-\todoi{Add some thoughts about the bigger picture here?}

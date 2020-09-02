@@ -70,17 +70,16 @@ Many functional dependencies can be used to generate a finite set of observation
 Instead, the performance of a black-box model is typically measured in terms of its ability to predict a test set of previously unseen data.
 With growing computational power and the availability of large data sets, black-box approaches have led to impressive advancements in domains that are hard to formalize such as image recognition tasks~\parencite{lecun_backpropagation_1989} or playing the game of Go~\parencite{silver_mastering_2016}.
 Since black-box models do not claim to uncover or represent knowledge about the true process in nature, their internal structure is generally not human-interpretable and their behavior is not well-understood.
-As a result, their applicability in critical systems in the physical world is often limited.
 
-We will study what we call structured models.
+In this work, we will study what we call structured models.
 Structured models exist between these extremes as they are designed based on our scientific understanding of the underlying problem.
 At the same time, we accept that there are problem-components we do not or cannot understand and use general function approximators to model these components.
-\Cref{fig:introduction:models:structured} shows a structured model that has internal structure inspired by the more complex white-box model in~\cref{fig:introduction:models:white_box} but which also contains black-box components.
+\Cref{fig:introduction:models:structured} shows a structured model that has internal structure inspired by the more complex white-box model in~\cref{fig:introduction:models:white_box} but also contains black-box components.
 The goal of the structured modeling approach is to be more data-efficient compared to black-box models because there is less knowledge that needs to be inferred from data.
 At the same time, imposing structure allows us to characterize desired solutions and formulate what we want to learn from data.
 As a result, structured models can be formulated to gain insights about poorly understood system components from data.
 
-Many successes in machine learning are based on structured models.
+Many successful approaches in machine learning can be interpreted as structured models.
 A well-known example is the convolutional neural network (CNN) used in computer vision tasks~\parencite{lecun_backpropagation_1989}.
 Instead of, for example, using a standard multi-layer perceptron with sigmoid activation functions, the structure of a CNN is inspired by high-level knowledge about vision tasks.
 Recognizing the importance of edge-detection and scale-invariance, a CNN consists of a stack of layers that implement a potentially large set of convolution kernels.
@@ -107,61 +106,63 @@ To ensure trust, ML-systems often need to be verified by domain experts before d
 Models are required to incorporate and reproduce expert knowledge and make consistent predictions, while at the same time yielding new insights from data.
 
 The highly adaptable and scalable models that lead to success in digital domains are not well-suited to be deployed in safety-critical environments.
-Large neural networks employed suffer from low interpretability, requirements of large amounts of data and their inability to quantify uncertainties~\parencite{goodfellow_deep_2016}.
+Large neural networks generally suffer from low interpretability, the need for large amounts of data and their inability to quantify uncertainties~\parencite{goodfellow_deep_2016}.
 This work explores an alternative approach to formulating structured machine learning models based on probabilistic modelling that can satisfy the requirements of physical environments.
 
 \section{Bayesian structured models with Gaussian processes}
 A key technique that allows us to cope with the requirements of critical systems in the physical world is probabilistic modeling.
-Bayesian inference offers a framework to formalize expert knowledge as in prior assumptions and combine them with potentially uncertain data to represent knowledge about a system.
+Bayesian inference offers a framework to formalize expert knowledge in prior assumptions and combine them with potentially uncertain data to represent knowledge about a system.
 Using Bayes' rule, a distribution of plausible models is reweighed by their ability to explain observed data to yield a posterior distribution over plausible explanations.
 To make predictions, all plausible models are taken into account, allowing us to both quantify confidence in predictions and take more unlikely but relevant scenarios into consideration.
 
 Bayesian reasoning was pioneered by Pierre-Simon Laplace in the eighteenth century.
 Laplace extended the prevalent mechanistic world-view held by scholars like Newton with the idea that knowledge can be imperfect or incomplete.
 Laplace used Bayesian inference to formalize scientific reasoning under uncertainty and to enable the integration of multiple sources of data of varying quality.
-Based on white-box models grounded in scientific understanding, this reasoning for example led to improved estimates of the masses of Jupiter and Saturn and the discovery of the uneven proportion of male and female human births~\parencite{pulskamp_laplace_2020,laplace_theorie_1820}.
-Modern science has moved beyond phenomena that can be explained by a deterministic world-view held by Newton and Laplace towards subjects where randomness plays a major role.
-Large-scale experiments in fields such as particle physics~\parencite{khachatryan_observation_2015} or astronomical observations~\parencite{collaboration_first_2019,the_ligo_scientific_collaboration_observation_2016} uncover scientific knowledge hidden in a sea of random events.
-While Bayesian statistics is successfully used to identify the signal in highly noisy measurements, this analysis is still based on white-box modelling approaches to ensure that results conform to the requirements of scientific rigor.
+Based on white-box models grounded in scientific understanding, this reasoning, for example, led to improved estimates of the masses of Jupiter and Saturn and the discovery of the uneven proportion of male and female human births~\parencite{pulskamp_laplace_2020,laplace_theorie_1820}.
+Modern science has moved beyond phenomena that can be explained by the deterministic world-view held by Newton and Laplace towards subjects where randomness plays a major role.
+Large-scale experiments in fields such as particle physics~\parencite{khachatryan_observation_2015} or astronomical observations~\parencite{collaboration_first_2019,the_ligo_scientific_collaboration_observation_2016} uncover scientific knowledge hidden in a large number of random events.
+However, These analyses are still based on white-box modelling approaches to ensure that results conform to the requirements of scientific rigor.
 
 This dissertation explores how advances in black-box machine learning can be integrated in Bayesian reasoning to futher relax the mechanistic world-view and allow us to tackle problems where white-box models are not available.
-For applications in the physical world, expert knowledge is often based on an intuitive understanding of the underlying physics leading to coarse expectations about system-behavior on different layers of abstraction.
-However, complete Bayesian white-box models are often too complex to formulate or computationally intractable.
-We will discuss how abstract knowledge can be exploited to formulate structured Bayesian models that reproduce expectations but are still able to learn from data.
-We will explore two approaches to adding such a structure.
+For applications of data-centric approaches in the physical world, expert knowledge is often based on an intuitive understanding of the underlying physics leading to coarse expectations about system-behavior on different layers of abstraction.
+However, fully white-box models are often too complex to formulate or computationally intractable.
+We will discuss how abstract knowledge can be exploited to formulate structured Bayesian models that reproduce expectations but are still able to learn from data and explore two approaches to adding such structure.
 First, white-box mathematical structure can be relaxed to a structured hierarchical system to learn new insights from data.
 And second, structure motivated by expert-understanding of an underlying physical process can be used to formulate semantic constraints to a data-centric black-box approach.
 
 The black-box and white-box modelling cultures follow different approaches to evaluating models.
 While a white-box model is evaluated through a combination of goodness-of-fit measures on observations used during inference and subjective measures based on interpretability, black-box approaches typically focus on performance measures on test-sets.
-Since structured models combine white-box and black-box properties, evaluation strategies should be a combination of both approaches.
+Since structured models combine white-box and black-box properties, evaluation strategies should be a combination of both approaches as well.
 We will show that good predictive performance is often not sufficient to identify a desirable structured model.
-To formalize the subjectiveness in the description of desirable models, we will explore how downstream tasks can be taken into account during model selection.
+To formalize the subjectiveness in the description of desirable models, we will explore how downstream tasks can be taken into account for model selection.
 
 
 \section{Thesis outline}
 In this thesis, we will study how to formulate and evaluate Bayesian structural models using methods of Bayesian nonparametrics.
-\todoi{Why GPs?}
+While traditional white-box Bayesian models typically avoid general function approximators, we use Gaussian processes to formulate the black-box components in our structural models.
 The content is structured as follows.
 In \cref{toc:gp}, we provide a short introduction to Bayesian machine learning and Bayesian nonparametrics with a focus on Gaussian processes (GPs).
 We discuss the connection between statistical learning theory and Bayesian inference and their application to hierarchical models.
-After introducing GPs, we discuss variational approaches to sparse GPs, their generalization to deep GP models, and inference schemes.
+After introducing GPs, we discuss variational approaches to sparse GPs, their generalization to deep GP models, and efficient inference schemes.
 
 In \cref{toc:data_association}, we explore how to relax white-box structure in a structured hierarchical model using the data-association problem as an example.
 We use the formal mathematical structure to separate the data-association problem into separate hierarchical components and derive a joint inference scheme, resulting in a fully Bayesian model.
 We show that this model is able to factorize multi-modal data into independent processes, providing explicit models for both the processes and assignment probabilities.
+Comparisons with previous models show the additional qualitative model capabilities of the structured approach and competitive black-box performance.
+However, experiments also show that standard measures are not enough to identify desirable models.
 
-In \cref{toc:alignment}, we discuss how to introduce additional constraints arising from expert knowledge about the data generation process to black-box deep GPs.
+In \cref{toc:alignment}, we formulate a structured Bayesian model using black-box models as a starting point.
+We discuss how to introduce additional constraints arising from expert knowledge about the data generation process to black-box deep GPs.
 We interpret the problem of modeling the power production of multiple wind-turbines in a wind-farm as a nonlinear alignment problem.
 Based on expert knowledge about the underlying latent and turbulent wind field, we can derive a structural model that enforces a physically plausible dependency structure between multiple time-series.
 We discuss how these constraints help to solve an otherwise highly ambiguous learning problem and show that the imposed structure leads to a rich internal model-structure.
 
-In \cref{toc:interpretable_rl}, we consider how to formalize the subjectiveness introduced via expert knowledge and model ambiguities by incorporating it into the model itself.
+In \cref{toc:interpretable_rl}, we consider how to formalize the subjectiveness introduced via expert knowledge and model ambiguities.
 We include the task a model will be used to solve into model selection, which allows us to distinguish between qualitatively different models showing similar performance metrics.
-We revisit the data-association problem and embed it into a reinforcement learning problem, where identifying the correct underlying dynamics is critical to finding a successful policy.
+We revisit the data-association problem and embed it into a reinforcement learning problem, where identifying the correct underlying dynamics, and therefore a desirable model, is critical to finding a successful policy.
 We show that semantic hierarchical structure increases data efficiency and allows domain experts to influence agent behavior through detailed insights into the dynamics of a system.
 
-\Cref{toc:discussion} concludes the work presented in this thesis.
+\Cref{toc:discussion} concludes the work presented in this thesis and further explores the properties and evaluation of structured hierarchical models.
 In \cref{toc:discussion:composition}, we present an intuitive argument for why inference schemes based on factorizations between layers cannot represent heterogeneous posteriors.
 In \cref{toc:discussion:bo}, we argue why models with suboptimal marginal likelihoods can perform well in hierarchical systems.
 In \cref{toc:discussion:mountaincar}, we explore this idea further and consider how tasks can be included in the inference problem directly.

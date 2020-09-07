@@ -31,67 +31,63 @@ In this work, we explore how to formulate machine learning models that can satis
 \section{Bayesian structured models with Gaussian processes}
 A key technique that allows us to cope with the requirements of critical systems in the physical world is probabilistic modeling.
 Bayesian inference offers a framework to formalize expert knowledge in prior assumptions and combine them with data.
-Expert
-Using Bayes' rule, a distribution of plausible models is reweighed by their ability to generate data to yield a posterior distribution over plausible explanations.
+% Using Bayes' rule, a distribution of plausible models is reweighed by their ability to generate data to yield a posterior distribution over plausible explanations.
 To make predictions, all plausible models are taken into account, allowing us to both quantify confidence in predictions and take more unlikely but relevant scenarios into consideration.
-Bayesian reasoning was pioneered by Pierre-Simon Laplace in the eighteenth century to extend the prevalent mechanistic world-view with the idea that knowledge is imperfect~\parencite{pulskamp_laplace_2020}.
-In modern science, probabilistic models are used in large-scale experiments in particle physics~\parencite{khachatryan_observation_2015} or astronomy~\parencite{collaboration_first_2019,the_ligo_scientific_collaboration_observation_2016} where randomness plays a major role.
-These Bayesian scientific models are generally formulated from a hypothesis testing perspective and follow the white-box philosophy.
-Causal theoretic models are extended with statistical theory to handle uncertain data and lead to conclusions in terms of effect sizes in simple models with few parameters.
-The focus lies on explaining the available observations instead of predictions of new situations.
+% Bayesian reasoning was pioneered by Pierre-Simon Laplace in the eighteenth century to extend the prevalent mechanistic world-view with the idea that knowledge is imperfect~\parencite{pulskamp_laplace_2020}.
+In modern science, probabilistic models are used in large-scale experiments such as in particle physics~\parencite{khachatryan_observation_2015} or astronomy~\parencite{collaboration_first_2019,the_ligo_scientific_collaboration_observation_2016}, where randomness plays a major role.
+These scientific models are generally formulated from a hypothesis testing perspective and follow the white-box philosophy.
+Causal theoretic models are extended with statistical theory to handle uncertain data and lead to conclusions in terms of effect sizes.
+The focus is on explaining the available observations instead of predicting new situations.
 
-For many applications of machine learning in the physical world\todo{Instead of arguing via models, argue via the problem and the requirements first? We DO need predictions.}, complete theoretic models are not available.
-Instead, the knowledge of domain experts is based on an intuitive understanding of the underlying leading to coarse expectations about system-behavior on different layers of abstraction.
-We will discuss how abstract knowledge can be exploited to formulate structured Bayesian models that reproduce expectations but are still able to learn from data
+For many applications of machine learning in the physical world, the situation is different.
+Since complete theoretic models are not available, the goal of modeling is to infer some aspects of a system's behavior from data while still yielding physically plausible explanations.
+Take wind power production as an example:
+To optimize the efficiency of a wind-turbine, the speed and pitch have to be controlled according to the local wind conditions.
+In a wind-farm, turbines are typically equipped with sensors for wind speed and direction.
+The goal is to use these sensor data to produce accurate estimates and forecasts of the wind conditions at every turbine in the farm.
+For the ideal case of a homogeneous and very slowly changing wind field, wind conditions can be estimated using the propagation times computed from geometry, wind speed and direction.
+In the real world, however, wind fields are not homogeneous, exhibit global and local turbulence, and interfere with the turbines and the terrain inside and outside the farm.
+This makes it extremely difficult to construct accurate analytical models of wind propagation in a farm.
+At the same time, data-driven black-box approaches struggle due to identifiability issues introduced by the noise of the unpredictable turbulence.
+While we cannot formulate analytical models, domain experts do have an intuitive understanding of the underlying physics of wind propagation.
+A successful model needs to combine the white-box and black-box approaches:
+It needs to reproduce expectations like slowly changing prevailing wind conditions or gusts that travel through the system while still being able to infer new knowledge about specific turbine behavior or the influence of terrain from data.
+Domain experts need to be able to verify that they can trust the model's predictions for unseen situations.
 
-\begin{itemize}
-    \item How do we formulate models that conform to expert expectations about system-behavior but that can also learn from data? How do we make sure that the result is understandable for domain experts?
-    \item How do we use expert expectations to constrain models to only produce physically plausible solutions in the areas of the input space that matter? How do we make inference-schemes work in the Bayesian context when things usually do not scale?
-    \item How do we evaluate models in settings where we do not have either sufficient theory or sufficient generalization data? How do we even know where to evaluate?
-\end{itemize}
-
-The black-box and white-box modelling cultures follow different approaches to evaluating models.
-While a white-box model is evaluated through a combination of goodness-of-fit measures on observations used during inference and subjective measures based on interpretability, black-box approaches typically focus on performance measures on test-sets.
-Since structured models combine white-box and black-box properties, evaluation strategies should be a combination of both approaches as well.
-We will show that good predictive performance is often not sufficient to identify a desirable structured model.
+In this work, we study how to formulate structured models that fullfill these requirements.
+We use information about the structure of a learning problem to formulate machine learning models that reproduce knowledge, are understandable for domain-experts, make physically plausible predictions in unseen situations and can quantify their own uncertainty.
+First, we explore how to embed general function approximators in Bayesian probabilistic models to enforce structure and learn from data.
+We discuss how to formulate inference schemes based on composite and hierarchical Gaussian process models that yield informative uncertainties.
+Second, we study how to use structured models to reproduce expert knowledge and factorize uncertainties to achieve interpretability.
+We explore how rich internal structure helps models to generalize to unseen situations.
+And third, we discuss how to evaluate structured models.
+As evaluation data in critical parts of the system is often scarce in physical environments, performance measures such as the generalization error are not enough to identify a desirable structured model.
 To formalize the subjectiveness in the description of desirable models, we will explore how downstream tasks can be taken into account for model selection.
-
-\begin{itemize}
-    \item Models that are used in this context need to be simple to yield provable results based on statistical theory. That is, we use linear models. Which are not adequate for our use-case. White-box models that explain our training data well might not be enough as we have not seen all relevant parts of the system. Predictions are important.
-    \item The standard approach to data-driven models does not work either. We usually claim that predictions are good enough and we can validate through generalization behavior. But that does not work either: We do not get to observe the more critical parts of the system and can not check if the generalization-behavior makes sense there.
-    \item In physical industrial applications, we want to combine the two: We are not after causal explanations. We are after plausible explanations that allow us to trust data-driven models. \Textcite{shmueli_explain_2010} separate explanatory power and predictive power of a model. We need both.
-    \item How to get there is not clear: How do you enforce plausible solutions if you cannot test if they are plausible? Our answers: The correct (abstract) priors and a new evaluation scheme based on downstream tasks.
-    \item Standard approaches to priors do not really scale here: We cannot easily explain regularization, specific choices for optimizers and hyper-parameters to domain experts. Our ML-choices need to be clean enough to be understandable for experts, the magic needs to be in the model description. Post-hoc explainability is a real issue with black-box approaches~\parencite{rudin_stop_2019}.
-    \item However, complicated models usually make inference very hard. Bayesian non-parametrics struggles with this, which is why black-box approaches are so successful which make more general-purpose decisions. One aspect of our work is to formulate priors carefully to allow us to use scalable inference schemes.
-\end{itemize}
 
 
 \section{Thesis outline}
-In this thesis, we will study how to formulate and evaluate Bayesian structural models using methods of Bayesian nonparametrics.
-While traditional white-box Bayesian models typically avoid general function approximators, we use Gaussian processes to formulate the black-box components in our structural models.
-The content is structured as follows.
+The content of this thesis is structured as follows.
 In \cref{toc:gp}, we provide a short introduction to Bayesian machine learning and Bayesian nonparametrics with a focus on Gaussian processes (GPs).
 We discuss the connection between statistical learning theory and Bayesian inference and their application to hierarchical models.
-After introducing GPs, we discuss variational approaches to sparse GPs, their generalization to deep GP models, and efficient inference schemes.
+After introducing GPs, we discuss variational approaches to sparse GPs, their extension to hierarchical GP models, and efficient inference schemes.
 
-In \cref{toc:data_association}, we explore how to relax white-box structure in a structured hierarchical model using the data-association problem as an example.
-We use the formal mathematical structure to separate the data-association problem into separate hierarchical components and derive a joint inference scheme, resulting in a fully Bayesian model.
+In \cref{toc:data_association}, we explore how to formulate structured hierarchical models using the data association problem as an example.
+We separate the data association problem into hierarchical components and derive an efficient joint inference scheme, resulting in a fully Bayesian model.
 We show that this model is able to factorize multi-modal data into independent processes, providing explicit models for both the processes and assignment probabilities.
 Comparisons with previous models show the additional qualitative model capabilities of the structured approach and competitive black-box performance.
 However, experiments also show that standard measures are not enough to identify desirable models.
 
-In \cref{toc:alignment}, we formulate a structured Bayesian model using black-box models as a starting point.
-We discuss how to introduce additional constraints arising from expert knowledge about the data generation process to black-box deep GPs.
-We interpret the problem of modeling the power production of multiple wind-turbines in a wind-farm as a nonlinear alignment problem.
+In \cref{toc:alignment}, we formulate a structured Bayesian model that reproduces expert knowledge about wind propagation in a wind-farm.
+We interpret the problem of modeling the power production of multiple wind-turbines as a nonlinear alignment problem and derive an efficient inference scheme.
 Based on expert knowledge about the underlying latent and turbulent wind field, we can derive a structural model that enforces a physically plausible dependency structure between multiple time-series.
-We discuss how these constraints help to solve an otherwise highly ambiguous learning problem and show that the imposed structure leads to a rich internal model-structure.
+We discuss how these constraints help to solve an otherwise highly ambiguous learning problem and show that the imposed structure leads to a rich internal model-structure that can be interpreted by experts.
 
-In \cref{toc:interpretable_rl}, we consider how to formalize the subjectiveness introduced via expert knowledge and model ambiguities.
+In \cref{toc:interpretable_rl}, we consider how to formalize the subjectiveness introduced via expert knowledge and model ambiguities to evalute structured models.
 We include the task a model will be used to solve into model selection, which allows us to distinguish between qualitatively different models showing similar performance metrics.
-We revisit the data-association problem and embed it into a reinforcement learning problem, where identifying the correct underlying dynamics, and therefore a desirable model, is critical to finding a successful policy.
+We revisit the data association problem and embed it into a reinforcement learning problem, where identifying the correct underlying dynamics, and therefore a desirable model, is critical to finding a successful policy.
 We show that semantic hierarchical structure increases data efficiency and allows domain experts to influence agent behavior through detailed insights into the dynamics of a system.
 
-\Cref{toc:discussion} concludes the work presented in this thesis and further explores the properties and evaluation of structured hierarchical models.
+\Cref{toc:discussion} concludes the work presented in this thesis and interprets the results in a broader context by further exploring the properties and evaluation of structured hierarchical models.
 In \cref{toc:discussion:composition}, we present an intuitive argument for why inference schemes based on factorizations between layers cannot represent heterogeneous posteriors.
 In \cref{toc:discussion:bo}, we argue why models with suboptimal marginal likelihoods can perform well in hierarchical systems.
 In \cref{toc:discussion:mountaincar}, we explore this idea further and consider how tasks can be included in the inference problem directly.
@@ -99,18 +95,20 @@ Finally, we discuss possible further directions of research.
 
 
 \section{Contributions}
+The main contributions presented in this thesis appeared in a number of peer-reviewed publications and patents we outline below.
 This work presents novel Bayesian structured models inspired by industrial applications.
-In \cref{contrib:data_association}, we formulate a fully Bayesian interpretation of the data association problem.
-\Cref{contrib:patent_depeweg,contrib:patent_geipel} discuss an application of this model to the prediction of the combustion dynamics of a gas-turbine.
-We formulate a hierarchical Bayesian model for a nonlinear alignment problem that is capable of representing the complex interactions between turbines in a wind farm in \cref{contrib:windpower,contrib:patent_egedal,contrib:patent_kaiser}.
+In \cref{contrib:data_association}, we formulate a fully Bayesian interpretation of the data association problem and derive an efficient inference scheme.
+\Cref{contrib:patent_depeweg,contrib:patent_geipel} discuss an application of this model to the prediction of the combustion dynamics of a gas-turbine, where the structured model allows us to distinguish between different dynamical regimes.
+In~\cref{contrib:windpower}, we formulate a hierarchical Bayesian model and inference-scheme for a nonlinear time-series alignment problem and show that this model is capable of representing the complex interactions between turbines in a wind farm.
+We discuss how this model can be used to derive more efficient controllers for wind-turbines in~\cref{contrib:patent_egedal,contrib:patent_kaiser}.
 
-Using these methods, we investigate the behavior of Bayesian structured models and discuss evaluation strategies.
+Using our methods as examples, we investigate the behavior of Bayesian structured models and discuss evaluation strategies.
 In \cref{contrib:interpretable_rl,contrib:multi_modal_rl}, we apply our data association model to a reinforcement learning task and we show how a semantic decomposition of the dynamics reduces the data requirements and produces interpretable solutions.
 In \cref{contrib:surrogates}, we argue why models with suboptimal marginal likelihoods can perform well in hierarchical systems such as Bayesian optimization problems.
-In \cref{contrib:composition}, we present an argument for why inference schemes based on factorizations between layers cannot represent heterogeneous posteriors.
+And in \cref{contrib:composition}, we present an argument for why inference schemes based on factorizations between layers cannot represent heterogeneous posteriors.
 
 
-\subsubsection{Papers}
+\subsubsection{Own publications}
 \begin{enumerate}
     \item \label[contribution]{contrib:windpower}\fullfullcite{kaiser_bayesian_2018}
     \item \label[contribution]{contrib:data_association}\fullfullcite{kaiser_data_2019}

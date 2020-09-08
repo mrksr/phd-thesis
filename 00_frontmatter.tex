@@ -12,25 +12,29 @@
     Lernverfahren müssen Expertenwissen effizient nutzen, mit wenigen Daten auskommen und Unsicherheiten bestimmen.
     In dieser Dissertation wird untersucht, wie strukturierte probabilistische Modelle es uns ermöglichen, diesen Anforderungen gerecht zu werden.
     Strukturierte Modelle kombinieren datengestützte und theoriegetriebene Modellierungsansätze, um Expertenwissen zu formalisieren und dennoch neue Erkenntnisse aus Daten gewinnen zu können.
-    Während in theoriegetriebenen Modellen Domänenexperten detaillierte mathematische Modelle entwerfen, um einen Vorgang in der Natur zu beschreiben, konzentrieren sich datengestützte Methoden auf allgemeine Funktionsapproximatoren und vertrauen darauf, dass die Struktur das Lernproblems bei ausreichender Datenmenge extrahiert werden kann.
-    In strukturiereten Modellen nutzen wir das verfügbare Expertenwissen, akzeptieren aber, dass es Teile des Systems gibt, die wir nicht verstehen und deshalb mit datengestützten Methoden modellieren.
-    Die so formulierte Struktur erlaubt es uns, bevorzugte Modelle zu charakterisieren und zu beschreiben, welche Zusammenhänge aus den Daten gelernt werden sollen.
 
-    In dieser Arbeit wird untersucht, wie probabilistische strukturierte Modelle mithilfe von bayesschen nicht-parametrischen Methoden formuliert werden können.
+    In dieser Arbeit werden probabilistische strukturierte Modelle mithilfe von bayesschen nicht-parametrischen Methoden formuliert.
+    Wir nutzen Informationen über die Struktur eines Lernproblems, um Modelle zu formulieren, die Wissen reproduzieren, für Domänenexperten verständlich sind, physikalisch plausible Vorhersagen in unbekannten Situationen liefern und ihre eigene Unsicherheit beziffern können.
+    Dazu bettwen wir allgemeine Funktionsapproximatoren in probabilistische Modelle ein und formulieren Inferenzmethoden auf Basis von verketteten und hierarchischen Gaußprozessen.
+    Am Beispiel realer industrieller Anwendungen wie der Erkennung fehlerhafter Sensoren und der der Vorhersage der Stromerzeugung in einem Windpark zeigen wir, dass strukturierte informative Unsicherheiten liefern, interpretierbar sind und erfolgreich generalisieren.
 
+    In Situationen in denen die interne Struktur oder das Generalisierungsverhalten von Modellen in den Mittelpunkt rücken kann Modellselektion basierend auf klassischen Metriken unzureichend sein, um bevorzugte Modelle zu identifizieren.
+    Wir formalisieren den subjektiven Anteil der Modellselektion, indem wir die Aufgabe, die ein Modell lösen soll, in die Auswahl mit einbeziehen.
+    Wir zeigen an einem Reinforcement-Learning Problem, dass semantisch korrekte Modelle andere Modelle mit ähnlichen Metriken übertreffen und es Experten ermöglichen, das Verhalten von Agenten zu beeinflussen.
+    Wir untersuchen die Eigenschaften strukturierter Modelle in einem breiteren Kontext und diskutieren die Grenzen gängiger Inferenzverfahren, warum Modelle mit suboptimalen Metriken in hierarchischen Systemen erfolgreich eingesetzt werden können und wie bayessche Inferenzprobleme formulierten werden können, die nachgelagerte Aufgaben berücksichtigen.
 \end{Abstract}
 
 \begin{Abstract}{english}
     Machine learning methods have seen great success recently in a wide range of digital domains such as speech recognition, computer vision or video games.
     However, bridging the gap to applications in the physical world has proved challenging as they introduce a new set of requirements.
     Machine learning systems must make efficient use of expert knowledge, handle low data regimes, and quantify uncertainties.
-    This thesis studies how structured probabilistic models allow us to cope with these requirements.
+    This thesis explores how structured probabilistic models allow us to cope with these requirements.
     Structured models combine black-box and white-box modeling approaches to formalize expert knowledge while still being able to gain new insights from data.
 
-    In this work, we study how to formulate Bayesian structured models using methods from Bayesian nonparametrics.
+    In this work, we formulate Bayesian structured models using methods from Bayesian nonparametrics.
     We use information about the structure of a learning problem to formulate machine learning models that reproduce knowledge, are understandable for domain-experts, make physically plausible predictions in unseen situations and can quantify their own uncertainty.
-    We explore how to embed general function approximators in Bayesian probabilistic models to enforce structure and discuss how to formulate inference schemes based on composite and hierarchical Gaussian process models that yield informative uncertainties.
-    Using real-world industrial applications such as the detection of faulty sensors and the prediction of power generation in a wind-farm as examples, we study how to use structured models to factorize uncertainties, achieve interpretability, and generalize to unobserved inputs.
+    We explore how to embed general function approximators in Bayesian probabilistic models to enforce structure and discuss how to formulate inference schemes based on composite and hierarchical Gaussian process models.
+    Using real-world industrial applications such as the detection of faulty sensors and the prediction of power generation in a wind-farm as examples, we show how to use structured models to factorize uncertainties, achieve interpretability, and generalize to unobserved inputs.
 
     In settings where internal structure and generalization behavior come into focus, model selection using marginal likelihoods can be insufficient to identify desirable models.
     We consider how to formalize the subjectiveness in model selection through the task a model will be used to solve.

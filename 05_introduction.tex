@@ -25,38 +25,72 @@ In this work, we explore how to formulate machine learning models that can satis
 
 
 \section{Bayesian structured models with Gaussian processes}
-A key technique that allows us to cope with the requirements of critical systems in the physical world is probabilistic modeling.
-Bayesian inference offers a framework for formalizing expert knowledge in prior assumptions and combining them with data.
-To make predictions, all plausible models are taken into account, allowing us to both quantify confidence in predictions and take more unlikely but relevant scenarios into consideration.
-In modern science, probabilistic models are used in large-scale experiments such as in particle physics~\parencite{khachatryan_observation_2015} or astronomy~\parencite{collaboration_first_2019,the_ligo_scientific_collaboration_observation_2016}, where randomness plays a major role.
-These scientific models are generally formulated from a hypothesis testing perspective and follow the white-box philosophy.
-Causal theoretic models are extended with statistical theory to handle uncertain data and lead to conclusions in terms of effect sizes.
-The focus is on explaining the available observations instead of predicting new situations.
+% A key technique that allows us to cope with the requirements of critical systems in the physical world is probabilistic modeling.
+% Bayesian inference offers a framework for formalizing expert knowledge in prior assumptions and combining them with data.
+% To make predictions, all plausible models are taken into account, allowing us to both quantify confidence in predictions and take more unlikely but relevant scenarios into consideration.
+% In modern science, probabilistic models are used in large-scale experiments such as in particle physics~\parencite{khachatryan_observation_2015} or astronomy~\parencite{collaboration_first_2019,the_ligo_scientific_collaboration_observation_2016}, where randomness plays a major role.
+% These scientific models are generally formulated from a hypothesis testing perspective and follow the white-box philosophy.
+% Causal theoretic models are extended with statistical theory to handle uncertain data and lead to conclusions in terms of effect sizes.
+% The focus is on explaining the available observations instead of predicting new situations.
 
-For many applications of machine learning in the physical world, the situation is different.
-Since complete theoretic models are not available, the goal of modeling is to infer some aspects of a system's behavior from data while still yielding physically plausible explanations.
-Take wind power production as an example:
-To optimize the efficiency of a wind-turbine, the speed and pitch have to be controlled according to the local wind conditions.
-In a wind-farm, turbines are typically equipped with sensors for wind speed and direction.
-The goal is to use these sensor data to produce accurate estimates and forecasts of the wind conditions at every turbine in the farm.
-For the ideal case of a homogeneous and very slowly changing wind field, wind conditions can be estimated using the propagation times computed from geometry, wind speed and direction.
-In the real world, however, wind fields are not homogeneous, exhibit global and local turbulence, and interfere with the turbines and the terrain inside and outside the farm.
-This makes it extremely difficult to construct accurate analytical models of wind propagation in a farm.
-At the same time, data-driven black-box approaches struggle due to identifiability issues introduced by the noise of the unpredictable turbulence.
-While we cannot formulate analytical models, domain experts do have an intuitive understanding of the underlying physics of wind propagation.
-A successful model needs to combine the white-box and black-box approaches:
-It needs to reproduce expectations like slowly changing prevailing wind conditions or gusts that travel through the system while still being able to infer new knowledge about specific turbine behavior or the influence of terrain from data.
-By checking if these these expectations are met, domain experts can build trust in the model's predictions for unseen situations.
+% For many applications of machine learning in the physical world, the situation is different.
+% Since complete theoretic models are not available, the goal of modeling is to infer some aspects of a system's behavior from data while still yielding physically plausible explanations.
+% Take wind power production as an example:
+% To optimize the efficiency of a wind-turbine, the speed and pitch have to be controlled according to the local wind conditions.
+% In a wind-farm, turbines are typically equipped with sensors for wind speed and direction.
+% The goal is to use these sensor data to produce accurate estimates and forecasts of the wind conditions at every turbine in the farm.
+% For the ideal case of a homogeneous and very slowly changing wind field, wind conditions can be estimated using the propagation times computed from geometry, wind speed and direction.
+% In the real world, however, wind fields are not homogeneous, exhibit global and local turbulence, and interfere with the turbines and the terrain inside and outside the farm.
+% This makes it extremely difficult to construct accurate analytical models of wind propagation in a farm.
+% At the same time, data-driven black-box approaches struggle due to identifiability issues introduced by the noise of the unpredictable turbulence.
+% While we cannot formulate analytical models, domain experts do have an intuitive understanding of the underlying physics of wind propagation.
+% A successful model needs to combine the white-box and black-box approaches:
+% It needs to reproduce expectations like slowly changing prevailing wind conditions or gusts that travel through the system while still being able to infer new knowledge about specific turbine behavior or the influence of terrain from data.
+% By checking if these these expectations are met, domain experts can build trust in the model's predictions for unseen situations.
 
-In this work, we study how to formulate structured models that fullfill these requirements.
-We use information about the structure of a learning problem to formulate machine learning models that reproduce knowledge, are understandable for domain-experts, make physically plausible predictions in unseen situations and can quantify their own uncertainty.
-First, we explore how to embed general function approximators in Bayesian probabilistic models to enforce structure and learn from data.
-We discuss how to formulate inference schemes based on composite and hierarchical Gaussian process models that yield informative uncertainties.
-Second, we study how to use structured models to reproduce expert knowledge and factorize uncertainties to achieve interpretability.
-We explore how rich internal structure helps models to generalize to unseen situations.
-And third, we discuss how to evaluate structured models.
-As evaluation data in critical parts of the system is often scarce in physical environments, performance measures such as the generalization error are not enough to identify a desirable structured model.
-To formalize the subjectiveness in the description of desirable models, we will explore how downstream tasks can be taken into account for model selection.
+% In this work, we study how to formulate structured models that fullfill these requirements.
+% We use information about the structure of a learning problem to formulate machine learning models that reproduce knowledge, are understandable for domain-experts, make physically plausible predictions in unseen situations and can quantify their own uncertainty.
+% First, we explore how to embed general function approximators in Bayesian probabilistic models to enforce structure and learn from data.
+% We discuss how to formulate inference schemes based on composite and hierarchical Gaussian process models that yield informative uncertainties.
+% Second, we study how to use structured models to reproduce expert knowledge and factorize uncertainties to achieve interpretability.
+% We explore how rich internal structure helps models to generalize to unseen situations.
+% And third, we discuss how to evaluate structured models.
+% As evaluation data in critical parts of the system is often scarce in physical environments, performance measures such as the generalization error are not enough to identify a desirable structured model.
+% To formalize the subjectiveness in the description of desirable models, we will explore how downstream tasks can be taken into account for model selection.
+
+Why should I care about structured models and their evaluation?
+\begin{enumerate}
+    \item Besides predictions, we want to use models for validation and root-cause analysis, so understanding is key. We cannot hide knowledge in the choices of optimizer or the regularization as domain experts will not understand - we need our knowledge to be as explicit as possible.
+
+    \item Large models in deep-learning approaches excel in settings where large amounts of data is available and exploration is cheap and safe.
+    When a model behaves incorrectly in a specific setting, more data can be collected and the model can be improved.
+    In the physical world however, safety-concerns or high cost make it infeasible to collect data about failure modes or new control strategies.
+    We therefore need to formulate models that make do with limited amounts of data that do not cover all situations of interest.
+    \item It is nonetheless critical to make reliable predictions about unseen situations to find more efficient or safer control strategies.
+    To formulate models that can generalize aggressively, we need to make use of the available expert knowledge.
+    In contrast to classical analytical models that fully explain a system, we accept that there are parts of the system we do not understand and want to learn from data.
+    Since knowledge uncovered from data is imperfect due to identifiability-issues, we cannot blindly trust predictions.
+    Models that can quantify uncertainties allow us to judge how high our trust-level should be.
+    \item Experts need to understand and trust our systems to make reliable predictions.
+    Fully black-box models are hard to deploy because we cannot explain how they work post-hoc.
+    We therefore need to formulate models that inherently fulfill the expectations of domain experts and allow experts to validate this is the case, even in unseen situations.
+    Bayesian modelling offers a framework to formulate such models.
+    However, traditional Bayesian models and inference schemes are based on causal theoretic models and cannot handle general function approximators.
+    How do we combine the properties of both?
+    \item The black-box approach generally relies on generalization error measures for model selection.
+    When data is abundant, enough generalization data can be collected to comprehensively evaluate a model.
+    If evaluation data in critical parts of the system is not available, performance measures are not sufficient to identify desirable models.
+    Instead, domain experts inspect a model's internal structure and subjectively select models for deployment.
+    Can we make use of this implicit knowledge during model selection?
+    \item Our main research questions are:
+        \begin{enumerate}
+            \item How can we combine the advantages of analytical models and black-box approaches to formulate models that enforce structure and learn from data?
+            How can we formulate inference schemes that scale?
+            \item How can we use structured models to reproduce expert knowledge and factorize uncertainties to generalize confidently and achieve interpretability?
+            \item How do we evaluate structured models beyond classical performance measures?
+            How do we formalize the subjectiveness in what makes a model desirable?
+        \end{enumerate}
+\end{enumerate}
 
 
 \section{Thesis outline}
@@ -90,10 +124,14 @@ Finally, we discuss possible further directions of research.
 
 \section{Contributions}
 This work presents novel Bayesian structured models inspired by industrial applications.
-We formulate fully bayesian interpretations of the data association problem and nonlinear timeseries alignment.
-To formulate efficient and scalable inference schemes, we extend the variational inference schemes for deep Gaussian processes to handle multi-output GPs and discrete structure.
-We present a Bayesian view on model-based reinforcement learning and formulate an efficient probabilistic policy search algorithm using structured dynamics models.
-Interpreting our results in a broader context, we discuss the limitations of current variational inference schemes for hierarchical Gaussian process models and argue why surrogate models with suboptimal marginal likelihoods can perform well in Bayesian optimization problems.
+Our main contributions are as follows:
+\begin{compactitem}
+    \item We formulate fully Bayesian interpretations of the data association problem and nonlinear timeseries alignment.
+    \item We formulate efficient and scalable inference schemes for these models by extending the variational inference schemes for deep Gaussian processes to handle multi-output GPs and discrete structure.
+    \item We present a Bayesian view on model-based reinforcement learning and formulate an efficient probabilistic policy search algorithm for structured dynamics models.
+    \item We discuss the limitations of current variational inference schemes for hierarchical Gaussian process models.
+    \item We argue why surrogate models with suboptimal marginal likelihoods can perform well in Bayesian optimization problems.
+\end{compactitem}
 
 The main contributions presented in this thesis appeared in a number of peer-reviewed publications and patents we outline below.
 In \cref{contrib:data_association,contrib:patent_depeweg,contrib:patent_geipel}, we formulate a Bayesian interpretation of the data association problem and discuss an application of this model to the prediction of the combustion dynamics of a gas-turbine, where the structured model allows us to distinguish between different dynamical regimes.

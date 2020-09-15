@@ -168,3 +168,10 @@
         \quad\hbox{$\square$}%
     \fi
 }
+
+\newenvironment{titledesc}[1]{%
+    \paragraph{#1}
+    \begin{compactdesc}%
+}{%
+    \end{compactdesc}%
+}

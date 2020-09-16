@@ -3,6 +3,7 @@
 \usetikzlibrary{backgrounds}
 \usetikzlibrary{fit}
 \usetikzlibrary{scopes}
+\usetikzlibrary{shapes.geometric}
 
 \tikzstyle{with struts} = [execute at begin node={\strut}, execute at end node={\strut}]
 
@@ -20,3 +21,33 @@
 
 \tikzstyle{align plate} = [draw=sStoneDark, fill=sStone, fill opacity=.2, thick, inner xsep=4pt, inner ysep=4pt]
 \tikzstyle{align graphical model} = [baseline=(baseline), x=4em, y=5em]
+
+\tikzstyle{white box} = [
+    align plate,
+    inner sep=10pt,
+    black,
+    fill=white,
+    fill opacity=0,
+]
+\tikzstyle{box component} = [
+    random variable,
+    inner sep=0pt,
+    minimum size=8pt,
+]
+\tikzstyle{black box component} = [
+    box component,
+    regular polygon,
+    regular polygon sides=4,
+    inner sep=-1.5pt,
+    fill=sStoneDark!50,
+]
+\tikzstyle{white box component} = [
+    box component,
+    fill=sStoneDark!10,
+]
+
+\newcommand{\whiteboxblob}[1]{%
+    \tikz[x=2.5em]{
+        \node[inline random variable, #1] (x) {};
+    }%
+}

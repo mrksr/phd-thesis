@@ -5,6 +5,10 @@
 \colorlet{layoutHeading}{sBlueDark!80!black}
 \colorlet{layoutDefinition}{sBlueDark!20}
 \colorlet{layoutTheorem}{sGreenDark!20}
+\colorlet{layoutProblem}{sGreenDark!20}
+\colorlet{layoutPros}{sGreenDark!20}
+\colorlet{layoutCons}{sRedDark!20}
+\colorlet{layoutRQs}{sBlueDark!20}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,6 +70,9 @@
 \newtheorem{TheoBox}[Definition]{Theorem}
 \newtheorem{LemBox}[Definition]{Lemma}
 \newtheorem{ProbBox}[Definition]{Problem}
+\newtheorem*{ProsBox}{Pros}
+\newtheorem*{ConsBox}{Cons}
+\newtheorem*{RQsBox}{Research Questions}
 
 \renewenvironment{definition}
 {
@@ -80,7 +87,7 @@
 
 \newenvironment{problem}
 {
-    \begin{defaultColourFrame}{layoutTheorem}{layoutTheorem}
+    \begin{defaultColourFrame}{layoutProblem}{layoutProblem}
         \begin{ProbBox}
             }
             {
@@ -110,6 +117,39 @@
     \end{defaultColourFrame}
 }
 \renewenvironment{Lemma}{\begin{lemma}}{\end{lemma}}
+
+\newenvironment{pros}
+{
+    \begin{defaultColourFrame}{layoutPros}{layoutPros}
+        \begin{ProsBox}
+            }
+            {
+        \end{ProsBox}
+    \end{defaultColourFrame}
+}
+\newenvironment{Pros}{\begin{pros}}{\end{pros}}
+
+\newenvironment{cons}
+{
+    \begin{defaultColourFrame}{layoutCons}{layoutCons}
+        \begin{ConsBox}
+            }
+            {
+        \end{ConsBox}
+    \end{defaultColourFrame}
+}
+\newenvironment{Cons}{\begin{cons}}{\end{cons}}
+
+\newenvironment{rqs}
+{
+    \begin{defaultColourFrame}{layoutRQs}{layoutRQs}
+        \begin{RQsBox}
+            }
+            {
+        \end{RQsBox}
+    \end{defaultColourFrame}
+}
+\newenvironment{RQs}{\begin{rqs}}{\end{rqs}}
 
 \makeatletter
 \renewenvironment{proof}
@@ -167,11 +207,4 @@
         \leavevmode\unskip\penalty9999 \hbox{}\nobreak\hfill
         \quad\hbox{$\square$}%
     \fi
-}
-
-\newenvironment{titledesc}[1]{%
-    \paragraph{#1}
-    \begin{compactdesc}%
-}{%
-    \end{compactdesc}%
 }

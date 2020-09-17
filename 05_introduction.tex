@@ -26,35 +26,13 @@ Given a set of observational pairs $(\mat{x}, \mat{y})$, we want to learn about 
     f(\mat{x}).
 \end{align}
 The goal of learning is often to either gain new knowledge about nature by describing the data or to be able to predict outputs $\mat{y}_\ast$ for previously unseen inputs $\mat{x}_\ast$.
-
-\begin{itemize}
-    \item There are two approaches to formalizing such a functional dependency: Data-driven and model-driven.
-    \item They are associated with machine learning for data and statistics for models.
-    \item Both have pros and cons.
-\end{itemize}
-
-In many machine learning problems, the task is to derive a model for observations of some process in nature that is not fully understood.
-While traditional statistics favor the white-box modeling culture that focuses on explaining observational data using causal theoretic models, machine learning is more closely associated with the black-box culture~\parencite{breiman_statistical_2001,shmueli_explain_2010}.
-When formulating a black-box model, we accept that we cannot model nature directly and instead focus on the functional dependency between inputs and outputs.
-Using general function approximators like neural networks or Gaussian processes, any smooth dependency can be modeled given enough observations.
-With growing computational power and the availability of data sets, black-box approaches have led to impressive advancements in domains that are hard to formalize.
-Successes have been seen in a wide range of digital tasks such as speech recognition~\parencite{hochreiter_long_1997,chorowski_attention-based_2015,bahdanau_neural_2014,chorowski_attention-based_2015}, computer vision~\parencite{russakovsky_imagenet_2015,lecun_backpropagation_1989}, non-cooperative games~\parencite{berner_dota_2019,silver_mastering_2016}, or machine translation~\parencite{johnson_googles_2017}.
-The abundance of data in these domains shifts the focus away from traditional statistical models to approaches that are highly adaptabe and scalable.
+While traditional statistics favor the white-box modeling culture that focuses on explaining observational data using causal theoretic models, machine learning and specifically deep learning is more closely associated with the black-box culture, which focuses on prediction instead~\parencite{breiman_statistical_2001,shmueli_explain_2010}.
+The impressive successes of both cultures have been achieved in different application domains however, which is due to their respective pros and cons.
 
 
 \section{Black-box models in deep learning}
-\begin{itemize}
-    \item Highly scalable models can fit to large amounts of data
-    \item Neural networks are at the core of deep learning and inherently non-interpretable.
-    \item You can get more principled with BNNs, but you can never make them white-box.
-\end{itemize}
-
-The highly adaptable and scalable models that lead to success in digital domains are not well-suited to be deployed in safety-critical environments.
-Large neural networks generally suffer from low interpretability~\parencite{rudin_stop_2019}, the need for large amounts of data and their inability to quantify uncertainties~\parencite{goodfellow_deep_2016}.
-In this work, we explore how to formulate machine learning models that can satisfy the requirements of physical environments.
-
-The black-box culture is more closely associated with machine learning~\parencite{mitchell_machine_1997,goodfellow_deep_2016}.
 When formulating a black-box model, we accept that we cannot model nature directly and instead focus on the functional dependency $f$ between inputs and outputs.
+The approach is to find an algorithm $f_{\mat{w}}$ with parameters $\mat{w}$ that approximates the true dependency $f$ in
 \begin{align}
     \begin{tikzpicture}[align graphical model]
         \coordinate (baseline) at (0, 1);
@@ -77,40 +55,45 @@ When formulating a black-box model, we accept that we cannot model nature direct
      & =
     f_{\mat{w}}(\mat{x}).
 \end{align}
-Since one can show that many algorithms including neural networks are general approximators for smooth functions~\parencite{rasmussen_gaussian_2006}, given enough observations, they are expected to be able to approximate $f$ as well.
-Since a sufficiently powerful approximator can explain any observation set, a black-box model can no longer be evaluated by how well it explains the training data.
-Many functional dependencies can be used to generate a finite set of observations and since a black-box model does not have a scientific basis, it is hard to judge if the true process has been uncovered.
-Instead, the performance of a black-box model is typically measured in terms of its ability to predict a test set of previously unseen data.
-With growing computational power and the availability of large data sets, black-box approaches have led to impressive advancements in domains that are hard to formalize such as image recognition tasks~\parencite{lecun_backpropagation_1989} or playing the game of Go~\parencite{silver_mastering_2016}.
-Since black-box models do not claim to uncover or represent knowledge about the true process in nature, their internal structure is generally not human-interpretable and their behavior is not well-understood.
-
-Many successful approaches in machine learning can be interpreted as structured models.
-A well-known example is the convolutional neural network (CNN) used in computer vision tasks~\parencite{lecun_backpropagation_1989}.
-Instead of, for example, using a standard multi-layer perceptron with sigmoid activation functions, the structure of a CNN is inspired by high-level knowledge about vision tasks.
-Recognizing the importance of edge-detection and scale-invariance, a CNN consists of a stack of layers that implement a potentially large set of convolution kernels.
-In contrast to earlier (more white-box) approaches to vision such as SIFT-features~\parencite{lowe_object_1999}, the parameters of the convolutions are learned from the data, thereby introducing a black-box component.
-Another application of structured models can be found in natural language processing.
-Formulating a white-box model for human language is prohibitively difficult.
-However, insights from formal language theory~\parencite{chomsky_aspects_2014} can be used to formulate abstract expectations about the interaction of words in any language.
-These insights lead to concepts such as the long short-term memory (LSTM)~\parencite{hochreiter_long_1997} or the attention mechanism~\parencite{bahdanau_neural_2014,chorowski_attention-based_2015}.
+Using general function approximators like neural networks with a typically large set of weights $\mat{w}$, any smooth dependency can be modeled given enough observations.
+With growing computational power and the availability of data sets, black-box approaches have led to impressive advancements in domains that are hard to formalize.
+Successes have been seen in a wide range of digital tasks such as speech recognition~\parencite{hochreiter_long_1997,chorowski_attention-based_2015,bahdanau_neural_2014,chorowski_attention-based_2015}, computer vision~\parencite{russakovsky_imagenet_2015,lecun_backpropagation_1989}, non-cooperative games~\parencite{berner_dota_2019,silver_mastering_2016}, or machine translation~\parencite{johnson_googles_2017}.
+The abundance of data in these domains shifts the focus away from traditional statistical models to approaches that are highly adaptabe and scalable.
+Black-box models do not claim to uncover or represent knowledge about the true process in nature but capture correlations between inputs and outputs instead.
+Their advantages and disadvantages can be summarized as follows.
 
 \begin{Pros}[Deep learning]
     \begin{compactdesc}
-        \item[Universal approximation] asd
-        \item[Strong scalability] asd
-        \item[Potential for automation] asd
+        \item[Universal approximation]
+        Black-box models do not require a theoretic understanding of the problem which has to be formalized by experts.
+        Neural networks can potentially find useful structure in any data set, even if the problem domain is not well-understood.
+        \item[Simple portability]
+        Black-box model formulations can be applied to many different applications due to their assumed independence of the concrete problem.
+        \item[Strong scalability]
+        As long as universality is preserved, the internal structure of black-box models can be chosen to optimally leverage computational power.
+        Models in deep learning can have billions of parameters and have been trained on data sets of high dimensionality and with billions of observations.
     \end{compactdesc}
 \end{Pros}
 
 \begin{Cons}[Deep learning]
     \begin{compactdesc}
-        \item[Strong data bias] asd
-        \item[Weak interpretability] asd
-        \item[Complex parametrization] asd
-        \item[High data requirements] asd
-        \item[Unsafe generalization] asd
+        \item[Complex parametrization]
+        Many models in deep learning depend on specific architecture-choices and carefully tuned hyper-parameters to produce desired results, drawing their robustness into question.
+        \item[Data bias]
+        Black-box approaches can only uncover structure that is present in the training data.
+        If observations of critical parts of a system are scarce, the black-box approach cannot learn the correct functional dependency.
+        Black-box approaches therefore typically require a large amount of training data.
+        \item[Low interpretability]
+        Black-box approaches make no guarantees about how they generalize to unobserved parts of the system since they do not claim to represent the true process in nature.
+        Since the internal structure of neural networks is inherently hard to interpret~\parencite{rudin_stop_2019}, it is hard for experts to tell if a model in deep learning has learned a desired functional dependency.
+        \item[Unclear generalization]
+        A black-box model can only be evaluated in terms of its ability to predict unseen data.
+        In parts of a system where no observational data is available, it is hard to make statements about when or how a model from deep learning generalizes.
     \end{compactdesc}
 \end{Cons}
+
+The highly adaptable and scalable models from deep learning excel at finding structure in large and complex data sets.
+However, the black-box approach struggles in environments where the internal structure of the model or the generalization behavior come into focus.
 
 
 \section{White-box models in Bayesian statistics}
@@ -119,6 +102,7 @@ These insights lead to concepts such as the long short-term memory (LSTM)~\paren
     \item Inference comes down to a small number of parameters
     \item Why not other approaches like algorithms or rule-based systems?
     \item You can get more general with Gaussian processes, but at some point they are just black-box.
+    \item Or you can use BNNs, but while they might quantify uncertainties, they are always black-box.
 \end{itemize}
 
 \begin{align}
@@ -146,10 +130,10 @@ These insights lead to concepts such as the long short-term memory (LSTM)~\paren
         \end{scope}
     \end{tikzpicture}
      &   &
-     \Prob*{\mat{y} \given \mat{x}}
+    \Prob*{\mat{y} \given \mat{x}}
      & =
     \begin{aligned}
-        & \int
+         & \int
         \Prob*{
             \mat{y},
             \whiteboxblob{latent},
@@ -186,7 +170,7 @@ Laplace used Bayesian inference to formalize scientific reasoning under uncertai
 Based on white-box models grounded in scientific understanding, this reasoning, for example, led to improved estimates of the masses of Jupiter and Saturn and the discovery of the uneven proportion of male and female human births~\parencite{pulskamp_laplace_2020,laplace_theorie_1820}.
 Modern science has moved beyond phenomena that can be explained by the deterministic world-view held by Newton and Laplace towards subjects where randomness plays a major role.
 Large-scale experiments in fields such as particle physics~\parencite{khachatryan_observation_2015} or astronomical observations~\parencite{collaboration_first_2019,the_ligo_scientific_collaboration_observation_2016} uncover scientific knowledge hidden in a large number of random events.
-However, These analyses are still based on white-box modelling approaches to ensure that results conform to the requirements of scientific rigor.
+However, These analyses are still based on white-box modeling approaches to ensure that results conform to the requirements of scientific rigor.
 
 
 \begin{Pros}[Bayesian statistics]
@@ -198,7 +182,7 @@ However, These analyses are still based on white-box modelling approaches to ens
 \end{Pros}
 \begin{Cons}[Bayesian statistics]
     \begin{compactdesc}
-        \item[Strong model bias] asd
+        \item[Model bias] asd
         \item[Subjective model-selection] asd
         \item[Weak scalability] asd
     \end{compactdesc}
@@ -297,7 +281,7 @@ We study how to use structured models to reproduce expert knowledge and factoriz
 We explore how rich internal structure helps models to generalize to unseen situations.
 
 \paragraph{RQ3: How can we improve model selection in situations where internal model structure and generalization behavior come into focus?}
-The black-box and white-box modelling cultures follow different approaches to evaluating models.
+The black-box and white-box modeling cultures follow different approaches to evaluating models.
 While a white-box model is evaluated through a combination of goodness-of-fit measures on observations used during inference and subjective measures based on interpretability, black-box approaches typically focus on performance measures on test-sets.
 As evaluation data in critical parts of the system is often scarce in physical environments, performance measures such as the generalization error are not enough to identify a desirable structured model.
 To formalize the subjectiveness in the description of desirable models, we will explore how downstream tasks can be taken into account for model selection.

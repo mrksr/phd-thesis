@@ -147,13 +147,13 @@ Probabilistic models consider the likelihood $\Prob*{\mat{y} \given \mat{x}}$ ba
 Bayesian inference offers a framework for formalizing this knowledge in prior assumptions and combining them with data.
 Using Bayes' rule, a distribution of plausible models is reweighed by their ability to generate data to yield a posterior distribution
 $
-\Prob*{
-    \whiteboxblob{latent},
-    \whiteboxblob{hyperparameter},
-    \whiteboxblob{variational},
-    \whiteboxblob{}
-    \given \mat{x}, \mat{y}
-}
+    \Prob*{
+        \whiteboxblob{latent},
+        \whiteboxblob{hyperparameter},
+        \whiteboxblob{variational},
+        \whiteboxblob{}
+        \given \mat{x}, \mat{y}
+    }
 $
 over plausible explanations.
 To make predictions about novel observations $\Prob*{\mat{y}_\ast \given \mat{x}_\ast}$, all plausible models are taken into account, allowing us to both quantify confidence in predictions and take more unlikely but relevant scenarios into consideration.
@@ -189,9 +189,29 @@ However, as processes get more complex and the amount of available data grows, f
 
 
 \section{Structured models with Gaussian processes}
+White-box and black-box modeling approaches serve different purposes in data analysis.
+White-box models are used in applications where hypotheses should be tested when strong theoretical background is available.
+Black-box models are successful when correlations and associations in large amounts of data should be used to make predictions about systems where the consequences of mistakes are mild.
+However, for many safety-critical applications of machine learning in the physical world, the situation is different.
+Complete theoretic models are not available to solve a learning task and new insights need to be inferred from potentially large amounts of data.
+At the same time, models need to make physically plausible predictions and are required to be interpretable for domain experts.
+
+Take wind power production as an example:
+To optimize the efficiency of a wind-turbine, the speed and pitch have to be controlled according to the local wind conditions.
+In a wind-farm, turbines are typically equipped with sensors for wind speed and direction.
+The goal is to use these sensor data to produce accurate estimates and forecasts of the wind conditions at every turbine in the farm.
+For the ideal case of a homogeneous and very slowly changing wind field, wind conditions can be estimated using the propagation times computed from geometry, wind speed and direction.
+In the real world, however, wind fields are not homogeneous, exhibit global and local turbulence, and interfere with the turbines and the terrain inside and outside the farm.
+This makes it extremely difficult to construct accurate white-box models of wind propagation in a farm.
+At the same time, data-driven black-box approaches struggle due to identifiability issues introduced by the noise of the unpredictable turbulence.
+While we cannot formulate analytical models, domain experts do have an intuitive understanding of the underlying physics of wind propagation.
+A successful model needs to combine the white-box and black-box approaches:
+It needs to reproduce expectations like slowly changing prevailing wind conditions or gusts that travel through the system while still being able to infer new knowledge about specific turbine behavior or the influence of terrain from data.
+By checking if these these expectations are met, domain experts can build trust in the model's predictions for novel situations.
+
 \begin{table}[t]
     \caption[Research questions]{
-        \label{tab:introduction:questions}
+        \label{tab:introduction:research_questions}
         The model properties considered as research questions in this thesis.
     }
     \centering
@@ -237,70 +257,42 @@ However, as processes get more complex and the amount of available data grows, f
         ] {};
     \end{tikzpicture}
 \end{table}
-However, bridging the gap to applications in critical systems in the physical world has proved challenging.
-Problem domains like robotics or industrial control introduce a new set of requirements.
-In industrial control, machine learning is used to find more efficient or safer control strategies not obvious to the engineers designing a machine~\parencite{hein_benchmark_2017}.
-In such scenarios, relevant data are often scarce.
-The most valuable data, such as when a machine will fail or how it will behave in new situations, is never produced.
-As applications become more safety-relevant, gathering data through exploration can be problematic due to the adverse consequences of failure.
-If they are to operate in safety-critical areas, interact with people, or carry responsibility, machine learning systems must be robust, trustworthy, and assessable.
-Besides optimizing for good average-case performance, a responsible system needs to reason about plausible worst-cases to be able to avoid them.
-To ensure trust, ML-systems often need to be verified by domain experts before deployment, emphasizing a need for interpretability.
-Models are required to incorporate and reproduce expert knowledge and make consistent predictions, while at the same time yielding new insights from data.
+In this work, we study how to formulate structured Bayesian models that reproduce knowledge, are understandable for domain-experts, and are still able to gain new insights from data.
+\Cref{tab:introduction:research_questions} shows that structured models need to combine the advantages of the general function approximators from deep learning and the strong and interpretable structure from Bayesian statistics.
+To that end, we embed Gaussian processes (GPs) in hierarchical probabilistic models.
+GPs are non-parametric distributions over functions that allow us to encode Bayesian assumptions in an explicit manner to achieve interpretable results.
+The research questions we consider in this thesis are as follows.
 
-In this work, we will study what we call structured models.
-Structured models exist between these extremes as they are designed based on our scientific understanding of the underlying problem.
-At the same time, we accept that there are problem-components we do not or cannot understand and use general function approximators to model these components.
-The goal of the structured modeling approach is to be more data-efficient compared to black-box models because there is less knowledge that needs to be inferred from data.
-At the same time, imposing structure allows us to characterize desired solutions and formulate what we want to learn from data.
-As a result, structured models can be formulated to gain insights about poorly understood system components from data.
-
-This dissertation explores how advances in black-box machine learning can be integrated in Bayesian reasoning to futher relax the mechanistic world-view and allow us to tackle problems where white-box models are not available.
-For applications of data-centric approaches in the physical world, expert knowledge is often based on an intuitive understanding of the underlying physics leading to coarse expectations about system-behavior on different layers of abstraction.
-However, fully white-box models are often too complex to formulate or computationally intractable.
-We will discuss how abstract knowledge can be exploited to formulate structured Bayesian models that reproduce expectations but are still able to learn from data and explore two approaches to adding such structure.
-First, white-box mathematical structure can be relaxed to a structured hierarchical system to learn new insights from data.
-And second, structure motivated by expert-understanding of an underlying physical process can be used to formulate semantic constraints to a data-centric black-box approach.
-
-\begin{RQs}
-    \begin{compactdesc}
-        \item[RQ1:] How can we relax the model-bias of white-box models and efficiently learn from data?
-        \item[RQ2:] How can we reduce the data-bias of black-box models and reliably reproduce expert expectations?
-        \item[RQ3:] How can we formalize model selection in situations where internal model structure and generalization behavior come into focus?
-    \end{compactdesc}
-\end{RQs}
-
-\paragraph{RQ1: How can we relax the model-bias of white-box models and efficiently learn from data?}
-We explore how to embed general function approximators in Bayesian probabilistic models to enforce structure and learn from data.
-We discuss how to formulate inference schemes based on composite and hierarchical Gaussian process models that yield informative uncertainties.
+\paragraph{RQ1: How can we reduce the model-bias of white-box models and efficiently learn from data?}
+Starting from a white-box model, we explore how to relax strong theoretical structure by embedding general function approximators in a hierarchy.
+While conserving interpretability and informative uncertainty quantification, we use GPs learn about problem-components we cannot formalize.
+We discuss how to formulate inference schemes that scale to large data sets.
 
 \paragraph{RQ2: How can we reduce the data-bias of black-box models and reliably reproduce expert expectations?}
-We study how to use structured models to reproduce expert knowledge and factorize uncertainties to achieve interpretability.
-We explore how rich internal structure helps models to generalize to unseen situations.
+We study how to add structure to black-box deep GP models to reproduce expert knowledge and factorize uncertainties.
+Additional structure allows us to formulate problem-driven constraints for desirable solutions that yield physically plausible results.
+We explore how rich internal structure helps models to generalize to novel situations in an interpretable manner.
 
 \paragraph{RQ3: How can we formalize model selection in situations where internal model structure and generalization behavior come into focus?}
-The black-box and white-box modeling cultures follow different approaches to evaluating models.
-While a white-box model is evaluated through a combination of goodness-of-fit measures on observations used during inference and subjective measures based on interpretability, black-box approaches typically focus on performance measures on test-sets.
-As evaluation data in critical parts of the system is often scarce in physical environments, performance measures such as the generalization error are not enough to identify a desirable structured model.
-To formalize the subjectiveness in the description of desirable models, we will explore how downstream tasks can be taken into account for model selection.
-
+As evaluation data in critical parts of the system is often scarce in physical environments, performance measures such as the generalization error are not enough to identify desirable structured models.
+At the same time, the subjective model-selection of white-box approaches is problematic in domains that are not well-understood.
+To formalize the description of desirable structured models, we explore how downstream tasks can be taken into account for model selection.
 
 \section{Contributions}
 This work presents novel Bayesian structured models inspired by industrial applications.
-Our main contributions are as follows:
-\begin{compactitem}
-    \item We formulate fully Bayesian interpretations of the data association problem and nonlinear timeseries alignment.
-    \item We formulate efficient and scalable inference schemes for these models by extending the variational inference schemes for deep Gaussian processes to handle multi-output GPs and discrete structure.
-    \item We present a Bayesian view on model-based reinforcement learning and formulate an efficient probabilistic policy search algorithm for structured dynamics models.
-    \item We discuss the limitations of current variational inference schemes for hierarchical Gaussian process models.
-    \item We argue why surrogate models with suboptimal marginal likelihoods can perform well in Bayesian optimization problems.
-\end{compactitem}
-
 The main contributions presented in this thesis appeared in a number of peer-reviewed publications and patents we outline below.
-In \cref{contrib:data_association,contrib:patent_depeweg,contrib:patent_geipel}, we formulate a Bayesian interpretation of the data association problem and discuss an application of this model to the prediction of the combustion dynamics of a gas-turbine, where the structured model allows us to distinguish between different dynamical regimes.
-In~\cref{contrib:windpower,contrib:patent_egedal,contrib:patent_kaiser}, we formulate a hierarchical Bayesian model for a nonlinear time-series alignment problem, show that this model is capable of representing the complex interactions between turbines in a wind farm and discuss how this model can be used to derive more efficient controllers for wind-turbines in.
-In \cref{contrib:interpretable_rl,contrib:multi_modal_rl}, we apply our data association model to a reinforcement learning task and show how a semantic decomposition of the dynamics reduces the data requirements and produces interpretable solutions.
-In \cref{contrib:surrogates}, we formulate surrogate models for Bayesian optimization problems that focus on the informative structure of the objective functions by sacrificing local accuracy and in \cref{contrib:composition}, we present an argument for why inference schemes based on factorizations between layers cannot represent heterogeneous posteriors.
+Our main contributions to the research questions in~\cref{tab:introduction:research_questions} are as follows.
+
+\begin{compactdesc}
+    \item[RQ1]
+    The main contributions presented in this thesis appeared in a number of peer-reviewed publications and patents we outline below.
+    In \cref{contrib:data_association,contrib:patent_depeweg,contrib:patent_geipel}, we formulate a Bayesian interpretation of the data association problem and discuss an application of this model to the prediction of the combustion dynamics of a gas-turbine, where the structured model allows us to distinguish between different dynamical regimes.
+    \item[RQ2]
+    In~\cref{contrib:windpower,contrib:patent_egedal,contrib:patent_kaiser}, we formulate a hierarchical Bayesian model for a nonlinear time-series alignment problem, show that this model is capable of representing the complex interactions between turbines in a wind farm and discuss how this model can be used to derive more efficient controllers for wind-turbines in.
+    \item[RQ3]
+    In \cref{contrib:interpretable_rl,contrib:multi_modal_rl}, we apply our data association model to a reinforcement learning task and show how a semantic decomposition of the dynamics reduces the data requirements and produces interpretable solutions.
+    In \cref{contrib:surrogates}, we formulate surrogate models for Bayesian optimization problems that focus on the informative structure of the objective functions by sacrificing local accuracy and in \cref{contrib:composition}, we present an argument for why inference schemes based on factorizations between layers cannot represent heterogeneous posteriors.
+\end{compactdesc}
 
 
 \subsubsection{Own publications}
@@ -329,18 +321,18 @@ In \cref{toc:gp}, we provide a short introduction to Bayesian machine learning a
 We discuss the connection between statistical learning theory and Bayesian inference and their application to hierarchical models.
 After introducing GPs, we discuss variational approaches to sparse GPs, their extension to hierarchical GP models, and efficient inference schemes.
 
-In \cref{toc:data_association}, we explore how to formulate structured hierarchical models using the data association problem as an example.
+In \cref{toc:data_association}, we consider the first research question and explore how to formulate structured hierarchical models using the data association problem as an example.
 We separate the data association problem into hierarchical components and derive an efficient joint inference scheme, resulting in a fully Bayesian model.
 We show that this model is able to factorize multi-modal data into independent processes, providing explicit models for both the processes and assignment probabilities.
 Comparisons with previous models show the additional qualitative model capabilities of the structured approach and competitive black-box performance.
 However, experiments also show that standard measures are not enough to identify desirable models.
 
-In \cref{toc:alignment}, we formulate a structured Bayesian model that reproduces expert knowledge about wind propagation in a wind-farm.
+In \cref{toc:alignment}, we consider the second research question and formulate a structured Bayesian model that reproduces expert knowledge about wind propagation in a wind-farm.
 We interpret the problem of modeling the power production of multiple wind-turbines as a nonlinear alignment problem and derive an efficient inference scheme.
 Based on expert knowledge about the underlying latent and turbulent wind field, we can derive a structured model that enforces a physically plausible dependency structure between multiple time-series.
 We discuss how these constraints help to solve an otherwise highly ambiguous learning problem and show that the imposed structure leads to a rich internal model-structure that can be interpreted by experts.
 
-In \cref{toc:interpretable_rl}, we consider how to formalize the subjectiveness introduced via expert knowledge and model ambiguities to evalute structured models.
+In \cref{toc:interpretable_rl}, we consider the third research question and discuss how to formalize the subjectiveness introduced via expert knowledge and model ambiguities to evalute structured models.
 We include the task a model will be used to solve into model selection, which allows us to distinguish between qualitatively different models showing similar performance metrics.
 We revisit the data association problem and embed it into a reinforcement learning problem, where identifying the correct underlying dynamics, and therefore a desirable model, is critical to finding a successful policy.
 We show that semantic hierarchical structure increases data efficiency and allows domain experts to influence agent behavior through detailed insights into the dynamics of a system.

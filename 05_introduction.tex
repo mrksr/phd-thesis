@@ -31,7 +31,7 @@ The impressive successes of both cultures have been achieved in different applic
 
 
 \section{Black-box models in deep learning}
-When formulating a black-box model, we accept that we cannot model nature directly and instead focus on the functional dependency $f$ between inputs and outputs.
+When formulating a black-box model, we accept that we cannot model nature directly and instead focus on the functional dependency $f$.
 The approach is to find an algorithm $f_{\mat{w}}$ with parameters $\mat{w}$ that approximates the true dependency $f$ in
 \begin{align}
     \begin{tikzpicture}[align graphical model]
@@ -65,30 +65,27 @@ Their advantages and disadvantages can be summarized as follows.
 \begin{Pros}[Deep learning]
     \begin{compactdesc}
         \item[Universal approximation]
-        Black-box models do not require a theoretic understanding of the problem which has to be formalized by experts.
-        Neural networks can potentially find useful structure in any data set, even if the problem domain is not well-understood.
+        Neural networks can potentially find useful structure in any data set, even if the problem domain is not well-understood or cannot be formalized by experts.
         \item[Simple portability]
         Black-box model formulations can be applied to many different applications due to their assumed independence of the concrete problem.
         \item[Strong scalability]
-        As long as universality is preserved, the internal structure of black-box models can be chosen to optimally leverage computational power.
-        Models in deep learning can have billions of parameters and have been trained on data sets of high dimensionality and with billions of observations.
+        The internal structure of black-box models can often be chosen to optimally leverage computational power.
+        Models in deep learning can cope with billions of parameters and observations.
     \end{compactdesc}
 \end{Pros}
-
 \begin{Cons}[Deep learning]
     \begin{compactdesc}
-        \item[Complex parametrization]
-        Many models in deep learning depend on specific architecture-choices and carefully tuned hyper-parameters to produce desired results, drawing their robustness into question.
+        % \item[Complex parametrization]
+        % Many models in deep learning depend on specific architecture-choices and carefully tuned hyper-parameters to produce desired results, drawing their robustness into question.
         \item[Data bias]
         Black-box approaches can only uncover structure that is present in the training data.
-        If observations of critical parts of a system are scarce, the black-box approach cannot learn the correct functional dependency.
-        Black-box approaches therefore typically require a large amount of training data.
-        \item[Low interpretability]
-        Black-box approaches make no guarantees about how they generalize to unobserved parts of the system since they do not claim to represent the true process in nature.
-        Since the internal structure of neural networks is inherently hard to interpret~\parencite{rudin_stop_2019}, it is hard for experts to tell if a model in deep learning has learned a desired functional dependency.
+        They therefore typically require a large amount of training data in all parts of the system.
+        \item[Weak interpretability]
+        Black-box models are not designed to offer causal explanations of observations.
+        As a result, the complex internal structure of models in deep learning is generally not understandable to human experts~\parencite{rudin_stop_2019}.
         \item[Unclear generalization]
         A black-box model can only be evaluated in terms of its ability to predict unseen data.
-        In parts of a system where no observational data is available, it is hard to make statements about when or how a model from deep learning generalizes.
+        In parts of a system where no data is available, it is hard to make statements about when or how a model generalizes.
     \end{compactdesc}
 \end{Cons}
 
@@ -97,14 +94,12 @@ However, the black-box approach struggles in environments where the internal str
 
 
 \section{White-box models in Bayesian statistics}
-\begin{itemize}
-    \item White-box models are founded on a theoretical understanding of nature
-    \item Inference comes down to a small number of parameters
-    \item Why not other approaches like algorithms or rule-based systems?
-    \item You can get more general with Gaussian processes, but at some point they are just black-box.
-    \item Or you can use BNNs, but while they might quantify uncertainties, they are always black-box.
-\end{itemize}
-
+White-box models are based on strong and human-interpretable internal structure.
+The focus is on describing and understanding observational data and thus the true generative process in nature.
+In modern science, white-box models are used in large-scale experiments such as in particle physics~\parencite{khachatryan_observation_2015} or astronomy~\parencite{collaboration_first_2019,the_ligo_scientific_collaboration_observation_2016}.
+In such experiments, noisy and limited data play a major role.
+To cope with imperfect knowledge, causal theoretic models are extended with statistical theory to formulate probabilistic models.
+Probabilistic models consider the likelihood $\Prob*{\mat{y} \given \mat{x}}$ based on knowledge about the model components $\whiteboxblob{latent}, \whiteboxblob{hyperparameter}, \dots$ in
 \begin{align}
     \begin{tikzpicture}[align graphical model]
         \coordinate (baseline) at (0, 1);
@@ -145,56 +140,59 @@ However, the black-box approach struggles in environments where the internal str
         \diff\whiteboxblob{latent}
         \diff\whiteboxblob{hyperparameter}
         \diff\whiteboxblob{variational}
-        \diff\whiteboxblob{}
+        \diff\whiteboxblob{}.
     \end{aligned}
 \end{align}
 
-Traditional statistics favor white-box models which place a focus on describing and understanding observational data~\parencite{andrew_gelman_bayesian_2013,casella_statistical_2002,cox_planning_1958}.
-In this worldview, data analysis is based on a stochastic model of nature that can explain how the data has been generated in great detail.
-Such a model typically has a small number of unknown parameters whose values are estimated from the data.
-Based on the scientific understanding of nature, the process of interest is factorized into smaller components that are modeled separately and that interact to jointly explain the data.
-Crucially, all components of a white-box model are designed by humans and are white-box as well to ensure an interpretable result.
-Since white-box models represent a scientific understanding of nature, a model can be evaluated by how well it can describe the available observations:
-A simple model with few parameters which is able to explain observations is expected to approximate the true process in nature reasonably well, thereby implementing Occam's razor~\parencite{thorburn_occams_1915}.
-White-box models have been the driving force behind many advances in economics, medicine, and the natural sciences and allowed researchers to find and understand the structure in complex and heterogenous data~\parencite{efron_modern_2005,giulio_d._agostini_bayesian_2003}.
-However, as processes get more complex and the amount of available data grows, formulating white-box models becomes a very difficult task~\parencite{sutton_bitter_2019}.
-
-A key technique that allows us to cope with the requirements of critical systems in the physical world is probabilistic modeling.
-Bayesian inference offers a framework to formalize expert knowledge in prior assumptions and combine them with potentially uncertain data to represent knowledge about a system.
-Using Bayes' rule, a distribution of plausible models is reweighed by their ability to explain observed data to yield a posterior distribution over plausible explanations.
-To make predictions, all plausible models are taken into account, allowing us to both quantify confidence in predictions and take more unlikely but relevant scenarios into consideration.
-
-Bayesian reasoning was pioneered by Pierre-Simon Laplace in the eighteenth century.
-Laplace extended the prevalent mechanistic world-view held by scholars like Newton with the idea that knowledge can be imperfect or incomplete.
-Laplace used Bayesian inference to formalize scientific reasoning under uncertainty and to enable the integration of multiple sources of data of varying quality.
-Based on white-box models grounded in scientific understanding, this reasoning, for example, led to improved estimates of the masses of Jupiter and Saturn and the discovery of the uneven proportion of male and female human births~\parencite{pulskamp_laplace_2020,laplace_theorie_1820}.
-Modern science has moved beyond phenomena that can be explained by the deterministic world-view held by Newton and Laplace towards subjects where randomness plays a major role.
-Large-scale experiments in fields such as particle physics~\parencite{khachatryan_observation_2015} or astronomical observations~\parencite{collaboration_first_2019,the_ligo_scientific_collaboration_observation_2016} uncover scientific knowledge hidden in a large number of random events.
-However, These analyses are still based on white-box modeling approaches to ensure that results conform to the requirements of scientific rigor.
-
+Bayesian inference offers a framework for formalizing this knowledge in prior assumptions and combining them with data.
+Using Bayes' rule, a distribution of plausible models is reweighed by their ability to generate data to yield a posterior distribution
+$
+\Prob*{
+    \whiteboxblob{latent},
+    \whiteboxblob{hyperparameter},
+    \whiteboxblob{variational},
+    \whiteboxblob{}
+    \given \mat{x}, \mat{y}
+}
+$
+over plausible explanations.
+To make predictions about novel observations $\Prob*{\mat{y}_\ast \given \mat{x}_\ast}$, all plausible models are taken into account, allowing us to both quantify confidence in predictions and take more unlikely but relevant scenarios into consideration.
+Scientific white-box models are driven by strong theory that provides causal explanations.
+Observational data is used to answer specific questions about a small number of hypotheses, leading to the following pros and cons.
 
 \begin{Pros}[Bayesian statistics]
     \begin{compactdesc}
-        \item[Trustworthy predictions] asd
-        \item[Strong interpretability] asd
-        \item[Safe generalization] asd
+        \item[Strong interpretability]
+        Since a white-box model is constructed from human-interpretable components and causal theory, model behavior and predictions are understandable to experts.
+        \item[Trustworthy predictions]
+        Bayesian probabilistic models quantify their confidence about predictions in a principled manner based on explicit assumptions.
+        \item[Safe generalization]
+        Generalization of white-box models is driven by human-interpretable causal theory that can be evaluated and verified by experts.
     \end{compactdesc}
 \end{Pros}
 \begin{Cons}[Bayesian statistics]
     \begin{compactdesc}
-        \item[Model bias] asd
-        \item[Subjective model-selection] asd
-        \item[Weak scalability] asd
+        \item[Model bias]
+        All insights from white-box models are with respect to strong causal theoretic modeling assumptions.
+        Wrong or insufficient assumption cannot be compensated through data, which limits the applicability of white-box models in problem domains that are hard to formalize.
+        \item[Subjective model-selection]
+        White-box models aim to model causal relationships in nature.
+        It is a hard problem to select the correct model from a set of plausible explanations~\parencite{thorburn_occams_1915}.
+        \item[Weak scalability]
+        The theory behind white-box models is often problem specific and hard to transfer to other applications.
+        Similarly, complex theory often requires specialized learning algorithms that do not scale to large amounts of data.
     \end{compactdesc}
 \end{Cons}
 
+White-box models have been the driving force behind many advances in economics, medicine, and the natural sciences and allowed researchers to find and understand the structure in complex and heterogenous data~\parencite{efron_modern_2005,giulio_d._agostini_bayesian_2003}.
+However, as processes get more complex and the amount of available data grows, formulating white-box models becomes a very difficult task~\parencite{sutton_bitter_2019}.
+
 
 \section{Structured models with Gaussian processes}
-
 \begin{table}[t]
     \caption[Research questions]{
         \label{tab:introduction:questions}
-        Research questions
+        The model properties considered as research questions in this thesis.
     }
     \centering
     \newcolumntype{Y}{>{\centering\arraybackslash}X}
@@ -268,7 +266,7 @@ And second, structure motivated by expert-understanding of an underlying physica
     \begin{compactdesc}
         \item[RQ1:] How can we relax the model-bias of white-box models and efficiently learn from data?
         \item[RQ2:] How can we reduce the data-bias of black-box models and reliably reproduce expert expectations?
-        \item[RQ3:] How can we improve model selection in situations where internal model structure and generalization behavior come into focus?
+        \item[RQ3:] How can we formalize model selection in situations where internal model structure and generalization behavior come into focus?
     \end{compactdesc}
 \end{RQs}
 
@@ -280,7 +278,7 @@ We discuss how to formulate inference schemes based on composite and hierarchica
 We study how to use structured models to reproduce expert knowledge and factorize uncertainties to achieve interpretability.
 We explore how rich internal structure helps models to generalize to unseen situations.
 
-\paragraph{RQ3: How can we improve model selection in situations where internal model structure and generalization behavior come into focus?}
+\paragraph{RQ3: How can we formalize model selection in situations where internal model structure and generalization behavior come into focus?}
 The black-box and white-box modeling cultures follow different approaches to evaluating models.
 While a white-box model is evaluated through a combination of goodness-of-fit measures on observations used during inference and subjective measures based on interpretability, black-box approaches typically focus on performance measures on test-sets.
 As evaluation data in critical parts of the system is often scarce in physical environments, performance measures such as the generalization error are not enough to identify a desirable structured model.

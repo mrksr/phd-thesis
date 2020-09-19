@@ -109,7 +109,7 @@ Probabilistic models consider the likelihood $\Prob*{\mat{y} \given \mat{x}}$ ba
         \node[white box component, latent] (a) at (-0.75, 1.25) {};
         \node[white box component, hyperparameter] (b) at (0.75, 1.25) {};
         \node[white box component, variational] (c) at (0, 0.75) {};
-        \node[white box component, ] (d) at (-0.75, 0.75) {};
+        \node[white box component, fill=white] (d) at (-0.75, 0.75) {};
         % ---
         \draw[edge, directed] (x) -- (a);
         \draw[edge, directed] (x) -- (b);
@@ -280,15 +280,16 @@ To formalize the description of desirable structured models, we explore how down
 
 \section{Contributions}
 This work presents novel Bayesian structured models inspired by industrial applications.
-The main contributions presented in this thesis appeared in a number of peer-reviewed publications and patents we outline below.
-Our main contributions to the research questions in~\cref{tab:introduction:research_questions} are as follows.
+The main contributions to the research questions in~\cref{tab:introduction:research_questions} are as follows.
+They appeared in a number of peer-reviewed publications and patents we outline below.
 
 \begin{compactdesc}
     \item[RQ1]
-    The main contributions presented in this thesis appeared in a number of peer-reviewed publications and patents we outline below.
-    In \cref{contrib:data_association,contrib:patent_depeweg,contrib:patent_geipel}, we formulate a Bayesian interpretation of the data association problem and discuss an application of this model to the prediction of the combustion dynamics of a gas-turbine, where the structured model allows us to distinguish between different dynamical regimes.
+    In \cref{contrib:data_association,contrib:patent_depeweg,contrib:patent_geipel}, we formulate a Bayesian interpretation of the data association problem.
+    We discuss an application of this model to the prediction of the combustion dynamics of a gas-turbine, where the structured model allows us to distinguish between different dynamical regimes.
     \item[RQ2]
-    In~\cref{contrib:windpower,contrib:patent_egedal,contrib:patent_kaiser}, we formulate a hierarchical Bayesian model for a nonlinear time-series alignment problem, show that this model is capable of representing the complex interactions between turbines in a wind farm and discuss how this model can be used to derive more efficient controllers for wind-turbines in.
+    In~\cref{contrib:windpower,contrib:patent_egedal,contrib:patent_kaiser}, we formulate a hierarchical Bayesian model for a nonlinear time-series alignment problem.
+    We show that this model is capable of representing the complex interactions between turbines in a wind-farm and discuss how it can be used to derive more efficient controllers for wind-turbines.
     \item[RQ3]
     In \cref{contrib:interpretable_rl,contrib:multi_modal_rl}, we apply our data association model to a reinforcement learning task and show how a semantic decomposition of the dynamics reduces the data requirements and produces interpretable solutions.
     In \cref{contrib:surrogates}, we formulate surrogate models for Bayesian optimization problems that focus on the informative structure of the objective functions by sacrificing local accuracy and in \cref{contrib:composition}, we present an argument for why inference schemes based on factorizations between layers cannot represent heterogeneous posteriors.

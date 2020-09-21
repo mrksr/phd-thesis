@@ -27,11 +27,11 @@ Given a set of observational pairs $(\mat{x}, \mat{y})$, we want to learn about 
 \end{align}
 The goal of learning is often to either gain new knowledge about nature by describing the data or to be able to predict outputs $\mat{y}_\ast$ for previously unseen inputs $\mat{x}_\ast$.
 While traditional statistics favor the white-box modeling culture that focuses on explaining observational data using causal theoretic models, machine learning and specifically deep learning is more closely associated with the black-box culture, which focuses on prediction instead~\parencite{breiman_statistical_2001,shmueli_explain_2010}.
-The impressive successes of both cultures have been achieved in different application domains however, which is due to their respective pros and cons.
+The impressive successes of both cultures have been achieved in different application domains, however, which is due to their respective pros and cons.
 
 
 \section{Black-box models in deep learning}
-When formulating a black-box model, we accept that we cannot model nature directly and instead focus on the functional dependency $f$.
+When formulating a black-box model, we accept that we cannot model nature directly and focus on the functional dependency $f$ instead.
 The approach is to find an algorithm $f_{\mat{w}}$ with parameters $\mat{w}$ that approximates the true dependency $f$ in
 \begin{align}
     \begin{tikzpicture}[align graphical model]
@@ -58,7 +58,7 @@ The approach is to find an algorithm $f_{\mat{w}}$ with parameters $\mat{w}$ tha
 Using general function approximators like neural networks with a typically large set of weights $\mat{w}$, any smooth dependency can be modeled given enough observations.
 With growing computational power and the availability of data sets, black-box approaches have led to impressive advancements in domains that are hard to formalize.
 Successes have been seen in a wide range of digital tasks such as speech recognition~\parencite{hochreiter_long_1997,chorowski_attention-based_2015,bahdanau_neural_2014,chorowski_attention-based_2015}, computer vision~\parencite{russakovsky_imagenet_2015,lecun_backpropagation_1989}, non-cooperative games~\parencite{berner_dota_2019,silver_mastering_2016}, or machine translation~\parencite{johnson_googles_2017}.
-The abundance of data in these domains shifts the focus away from traditional statistical models to approaches that are highly adaptabe and scalable.
+The abundance of data in these domains shifts the focus away from traditional statistical models to highly adaptable and scalable approaches.
 Black-box models do not claim to uncover or represent knowledge about the true process in nature but capture correlations between inputs and outputs instead.
 Their advantages and disadvantages can be summarized as follows.
 
@@ -69,7 +69,7 @@ Their advantages and disadvantages can be summarized as follows.
         \item[Simple portability]
         Black-box model formulations can be applied to many different applications due to their assumed independence of the concrete problem.
         \item[Strong scalability]
-        The internal structure of black-box models can often be chosen to optimally leverage computational power.
+        The internal structure of black-box models can often be chosen to leverage computational power optimally.
         Models in deep learning can cope with billions of parameters and observations.
     \end{compactdesc}
 \end{Pros}
@@ -78,8 +78,8 @@ Their advantages and disadvantages can be summarized as follows.
         % \item[Complex parametrization]
         % Many models in deep learning depend on specific architecture-choices and carefully tuned hyper-parameters to produce desired results, drawing their robustness into question.
         \item[Data bias]
-        Black-box approaches can only uncover structure that is present in the training data.
-        They therefore typically require a large amount of training data in all parts of the system.
+        Black-box approaches can only uncover the structure that is present in the training data.
+        They, therefore, typically require a large amount of training data in all parts of the system.
         \item[Weak interpretability]
         Black-box models are not designed to offer causal explanations of observations.
         As a result, the complex internal structure of models in deep learning is generally not understandable to human experts~\parencite{rudin_stop_2019}.
@@ -90,7 +90,7 @@ Their advantages and disadvantages can be summarized as follows.
 \end{Cons}
 
 The highly adaptable and scalable models from deep learning excel at finding structure in large and complex data sets.
-However, the black-box approach struggles in environments where the internal structure of the model or the generalization behavior come into focus.
+However, the black-box approach struggles in environments where the model's internal structure or the generalization behavior come into focus.
 
 
 \section{White-box models in Bayesian statistics}
@@ -167,34 +167,34 @@ Observational data is used to answer specific questions about a small number of 
         \item[Trustworthy predictions]
         Bayesian probabilistic models quantify their confidence about predictions in a principled manner based on explicit assumptions.
         \item[Safe generalization]
-        Generalization of white-box models is driven by human-interpretable causal theory that can be evaluated and verified by experts.
+        The generalization of white-box models is driven by human-interpretable causal theory that can be evaluated and verified by experts.
     \end{compactdesc}
 \end{Pros}
 \begin{Cons}[Bayesian statistics]
     \begin{compactdesc}
         \item[Model bias]
         All insights from white-box models are with respect to strong causal theoretic modeling assumptions.
-        Wrong or insufficient assumption cannot be compensated through data, which limits the applicability of white-box models in problem domains that are hard to formalize.
+        Wrong or insufficient assumptions cannot be compensated through data, limiting the applicability of white-box models in problem domains that are hard to formalize.
         \item[Subjective model-selection]
         White-box models aim to model causal relationships in nature.
         It is a hard problem to select the correct model from a set of plausible explanations~\parencite{thorburn_occams_1915}.
         \item[Weak scalability]
-        The theory behind white-box models is often problem specific and hard to transfer to other applications.
+        The theory behind white-box models is often problem-specific and hard to transfer to other applications.
         Similarly, complex theory often requires specialized learning algorithms that do not scale to large amounts of data.
     \end{compactdesc}
 \end{Cons}
 
 White-box models have been the driving force behind many advances in economics, medicine, and the natural sciences and allowed researchers to find and understand the structure in complex and heterogenous data~\parencite{efron_modern_2005,giulio_d._agostini_bayesian_2003}.
-However, as processes get more complex and the amount of available data grows, formulating white-box models becomes a very difficult task~\parencite{sutton_bitter_2019}.
+However, as processes get more complex, and the amount of available data grows, formulating white-box models becomes a very difficult task~\parencite{sutton_bitter_2019}.
 
 
 \section{Structured models with Gaussian processes}
 White-box and black-box modeling approaches serve different purposes in data analysis.
-White-box models are used in applications where hypotheses should be tested when strong theoretical background is available.
+White-box models are used in applications where hypotheses should be tested when strong a theoretical background is available.
 Black-box models are successful when correlations and associations in large amounts of data should be used to make predictions about systems where the consequences of mistakes are mild.
 However, for many safety-critical applications of machine learning in the physical world, the situation is different.
-Complete theoretic models are not available to solve a learning task and new insights need to be inferred from potentially large amounts of data.
-At the same time, models need to make physically plausible predictions and are required to be interpretable for domain experts.
+Complete theoretic models are not available to solve a learning task, and new insights need to be inferred from potentially large amounts of data.
+Simultaneously, models need to make physically plausible predictions and are required to be interpretable for domain experts.
 
 Take wind power production as an example:
 To optimize the efficiency of a wind-turbine, the speed and pitch have to be controlled according to the local wind conditions.
@@ -207,7 +207,7 @@ At the same time, data-driven black-box approaches struggle due to identifiabili
 While we cannot formulate analytical models, domain experts do have an intuitive understanding of the underlying physics of wind propagation.
 A successful model needs to combine the white-box and black-box approaches:
 It needs to reproduce expectations like slowly changing prevailing wind conditions or gusts that travel through the system while still being able to infer new knowledge about specific turbine behavior or the influence of terrain from data.
-By checking if these these expectations are met, domain experts can build trust in the model's predictions for novel situations.
+By checking if these expectations are met, domain experts can build trust in the model's predictions for novel situations.
 
 \begin{table}[t]
     \caption[Research questions]{
@@ -257,25 +257,25 @@ By checking if these these expectations are met, domain experts can build trust 
         ] {};
     \end{tikzpicture}
 \end{table}
-In this work, we study how to formulate structured Bayesian models that reproduce knowledge, are understandable for domain-experts, and are still able to gain new insights from data.
+In this work, we study how to formulate structured Bayesian models that reproduce knowledge, are understandable for domain experts, and can still gain new insights from data.
 \Cref{tab:introduction:research_questions} shows that structured models need to combine the advantages of the general function approximators from deep learning and the strong and interpretable structure from Bayesian statistics.
 To that end, we embed Gaussian processes (GPs) in hierarchical probabilistic models.
-GPs are non-parametric distributions over functions that allow us to encode Bayesian assumptions in an explicit manner to achieve interpretable results.
+GPs are non-parametric distributions over functions that allow us to encode Bayesian assumptions explicitly to achieve interpretable results.
 The research questions we consider in this thesis are as follows.
 
 \paragraph{RQ1: How can we reduce the model-bias of white-box models and efficiently learn from data?}
-Starting from a white-box model, we explore how to relax strong theoretical structure by embedding general function approximators in a hierarchy.
-While conserving interpretability and informative uncertainty quantification, we use GPs learn about problem-components we cannot formalize.
+Starting from a white-box model, we explore how to relax a strong theoretical structure by embedding general function approximators in a hierarchy.
+While conserving interpretability and informative uncertainty quantification, we use GPs to learn about problem-components we cannot formalize.
 We discuss how to formulate inference schemes that scale to large data sets.
 
 \paragraph{RQ2: How can we reduce the data-bias of black-box models and reliably reproduce expert expectations?}
 We study how to add structure to black-box deep GP models to reproduce expert knowledge and factorize uncertainties.
-Additional structure allows us to formulate problem-driven constraints for desirable solutions that yield physically plausible results.
+The additional structure allows us to formulate problem-driven constraints for desirable solutions that yield physically plausible results.
 We explore how rich internal structure helps models to generalize to novel situations in an interpretable manner.
 
 \paragraph{RQ3: How can we formalize model selection in situations where internal model structure and generalization behavior come into focus?}
 As evaluation data in critical parts of the system is often scarce in physical environments, performance measures such as the generalization error are not enough to identify desirable structured models.
-At the same time, the subjective model-selection of white-box approaches is problematic in domains that are not well-understood.
+Simultaneously, the subjective model-selection of white-box approaches is problematic in domains that are not well-understood.
 To formalize the description of desirable structured models, we explore how downstream tasks can be taken into account for model selection.
 
 \section{Contributions}
@@ -286,12 +286,12 @@ They appeared in a number of peer-reviewed publications and patents we outline b
 \begin{compactdesc}
     \item[RQ1]
     In \cref{contrib:data_association,contrib:patent_depeweg,contrib:patent_geipel}, we formulate a Bayesian interpretation of the data association problem.
-    We discuss an application of this model to the prediction of the combustion dynamics of a gas-turbine, where the structured model allows us to distinguish between different dynamical regimes.
+    We discuss an application of this model to the prediction of the combustion dynamics of a gas turbine, where the structured model allows us to distinguish between different dynamical regimes.
     \item[RQ2]
     In~\cref{contrib:windpower,contrib:patent_egedal,contrib:patent_kaiser}, we formulate a hierarchical Bayesian model for a nonlinear time-series alignment problem.
-    We show that this model is capable of representing the complex interactions between turbines in a wind-farm and discuss how it can be used to derive more efficient controllers for wind-turbines.
+    We show that this model is capable of representing the complex interactions between turbines in a wind farm, and discuss how it can be used to derive more efficient controllers for wind-turbines.
     \item[RQ3]
-    In \cref{contrib:interpretable_rl,contrib:multi_modal_rl}, we apply our data association model to a reinforcement learning task and show how a semantic decomposition of the dynamics reduces the data requirements and produces interpretable solutions.
+    In \cref{contrib:interpretable_rl,contrib:multi_modal_rl}, we apply our data association model to a reinforcement learning task and show how a semantic decomposition of the dynamics reduces the data requirements, and produces interpretable solutions.
     In \cref{contrib:surrogates}, we formulate surrogate models for Bayesian optimization problems that focus on the informative structure of the objective functions by sacrificing local accuracy and in \cref{contrib:composition}, we present an argument for why inference schemes based on factorizations between layers cannot represent heterogeneous posteriors.
 \end{compactdesc}
 
@@ -324,16 +324,16 @@ After introducing GPs, we discuss variational approaches to sparse GPs, their ex
 
 In \cref{toc:data_association}, we consider the first research question and explore how to formulate structured hierarchical models using the data association problem as an example.
 We separate the data association problem into hierarchical components and derive an efficient joint inference scheme, resulting in a fully Bayesian model.
-We show that this model is able to factorize multi-modal data into independent processes, providing explicit models for both the processes and assignment probabilities.
+We show that this model can factorize multi-modal data into independent processes, providing explicit models for both the processes and assignment probabilities.
 Comparisons with previous models show the additional qualitative model capabilities of the structured approach and competitive black-box performance.
 However, experiments also show that standard measures are not enough to identify desirable models.
 
 In \cref{toc:alignment}, we consider the second research question and formulate a structured Bayesian model that reproduces expert knowledge about wind propagation in a wind-farm.
 We interpret the problem of modeling the power production of multiple wind-turbines as a nonlinear alignment problem and derive an efficient inference scheme.
 Based on expert knowledge about the underlying latent and turbulent wind field, we can derive a structured model that enforces a physically plausible dependency structure between multiple time-series.
-We discuss how these constraints help to solve an otherwise highly ambiguous learning problem and show that the imposed structure leads to a rich internal model-structure that can be interpreted by experts.
+We discuss how these constraints help solve an otherwise highly ambiguous learning problem and show that the imposed structure leads to a rich internal model-structure that experts can interpret.
 
-In \cref{toc:interpretable_rl}, we consider the third research question and discuss how to formalize the subjectiveness introduced via expert knowledge and model ambiguities to evalute structured models.
+In \cref{toc:interpretable_rl}, we consider the third research question and discuss how to formalize the subjectiveness introduced via expert knowledge and model ambiguities to evaluate structured models.
 We include the task a model will be used to solve into model selection, which allows us to distinguish between qualitatively different models showing similar performance metrics.
 We revisit the data association problem and embed it into a reinforcement learning problem, where identifying the correct underlying dynamics, and therefore a desirable model, is critical to finding a successful policy.
 We show that semantic hierarchical structure increases data efficiency and allows domain experts to influence agent behavior through detailed insights into the dynamics of a system.
@@ -342,4 +342,4 @@ We show that semantic hierarchical structure increases data efficiency and allow
 In \cref{toc:discussion:composition}, we present an intuitive argument for why inference schemes based on factorizations between layers cannot represent heterogeneous posteriors.
 In \cref{toc:discussion:bo}, we argue why models with suboptimal marginal likelihoods can perform well in hierarchical systems.
 In \cref{toc:discussion:mountaincar}, we explore this idea further and consider how tasks can be included in the inference problem directly.
-Finally, we discuss possible further directions of research.
+Finally, we discuss possible further directions for research.

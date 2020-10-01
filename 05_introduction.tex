@@ -190,8 +190,8 @@ However, as processes get more complex, and the amount of available data grows, 
 
 \section{Structured models with Gaussian processes}
 White-box and black-box modeling approaches serve different purposes in data analysis.
-White-box models are used in applications where hypotheses should be tested when strong a theoretical background is available.
-Black-box models are successful when correlations and associations in large amounts of data should be used to make predictions about systems where the consequences of mistakes are mild.
+White-box models are used in applications where hypotheses should be tested when a strong theoretical background is available.
+Black-box models are most successful when correlations and associations in large amounts of data should be used to make predictions about systems where the consequences of mistakes are mild.
 However, for many safety-critical applications of machine learning in the physical world, the situation is different.
 Complete theoretic models are not available to solve a learning task, and new insights need to be inferred from potentially large amounts of data.
 Simultaneously, models need to make physically plausible predictions and are required to be interpretable for domain experts.
@@ -258,18 +258,23 @@ By checking if these expectations are met, domain experts can build trust in the
     \end{tikzpicture}
 \end{table}
 In this work, we study how to formulate structured Bayesian models that reproduce knowledge, are understandable for domain experts, and can still gain new insights from data.
-\Cref{tab:introduction:research_questions} shows that structured models need to combine the advantages of the general function approximators from deep learning and the strong and interpretable structure from Bayesian statistics.
-To that end, we embed Gaussian processes (GPs) in hierarchical probabilistic models.
-GPs are non-parametric distributions over functions that allow us to encode Bayesian assumptions explicitly to achieve interpretable results.
+\Cref{tab:introduction:research_questions} shows that structured models need to combine the advantages of the general function approximators from deep learning and the strong and interpretable structure from Bayesian statistics to fulfill all requirements of safety-critical systems.
+There are many approaches in machine learning that combine some but not all of these properties.
+Rule-based or equation-based systems~\parencite{hein_interpretable_2019,koza_genetic_1992,novak_mathematical_2012} can combine data-driven insights with interpretable results, but they struggle with representing uncertainties and making trustworthy predictions in poorly understood systems.
+Extensions to deep learning such as Bayesian neural networks (BNNs)~\parencite{depeweg_modeling_2019,gal_uncertainty_2016} augment neural networks with priors over weights to yield predictive uncertainties.
+However, BNNs remain black-box models with unclear generalization behavior and low interpretability~\parencite{rudin_stop_2019}.
+In this thesis, we embed Gaussian processes (GPs) in hierarchical probabilistic models.
+GPs are well-understood non-parametric distributions over functions that allow us to encode Bayesian assumptions explicitly.
+The combination of constraints imposed by hierarchical Bayesian structure and the data-driven insights provided by the embedded general approximators enables principled and interpretable reasoning about data-driven insights.
 The research questions we consider in this thesis are as follows.
 
 \paragraph{RQ1: How can we reduce the model-bias of white-box models and efficiently learn from data?}
-Starting from a white-box model, we explore how to relax a strong theoretical structure by embedding general function approximators in a hierarchy.
+Starting from a fully white-box model, we explore how to relax a strong theoretical structure by embedding general function approximators in a hierarchy.
 While conserving interpretability and informative uncertainty quantification, we use GPs to learn about problem-components we cannot formalize.
 We discuss how to formulate inference schemes that scale to large data sets.
 
 \paragraph{RQ2: How can we reduce the data-bias of black-box models and reliably reproduce expert expectations?}
-We study how to add structure to black-box deep GP models to reproduce expert knowledge and factorize uncertainties.
+Starting from black-box deep GP models, we study how to add Bayesian structure to reproduce expert knowledge and factorize uncertainties.
 The additional structure allows us to formulate problem-driven constraints for desirable solutions that yield physically plausible results.
 We explore how rich internal structure helps models to generalize to novel situations in an interpretable manner.
 

@@ -16,7 +16,7 @@ $(FMT): $(HEADER)
 $(JOB).pdf: $(FMT)
 	latexmk
 
-full: $(JOB).pdf figures
+full: figures $(JOB).pdf
 
 preview: all
 	latexmk -pvc

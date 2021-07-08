@@ -48,17 +48,7 @@
 
     \node[anchor=south, title text] (date) at (0.5, 0.1) {
         \makeatletter
-        Die Dissertation wurde am
-        \tikz[x=2.5cm,baseline={(0, 1pt)}]{
-            \draw[densely dotted] (0, 0) -- (1, 0);
-        }
-        % \@date{}
-        bei der Technischen Universität München eingereicht und durch die Fakultät für Informatik am
-        \tikz[x=2.5cm,baseline={(0, 1pt)}]{
-            \draw[densely dotted] (0, 0) -- (1, 0);
-        }
-        % \acceptdate{}
-        angenommen.
+        Die Dissertation wurde am \@date{} bei der Technischen Universität München eingereicht und durch die Fakultät für Informatik am \acceptdate{} angenommen.
         \makeatother
     };
     \node[title text] (committee) at ($(date.north)!0.5!(grade.south)$) {
